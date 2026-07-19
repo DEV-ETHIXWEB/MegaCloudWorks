@@ -6,7 +6,7 @@ export function Hero() {
       {/* ---- right: composed hero visual (phone + smoke + rock), full-bleed on lg ---- */}
       <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[56%] xl:w-[52%] lg:block">
         <img
-          src="/hero.png"
+          src="/hero.webp"
           alt="Megacloud app on a phone rising from red smoke"
           className="reveal-up h-full w-full object-cover object-center"
           style={{ animationDelay: '120ms' }}
@@ -40,7 +40,7 @@ export function Hero() {
         {/* ---- mobile / tablet: inline hero visual ---- */}
         <div className="relative flex items-center justify-center lg:hidden">
           <img
-            src="/hero.png"
+            src="/hero.webp"
             alt="Megacloud app on a phone rising from red smoke"
             className="reveal-up w-full max-w-[540px] object-contain"
             style={{ animationDelay: '120ms' }}

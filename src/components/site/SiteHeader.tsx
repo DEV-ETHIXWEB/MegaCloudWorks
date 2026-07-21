@@ -22,7 +22,7 @@ export function SiteHeader() {
           <img
             src="/logo.svg"
             alt="Megacloudworks"
-            className="h-6 w-auto sm:h-7"
+            className="h-[31px] w-auto sm:h-[36px]"
           />
         </a>
 

@@ -48,7 +48,7 @@ export function NotifyForm() {
           aria-label="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="sm:h-12"
+          className="border-black sm:h-12"
           required
         />
         <Button

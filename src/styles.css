@@ -1,10 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ *
+ * Geologica — self-hosted variable font (weight 100–900)
+ * ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Geologica';
+  src: url('/fonts/Geologica-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-stretch: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* ------------------------------------------------------------------ *
  * Megacloudworks brand tokens
@@ -103,8 +114,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Geologica', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Geologica', ui-sans-serif, system-ui, sans-serif;
 
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);

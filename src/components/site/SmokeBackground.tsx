@@ -49,25 +49,34 @@ const fragment = /* glsl */ `
   void main() {
     vec2 uv = vUv;
     float aspect = uResolution.x / max(uResolution.y, 1.0);
-    vec2 p = vec2(uv.x * aspect, uv.y) * 3.0;
-    float t = uTime * 0.08;
+    vec2 p = vec2(uv.x * aspect, uv.y) * 3.1;
 
-    // domain warp + upward drift for a billowing smoke feel
-    vec2 q = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(5.2, 1.3) - t));
-    float f = fbm(p + q * 1.6 + vec2(0.0, -t * 1.5));
-    f = smoothstep(0.12, 1.0, f);
+    // drift the pattern toward the lower-left over time (top-right -> lower-left stream)
+    float t = uTime * 0.09;
+    vec2 drift = vec2(t, t);
 
-    vec3 dark = vec3(0.04, 0.04, 0.05);
-    vec3 red = vec3(0.86, 0.10, 0.14);
-    vec3 hot = vec3(1.0, 0.42, 0.30);
-    vec3 col = mix(dark, red, smoothstep(0.2, 0.72, f));
-    col = mix(col, hot, smoothstep(0.72, 1.0, f) * 0.85);
+    // domain warp for billowing turbulence
+    vec2 q = vec2(fbm(p + drift), fbm(p + vec2(5.2, 1.3) + drift));
+    float f = fbm(p + q * 1.9 + drift * 1.35);
 
-    // fade at the horizontal edges so the plume reads as a column
-    float edge = smoothstep(0.0, 0.32, uv.x) * smoothstep(0.0, 0.3, 1.0 - uv.x);
-    float alpha = clamp(f * 1.25, 0.0, 1.0) * edge;
+    // dense, high-contrast smoke body — intensified now that it's confined
+    float d = smoothstep(0.10, 0.80, f);
+    d = pow(d, 0.82);
 
-    gl_FragColor = vec4(col, alpha * 0.92);
+    // red for mix-blend-multiply: white == no tint, deep red == heavy tint
+    vec3 col = mix(vec3(1.0), vec3(0.76, 0.03, 0.07), d);
+    col = mix(col, vec3(0.98, 0.24, 0.18), smoothstep(0.76, 1.05, f)); // hot cores
+
+    // keep the smoke strictly BELOW the hand-drawn cut line, which runs from
+    // top-right (~0.95, 0.72) down to lower-left (~0.37, 0.0) in uv space.
+    // Shrinking the region concentrates the plume so it reads much stronger.
+    float lineY = 1.25 * uv.x - 0.46;
+    float underLine = 1.0 - smoothstep(-0.05, 0.12, uv.y - lineY);
+
+    // no edge fade — let the plume reach the section's right/bottom edges
+    // (the diagonal cut line already shapes its upper boundary)
+    float alpha = clamp(d * 1.6, 0.0, 1.0) * underLine;
+    gl_FragColor = vec4(col, alpha);
   }
 `
 

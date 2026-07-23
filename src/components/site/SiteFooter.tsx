@@ -1,9 +1,9 @@
 export function SiteFooter() {
   return (
     <footer className="border-t border-[var(--line)]">
-      <div className="mx-auto flex max-w-[1100px] flex-col items-center gap-4 px-5 py-16 text-center sm:px-8">
+      <div className="mx-auto flex max-w-[1100px] flex-col items-center gap-4 px-[7px] py-16 text-center sm:px-[11px]">
         <a href="#top" className="flex items-center no-underline">
-          <img src="/logo.svg" alt="Megacloudworks" className="h-6 w-auto" />
+          <img src="/logo-resized.svg" alt="Megacloudworks" className="h-9 w-auto" />
         </a>
 
         <a

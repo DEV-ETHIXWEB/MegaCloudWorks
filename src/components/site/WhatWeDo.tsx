@@ -20,7 +20,7 @@ export function WhatWeDo() {
   return (
     <section
       id="what-we-do"
-      className="scroll-mt-24 px-5 py-20 sm:px-8 sm:py-28"
+      className="scroll-mt-24 px-[7px] py-20 sm:px-[11px] sm:py-28"
     >
       <div className="mx-auto max-w-[1100px]">
         <p className="text-center text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink-faint)]">

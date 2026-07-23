@@ -49,42 +49,54 @@ const fragment = /* glsl */ `
   void main() {
     vec2 uv = vUv;
     float aspect = uResolution.x / max(uResolution.y, 1.0);
-    vec2 p = vec2(uv.x * aspect, uv.y) * 3.1;
+    vec2 p = vec2(uv.x * aspect, uv.y) * 3.0;
 
-    // drift the pattern toward the lower-left over time (top-right -> lower-left stream)
-    float t = uTime * 0.09;
-    vec2 drift = vec2(t, t);
+    // rise: scroll the noise field downward so plumes travel UP the screen.
+    // a little horizontal sway makes the column billow instead of sliding straight.
+    float t = uTime * 0.14;
+    vec2 drift = vec2(sin(uTime * 0.11) * 0.12, -t);
 
     // domain warp for billowing turbulence
-    vec2 q = vec2(fbm(p + drift), fbm(p + vec2(5.2, 1.3) + drift));
-    float f = fbm(p + q * 1.9 + drift * 1.35);
+    vec2 q = vec2(fbm(p + drift), fbm(p + vec2(3.1, 1.7) + drift * 1.15));
+    float f = fbm(p + q * 2.2 + drift);
 
-    // dense, high-contrast smoke body — intensified now that it's confined
-    float d = smoothstep(0.10, 0.80, f);
-    d = pow(d, 0.82);
+    float d = smoothstep(0.14, 0.88, f);
+    d = pow(d, 1.1);
 
-    // red for mix-blend-multiply: white == no tint, deep red == heavy tint
-    vec3 col = mix(vec3(1.0), vec3(0.76, 0.03, 0.07), d);
-    col = mix(col, vec3(0.98, 0.24, 0.18), smoothstep(0.76, 1.05, f)); // hot cores
+    // colour body: soft grey where the smoke is thin, deepening to charcoal /
+    // near-black in the dense folds. natural, neutral smoke.
+    vec3 grey = vec3(0.50, 0.50, 0.53);
+    vec3 black = vec3(0.05, 0.05, 0.06);
+    vec3 col = mix(grey, black, smoothstep(0.30, 0.96, d));
 
-    // keep the smoke strictly BELOW the hand-drawn cut line, which runs from
-    // top-right (~0.95, 0.72) down to lower-left (~0.37, 0.0) in uv space.
-    // Shrinking the region concentrates the plume so it reads much stronger.
-    float lineY = 1.25 * uv.x - 0.46;
-    float underLine = 1.0 - smoothstep(-0.05, 0.12, uv.y - lineY);
+    // RED SMOG on the right band (behind the phone's right edge + over the rock):
+    // neutral grey through the centre-left, blending decisively to red smoke as
+    // it approaches the right edge — lighter red where thin, deep red where dense.
+    float redZone = smoothstep(0.68, 0.84, uv.x);
+    vec3 red = vec3(0.84, 0.08, 0.11);
+    vec3 redDeep = vec3(0.34, 0.02, 0.03);
+    vec3 redSmoke = mix(red, redDeep, smoothstep(0.35, 0.95, d));
+    col = mix(col, redSmoke, redZone);
 
-    // no edge fade — let the plume reach the section's right/bottom edges
-    // (the diagonal cut line already shapes its upper boundary)
-    float alpha = clamp(d * 1.6, 0.0, 1.0) * underLine;
+    // rise & dissipate: dense near the base, thinning gradually toward the top.
+    float rise = smoothstep(1.18, 0.04, uv.y);
+    float bottomFade = smoothstep(0.0, 0.08, uv.y);
+    // concentrate behind the phone/rock on the right, clear the copy on the left.
+    float rightBias = smoothstep(0.10, 0.55, uv.x);
+
+    // wispier, more natural edges — thin smoke stays translucent, only the
+    // dense cores build up opacity.
+    float body = pow(d, 1.35);
+    float alpha = clamp(body * rise * bottomFade * rightBias * 1.45, 0.0, 1.0);
     gl_FragColor = vec4(col, alpha);
   }
 `
 
 /**
- * SmokeBackground — the red/black WebGL plume behind the phone.
+ * SmokeBackground — a grey/black/red WebGL plume that rises behind the phone.
  * Rendered with OGL (WebGL1) and mounted client-side only, so it is SSR-safe.
- * A CSS gradient sits behind it (see the hero) as a graceful fallback if the
- * context can't be created.
+ * Draws its own colour with normal alpha (no blend mode needed); if the context
+ * can't be created it simply stays transparent over the hero's white base.
  */
 export function SmokeBackground({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)

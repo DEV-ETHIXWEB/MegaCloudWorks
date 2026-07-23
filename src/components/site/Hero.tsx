@@ -20,7 +20,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.82)_0%,rgba(255,255,255,0.55)_46%,rgba(255,255,255,0.18)_68%,rgba(255,255,255,0)_85%)] lg:hidden"
       />
 
-      <div className="relative mx-auto grid min-h-screen max-w-[1200px] grid-cols-1 items-center gap-10 px-[7px] pb-16 pt-28 sm:px-[11px] lg:grid-cols-2 lg:gap-4 lg:pb-0 lg:pt-0">
+      <div className="relative mx-auto grid min-h-screen max-w-[1600px] grid-cols-1 items-center gap-10 px-[7px] pb-16 pt-28 sm:px-[11px] lg:grid-cols-2 lg:gap-4 lg:pb-0 lg:pt-0">
         {/* ---- left: copy (dark ink pinned — hero band is always light) ---- */}
         <div className="relative z-10 max-w-xl">
           <h1 className="reveal-up font-display text-[clamp(3rem,8.5vw,7rem)] font-extrabold leading-[0.9] tracking-[-0.03em] text-[#101014]">

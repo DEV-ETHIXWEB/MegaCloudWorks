@@ -10,7 +10,7 @@ export function SiteHeader() {
 
   return (
     <header className="absolute inset-x-0 top-0 z-40">
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3 px-[7px] py-5 sm:px-[11px]">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-[7px] py-5 sm:px-[11px]">
         <a href="#top" className="flex shrink-0 items-center no-underline">
           <img
             src="/logo-resized.svg"

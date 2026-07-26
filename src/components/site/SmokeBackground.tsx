@@ -63,18 +63,19 @@ const fragment = /* glsl */ `
     float d = smoothstep(0.14, 0.88, f);
     d = pow(d, 1.1);
 
-    // colour body: soft grey where the smoke is thin, deepening to charcoal /
-    // near-black in the dense folds. natural, neutral smoke.
-    vec3 grey = vec3(0.50, 0.50, 0.53);
-    vec3 black = vec3(0.05, 0.05, 0.06);
-    vec3 col = mix(grey, black, smoothstep(0.30, 0.96, d));
+    // colour body: near-white where the smoke is thin, deepening only to a mid
+    // grey in the dense folds — white → grey, never black.
+    vec3 grey = vec3(0.74, 0.74, 0.77);
+    vec3 greyDeep = vec3(0.38, 0.38, 0.41);
+    vec3 col = mix(grey, greyDeep, smoothstep(0.30, 0.96, d));
 
     // RED SMOG on the right band (behind the phone's right edge + over the rock):
-    // neutral grey through the centre-left, blending decisively to red smoke as
-    // it approaches the right edge — lighter red where thin, deep red where dense.
+    // grey through the centre-left, blending decisively to red smoke as it
+    // approaches the right edge — lighter red where thin, a still-bright deep
+    // red where dense (kept clear of black).
     float redZone = smoothstep(0.68, 0.84, uv.x);
-    vec3 red = vec3(0.84, 0.08, 0.11);
-    vec3 redDeep = vec3(0.34, 0.02, 0.03);
+    vec3 red = vec3(0.88, 0.24, 0.26);
+    vec3 redDeep = vec3(0.66, 0.12, 0.15);
     vec3 redSmoke = mix(red, redDeep, smoothstep(0.35, 0.95, d));
     col = mix(col, redSmoke, redZone);
 
@@ -93,7 +94,7 @@ const fragment = /* glsl */ `
 `
 
 /**
- * SmokeBackground — a grey/black/red WebGL plume that rises behind the phone.
+ * SmokeBackground — a white/grey/red WebGL plume that rises behind the phone.
  * Rendered with OGL (WebGL1) and mounted client-side only, so it is SSR-safe.
  * Draws its own colour with normal alpha (no blend mode needed); if the context
  * can't be created it simply stays transparent over the hero's white base.

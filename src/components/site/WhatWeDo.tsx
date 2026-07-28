@@ -2,25 +2,28 @@ import { Link } from '@tanstack/react-router'
 
 const ITEMS = [
   {
-    img: '/showcase-app.png',
+    img: '/card-design.webp',
     title: 'App Design',
     desc: 'Thoughtful UX and polished interfaces.',
     to: '/services',
     hash: 'app-design',
+    imgY: 'translate-y-[7px] group-hover:translate-y-0',
   },
   {
-    img: '/code.png',
+    img: '/card-development.webp',
     title: 'App Development',
     desc: 'Clean, and performant code, shipped on time.',
     to: '/services',
     hash: 'app-development',
+    imgY: 'translate-y-5 group-hover:translate-y-3',
   },
   {
-    img: '/design.png',
+    img: '/card-brand.webp',
     title: 'Brand & UI',
     desc: 'Visual systems that feel cohesive.',
     to: '/services',
     hash: 'brand-ui',
+    imgY: 'translate-y-5 group-hover:translate-y-3',
   },
 ] as const
 
@@ -65,7 +68,7 @@ export function WhatWeDo() {
                 alt=""
                 aria-hidden="true"
                 loading="lazy"
-                className="pointer-events-none absolute bottom-0 right-0 w-[60%] max-w-[190px] translate-x-3 translate-y-3 object-contain transition-transform duration-300 group-hover:translate-y-1"
+                className={`pointer-events-none absolute bottom-0 right-0 w-[60%] max-w-[190px] translate-x-3 object-contain transition-transform duration-300 ${item.imgY}`}
               />
             </Link>
           ))}

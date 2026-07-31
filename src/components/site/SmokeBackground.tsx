@@ -49,46 +49,40 @@ const fragment = /* glsl */ `
   void main() {
     vec2 uv = vUv;
     float aspect = uResolution.x / max(uResolution.y, 1.0);
-    vec2 p = vec2(uv.x * aspect, uv.y) * 3.0;
+    // larger scale => bigger, rounder cumulus puffs
+    vec2 p = vec2(uv.x * aspect, uv.y) * 2.5;
 
-    // rise: scroll the noise field downward so plumes travel UP the screen.
-    // a little horizontal sway makes the column billow instead of sliding straight.
-    float t = uTime * 0.14;
-    vec2 drift = vec2(sin(uTime * 0.11) * 0.12, -t);
+    // slow roll flowing up and to the RIGHT, following the flow arrows
+    float t = uTime * 0.05;
+    vec2 drift = vec2(-t * 0.75 + sin(uTime * 0.06) * 0.12, -t);
 
-    // domain warp for billowing turbulence
-    vec2 q = vec2(fbm(p + drift), fbm(p + vec2(3.1, 1.7) + drift * 1.15));
-    float f = fbm(p + q * 2.2 + drift);
+    // domain-warped billowing turbulence
+    vec2 q = vec2(fbm(p + drift), fbm(p + vec2(3.1, 1.7) + drift * 1.1));
+    float warp = 2.0;
+    float f = fbm(p + q * warp + drift);
+    // sample a touch higher up the field for fake top-down lighting
+    float fu = fbm(p + vec2(0.0, 0.09) + q * warp + drift);
 
-    float d = smoothstep(0.14, 0.88, f);
-    d = pow(d, 1.1);
+    // Pure white 2D cloud appearance - minimal shading for flat, clean look
+    float lite = clamp((f - fu) * 3.0 + 0.7, 0.0, 1.0);
 
-    // colour body: near-white where the smoke is thin, deepening only to a mid
-    // grey in the dense folds — white → grey, never black.
-    vec3 grey = vec3(0.74, 0.74, 0.77);
-    vec3 greyDeep = vec3(0.38, 0.38, 0.41);
-    vec3 col = mix(grey, greyDeep, smoothstep(0.30, 0.96, d));
+    vec3 litCol = vec3(1.0, 1.0, 1.0);        // bright white
+    vec3 shadeCol = vec3(0.95, 0.95, 0.97);   // very light white-grey for subtle depth
+    vec3 col = mix(shadeCol, litCol, lite);
 
-    // RED SMOG on the right band (behind the phone's right edge + over the rock):
-    // grey through the centre-left, blending decisively to red smoke as it
-    // approaches the right edge — lighter red where thin, a still-bright deep
-    // red where dense (kept clear of black).
-    float redZone = smoothstep(0.68, 0.84, uv.x);
-    vec3 red = vec3(0.88, 0.24, 0.26);
-    vec3 redDeep = vec3(0.66, 0.12, 0.15);
-    vec3 redSmoke = mix(red, redDeep, smoothstep(0.35, 0.95, d));
-    col = mix(col, redSmoke, redZone);
+    // shape the bank: full and opaque in the body, wispy translucent edges,
+    // thinning toward the top.
+    float rise = smoothstep(1.15, 0.0, uv.y);
+    float bottomFade = smoothstep(0.0, 0.06, uv.y);
 
-    // rise & dissipate: dense near the base, thinning gradually toward the top.
-    float rise = smoothstep(1.18, 0.04, uv.y);
-    float bottomFade = smoothstep(0.0, 0.08, uv.y);
-    // concentrate behind the phone/rock on the right, clear the copy on the left.
-    float rightBias = smoothstep(0.10, 0.55, uv.x);
+    // keep the clouds strictly to the RIGHT of the diagonal border (the red
+    // line): the boundary leans right going up (~0.33 at the base -> ~0.55 at
+    // the top), so nothing ever spills onto the headline / copy.
+    float borderX = 0.33 + 0.22 * uv.y;
+    float leftMask = smoothstep(borderX - 0.04, borderX + 0.12, uv.x);
 
-    // wispier, more natural edges — thin smoke stays translucent, only the
-    // dense cores build up opacity.
-    float body = pow(d, 1.35);
-    float alpha = clamp(body * rise * bottomFade * rightBias * 1.45, 0.0, 1.0);
+    float alpha = smoothstep(0.30, 0.60, f);  // dense cloud cores stay opaque
+    alpha = clamp(alpha * rise * bottomFade * leftMask * 1.55, 0.0, 1.0);
     gl_FragColor = vec4(col, alpha);
   }
 `

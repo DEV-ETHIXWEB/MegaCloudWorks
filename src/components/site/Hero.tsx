@@ -1,19 +1,23 @@
 import { NotifyForm } from './NotifyForm'
-import { SmokeBackground } from './SmokeBackground'
+import { CloudField } from './CloudField'
 
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden bg-white">
-      {/* realistic grey/black/red smoke rising up behind the phone */}
-      <SmokeBackground />
+      {/* soft cloud bank drifting lower-left → upper-right, behind the phone */}
+      <CloudField />
 
-      {/* phone + rock cutout (transparent bg, no baked smoke) on top,
-          so the smoke rises BEHIND it */}
+      {/* phone + rock cutout (transparent bg) on top, so the clouds pass BEHIND it */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[image:url('/phone-rock.webp')] bg-[length:70%] bg-[position:right_bottom] bg-no-repeat"
       />
 
+      {/* desktop: left-weighted white scrim so the headline & copy stay readable over the clouds */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(255,255,255,0.78)_0%,rgba(255,255,255,0.45)_24%,rgba(255,255,255,0)_48%)] lg:block"
+      />
       {/* mobile: top-weighted white scrim so the stacked copy stays readable over the visual */}
       <div
         aria-hidden="true"

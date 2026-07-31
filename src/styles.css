@@ -207,6 +207,243 @@ body {
   }
 }
 
+/* One big cloud around the phone that cross-fades between the four shapes, with
+   a slow Ken-Burns float so it feels alive and reads as a single large,
+   evolving cloud rather than separate sprites. */
+/* slides the big cloud along the tilt axis (the parent is rotated, so this
+   left-right slide travels up the diagonal) with a slow zoom for life. */
+.cloud-slide {
+  animation: cloud-slide 30s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.cloud-cross {
+  animation-name: cloud-cross;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* each of the four sprites holds, then cross-fades to the next (25% stagger) */
+@keyframes cloud-cross {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--cloud-o, 0.96);
+  }
+  25% {
+    opacity: var(--cloud-o, 0.96);
+  }
+  31% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cloud-slide {
+  from {
+    transform: translate3d(-18%, 0, 0) scale(1.02);
+  }
+  to {
+    transform: translate3d(18%, 0, 0) scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-slide {
+    animation: none;
+  }
+  .cloud-cross {
+    animation: none;
+    opacity: 0;
+  }
+  .cloud-cross:first-child {
+    opacity: var(--cloud-o, 0.96);
+  }
+}
+
+/* Work page animations & glassmorphism utilities */
+.work-card {
+  animation: work-card-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes work-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes float-slower {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-40px, 30px) scale(0.9);
+  }
+  66% {
+    transform: translate(25px, -25px) scale(1.15);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 20s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: float-slower 25s ease-in-out infinite;
+}
+
+/* Enhanced micro-animations for Work page */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(245, 51, 59, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(245, 51, 59, 0.35);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+@keyframes modal-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-scale {
+  animation: modal-scale 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes border-glow-pulse {
+  0%, 100% {
+    border-color: rgba(245, 51, 59, 0.2);
+  }
+  50% {
+    border-color: rgba(255, 106, 61, 0.5);
+  }
+}
+
+.animate-border-glow {
+  animation: border-glow-pulse 3s ease-in-out infinite;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.dark .glass-panel {
+  background: rgba(19, 19, 23, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-card {
+    animation: none;
+  }
+  .animate-shimmer,
+  .animate-float-slow,
+  .animate-float-slower {
+    animation: none;
+  }
+}
+
+/* About page animations */
+.animate-hero-title {
+  animation: hero-title 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes hero-title {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Scroll-triggered animations */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-animate.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.scroll-animate.is-visible.animate-fade-up {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-title,
+  .scroll-animate,
+  .animate-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

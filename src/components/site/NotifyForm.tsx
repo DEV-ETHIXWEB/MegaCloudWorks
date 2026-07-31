@@ -65,7 +65,7 @@ export function NotifyForm() {
         Or say hello —{' '}
         <a
           href="mailto:hello@megacloudworks.com"
-          className="font-semibold text-[var(--ink)] underline decoration-[var(--brand)] decoration-2 underline-offset-2 hover:text-[var(--brand)]"
+          className="font-semibold text-[var(--ink)] no-underline hover:text-[var(--brand)]"
         >
           hello@megacloudworks.com
         </a>

@@ -201,9 +201,114 @@ body {
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * Link track — the connector between the Ethixweb / MegaCloudWorks
+ * wordmarks. A short brand-coloured pulse travels the rail out and back.
+ * ------------------------------------------------------------------ */
+.link-track {
+  position: relative;
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.link-track::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 42%;
+  background: linear-gradient(
+    90deg,
+    rgba(245, 51, 59, 0) 0%,
+    var(--brand) 50%,
+    rgba(245, 51, 59, 0) 100%
+  );
+  animation: link-travel 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
+}
+
+@keyframes link-travel {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(calc(100% / 0.42));
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * CTA — diagonal white wipe on hover
+ * ------------------------------------------------------------------ */
+.cta-diagonal {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--brand);
+  /* leaving hover: ink flips back to white immediately, no delay */
+  transition:
+    color 160ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+    box-shadow 320ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.cta-diagonal::before {
+  content: '';
+  position: absolute;
+  inset: -2px -30%;
+  z-index: -1;
+  background: #fff;
+  transform: translateX(-115%) skewX(-18deg);
+  transition: transform 420ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.cta-diagonal:hover::before,
+.cta-diagonal:focus-visible::before {
+  transform: translateX(0) skewX(-18deg);
+}
+
+/* entering hover: hold the white label until the wipe is under it, otherwise
+   brand-on-brand text goes invisible for a beat mid-sweep */
+.cta-diagonal:hover,
+.cta-diagonal:focus-visible {
+  color: var(--brand);
+  box-shadow: none;
+  transition:
+    color 160ms cubic-bezier(0.4, 0, 0.2, 1) 240ms,
+    box-shadow 320ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+/* ------------------------------------------------------------------ *
+ * Highlighted email address
+ * ------------------------------------------------------------------ */
+.mail-highlight {
+  border-radius: 0.375rem;
+  background: var(--brand-soft);
+  padding: 0.15em 0.45em;
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration: none;
+  box-decoration-break: clone;
+  transition:
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+.mail-highlight:hover,
+.mail-highlight:focus-visible {
+  background: var(--brand);
+  color: #fff;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal-up {
     animation: none;
+  }
+
+  .link-track::after {
+    animation: none;
+    opacity: 0.9;
+  }
+
+  .cta-diagonal::before {
+    transition: none;
   }
 }
 
@@ -269,6 +374,16 @@ body {
 /* Work page animations & glassmorphism utilities */
 .work-card {
   animation: work-card-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Simple project placeholder */
+.work-placeholder {
+  background: radial-gradient(ellipse at center, rgba(245,51,59,0.06) 0%, transparent 70%);
+  transition: background 0.4s ease;
+}
+
+.work-placeholder:hover {
+  background: radial-gradient(ellipse at center, rgba(245,51,59,0.12) 0%, transparent 70%);
 }
 
 @keyframes work-card-reveal {

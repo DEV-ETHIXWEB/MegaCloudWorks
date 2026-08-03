@@ -12,16 +12,11 @@ import {
   ArrowUpRight,
   Sparkles,
   Zap,
-  Code2,
   X,
-  BarChart3,
-  Smartphone,
   ArrowRight,
   Award,
   TrendingUp,
   CheckCircle2,
-  Cpu,
-  ShieldCheck,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/work')({ component: Work })
@@ -42,7 +37,7 @@ type Project = {
   challenge: string
   solution: string
   metrics: { label: string; value: string }[]
-  previewType: 'dashboard' | 'mobile' | 'code' | 'brand' | 'ai' | 'iot'
+  placeholderLabel: string
 }
 
 const APPROACH_COLUMNS = [
@@ -89,7 +84,7 @@ const PROJECTS: Project[] = [
       { label: 'ARR Growth', value: '$4.2M' },
       { label: 'App Rating', value: '4.9 ★' },
     ],
-    previewType: 'dashboard',
+    placeholderLabel: 'Project 1',
   },
   {
     id: 'halo-health',
@@ -110,7 +105,7 @@ const PROJECTS: Project[] = [
       { label: 'Day-30 Retention', value: '64%' },
       { label: 'App Store Feature', value: '#1 App' },
     ],
-    previewType: 'mobile',
+    placeholderLabel: 'Project 2',
   },
   {
     id: 'ledger-engine',
@@ -131,7 +126,7 @@ const PROJECTS: Project[] = [
       { label: 'Monthly API Requests', value: '1.2B' },
       { label: 'Dev Satisfaction', value: '98%' },
     ],
-    previewType: 'code',
+    placeholderLabel: 'Project 3',
   },
   {
     id: 'meridian-studio',
@@ -152,7 +147,7 @@ const PROJECTS: Project[] = [
       { label: 'Page Load Speed', value: '0.8s' },
       { label: 'Return Rate', value: '-35%' },
     ],
-    previewType: 'brand',
+    placeholderLabel: 'Project 4',
   },
   {
     id: 'aura-ai',
@@ -173,7 +168,7 @@ const PROJECTS: Project[] = [
       { label: 'Team Accounts', value: '1,400+' },
       { label: 'Net Promoter Score', value: '74' },
     ],
-    previewType: 'ai',
+    placeholderLabel: 'Project 5',
   },
   {
     id: 'veloce-mobility',
@@ -194,7 +189,7 @@ const PROJECTS: Project[] = [
       { label: 'Uptime Guarantee', value: '99.99%' },
       { label: 'Cost Reduction', value: '24%' },
     ],
-    previewType: 'iot',
+    placeholderLabel: 'Project 6',
   },
 ]
 
@@ -226,6 +221,29 @@ function RocketIcon(props: React.SVGProps<SVGSVGElement>) {
     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} {...props}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.63 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.58-5.84a14.98 14.98 0 00-6.16 12.12" />
     </svg>
+  )
+}
+
+/** Simple "Project N" styled placeholder with gradient accent */
+function ProjectPlaceholder({ label, number }: { label: string; number: string }) {
+  return (
+    <div className="work-placeholder relative flex h-full w-full flex-col items-center justify-center gap-3 select-none">
+      {/* Large subtle number watermark */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[8rem] font-extrabold leading-none text-white/[0.04] tracking-[-0.06em]"
+      >
+        {number}
+      </span>
+      {/* Centered label pill */}
+      <div className="relative z-10 flex flex-col items-center gap-2">
+        <div className="h-px w-12 bg-gradient-to-r from-transparent via-[var(--brand)] to-transparent opacity-70" />
+        <span className="rounded-full border border-[var(--brand)]/30 bg-[var(--brand)]/10 px-4 py-1.5 font-display text-sm font-bold tracking-widest text-[var(--brand)] backdrop-blur-sm uppercase">
+          {label}
+        </span>
+        <div className="h-px w-12 bg-gradient-to-r from-transparent via-[var(--brand)] to-transparent opacity-70" />
+      </div>
+    </div>
   )
 }
 
@@ -321,13 +339,13 @@ function Work() {
     <div ref={root} className="relative min-h-screen bg-[var(--paper)] text-[var(--ink)]">
       <SiteHeader />
 
-      {/* ================= HERO SECTION (Services Inspired) ================= */}
-      <section className="relative overflow-hidden px-6 pb-20 pt-36 sm:px-10 lg:px-20 lg:pt-44">
+      {/* ================= HERO SECTION ================= */}
+      <section className="relative overflow-hidden px-4 pb-16 pt-32 sm:px-8 lg:px-20 lg:pt-44">
         {/* Breathing background glow */}
         <div
           data-glow
           aria-hidden="true"
-          className="pointer-events-none absolute -right-40 -top-40 h-[42rem] w-[42rem] rounded-full opacity-70 blur-3xl"
+          className="pointer-events-none absolute -right-40 -top-40 h-[30rem] w-[30rem] rounded-full opacity-70 blur-3xl sm:h-[42rem] sm:w-[42rem]"
           style={{
             background:
               'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.09) 40%, rgba(255,255,255,0) 70%)',
@@ -343,7 +361,7 @@ function Work() {
           </p>
           <h1
             data-hero
-            className="mt-6 font-display text-[clamp(2.75rem,7vw,5.5rem)] font-extrabold leading-[0.92] tracking-[-0.03em] text-[var(--ink)]"
+            className="mt-5 font-display text-[clamp(2.2rem,7vw,5.5rem)] font-extrabold leading-[0.92] tracking-[-0.03em] text-[var(--ink)]"
           >
             Products engineered for{' '}
             <span className="bg-gradient-to-r from-[var(--brand)] via-[#ff6a3d] to-[#f5333b] bg-clip-text text-transparent">
@@ -352,7 +370,7 @@ function Work() {
           </h1>
           <p
             data-hero
-            className="mt-7 text-lg leading-relaxed text-[var(--ink-soft)]"
+            className="mt-5 text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg"
           >
             An inside look at how we combine strategic product design, modern engineering, and smooth visual polish to ship industry-defining software.
           </p>
@@ -361,10 +379,10 @@ function Work() {
         {/* 4 Approach Columns with Animated Accent Lines */}
         <div
           data-columns
-          className="relative mt-20 grid gap-10 sm:grid-cols-2 lg:grid-cols-4"
+          className="relative mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
         >
           {APPROACH_COLUMNS.map((c) => (
-            <div data-reveal key={c.kicker} className="relative pt-7">
+            <div data-reveal key={c.kicker} className="relative pt-6">
               {/* faint track + animated glowing accent line */}
               <span
                 aria-hidden="true"
@@ -390,12 +408,11 @@ function Work() {
       </section>
 
       {/* ================= SPOTLIGHT FEATURED CASE STUDY ================= */}
-      <section className="relative px-6 py-12 sm:px-10 lg:px-20">
-        {/* Decorative dashed background ring */}
+      <section className="relative px-4 py-10 sm:px-8 lg:px-20">
         <div
           data-ring
           aria-hidden="true"
-          className="pointer-events-none absolute -right-20 top-1/2 hidden h-[32rem] w-[32rem] -translate-y-1/2 rounded-full border border-dashed border-[var(--line-strong)] lg:block opacity-40"
+          className="pointer-events-none absolute -right-20 top-1/2 hidden h-[32rem] w-[32rem] -translate-y-1/2 rounded-full border border-dashed border-[var(--line-strong)] opacity-40 lg:block"
         />
 
         <div data-reveal className="relative">
@@ -409,14 +426,14 @@ function Work() {
             </span>
           </div>
 
-          <div className="group relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] shadow-[0_20px_60px_rgba(16,16,20,0.08)] transition-all duration-700 hover:border-[var(--brand)]/40 hover:shadow-[0_30px_80px_rgba(245,51,59,0.15)]">
-            {/* Glowing corner accent */}
+          <div className="group relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper)] shadow-[0_20px_60px_rgba(16,16,20,0.08)] transition-all duration-700 hover:border-[var(--brand)]/40 hover:shadow-[0_30px_80px_rgba(245,51,59,0.15)] sm:rounded-3xl">
+            {/* Glowing corner accents */}
             <div className="pointer-events-none absolute -right-20 -top-20 h-96 w-96 rounded-full bg-[var(--brand)]/15 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
             <div className="pointer-events-none absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-[var(--brand-2)]/10 blur-3xl" />
 
             <div className="grid lg:grid-cols-[1.1fr_1.3fr]">
               {/* Left Details */}
-              <div className="relative z-10 flex flex-col justify-between p-8 sm:p-10 lg:p-12">
+              <div className="relative z-10 flex flex-col justify-between p-6 sm:p-8 lg:p-12">
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-bold uppercase tracking-widest text-[var(--brand)]">
@@ -428,22 +445,22 @@ function Work() {
                     </span>
                   </div>
 
-                  <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
+                  <h2 className="mt-4 font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-3xl lg:text-5xl">
                     {featuredProject.name}
                   </h2>
 
-                  <p className="mt-4 text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
+                  <p className="mt-4 text-base leading-relaxed text-[var(--ink-soft)]">
                     {featuredProject.blurb}
                   </p>
 
                   {/* Impact Badges */}
-                  <div className="mt-8 grid grid-cols-3 gap-4 rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/80 p-4 backdrop-blur-md">
+                  <div className="mt-6 grid grid-cols-3 gap-3 rounded-xl border border-[var(--line)] bg-[var(--paper-2)]/80 p-3 backdrop-blur-md sm:mt-8 sm:gap-4 sm:rounded-2xl sm:p-4">
                     {featuredProject.metrics.map((m) => (
                       <div key={m.label}>
-                        <p className="font-display text-lg font-extrabold text-[var(--ink)] sm:text-xl">
+                        <p className="font-display text-base font-extrabold text-[var(--ink)] sm:text-xl">
                           {m.value}
                         </p>
-                        <p className="text-[11px] font-semibold text-[var(--ink-faint)]">
+                        <p className="text-[10px] font-semibold text-[var(--ink-faint)] sm:text-[11px]">
                           {m.label}
                         </p>
                       </div>
@@ -451,11 +468,11 @@ function Work() {
                   </div>
                 </div>
 
-                <div className="mt-8 flex flex-wrap items-center gap-4">
+                <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8">
                   <Button
                     onClick={() => setSelectedProject(featuredProject)}
                     size="lg"
-                    className="group/btn relative overflow-hidden bg-[var(--brand)] text-white shadow-lg transition-all duration-300 hover:bg-[var(--brand-strong)] hover:shadow-xl hover:shadow-[var(--brand)]/30"
+                    className="group/btn relative overflow-hidden bg-[var(--brand)] text-white shadow-lg"
                   >
                     <span className="relative z-10 flex items-center gap-2 font-semibold">
                       Explore Case Study
@@ -476,86 +493,10 @@ function Work() {
                 </div>
               </div>
 
-              {/* Right Stylized Interactive Graphic Placeholder */}
-              <div className="relative min-h-[320px] overflow-hidden bg-gradient-to-br from-[#121014] via-[#1a1216] to-[#0c0c0f] p-6 lg:min-h-[440px]">
+              {/* Right — Simple Project Placeholder */}
+              <div className="relative min-h-[220px] overflow-hidden bg-gradient-to-br from-[#121014] via-[#1a1216] to-[#0c0c0f] sm:min-h-[300px] lg:min-h-[400px]">
                 <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px]" />
-
-                {/* Dashboard Frame Graphic */}
-                <div className="relative h-full w-full rounded-2xl border border-white/10 bg-[#16141a]/90 p-5 shadow-2xl backdrop-blur-xl transition-all duration-700 group-hover:scale-[1.02]">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
-                      <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
-                      <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
-                      <span className="ml-2 text-xs font-mono text-white/50">
-                        finlytics-os.app/analytics
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-lg bg-white/5 px-2.5 py-1 text-[11px] font-medium text-emerald-400">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                      Live Stream: 48,200 ops/s
-                    </div>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
-                      <p className="text-xs font-medium text-white/60">
-                        Quarterly Revenue Growth
-                      </p>
-                      <p className="mt-1 font-display text-2xl font-bold text-white">
-                        $14,892,400{' '}
-                        <span className="text-xs font-semibold text-emerald-400">
-                          +34.2%
-                        </span>
-                      </p>
-                      <svg className="mt-3 h-14 w-full" viewBox="0 0 200 50">
-                        <defs>
-                          <linearGradient id="grad-spot" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#f5333b" stopOpacity="0.8" />
-                            <stop offset="100%" stopColor="#ff6a3d" stopOpacity="0.8" />
-                          </linearGradient>
-                        </defs>
-                        <path
-                          d="M0,40 Q30,10 60,30 T120,15 T180,35 T200,5"
-                          fill="none"
-                          stroke="url(#grad-spot)"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </div>
-
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
-                      <p className="text-xs font-medium text-white/60">
-                        Active API Consumers
-                      </p>
-                      <p className="mt-1 font-display text-2xl font-bold text-white">
-                        124,900{' '}
-                        <span className="text-xs font-semibold text-emerald-400">
-                          +18.4%
-                        </span>
-                      </p>
-                      <div className="mt-4 space-y-2">
-                        <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
-                          <div className="h-full w-[78%] rounded-full bg-gradient-to-r from-[var(--brand)] to-[var(--brand-2)]" />
-                        </div>
-                        <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
-                          <div className="h-full w-[62%] rounded-full bg-gradient-to-r from-orange-400 to-amber-300" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-4 py-3 text-xs text-white/70">
-                    <div className="flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4 text-[var(--brand)]" />
-                      <span>WebGL Real-time Pipeline Active</span>
-                    </div>
-                    <span className="font-mono text-[11px] text-white/50">
-                      v2.4.0-release
-                    </span>
-                  </div>
-                </div>
+                <ProjectPlaceholder label={featuredProject.placeholderLabel} number={featuredProject.number} />
               </div>
             </div>
           </div>
@@ -563,17 +504,17 @@ function Work() {
       </section>
 
       {/* ================= FILTER & CONTROLS BAR ================= */}
-      <section className="px-6 py-8 sm:px-10 lg:px-20">
-        <div data-reveal className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between border-y border-[var(--line)] py-6">
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2">
+      <section className="px-4 py-6 sm:px-8 lg:px-20">
+        <div data-reveal className="flex flex-col gap-4 border-y border-[var(--line)] py-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          {/* Category Filter Pills — scrollable on mobile */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:pb-0">
             {CATEGORIES.map((cat) => {
               const isActive = activeCategory === cat
               return (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`relative rounded-full px-4 py-2 text-xs font-bold transition-all duration-300 ${
+                  className={`relative shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all duration-300 ${
                     isActive
                       ? 'bg-[var(--brand)] text-white shadow-md shadow-[var(--brand)]/20'
                       : 'border border-[var(--line)] bg-[var(--paper-2)] text-[var(--ink-soft)] hover:border-[var(--brand)]/40 hover:text-[var(--ink)]'
@@ -590,7 +531,7 @@ function Work() {
 
           {/* Search Input & View Mode Switcher */}
           <div className="flex items-center gap-3">
-            <div className="relative min-w-[240px] flex-1 sm:flex-none">
+            <div className="relative flex-1 lg:flex-none lg:min-w-[220px]">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-faint)]" />
               <input
                 type="text"
@@ -637,10 +578,10 @@ function Work() {
         </div>
       </section>
 
-      {/* ================= PROJECT CARDS SECTION (Services Card Layout) ================= */}
-      <section className="px-6 py-8 sm:px-10 lg:px-20">
+      {/* ================= PROJECT CARDS SECTION ================= */}
+      <section className="px-4 pb-8 sm:px-8 lg:px-20">
         {filteredProjects.length === 0 ? (
-          <div className="my-16 rounded-3xl border border-dashed border-[var(--line-strong)] bg-[var(--paper-2)]/50 p-12 text-center">
+          <div className="my-12 rounded-3xl border border-dashed border-[var(--line-strong)] bg-[var(--paper-2)]/50 p-10 text-center sm:my-16 sm:p-12">
             <Sparkles className="mx-auto h-8 w-8 text-[var(--brand)]" />
             <h3 className="mt-4 font-display text-xl font-bold text-[var(--ink)]">
               No matching projects found
@@ -660,15 +601,15 @@ function Work() {
             </Button>
           </div>
         ) : viewMode === 'grid' ? (
-          <div className="grid gap-8 sm:grid-cols-2 lg:gap-10">
+          <div className="grid gap-6 sm:grid-cols-2 sm:gap-8 lg:gap-10">
             {filteredProjects.map((p) => (
               <article
                 key={p.id}
                 data-reveal
                 onClick={() => setSelectedProject(p)}
-                className="group relative cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] shadow-[0_1px_2px_rgba(16,16,20,0.04)] transition-all duration-500 hover:-translate-y-1.5 hover:border-[var(--brand)]/30 hover:shadow-[0_25px_60px_rgba(16,16,20,0.12),0_0_0_1px_rgba(245,51,59,0.1)]"
+                className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper)] shadow-[0_1px_2px_rgba(16,16,20,0.04)] transition-all duration-500 hover:-translate-y-1.5 hover:border-[var(--brand)]/30 hover:shadow-[0_25px_60px_rgba(16,16,20,0.12),0_0_0_1px_rgba(245,51,59,0.1)] sm:rounded-3xl"
               >
-                {/* Glowing red accent line that animates on hover */}
+                {/* Glowing red accent line */}
                 <span
                   aria-hidden="true"
                   className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 rounded-full bg-[var(--brand)] opacity-0 shadow-[0_0_16px_rgba(245,51,59,0.85)] transition-all duration-500 group-hover:scale-x-100 group-hover:opacity-100"
@@ -677,49 +618,50 @@ function Work() {
                 {/* Corner red glow accent */}
                 <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 origin-top-right scale-0 bg-gradient-to-br from-[var(--brand)]/15 via-[var(--brand-2)]/10 to-transparent opacity-0 blur-2xl transition-all duration-500 group-hover:scale-150 group-hover:opacity-100" />
 
-                {/* Custom Stylized Visual Graphic Placeholder */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-[#141217] via-[#1d171d] to-[#0e0d11] p-6">
-                  {/* Top Badges */}
+                {/* Placeholder Image Area */}
+                <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#141217] via-[#1d171d] to-[#0e0d11]">
+                  {/* Number + Year overlay */}
                   <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
                     <span className="font-display text-2xl font-extrabold text-[var(--brand)]">
                       {p.number}
                     </span>
-                    <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-bold text-[var(--ink)] backdrop-blur-sm shadow-sm">
+                    <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-bold text-[var(--ink)] shadow-sm">
                       {p.year}
                     </span>
                   </div>
 
+                  {/* Impact badge */}
                   <div className="absolute right-4 top-4 z-10">
-                    <span className="rounded-full bg-[var(--brand)]/80 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm shadow-sm">
+                    <span className="rounded-full bg-[var(--brand)]/80 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
                       {p.impact}
                     </span>
                   </div>
 
-                  {/* Interactive Graphic Preview */}
-                  <ProjectGraphicPlaceholder type={p.previewType} name={p.name} />
+                  {/* Simple project placeholder */}
+                  <ProjectPlaceholder label={p.placeholderLabel} number={p.number} />
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-30" />
                 </div>
 
                 {/* Content Section */}
-                <div className="relative p-6 sm:p-8">
+                <div className="relative p-5 sm:p-6 lg:p-8">
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--brand)]">
                       {p.category} · {p.client}
                     </p>
-                    <ArrowUpRight className="h-5 w-5 -translate-y-1 translate-x-1 text-[var(--brand)] opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
+                    <ArrowUpRight className="h-5 w-5 shrink-0 -translate-y-1 translate-x-1 text-[var(--brand)] opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
                   </div>
 
-                  <h3 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--brand)] sm:text-3xl">
+                  <h3 className="mt-2 font-display text-xl font-extrabold tracking-tight text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--brand)] sm:text-2xl">
                     {p.name}
                   </h3>
 
-                  <p className="mt-3 text-[15px] leading-relaxed text-[var(--ink-soft)]">
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--ink-soft)]">
                     {p.blurb}
                   </p>
 
                   {/* Tags */}
-                  <ul className="mt-6 flex flex-wrap gap-2">
+                  <ul className="mt-4 flex flex-wrap gap-2">
                     {p.tags.map((t) => (
                       <li
                         key={t}
@@ -730,8 +672,8 @@ function Work() {
                     ))}
                   </ul>
 
-                  {/* Explore Details CTA Prompt */}
-                  <div className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--brand)] transition-all duration-300 group-hover:translate-x-1">
+                  {/* CTA */}
+                  <div className="mt-5 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--brand)] transition-all duration-300 group-hover:translate-x-1">
                     <span>Explore Case Details</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </div>
@@ -741,16 +683,16 @@ function Work() {
           </div>
         ) : (
           /* List View Layout */
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
             {filteredProjects.map((p) => (
               <article
                 key={p.id}
                 data-reveal
                 onClick={() => setSelectedProject(p)}
-                className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-6 shadow-sm transition-all duration-300 hover:border-[var(--brand)]/30 hover:shadow-lg sm:p-8"
+                className="group relative cursor-pointer overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--paper)] p-5 shadow-sm transition-all duration-300 hover:border-[var(--brand)]/30 hover:shadow-lg sm:rounded-2xl sm:p-6 lg:p-8"
               >
-                <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                  <div className="max-w-2xl">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
                     <div className="flex items-center gap-3">
                       <span className="font-display text-lg font-extrabold text-[var(--brand)]">
                         {p.number}
@@ -764,15 +706,15 @@ function Work() {
                       </span>
                     </div>
 
-                    <h3 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] transition-colors group-hover:text-[var(--brand)]">
+                    <h3 className="mt-1 font-display text-xl font-extrabold tracking-tight text-[var(--ink)] transition-colors group-hover:text-[var(--brand)] sm:text-2xl">
                       {p.name}
                     </h3>
 
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--ink-soft)]">
+                    <p className="mt-1.5 text-sm leading-relaxed text-[var(--ink-soft)]">
                       {p.blurb}
                     </p>
 
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="mt-3 flex flex-wrap gap-2">
                       {p.tags.map((t) => (
                         <span
                           key={t}
@@ -784,7 +726,7 @@ function Work() {
                     </div>
                   </div>
 
-                  <div className="flex shrink-0 items-center justify-between gap-4 border-t border-[var(--line)] pt-4 md:border-t-0 md:pt-0">
+                  <div className="flex shrink-0 items-center justify-between gap-4 border-t border-[var(--line)] pt-3 sm:border-t-0 sm:pt-0">
                     <div className="text-right">
                       <p className="font-display text-base font-extrabold text-[var(--ink)]">
                         {p.impact}
@@ -803,18 +745,18 @@ function Work() {
         )}
       </section>
 
-      {/* ================= PROCESS SECTION (Services Step-by-Step Style) ================= */}
-      <section className="px-6 py-24 sm:px-10 lg:px-20">
+      {/* ================= PROCESS SECTION ================= */}
+      <section className="px-4 py-16 sm:px-8 sm:py-24 lg:px-20">
         <div data-reveal className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--brand)]">
             Execution Method
           </p>
-          <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl">
+          <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl">
             How we ship, step by step
           </h2>
         </div>
 
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {PROCESS.map((p) => (
             <div
               data-reveal
@@ -836,10 +778,10 @@ function Work() {
       </section>
 
       {/* ================= STUDIO IMPACT NUMBERS ================= */}
-      <section className="px-6 pb-20 sm:px-10 lg:px-20">
+      <section className="px-4 pb-16 sm:px-8 sm:pb-20 lg:px-20">
         <div
           data-reveal
-          className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-10 shadow-lg sm:p-12 lg:p-14"
+          className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-8 shadow-lg sm:rounded-3xl sm:p-12 lg:p-14"
         >
           <div
             data-glow
@@ -855,26 +797,26 @@ function Work() {
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--brand)]">
               Track Record
             </p>
-            <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl">
+            <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl">
               Proven momentum across every release.
             </h2>
           </div>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-4 grid-cols-2 lg:grid-cols-4">
             {STATS.map((s) => {
               const Icon = s.icon
               return (
                 <div
                   key={s.label}
-                  className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-6 shadow-sm transition-all duration-300 hover:border-[var(--brand)]/30 hover:shadow-md"
+                  className="rounded-xl border border-[var(--line)] bg-[var(--paper)] p-5 shadow-sm transition-all duration-300 hover:border-[var(--brand)]/30 hover:shadow-md sm:rounded-2xl sm:p-6"
                 >
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--brand)]/10 text-[var(--brand)]">
-                    <Icon className="h-5 w-5" />
+                  <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--brand)]/10 text-[var(--brand)] sm:h-10 sm:w-10">
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
-                  <p className="font-display text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl">
+                  <p className="font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-3xl lg:text-4xl">
                     {s.value}
                   </p>
-                  <p className="mt-2 text-xs font-semibold text-[var(--ink-soft)]">
+                  <p className="mt-1.5 text-xs font-semibold text-[var(--ink-soft)]">
                     {s.label}
                   </p>
                 </div>
@@ -884,11 +826,11 @@ function Work() {
         </div>
       </section>
 
-      {/* ================= CTA SECTION (Services CTA Style) ================= */}
-      <section className="px-6 pb-28 sm:px-10 lg:px-20">
+      {/* ================= CTA SECTION ================= */}
+      <section className="px-4 pb-24 sm:px-8 sm:pb-28 lg:px-20">
         <div
           data-reveal
-          className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-8 sm:p-12"
+          className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-7 sm:rounded-3xl sm:p-12"
         >
           <div
             data-glow
@@ -899,21 +841,21 @@ function Work() {
                 'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.09) 45%, rgba(255,255,255,0) 72%)',
             }}
           />
-          <div className="relative flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-[var(--brand)]/30 bg-[var(--brand)]/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--brand)]">
                 <Zap className="h-3.5 w-3.5" />
                 Available Q3/Q4 2025
               </span>
-              <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-3xl">
+              <h2 className="mt-3 font-display text-xl font-extrabold tracking-tight text-[var(--ink)] sm:text-3xl">
                 Could your product be next?
               </h2>
-              <p className="mt-2 text-[var(--ink-soft)]">
+              <p className="mt-2 text-sm text-[var(--ink-soft)] sm:text-base">
                 We take on a limited number of high-impact products each quarter. Tell us about your project.
               </p>
             </div>
-            <Button asChild size="lg" className="shrink-0 group">
-              <Link to="/contact" className="flex items-center gap-2">
+            <Button asChild size="lg" className="shrink-0 group w-full sm:w-auto">
+              <Link to="/contact" className="flex items-center justify-center gap-2">
                 <span>Start a Project</span>
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
@@ -924,22 +866,25 @@ function Work() {
 
       {/* ================= PROJECT DETAIL QUICK-VIEW MODAL ================= */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-10">
+        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6 lg:p-10">
           <div
             onClick={() => setSelectedProject(null)}
             className="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity duration-300"
           />
 
-          <div className="animate-modal-scale relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[var(--line)] px-6 py-5 sm:px-8">
-              <div className="flex items-center gap-3">
+          <div className="animate-modal-scale relative z-10 flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl border border-[var(--line)] bg-[var(--paper)] shadow-2xl sm:max-h-[90vh] sm:max-w-4xl sm:rounded-3xl">
+            {/* Modal handle (mobile) */}
+            <div className="mx-auto mt-3 h-1 w-10 rounded-full bg-[var(--line)] sm:hidden" />
+
+            <div className="flex items-center justify-between border-b border-[var(--line)] px-5 py-4 sm:px-8 sm:py-5">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <span className="font-display font-bold text-[var(--brand)]">
                   {selectedProject.number}
                 </span>
-                <span className="rounded-full bg-[var(--brand)]/10 px-3 py-1 text-xs font-bold text-[var(--brand)]">
+                <span className="rounded-full bg-[var(--brand)]/10 px-2.5 py-1 text-xs font-bold text-[var(--brand)]">
                   {selectedProject.category}
                 </span>
-                <span className="text-xs font-semibold text-[var(--ink-soft)]">
+                <span className="hidden text-xs font-semibold text-[var(--ink-soft)] sm:inline">
                   {selectedProject.client} ({selectedProject.year})
                 </span>
               </div>
@@ -951,31 +896,34 @@ function Work() {
               </button>
             </div>
 
-            <div className="overflow-y-auto p-6 sm:p-8 space-y-8">
+            <div className="overflow-y-auto p-5 sm:p-8 space-y-6 sm:space-y-8">
               <div>
-                <h2 className="font-display text-3xl font-extrabold text-[var(--ink)] sm:text-4xl">
+                <h2 className="font-display text-2xl font-extrabold text-[var(--ink)] sm:text-4xl">
                   {selectedProject.name}
                 </h2>
-                <p className="mt-3 text-lg leading-relaxed text-[var(--ink-soft)]">
+                <p className="mt-2 text-sm font-semibold text-[var(--ink-soft)] sm:hidden">
+                  {selectedProject.client} · {selectedProject.year}
+                </p>
+                <p className="mt-3 text-base leading-relaxed text-[var(--ink-soft)]">
                   {selectedProject.description}
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-4 sm:p-6">
+              <div className="grid grid-cols-3 gap-3 rounded-xl border border-[var(--line)] bg-[var(--paper-2)] p-4 sm:gap-4 sm:rounded-2xl sm:p-6">
                 {selectedProject.metrics.map((m) => (
                   <div key={m.label}>
-                    <p className="font-display text-xl font-extrabold text-[var(--brand)] sm:text-2xl">
+                    <p className="font-display text-lg font-extrabold text-[var(--brand)] sm:text-2xl">
                       {m.value}
                     </p>
-                    <p className="text-xs font-semibold text-[var(--ink-soft)]">
+                    <p className="text-[10px] font-semibold text-[var(--ink-soft)] sm:text-xs">
                       {m.label}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div className="rounded-2xl border border-[var(--line)] p-6 bg-[var(--paper-2)]/50">
+              <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                <div className="rounded-xl border border-[var(--line)] p-5 bg-[var(--paper-2)]/50 sm:rounded-2xl">
                   <h4 className="font-display text-base font-bold text-[var(--ink)]">
                     The Challenge
                   </h4>
@@ -983,7 +931,7 @@ function Work() {
                     {selectedProject.challenge}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[var(--line)] p-6 bg-[var(--paper-2)]/50">
+                <div className="rounded-xl border border-[var(--line)] p-5 bg-[var(--paper-2)]/50 sm:rounded-2xl">
                   <h4 className="font-display text-base font-bold text-[var(--ink)]">
                     Our Solution
                   </h4>
@@ -1010,13 +958,13 @@ function Work() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between border-t border-[var(--line)] px-6 py-4 bg-[var(--paper-2)]/50">
+            <div className="flex items-center justify-between border-t border-[var(--line)] px-5 py-4 bg-[var(--paper-2)]/50 sm:px-8">
               <span className="text-xs font-semibold text-[var(--ink-faint)]">
                 Megacloudworks Case Study
               </span>
               <Button
                 onClick={() => setSelectedProject(null)}
-                className="bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)]"
+                className="bg-[var(--brand)] text-white"
               >
                 Close Preview
               </Button>
@@ -1028,166 +976,4 @@ function Work() {
       <SiteFooter />
     </div>
   )
-}
-
-/**
- * Custom SVG & CSS Stylized Placeholder Graphic Component
- * Renders sleek, high-tech UI visual mockups matching brand palette
- */
-function ProjectGraphicPlaceholder({
-  type,
-  name,
-}: {
-  type: Project['previewType']
-  name: string
-}) {
-  switch (type) {
-    case 'dashboard':
-      return (
-        <div className="relative h-full w-full rounded-xl border border-white/10 bg-[#161318]/90 p-4 backdrop-blur-md">
-          <div className="flex items-center justify-between border-b border-white/10 pb-3">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
-              <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            </div>
-            <span className="font-mono text-[10px] text-white/40">
-              {name.toLowerCase().replace(/\s+/g, '')}.io
-            </span>
-          </div>
-          <div className="mt-3 space-y-3">
-            <div className="flex items-center justify-between rounded-lg bg-white/5 p-3">
-              <div>
-                <div className="h-2 w-20 rounded bg-white/30" />
-                <div className="mt-2 h-4 w-28 rounded bg-gradient-to-r from-[var(--brand)] to-orange-400" />
-              </div>
-              <div className="h-8 w-8 rounded-lg bg-[var(--brand)]/20 flex items-center justify-center text-[var(--brand)]">
-                <BarChart3 className="h-4 w-4" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="h-16 rounded-lg bg-white/5 p-2.5">
-                <div className="h-2 w-12 rounded bg-white/20" />
-                <div className="mt-2 h-3 w-16 rounded bg-emerald-400/80" />
-              </div>
-              <div className="h-16 rounded-lg bg-white/5 p-2.5">
-                <div className="h-2 w-12 rounded bg-white/20" />
-                <div className="mt-2 h-3 w-16 rounded bg-amber-400/80" />
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-
-    case 'mobile':
-      return (
-        <div className="flex h-full w-full items-center justify-center">
-          <div className="relative h-[90%] w-48 rounded-[28px] border-4 border-white/20 bg-[#161215] p-3 shadow-2xl">
-            <div className="mx-auto h-3 w-16 rounded-full bg-white/20" />
-            <div className="mt-4 flex flex-col items-center justify-center text-center">
-              <div className="h-14 w-14 rounded-full border-2 border-[var(--brand)]/60 bg-[var(--brand)]/20 flex items-center justify-center text-[var(--brand)]">
-                <Smartphone className="h-6 w-6" />
-              </div>
-              <div className="mt-3 h-3 w-24 rounded bg-white/40" />
-              <div className="mt-2 h-2 w-16 rounded bg-white/20" />
-            </div>
-            <div className="mt-5 space-y-2">
-              <div className="h-8 rounded-xl bg-white/10 p-2 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <div className="h-2 w-20 rounded bg-white/30" />
-              </div>
-              <div className="h-8 rounded-xl bg-white/10 p-2 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[var(--brand)]" />
-                <div className="h-2 w-16 rounded bg-white/30" />
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-
-    case 'code':
-      return (
-        <div className="h-full w-full rounded-xl border border-white/10 bg-[#0d0c10] p-4 font-mono text-[11px] text-white/80">
-          <div className="flex items-center gap-2 border-b border-white/10 pb-2 text-white/40">
-            <Code2 className="h-3.5 w-3.5 text-[var(--brand)]" />
-            <span>api.ledger.dev/v1/stream</span>
-          </div>
-          <div className="mt-3 space-y-1.5 text-xs">
-            <p className="text-emerald-400">
-              <span className="text-purple-400">POST</span> /v1/transactions/sync
-            </p>
-            <p className="text-white/40">Host: api.ledger.io</p>
-            <p className="text-white/40">Authorization: Bearer sk_live_99x</p>
-            <div className="mt-3 rounded-lg bg-white/5 p-2 text-amber-300/90">
-              {`{ "status": 200, "latency": "14ms", "synced": true }`}
-            </div>
-          </div>
-        </div>
-      )
-
-    case 'brand':
-      return (
-        <div className="flex h-full w-full flex-col justify-between rounded-xl border border-white/10 bg-gradient-to-br from-[#1d1216] to-[#120d12] p-5">
-          <div className="flex items-center justify-between">
-            <span className="font-display font-extrabold tracking-widest text-white/90">
-              MERIDIAN
-            </span>
-            <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/60">
-              Collection &apos;25
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="aspect-square rounded-lg bg-[var(--brand)]/30 border border-[var(--brand)]/40" />
-            <div className="aspect-square rounded-lg bg-amber-500/20 border border-amber-500/30" />
-            <div className="aspect-square rounded-lg bg-rose-500/20 border border-rose-500/30" />
-          </div>
-          <div className="h-3 w-3/4 rounded bg-white/20" />
-        </div>
-      )
-
-    case 'ai':
-      return (
-        <div className="relative h-full w-full rounded-xl border border-white/10 bg-[#140f16] p-4">
-          <div className="flex items-center gap-2 text-xs font-semibold text-purple-400">
-            <Cpu className="h-4 w-4 animate-spin" />
-            <span>Neural Diffusion Canvas</span>
-          </div>
-          <div className="mt-4 flex items-center justify-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 font-mono text-[10px]">
-              Prompt
-            </div>
-            <div className="h-0.5 w-8 bg-gradient-to-r from-purple-500 to-[var(--brand)]" />
-            <div className="h-16 w-16 rounded-xl bg-[var(--brand)]/20 border border-[var(--brand)]/40 flex items-center justify-center text-[var(--brand)] shadow-lg shadow-[var(--brand)]/20">
-              <Sparkles className="h-6 w-6" />
-            </div>
-          </div>
-        </div>
-      )
-
-    case 'iot':
-      return (
-        <div className="h-full w-full rounded-xl border border-white/10 bg-[#0e1417] p-4">
-          <div className="flex items-center justify-between text-xs text-cyan-400">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4" />
-              <span>Fleet Telemetry</span>
-            </div>
-            <span className="font-mono text-[10px] text-white/40">18.5k Online</span>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <div className="rounded-lg bg-white/5 p-2 text-center">
-              <p className="text-[10px] text-white/50">Avg Battery</p>
-              <p className="font-display text-lg font-bold text-emerald-400">94%</p>
-            </div>
-            <div className="rounded-lg bg-white/5 p-2 text-center">
-              <p className="text-[10px] text-white/50">Est Range</p>
-              <p className="font-display text-lg font-bold text-cyan-400">310 mi</p>
-            </div>
-          </div>
-        </div>
-      )
-
-    default:
-      return null
-  }
 }

@@ -63,10 +63,7 @@ export function NotifyForm() {
 
       <p className="mt-4 text-sm text-[var(--ink-soft)]">
         Or say hello —{' '}
-        <a
-          href="mailto:hello@megacloudworks.com"
-          className="font-semibold text-[var(--ink)] no-underline hover:text-[var(--brand)]"
-        >
+        <a href="mailto:hello@megacloudworks.com" className="mail-highlight">
           hello@megacloudworks.com
         </a>
       </p>

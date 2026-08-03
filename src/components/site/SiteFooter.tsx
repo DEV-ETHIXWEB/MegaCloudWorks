@@ -46,11 +46,7 @@ export function SiteFooter({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
 
         <a
           href="mailto:hello@megacloudworks.com"
-          className={`text-sm font-medium no-underline transition-colors ${
-            dark
-              ? 'text-white/70 hover:text-white'
-              : 'text-[var(--ink-soft)] hover:text-[var(--brand)]'
-          }`}
+          className="mail-highlight text-sm"
         >
           hello@megacloudworks.com
         </a>

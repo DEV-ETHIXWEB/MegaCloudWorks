@@ -209,6 +209,7 @@ body {
   position: relative;
   overflow: hidden;
   background: var(--line-strong);
+  border-radius: 999px;
 }
 
 .link-track::after {
@@ -217,12 +218,16 @@ body {
   inset-block: 0;
   left: 0;
   width: 42%;
+  border-radius: 999px;
   background: linear-gradient(
     90deg,
     rgba(245, 51, 59, 0) 0%,
     var(--brand) 50%,
     rgba(245, 51, 59, 0) 100%
   );
+  box-shadow:
+    0 0 10px 2px rgba(245, 51, 59, 0.75),
+    0 0 22px 6px rgba(245, 51, 59, 0.45);
   animation: link-travel 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
 }
 
@@ -283,7 +288,7 @@ body {
   background: var(--brand-soft);
   padding: 0.15em 0.45em;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--brand-strong);
   text-decoration: none;
   box-decoration-break: clone;
   transition:
@@ -293,6 +298,30 @@ body {
 
 .mail-highlight:hover,
 .mail-highlight:focus-visible {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* on a dark section, flip to a white highlight so it stays legible */
+.dark .mail-highlight {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.dark .mail-highlight:hover,
+.dark .mail-highlight:focus-visible {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* forced-white variant, for use on light sections with a busy/dark photo backdrop */
+.mail-highlight--white {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.mail-highlight--white:hover,
+.mail-highlight--white:focus-visible {
   background: var(--brand);
   color: #fff;
 }

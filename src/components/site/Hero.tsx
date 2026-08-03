@@ -5,7 +5,12 @@ export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden bg-white">
       {/* soft cloud bank drifting lower-left → upper-right, behind the phone */}
-      <CloudField />
+      <CloudField className="hidden lg:block" />
+      {/* mobile: same cloud bank, re-anchored behind the stacked phone + rock visual */}
+      <CloudField
+        className="lg:hidden"
+        stageClassName="bottom-[-14%] right-[-18%] h-[42%] w-[95%]"
+      />
 
       {/* phone + rock cutout (transparent bg) on top, so the clouds pass BEHIND it */}
       <div

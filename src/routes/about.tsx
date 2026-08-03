@@ -12,6 +12,76 @@ export const Route = createFileRoute('/about')({ component: About })
 const ETHIXWEB_SERVICES = ['Web design', 'Marketing sites', 'Brand & content']
 const MEGACLOUD_SERVICES = ['App design', 'App development', 'UI / UX systems']
 
+function EthixwebMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className={className}
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="ethixweb-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#e11d26" />
+          <stop offset="100%" stopColor="#8f0f16" />
+        </linearGradient>
+        <radialGradient id="ethixweb-sheen" cx="50%" cy="32%" r="70%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+        <filter id="ethixweb-soft" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="1.3" />
+        </filter>
+      </defs>
+
+      <rect width="100" height="100" rx="20" fill="url(#ethixweb-bg)" />
+      <rect width="100" height="100" rx="20" fill="url(#ethixweb-sheen)" />
+
+      <g filter="url(#ethixweb-soft)">
+        <rect
+          x="15"
+          y="15"
+          width="16"
+          height="70"
+          rx="0"
+          fill="rgba(255,255,255,0.22)"
+          stroke="rgba(255,255,255,0.85)"
+          strokeWidth="2.5"
+        />
+        <rect
+          x="35"
+          y="15"
+          width="50"
+          height="16"
+          rx="0"
+          fill="rgba(255,255,255,0.22)"
+          stroke="rgba(255,255,255,0.85)"
+          strokeWidth="2.5"
+        />
+        <rect
+          x="35"
+          y="42"
+          width="38"
+          height="16"
+          rx="0"
+          fill="rgba(255,255,255,0.22)"
+          stroke="rgba(255,255,255,0.85)"
+          strokeWidth="2.5"
+        />
+        <rect
+          x="35"
+          y="69"
+          width="50"
+          height="16"
+          rx="0"
+          fill="rgba(255,255,255,0.22)"
+          stroke="rgba(255,255,255,0.85)"
+          strokeWidth="2.5"
+        />
+      </g>
+    </svg>
+  )
+}
+
 function ServiceList({ items }: { items: ReadonlyArray<string> }) {
   return (
     <ul className="space-y-3">
@@ -94,32 +164,32 @@ function About() {
           </div>
 
           {/* ---- right: the two-studio split card ---- */}
-          <div
-            data-hero
-            className="w-full rounded-2xl border-[1.5px] border-[var(--ink)] bg-white"
-          >
+          <div className="w-full rounded-2xl border-[1.5px] border-[var(--ink)] bg-white">
             {/* masthead — Ethixweb ←→ MegaCloudWorks */}
-            <div className="grid grid-cols-1 gap-6 px-7 pb-6 pt-7 sm:grid-cols-2">
-              <div>
-                <div className="flex items-center gap-4">
-                  <span className="font-display text-lg font-extrabold tracking-[-0.01em] text-[var(--ink)]">
-                    ETHIXWEB
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="link-track hidden h-px flex-1 sm:block"
-                  />
-                </div>
-                <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
+            <div className="px-7 pb-6 pt-7">
+              <div
+                data-hero
+                className="flex items-center justify-center gap-4 sm:gap-6"
+              >
+                <EthixwebMark className="size-11 shrink-0 rounded-[10px] shadow-[0_0_16px_rgba(225,29,38,0.55)]" />
+                <span
+                  aria-hidden="true"
+                  className="link-track h-[3px] w-14 shrink-0 rounded-full sm:w-28"
+                />
+                <img
+                  src="/logo-mark.svg"
+                  alt="MegaCloudWorks"
+                  className="h-10 w-auto shrink-0"
+                />
+              </div>
+              <div
+                data-hero
+                className="mt-3 grid grid-cols-1 gap-1 sm:grid-cols-2"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
                   Web &amp; Marketing
                 </p>
-              </div>
-
-              <div>
-                <div className="font-display text-lg font-extrabold tracking-[-0.01em] text-[var(--brand)]">
-                  MEGACLOUDWORKS
-                </div>
-                <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)] sm:text-right">
                   App design &amp; development
                 </p>
               </div>
@@ -127,16 +197,22 @@ function About() {
 
             {/* service columns */}
             <div className="grid grid-cols-1 border-t-[1.5px] border-[var(--ink)] sm:grid-cols-2">
-              <div className="px-7 py-7">
+              <div data-hero className="px-7 py-7">
                 <ServiceList items={ETHIXWEB_SERVICES} />
               </div>
-              <div className="border-t-[1.5px] border-[var(--ink)] px-7 py-7 sm:border-l-[1.5px] sm:border-t-0">
+              <div
+                data-hero
+                className="border-t-[1.5px] border-[var(--ink)] px-7 py-7 sm:border-l-[1.5px] sm:border-t-0"
+              >
                 <ServiceList items={MEGACLOUD_SERVICES} />
               </div>
             </div>
 
             {/* cross-sell footer */}
-            <div className="border-t-[1.5px] border-[var(--ink)] px-7 pb-8 pt-6 text-center">
+            <div
+              data-hero
+              className="border-t-[1.5px] border-[var(--ink)] px-7 pb-8 pt-6 text-center"
+            >
               <p className="text-sm text-[var(--ink-soft)]">
                 Looking for websites instead?
               </p>
@@ -172,16 +248,22 @@ function About() {
         />
 
         <div className="relative mx-auto flex min-h-[34rem] max-w-[1600px] items-center px-6 pb-72 pt-20 sm:px-10 lg:min-h-[42rem] lg:px-20 lg:pb-20">
-          <div data-reveal className="max-w-lg">
-            <h2 className="font-display text-[clamp(2.25rem,4.4vw,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--ink)]">
+          <div className="max-w-lg">
+            <h2
+              data-reveal
+              className="font-display text-[clamp(2.25rem,4.4vw,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--ink)]"
+            >
               Ready to build something great?
             </h2>
-            <p className="mt-4 max-w-sm text-lg leading-relaxed text-[var(--ink-soft)]">
+            <p
+              data-reveal
+              className="mt-4 max-w-sm text-lg leading-relaxed text-[var(--ink-soft)]"
+            >
               Drop your email and we&rsquo;ll reach out the moment we open for
               projects.
             </p>
-            <div className="mt-8">
-              <NotifyForm />
+            <div data-reveal className="mt-8">
+              <NotifyForm mailVariant="white" />
             </div>
           </div>
         </div>

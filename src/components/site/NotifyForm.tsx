@@ -4,8 +4,13 @@ import { toast } from 'sonner'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { subscribe } from '#/server/subscribe'
+import { cn } from '#/lib/utils'
 
-export function NotifyForm() {
+export function NotifyForm({
+  mailVariant = 'auto',
+}: {
+  mailVariant?: 'auto' | 'white'
+} = {}) {
   const [email, setEmail] = useState('')
 
   const mutation = useMutation({
@@ -63,7 +68,13 @@ export function NotifyForm() {
 
       <p className="mt-4 text-sm text-[var(--ink-soft)]">
         Or say hello —{' '}
-        <a href="mailto:hello@megacloudworks.com" className="mail-highlight">
+        <a
+          href="mailto:hello@megacloudworks.com"
+          className={cn(
+            'mail-highlight',
+            mailVariant === 'white' && 'mail-highlight--white',
+          )}
+        >
           hello@megacloudworks.com
         </a>
       </p>

@@ -14,7 +14,7 @@ export function SiteFooter({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
     <footer
       className={
         dark
-          ? 'border-t border-white/10 bg-[#0d0d0f]'
+          ? 'dark border-t border-white/10 bg-[#0d0d0f]'
           : 'border-t border-[var(--line)]'
       }
     >

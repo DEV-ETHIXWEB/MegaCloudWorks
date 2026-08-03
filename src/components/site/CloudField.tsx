@@ -13,7 +13,13 @@ import { cn } from '#/lib/utils'
 const CLOUDS = ['/cloud-1.webp', '/cloud-2.webp', '/cloud-3.webp', '/cloud-4.webp']
 const CYCLE = 32 // seconds for a full loop through all four shapes
 
-export function CloudField({ className }: { className?: string }) {
+export function CloudField({
+  className,
+  stageClassName = 'left-[16%] top-[2%] h-[92%] w-[124%]',
+}: {
+  className?: string
+  stageClassName?: string
+}) {
   return (
     <div
       aria-hidden="true"
@@ -24,7 +30,7 @@ export function CloudField({ className }: { className?: string }) {
     >
       {/* tilted, zoomed-in stage positioned along the diagonal behind the phone */}
       <div
-        className="absolute left-[8%] top-[2%] h-[92%] w-[124%]"
+        className={cn('absolute', stageClassName)}
         style={{
           transform: 'rotate(-15deg)',
           transformOrigin: 'center',

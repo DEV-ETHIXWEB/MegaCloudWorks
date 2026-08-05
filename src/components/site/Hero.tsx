@@ -9,13 +9,13 @@ export function Hero() {
       {/* mobile: same cloud bank, re-anchored behind the stacked phone + rock visual */}
       <CloudField
         className="lg:hidden"
-        stageClassName="bottom-[-14%] right-[-18%] h-[42%] w-[95%]"
+        stageClassName="bottom-[-14%] right-[-18%] h-[50%] w-[114%]"
       />
 
       {/* phone + rock cutout (transparent bg) on top, so the clouds pass BEHIND it */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[image:url('/phone-rock.webp')] bg-[length:70%] bg-[position:right_bottom] bg-no-repeat"
+        className="pointer-events-none absolute inset-0 bg-[image:url('/phone-rock.webp')] bg-[length:84%] bg-[position:right_bottom] bg-no-repeat lg:bg-[length:70%]"
       />
 
       {/* desktop: left-weighted white scrim so the headline & copy stay readable over the clouds */}
@@ -29,10 +29,10 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.82)_0%,rgba(255,255,255,0.55)_46%,rgba(255,255,255,0.18)_68%,rgba(255,255,255,0)_85%)] lg:hidden"
       />
 
-      <div className="relative mx-auto grid min-h-screen max-w-[1600px] grid-cols-1 items-center gap-10 px-6 pb-16 pt-28 sm:px-10 lg:grid-cols-2 lg:gap-4 lg:px-20 lg:pb-0 lg:pt-0">
+      <div className="relative mx-auto grid min-h-screen max-w-[1600px] grid-cols-1 items-start gap-10 px-6 pb-16 pt-[calc(5rem+10dvh)] sm:px-10 lg:grid-cols-2 lg:items-center lg:gap-4 lg:px-20 lg:pb-0 lg:pt-0">
         {/* ---- left: copy (dark ink pinned — hero band is always light) ---- */}
         <div className="relative z-10 max-w-xl">
-          <h1 className="reveal-up font-display text-[clamp(3rem,8.5vw,7rem)] font-extrabold leading-[0.9] tracking-[-0.03em] text-[#101014]">
+          <h1 className="reveal-up font-display text-[clamp(3.75rem,11vw,7rem)] font-extrabold leading-[0.9] tracking-[-0.03em] text-[#101014]">
             <span className="block whitespace-nowrap">COMING</span>
             <span className="block whitespace-nowrap text-[var(--brand)]">
               SOON.

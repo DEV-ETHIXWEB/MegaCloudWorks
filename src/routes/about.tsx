@@ -12,6 +12,124 @@ export const Route = createFileRoute('/about')({ component: About })
 const ETHIXWEB_SERVICES = ['Web design', 'Marketing sites', 'Brand & content']
 const MEGACLOUD_SERVICES = ['App design', 'App development', 'UI / UX systems']
 
+/**
+ * Ethixweb "E" — a full-height frosted upright beside three deep-red glass
+ * rungs, each with a dark edge and a white inner highlight, plus a diagonal
+ * gloss sweep across the whole letterform. Matches the brand emblem, minus
+ * the backing plate so it sits directly on the card.
+ */
+const E_RUNG_Y = [0, 36, 72] as const
+const RUNG_H = 28
+const COL_W = 31.4
+const RUNG_W = 64.1
+
+function EthixwebMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="-2 -2 99.5 104"
+      className={className}
+      role="img"
+      aria-label="Ethixweb"
+    >
+      <defs>
+        {/* frosted, lighter glass for the upright */}
+        <linearGradient id="ethix-col" x1="0" y1="0" x2="0.9" y2="1">
+          <stop offset="0%" stopColor="#f7cdd1" />
+          <stop offset="40%" stopColor="#efb0b6" />
+          <stop offset="70%" stopColor="#e79ba2" />
+          <stop offset="100%" stopColor="#f0b7bd" />
+        </linearGradient>
+        {/* deeper, glossier glass for the rungs */}
+        <linearGradient id="ethix-rung" x1="0" y1="0" x2="0.8" y2="1">
+          <stop offset="0%" stopColor="#e3959c" />
+          <stop offset="20%" stopColor="#c02330" />
+          <stop offset="52%" stopColor="#a5101a" />
+          <stop offset="80%" stopColor="#bc2c37" />
+          <stop offset="100%" stopColor="#d9666f" />
+        </linearGradient>
+        {/* single diagonal highlight raked across the letterform */}
+        <linearGradient id="ethix-sheen" x1="0" y1="1" x2="0.75" y2="0">
+          <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+          <stop offset="42%" stopColor="rgba(255,255,255,0)" />
+          <stop offset="52%" stopColor="rgba(255,255,255,0.30)" />
+          <stop offset="62%" stopColor="rgba(255,255,255,0)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </linearGradient>
+        <clipPath id="ethix-letter">
+          <rect x="0" y="0" width={COL_W} height="100" />
+          {E_RUNG_Y.map((y) => (
+            <rect key={y} x={COL_W} y={y} width={RUNG_W} height={RUNG_H} />
+          ))}
+        </clipPath>
+        <filter id="ethix-drop" x="-15%" y="-15%" width="135%" height="135%">
+          <feDropShadow
+            dx="1"
+            dy="1.4"
+            stdDeviation="1.1"
+            floodColor="#7d0a12"
+            floodOpacity="0.3"
+          />
+        </filter>
+      </defs>
+
+      <g filter="url(#ethix-drop)">
+        {/* upright */}
+        <rect
+          x="0"
+          y="0"
+          width={COL_W}
+          height="100"
+          fill="url(#ethix-col)"
+          stroke="#9c0f18"
+          strokeWidth="1.2"
+        />
+        <rect
+          x="1.5"
+          y="1.5"
+          width={COL_W - 3}
+          height="97"
+          fill="none"
+          stroke="rgba(255,255,255,0.9)"
+          strokeWidth="0.7"
+        />
+
+        {/* rungs */}
+        {E_RUNG_Y.map((y) => (
+          <g key={y}>
+            <rect
+              x={COL_W}
+              y={y}
+              width={RUNG_W}
+              height={RUNG_H}
+              fill="url(#ethix-rung)"
+              stroke="#9c0f18"
+              strokeWidth="1.2"
+            />
+            <rect
+              x={COL_W + 1.5}
+              y={y + 1.5}
+              width={RUNG_W - 3}
+              height={RUNG_H - 3}
+              fill="none"
+              stroke="rgba(255,255,255,0.9)"
+              strokeWidth="0.7"
+            />
+          </g>
+        ))}
+
+        <rect
+          x="0"
+          y="0"
+          width={COL_W + RUNG_W}
+          height="100"
+          fill="url(#ethix-sheen)"
+          clipPath="url(#ethix-letter)"
+        />
+      </g>
+    </svg>
+  )
+}
+
 function ServiceList({ items }: { items: ReadonlyArray<string> }) {
   return (
     <ul className="space-y-3">
@@ -101,11 +219,7 @@ function About() {
                 data-hero
                 className="flex items-center justify-center gap-4 sm:gap-6"
               >
-                <img
-                  src="/ethix-emblem.png"
-                  alt="Ethixweb"
-                  className="size-11 shrink-0 rounded-[10px] object-cover shadow-[0_0_16px_rgba(225,29,38,0.4)]"
-                />
+                <EthixwebMark className="h-10 w-auto shrink-0" />
                 <span
                   aria-hidden="true"
                   className="link-track h-[3px] w-14 shrink-0 rounded-full sm:w-28"
@@ -169,19 +283,20 @@ function About() {
         {/* expedition photograph, anchored bottom-right */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[image:url('/about-background.png')] bg-cover bg-[position:right_bottom] bg-no-repeat lg:bg-[length:auto_100%]"
+          className="pointer-events-none absolute inset-0 bg-[image:url('/about-background.png')] bg-cover bg-[position:72%_bottom] bg-no-repeat lg:bg-[position:right_bottom]"
         />
-        {/* white scrim so the copy stays readable over the photo */}
+        {/* white scrim so the copy stays readable over the photo — the wide crop
+            already carries fog on its left, so this only needs a gentle lift */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_24%,rgba(255,255,255,0.55)_38%,rgba(255,255,255,0)_54%)] lg:block"
+          className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(255,255,255,0.95)_0%,rgba(255,255,255,0.8)_28%,rgba(255,255,255,0.35)_44%,rgba(255,255,255,0)_60%)] lg:block"
         />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.94)_0%,rgba(255,255,255,0.72)_42%,rgba(255,255,255,0.1)_70%,rgba(255,255,255,0)_88%)] lg:hidden"
         />
 
-        <div className="relative mx-auto flex min-h-[34rem] max-w-[1600px] items-center px-6 pb-72 pt-20 sm:px-10 lg:min-h-[42rem] lg:px-20 lg:pb-20">
+        <div className="relative mx-auto flex min-h-[30rem] max-w-[1600px] items-center px-6 pb-56 pt-16 sm:px-10 lg:min-h-[42rem] lg:px-20 lg:pb-20 lg:pt-20">
           <div className="max-w-lg">
             <h2
               data-reveal
@@ -197,7 +312,7 @@ function About() {
               projects.
             </p>
             <div data-reveal className="mt-8">
-              <NotifyForm mailVariant="white" />
+              <NotifyForm />
             </div>
           </div>
         </div>

@@ -12,76 +12,6 @@ export const Route = createFileRoute('/about')({ component: About })
 const ETHIXWEB_SERVICES = ['Web design', 'Marketing sites', 'Brand & content']
 const MEGACLOUD_SERVICES = ['App design', 'App development', 'UI / UX systems']
 
-function EthixwebMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      className={className}
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="ethixweb-bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#e11d26" />
-          <stop offset="100%" stopColor="#8f0f16" />
-        </linearGradient>
-        <radialGradient id="ethixweb-sheen" cx="50%" cy="32%" r="70%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-        </radialGradient>
-        <filter id="ethixweb-soft" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1.3" />
-        </filter>
-      </defs>
-
-      <rect width="100" height="100" rx="20" fill="url(#ethixweb-bg)" />
-      <rect width="100" height="100" rx="20" fill="url(#ethixweb-sheen)" />
-
-      <g filter="url(#ethixweb-soft)">
-        <rect
-          x="15"
-          y="15"
-          width="16"
-          height="70"
-          rx="0"
-          fill="rgba(255,255,255,0.22)"
-          stroke="rgba(255,255,255,0.85)"
-          strokeWidth="2.5"
-        />
-        <rect
-          x="35"
-          y="15"
-          width="50"
-          height="16"
-          rx="0"
-          fill="rgba(255,255,255,0.22)"
-          stroke="rgba(255,255,255,0.85)"
-          strokeWidth="2.5"
-        />
-        <rect
-          x="35"
-          y="42"
-          width="38"
-          height="16"
-          rx="0"
-          fill="rgba(255,255,255,0.22)"
-          stroke="rgba(255,255,255,0.85)"
-          strokeWidth="2.5"
-        />
-        <rect
-          x="35"
-          y="69"
-          width="50"
-          height="16"
-          rx="0"
-          fill="rgba(255,255,255,0.22)"
-          stroke="rgba(255,255,255,0.85)"
-          strokeWidth="2.5"
-        />
-      </g>
-    </svg>
-  )
-}
-
 function ServiceList({ items }: { items: ReadonlyArray<string> }) {
   return (
     <ul className="space-y-3">
@@ -171,7 +101,11 @@ function About() {
                 data-hero
                 className="flex items-center justify-center gap-4 sm:gap-6"
               >
-                <EthixwebMark className="size-11 shrink-0 rounded-[10px] shadow-[0_0_16px_rgba(225,29,38,0.55)]" />
+                <img
+                  src="/ethix-emblem.png"
+                  alt="Ethixweb"
+                  className="size-11 shrink-0 rounded-[10px] object-cover shadow-[0_0_16px_rgba(225,29,38,0.4)]"
+                />
                 <span
                   aria-hidden="true"
                   className="link-track h-[3px] w-14 shrink-0 rounded-full sm:w-28"

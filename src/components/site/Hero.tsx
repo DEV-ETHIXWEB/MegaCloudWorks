@@ -9,13 +9,13 @@ export function Hero() {
       {/* mobile: same cloud bank, re-anchored behind the stacked phone + rock visual */}
       <CloudField
         className="lg:hidden"
-        stageClassName="bottom-[-14%] right-[-18%] h-[50%] w-[114%]"
+        stageClassName="bottom-[-14%] right-[-18%] h-[62%] w-[140%]"
       />
 
       {/* phone + rock cutout (transparent bg) on top, so the clouds pass BEHIND it */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[image:url('/phone-rock.webp')] bg-[length:84%] bg-[position:right_bottom] bg-no-repeat lg:bg-[length:70%]"
+        className="pointer-events-none absolute inset-0 bg-[image:url('/phone-rock.webp')] bg-[length:104%] bg-[position:right_bottom] bg-no-repeat lg:bg-[length:70%]"
       />
 
       {/* desktop: left-weighted white scrim so the headline & copy stay readable over the clouds */}
@@ -43,7 +43,7 @@ export function Hero() {
             className="reveal-up mt-7 max-w-md text-lg leading-relaxed text-[#56575f]"
             style={{ animationDelay: '90ms' }}
           >
-            Megacloud is an app design &amp; development studio crafting clean,
+            MegaCloudWorks is an app design &amp; development studio crafting clean,
             fast, beautiful products. Our new home is almost ready.
           </p>
 

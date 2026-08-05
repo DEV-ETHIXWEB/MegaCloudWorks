@@ -960,7 +960,7 @@ function Work() {
 
             <div className="flex items-center justify-between border-t border-[var(--line)] px-5 py-4 bg-[var(--paper-2)]/50 sm:px-8">
               <span className="text-xs font-semibold text-[var(--ink-faint)]">
-                Megacloudworks Case Study
+                MegaCloudWorks Case Study
               </span>
               <Button
                 onClick={() => setSelectedProject(null)}

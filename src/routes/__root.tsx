@@ -26,12 +26,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Megacloudworks — Coming Soon',
+        title: 'MegaCloudWorks — Coming Soon',
       },
       {
         name: 'description',
         content:
-          'Megacloud is an app design & development studio crafting clean, fast, beautiful products. Our new home is almost ready.',
+          'MegaCloudWorks is an app design & development studio crafting clean, fast, beautiful products. Our new home is almost ready.',
       },
     ],
     links: [
@@ -46,8 +46,28 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       {
         rel: 'icon',
-        href: '/favicon.ico',
+        type: 'image/png',
+        href: '/favicon-32x32.png',
         sizes: '32x32',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        href: '/favicon-16x16.png',
+        sizes: '16x16',
+      },
+      {
+        rel: 'icon',
+        href: '/favicon.ico',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/apple-touch-icon.png',
+        sizes: '180x180',
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
       },
     ],
   }),

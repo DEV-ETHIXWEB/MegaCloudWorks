@@ -38,7 +38,7 @@ export function SiteHeader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
         >
           <img
             src={logo}
-            alt="Megacloudworks"
+            alt="MegaCloudWorks"
             className="h-[30px] w-auto sm:h-[34px]"
           />
         </Link>

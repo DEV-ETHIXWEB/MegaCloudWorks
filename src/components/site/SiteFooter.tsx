@@ -22,7 +22,7 @@ export function SiteFooter({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
         <Link to="/" className="flex items-center no-underline">
           <img
             src={dark ? '/logo-light.svg' : '/logo-resized.svg'}
-            alt="Megacloudworks"
+            alt="MegaCloudWorks"
             className="h-9 w-auto"
           />
         </Link>
@@ -56,7 +56,7 @@ export function SiteFooter({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
             dark ? 'text-xs text-white/40' : 'text-xs text-[var(--ink-faint)]'
           }
         >
-          © {new Date().getFullYear()} Megacloudworks. All rights reserved.
+          © {new Date().getFullYear()} MegaCloudWorks. All rights reserved.
         </p>
       </div>
     </footer>

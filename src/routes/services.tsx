@@ -5,14 +5,24 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SiteHeader } from '#/components/site/SiteHeader'
 import { SiteFooter } from '#/components/site/SiteFooter'
 import { Button } from '#/components/ui/button'
+import { seo } from '#/lib/seo'
 
-export const Route = createFileRoute('/services')({ component: Services })
+export const Route = createFileRoute('/services')({
+  component: Services,
+  head: () =>
+    seo({
+      title: 'Services',
+      description:
+        'App design, development, and brand & UI, one team handling strategy, design, and engineering end to end.',
+      path: '/services',
+    }),
+})
 
 const COLUMNS = [
   {
     kicker: 'Services',
     title: 'Design & UX',
-    body: 'Research, flows and high-fidelity interfaces — the whole product design journey, not just pretty screens.',
+    body: 'Research, flows and high-fidelity interfaces, the whole product design journey, not just pretty screens.',
   },
   {
     kicker: 'Technology',
@@ -42,7 +52,8 @@ const SERVICES = [
     id: 'app-design',
     title: 'App Design',
     tagline: 'Product design & UX',
-    body: 'We turn a rough idea into a clear, usable product. Research and flows first, then interfaces people actually enjoy — designed in high fidelity and handed off ready to build.',
+    body: 'We turn a rough idea into a clear, usable product. Research and flows first, then interfaces people actually enjoy, designed in high fidelity and handed off ready to build.',
+    img: '/card-design.webp',
     includes: [
       'Discovery, user flows & information architecture',
       'Wireframes and interactive prototypes',
@@ -55,7 +66,8 @@ const SERVICES = [
     id: 'app-development',
     title: 'App Development',
     tagline: 'Web & mobile engineering',
-    body: 'Clean, performant, maintainable code — shipped on a schedule you can plan around. We build with modern, well-supported stacks so what we ship keeps working after launch.',
+    body: 'Clean, performant, maintainable code, shipped on a schedule you can plan around. We build with modern, well-supported stacks so what we ship keeps working after launch.',
+    img: '/card-development.webp',
     includes: [
       'Web apps, PWAs & cross-platform mobile',
       'API design and backend integration',
@@ -68,7 +80,8 @@ const SERVICES = [
     id: 'brand-ui',
     title: 'Brand & UI',
     tagline: 'Identity & visual systems',
-    body: 'A visual language that feels cohesive everywhere — from the logo to the smallest button. We build systems, not one-off screens, so your product looks intentional as it grows.',
+    body: 'A visual language that feels cohesive everywhere, from the logo to the smallest button. We build systems, not one-off screens, so your product looks intentional as it grows.',
+    img: '/card-brand.webp',
     includes: [
       'Logo, colour and typography systems',
       'Brand guidelines & usage rules',
@@ -80,10 +93,26 @@ const SERVICES = [
 ]
 
 const PROCESS = [
-  { step: '01', title: 'Discover', body: 'We dig into your goals, users and constraints so the work is pointed at the right problem.' },
-  { step: '02', title: 'Design', body: 'Flows, prototypes and polished UI — validated early, before a line of production code.' },
-  { step: '03', title: 'Build', body: 'We ship in tight increments you can review, with quality and performance built in.' },
-  { step: '04', title: 'Launch', body: 'We get it live, measure what matters, and keep iterating alongside you.' },
+  {
+    step: '01',
+    title: 'Discover',
+    body: 'We dig into your goals, users and constraints so the work is pointed at the right problem.',
+  },
+  {
+    step: '02',
+    title: 'Design',
+    body: 'Flows, prototypes and polished UI, validated early, before a line of production code.',
+  },
+  {
+    step: '03',
+    title: 'Build',
+    body: 'We ship in tight increments you can review, with quality and performance built in.',
+  },
+  {
+    step: '04',
+    title: 'Launch',
+    body: 'We get it live, measure what matters, and keep iterating alongside you.',
+  },
 ]
 
 function Services() {
@@ -205,7 +234,7 @@ function Services() {
           </p>
           <h1
             data-hero
-            className="mt-6 font-display text-[clamp(2.75rem,7vw,5.5rem)] font-extrabold leading-[0.92] tracking-[-0.03em] text-[var(--ink)]"
+            className="mt-6 font-display text-[clamp(2.75rem,6.5vw,5rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
           >
             Design and engineering, under one roof.
           </h1>
@@ -214,7 +243,7 @@ function Services() {
             className="mt-7 text-lg leading-relaxed text-[var(--ink-soft)]"
           >
             Three tightly connected services. Take one, or hand us the whole
-            journey — from first sketch to shipped product.
+            journey, from first sketch to shipped product.
           </p>
         </div>
 
@@ -278,19 +307,19 @@ function Services() {
           <div
             data-ring
             aria-hidden="true"
-            className="pointer-events-none absolute hidden h-[26rem] w-[26rem] rounded-full border border-dashed border-[var(--line-strong)] md:block"
+            className="pointer-events-none absolute hidden h-[22rem] w-[22rem] rounded-full border border-dashed border-[var(--line-strong)] md:block lg:h-[26rem] lg:w-[26rem]"
           />
           <div
             data-ring
             aria-hidden="true"
-            className="pointer-events-none absolute hidden h-[34rem] w-[34rem] rounded-full border border-dashed border-[var(--line)] md:block"
+            className="pointer-events-none absolute hidden h-[29rem] w-[29rem] rounded-full border border-dashed border-[var(--line)] md:block lg:h-[34rem] lg:w-[34rem]"
           />
 
           {CIRCLES.map((c) => (
             <div
               key={c.n}
               data-circle
-              className="group relative aspect-square w-[16rem] md:-mx-6 lg:w-[19rem]"
+              className="group relative aspect-square w-[13.5rem] md:-mx-4 lg:w-[19rem] lg:-mx-6"
             >
               {/* glowing halo behind the circle */}
               <span
@@ -305,12 +334,12 @@ function Services() {
               <Link
                 to="/services"
                 hash={c.to}
-                className="absolute inset-0 flex flex-col items-center justify-center rounded-full border border-[rgba(16,16,20,0.22)] bg-[var(--paper)]/70 text-center no-underline shadow-[0_18px_50px_-20px_rgba(16,16,20,0.25)] backdrop-blur-sm transition-colors duration-500 group-hover:border-[var(--brand)] group-hover:bg-[var(--paper-2)]/80"
+                className="absolute inset-0 flex flex-col items-center justify-center rounded-full border border-[rgba(16,16,20,0.22)] bg-[var(--paper)]/70 px-4 text-center no-underline shadow-[0_18px_50px_-20px_rgba(16,16,20,0.25)] backdrop-blur-sm transition-colors duration-500 group-hover:border-[var(--brand)] group-hover:bg-[var(--paper-2)]/80"
               >
                 <span className="font-display text-sm font-bold text-[var(--brand)]">
                   {c.n}
                 </span>
-                <span className="mt-1 font-display text-3xl font-extrabold tracking-tight text-[var(--ink)]">
+                <span className="mt-1 font-display text-xl font-extrabold tracking-tight text-[var(--ink)] lg:text-3xl">
                   {c.title}
                 </span>
                 <span className="mt-3 text-sm font-semibold text-[var(--ink-faint)] transition-colors duration-300 group-hover:text-[var(--ink)]">
@@ -333,17 +362,34 @@ function Services() {
               className="scroll-mt-28 overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-8 shadow-[0_1px_2px_rgba(16,16,20,0.04)] sm:p-10"
             >
               <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-                <div>
-                  <span className="font-display text-5xl font-extrabold text-[var(--brand)]">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
+                <div className="relative">
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-6 -top-6 size-40 rounded-full opacity-70 blur-3xl"
+                    style={{
+                      background:
+                        'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.08) 45%, rgba(255,255,255,0) 72%)',
+                    }}
+                  />
+                  <div className="relative flex items-start justify-between gap-4">
+                    <span className="font-display text-5xl font-extrabold text-[var(--brand)]">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <img
+                      src={s.img}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="-mr-8 -mt-2 h-32 w-32 shrink-0 object-contain drop-shadow-[0_16px_24px_rgba(16,16,20,0.14)] sm:mr-0 sm:h-40 sm:w-40 lg:-mr-8 lg:h-44 lg:w-44"
+                    />
+                  </div>
+                  <p className="relative mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
                     {s.tagline}
                   </p>
-                  <h3 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl">
+                  <h3 className="relative mt-1 font-display text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl">
                     {s.title}
                   </h3>
-                  <p className="mt-4 max-w-md text-base leading-relaxed text-[var(--ink-soft)]">
+                  <p className="relative mt-4 max-w-md text-base leading-relaxed text-[var(--ink-soft)]">
                     {s.body}
                   </p>
                 </div>
@@ -423,7 +469,7 @@ function Services() {
                 Have something in mind?
               </h2>
               <p className="mt-2 text-[var(--ink-soft)]">
-                Tell us about your project — we&apos;ll come back with a plan.
+                Tell us about your project, we&apos;ll come back with a plan.
               </p>
             </div>
             <Button asChild size="lg" className="shrink-0">

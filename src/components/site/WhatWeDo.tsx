@@ -88,7 +88,7 @@ export function WhatWeDo() {
             >
               {/* Red glow background on hover */}
               <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_center,rgba(245,51,59,0.08)_0%,transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              
+
               <h3 className="relative z-10 font-display text-2xl font-extrabold leading-tight tracking-tight text-[var(--ink)]">
                 {item.title}
               </h3>

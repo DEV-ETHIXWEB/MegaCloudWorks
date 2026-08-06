@@ -5,8 +5,18 @@ import { Clock, Mail, Users2 } from 'lucide-react'
 import { SiteHeader } from '#/components/site/SiteHeader'
 import { SiteFooter } from '#/components/site/SiteFooter'
 import { ContactForm } from '#/components/site/ContactForm'
+import { seo } from '#/lib/seo'
 
-export const Route = createFileRoute('/contact')({ component: Contact })
+export const Route = createFileRoute('/contact')({
+  component: Contact,
+  head: () =>
+    seo({
+      title: 'Contact',
+      description:
+        'Tell us what you’re working on. MegaCloudWorks replies personally within one business day.',
+      path: '/contact',
+    }),
+})
 
 const DETAILS = [
   {
@@ -53,94 +63,84 @@ function Contact() {
       ref={root}
       className="relative min-h-screen overflow-hidden bg-[var(--paper)] text-[var(--ink)]"
     >
-      {/* decorative backdrop — glow, diagonal line, accent dot */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div
-          className="absolute -right-40 top-0 h-[46rem] w-[46rem] rounded-full opacity-70 blur-3xl"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.08) 40%, rgba(255,255,255,0) 72%)',
-          }}
-        />
-        <div className="absolute right-[6%] top-[20%] h-px w-[55%] origin-left rotate-[22deg] bg-gradient-to-r from-transparent via-[rgba(16,16,20,0.12)] to-transparent" />
-        <span className="absolute right-[20%] top-[48%] size-1.5 rounded-full bg-[var(--brand)] shadow-[0_0_18px_4px_rgba(245,51,59,0.5)]" />
-      </div>
-
       <SiteHeader />
 
-      <section className="relative px-6 pb-24 pt-36 sm:px-10 lg:px-20 lg:pb-32 lg:pt-44">
-        <div className="grid gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
-          {/* ---- left: heading + contact details ---- */}
-          <div>
-            <div data-hero className="flex items-center gap-3">
-              <span
-                aria-hidden="true"
-                className="h-7 w-1 rounded-full bg-[var(--brand)]"
-              />
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[var(--ink-faint)]">
-                How to contact us
-              </p>
-            </div>
-
-            <h1
-              data-hero
-              className="mt-5 font-display text-[clamp(3rem,7vw,5.5rem)] font-extrabold leading-[0.92] tracking-[-0.03em] text-[var(--ink)]"
-            >
-              Let&apos;s build something.
-            </h1>
-
-            <p
-              data-hero
-              className="mt-6 max-w-md text-lg leading-relaxed text-[var(--ink-soft)]"
-            >
-              Tell us what you&apos;re working on and where you&apos;re
-              headed. We read every message and reply personally.
-            </p>
-
-            <div className="mt-14 flex flex-wrap gap-x-12 gap-y-8">
-              {DETAILS.map((d) => (
-                <div data-hero key={d.label} className="max-w-[13rem]">
-                  <d.icon
-                    className="size-4 text-[var(--brand)]"
-                    strokeWidth={2.2}
-                    aria-hidden="true"
-                  />
-                  <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--ink-faint)]">
-                    {d.label}
-                  </p>
-                  {d.href ? (
-                    <a
-                      href={d.href}
-                      className="mt-1 inline-block whitespace-nowrap font-display text-base font-bold text-[var(--ink)] no-underline transition-colors hover:text-[var(--brand)]"
-                    >
-                      {d.value}
-                    </a>
-                  ) : (
-                    <p className="mt-1 font-display text-base font-bold text-[var(--ink)]">
-                      {d.value}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ---- right: get in touch card ---- */}
-          <div
+      <section className="relative px-6 pb-24 pt-32 sm:px-10 lg:px-20 lg:pb-32 lg:pt-40">
+        {/* ---- centered heading ---- */}
+        <div className="mx-auto max-w-xl text-center">
+          <h1
             data-hero
-            className="relative rounded-3xl border-2 border-[var(--brand)] bg-[var(--paper-2)] p-6 shadow-[0_0_0_1px_rgba(245,51,59,0.15),0_20px_60px_-24px_rgba(245,51,59,0.35)] sm:p-8"
+            className="font-display text-[clamp(2.75rem,6.5vw,5rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
           >
-            <div className="flex items-center gap-2">
-              <span
+            Get In <span className="text-[var(--brand)]">Touch</span>
+          </h1>
+          <p
+            data-hero
+            className="mx-auto mt-4 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg"
+          >
+            Tell us what you&rsquo;re working on and where you&rsquo;re headed.
+            We read every message and reply personally.
+          </p>
+        </div>
+
+        {/* ---- unified contact card ---- */}
+        <div
+          data-hero
+          className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] shadow-[0_20px_60px_-24px_rgba(16,16,20,0.15)] sm:mt-16"
+        >
+          <div className="grid lg:grid-cols-[0.85fr_1.15fr] lg:items-stretch">
+            {/* ---- left: contact info over photo ---- */}
+            <div className="relative flex min-h-[36rem] flex-col overflow-hidden p-8 sm:p-10">
+              <div
                 aria-hidden="true"
-                className="size-1.5 rounded-full bg-[var(--brand)] shadow-[0_0_10px_2px_rgba(245,51,59,0.7)]"
+                className="pointer-events-none absolute inset-0 bg-[image:url('/contact-background.png')] bg-cover bg-[position:85%_100%] bg-no-repeat"
               />
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
-                Get in touch
-              </p>
+
+              <div className="relative max-w-[16rem]">
+                <h2 className="font-display text-xl font-extrabold tracking-tight text-[var(--ink)] sm:text-2xl">
+                  Contact information
+                </h2>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">
+                  Reach out any time, we read every message and reply personally
+                  within one business day.
+                </p>
+
+                <div className="mt-8 space-y-5">
+                  {DETAILS.map((d) => (
+                    <div key={d.label} className="flex items-start gap-3">
+                      <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)]">
+                        <d.icon
+                          className="size-4 text-[var(--brand)]"
+                          strokeWidth={2.2}
+                          aria-hidden="true"
+                        />
+                      </span>
+                      <div>
+                        <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+                          {d.label}
+                        </p>
+                        {d.href ? (
+                          <a
+                            href={d.href}
+                            className="text-sm font-bold text-[var(--ink)] no-underline transition-colors hover:text-[var(--brand)]"
+                          >
+                            {d.value}
+                          </a>
+                        ) : (
+                          <p className="text-sm font-bold text-[var(--ink)]">
+                            {d.value}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="mt-6">
-              <ContactForm />
+
+            {/* ---- right: form ---- */}
+            <div className="flex border-t border-[var(--line)] p-8 sm:p-10 lg:border-l lg:border-t-0">
+              <ContactForm className="flex flex-1 flex-col" />
             </div>
           </div>
         </div>

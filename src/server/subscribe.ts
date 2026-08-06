@@ -19,7 +19,11 @@ export const subscribe = createServerFn({ method: 'POST' })
     return email.trim().toLowerCase()
   })
   .handler(async ({ data: email }): Promise<SubscribeResult> => {
-    // TODO: persist to a store / forward to your email provider.
+    // TODO(production): this only logs — signups are not persisted anywhere
+    // yet. Before launch, replace this block with a call to your email
+    // provider's list/audience API (e.g. Resend Audiences, Mailchimp) or a
+    // database insert, using credentials from an environment variable,
+    // never hardcoded here. `email` is already validated at this point.
     console.log(`[megacloudworks] new signup: ${email}`)
     return { ok: true, email }
   })

@@ -1,4 +1,5 @@
-import { useRef, type ReactNode } from 'react'
+import { useRef } from 'react'
+import type { ReactNode } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { cn } from '#/lib/utils'

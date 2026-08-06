@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Button } from '#/components/ui/button'
@@ -67,7 +68,7 @@ export function NotifyForm({
       </form>
 
       <p className="mt-4 text-sm text-[var(--ink-soft)]">
-        Or say hello —{' '}
+        Or say hello,{' '}
         <a
           href="mailto:hello@megacloudworks.com"
           className={cn(

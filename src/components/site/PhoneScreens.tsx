@@ -29,7 +29,10 @@ export function DashboardScreen() {
           data-phone-reveal
           className="size-6 rounded-full bg-gradient-to-br from-[#d9d9de] to-[#eeeef1]"
         />
-        <span data-phone-reveal className="size-2.5 rounded-full bg-[var(--brand)]" />
+        <span
+          data-phone-reveal
+          className="size-2.5 rounded-full bg-[var(--brand)]"
+        />
       </div>
 
       {/* headline metric */}

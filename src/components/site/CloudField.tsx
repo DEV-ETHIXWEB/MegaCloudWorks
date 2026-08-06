@@ -10,7 +10,12 @@ import { cn } from '#/lib/utils'
  * Decorative and SSR-safe; under prefers-reduced-motion a single cloud is shown
  * statically (see styles.css).
  */
-const CLOUDS = ['/cloud-1.webp', '/cloud-2.webp', '/cloud-3.webp', '/cloud-4.webp']
+const CLOUDS = [
+  '/cloud-1.webp',
+  '/cloud-2.webp',
+  '/cloud-3.webp',
+  '/cloud-4.webp',
+]
 const CYCLE = 32 // seconds for a full loop through all four shapes
 
 export function CloudField({

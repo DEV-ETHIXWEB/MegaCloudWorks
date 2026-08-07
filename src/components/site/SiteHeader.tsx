@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
 
 const NAV = [
-  { label: 'Services', to: '/services' },
+  { label: 'What we do', to: '/services' },
   { label: 'Work', to: '/work' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
@@ -58,7 +58,7 @@ export function SiteHeader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
 
         <div className="flex items-center gap-2">
           <Button asChild size="sm" className="hidden h-10 px-5 sm:inline-flex">
-            <Link to="/contact">Get in touch</Link>
+            <Link to="/contact">Get notified</Link>
           </Button>
 
           <button

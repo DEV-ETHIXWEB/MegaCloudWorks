@@ -364,3 +364,80 @@ body {
     @apply border-border outline-ring/50;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Work page — 5-card bento grid.
+   Mobile: one column, every card full width, no spans.
+   >=1024px: three columns; Slate occupies column 3 across both rows, its
+   height coming from row1 + gap + row2 (never a hardcoded value).
+--------------------------------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  grid-template-areas:
+    'fieldly'
+    'stamp'
+    'slate'
+    'prophy'
+    'leadr';
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      'fieldly stamp slate'
+      'prophy  leadr  slate';
+  }
+}
+
+.card-fieldly {
+  grid-area: fieldly;
+}
+.card-stamp {
+  grid-area: stamp;
+}
+.card-slate {
+  grid-area: slate;
+}
+.card-prophy {
+  grid-area: prophy;
+}
+.card-leadr {
+  grid-area: leadr;
+}
+
+/* Desktop size tweaks. Each card still sits in its 1fr grid area; the
+   deltas are expressed as percentage margins, which resolve against that
+   area's width, so every offset stays proportional at any viewport.
+   Column unit c = one 1fr track.
+     row 1: fieldly 1.3c, stamp shifted +0.3c (unchanged width), slate 0.5c
+     row 2: prophy 0.8c (trimmed from the right), leadr 1.5c (grown both
+            ways, its right edge lining up with Stamp's above)
+   Gaps stay a true 24px everywhere; the 0.2c freed at the far right is the
+   space Slate gave up. */
+@media (min-width: 1024px) {
+  .card-fieldly {
+    margin-right: -30%;
+    min-height: 392px;
+  }
+  .card-stamp {
+    margin-left: 30%;
+    margin-right: -30%;
+    min-height: 392px;
+  }
+  .card-slate {
+    margin-left: 30%;
+    margin-right: 20%;
+  }
+  .card-prophy {
+    margin-right: 20%;
+  }
+  .card-leadr {
+    margin-left: -20%;
+    /* also reach right to sit 24px off Slate's shifted left edge */
+    margin-right: -30%;
+  }
+}

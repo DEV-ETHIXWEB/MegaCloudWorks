@@ -7,8 +7,55 @@ const LINKS = [
   { label: 'Contact', to: '/contact' },
 ] as const
 
-export function SiteFooter({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
+export function SiteFooter({
+  tone = 'light',
+  variant = 'full',
+}: {
+  tone?: 'light' | 'dark'
+  variant?: 'full' | 'compact'
+}) {
   const dark = tone === 'dark'
+
+  if (variant === 'compact') {
+    return (
+      <footer
+        className={
+          dark
+            ? 'dark border-t border-white/10 bg-[#0d0d0f]'
+            : 'border-t border-[var(--line)]'
+        }
+      >
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-4 px-6 py-7 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left lg:px-20">
+          <Link to="/" className="flex shrink-0 items-center no-underline">
+            <img
+              src={dark ? '/logo-light.svg' : '/logo-resized.svg'}
+              alt="MegaCloudWorks"
+              className="h-7 w-auto"
+            />
+          </Link>
+
+          <a
+            href="mailto:hello@megacloudworks.com"
+            className={`shrink-0 whitespace-nowrap text-sm font-medium no-underline transition-colors ${
+              dark
+                ? 'text-white/70 hover:text-white'
+                : 'text-[var(--ink-soft)] hover:text-[var(--brand)]'
+            }`}
+          >
+            hello@megacloudworks.com
+          </a>
+
+          <p
+            className={`shrink-0 text-xs ${
+              dark ? 'text-white/40' : 'text-[var(--ink-faint)]'
+            }`}
+          >
+            © {new Date().getFullYear()} MegaCloudWorks. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    )
+  }
 
   return (
     <footer

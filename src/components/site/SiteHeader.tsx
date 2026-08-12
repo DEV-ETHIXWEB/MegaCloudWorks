@@ -9,7 +9,15 @@ const NAV = [
   { label: 'Contact', to: '/contact' },
 ] as const
 
-export function SiteHeader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
+export function SiteHeader({
+  tone = 'light',
+  servicesLabel = 'Services',
+  ctaLabel = 'Get in touch',
+}: {
+  tone?: 'light' | 'dark'
+  servicesLabel?: string
+  ctaLabel?: string
+}) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
   const dark = tone === 'dark'
@@ -43,22 +51,24 @@ export function SiteHeader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
           />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-8 lg:flex">
           {NAV.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className={`text-sm font-semibold no-underline transition-colors ${navLink}`}
-              activeProps={{ className: 'text-[var(--brand)]' }}
+              className={`relative py-1 text-sm font-semibold no-underline transition-colors after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:scale-x-0 after:bg-[var(--brand)] after:transition-transform after:content-[''] ${navLink}`}
+              activeProps={{
+                className: 'text-[var(--brand)] after:scale-x-100',
+              }}
             >
-              {item.label}
+              {item.to === '/services' ? servicesLabel : item.label}
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
           <Button asChild size="sm" className="hidden h-10 px-5 sm:inline-flex">
-            <Link to="/contact">Get in touch</Link>
+            <Link to="/contact">{ctaLabel}</Link>
           </Button>
 
           <button
@@ -66,7 +76,7 @@ export function SiteHeader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
-            className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors md:hidden ${iconBtn}`}
+            className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors lg:hidden ${iconBtn}`}
           >
             <svg
               width="20"
@@ -96,7 +106,7 @@ export function SiteHeader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
       </div>
 
       {open && (
-        <div className={`mx-6 rounded-2xl border p-2 md:hidden ${panel}`}>
+        <div className={`mx-6 rounded-2xl border p-2 lg:hidden ${panel}`}>
           {NAV.map((item) => (
             <Link
               key={item.to}
@@ -105,12 +115,12 @@ export function SiteHeader({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
               className={`block rounded-xl px-4 py-3 text-sm font-semibold no-underline transition-colors ${panelLink}`}
               activeProps={{ className: 'text-[var(--brand)]' }}
             >
-              {item.label}
+              {item.to === '/services' ? servicesLabel : item.label}
             </Link>
           ))}
           <Button asChild className="mt-1 w-full">
             <Link to="/contact" onClick={close}>
-              Get in touch
+              {ctaLabel}
             </Link>
           </Button>
         </div>

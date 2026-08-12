@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
 
 const NAV = [
-  { label: 'Services', to: '/services' },
+  { label: 'What we do', to: '/services' },
   { label: 'Work', to: '/work' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },

@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router'
+import { Instagram, Linkedin, Twitter } from 'lucide-react'
 
-const LINKS = [
-  { label: 'Services', to: '/services' },
-  { label: 'Work', to: '/work' },
-  { label: 'About', to: '/about' },
-  { label: 'Contact', to: '/contact' },
+const SOCIALS = [
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/', Icon: Linkedin },
+  { label: 'Instagram', href: 'https://www.instagram.com/', Icon: Instagram },
+  { label: 'X', href: 'https://x.com/', Icon: Twitter },
 ] as const
 
 export function SiteFooter({
@@ -74,29 +74,31 @@ export function SiteFooter({
           />
         </Link>
 
-        <nav className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
-          {LINKS.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={`text-sm font-semibold no-underline transition-colors ${
-                dark
-                  ? 'text-white/70 hover:text-white'
-                  : 'text-[var(--ink-soft)] hover:text-[var(--brand)]'
-              }`}
-              activeProps={{ className: 'text-[var(--brand)]' }}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
         <a
           href="mailto:hello@megacloudworks.com"
           className="mail-highlight text-sm"
         >
           hello@megacloudworks.com
         </a>
+
+        <div className="flex items-center justify-center gap-3">
+          {SOCIALS.map(({ label, href, Icon }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={label}
+              className={`inline-flex size-9 items-center justify-center rounded-full no-underline transition-colors ${
+                dark
+                  ? 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
+                  : 'bg-[#1a1a1e] text-white hover:bg-[var(--brand)]'
+              }`}
+            >
+              <Icon className="size-4" strokeWidth={2} />
+            </a>
+          ))}
+        </div>
 
         <p
           className={

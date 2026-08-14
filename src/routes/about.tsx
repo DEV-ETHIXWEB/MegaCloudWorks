@@ -10,6 +10,7 @@ import { BlurText } from '#/components/site/BlurText'
 import { PageWash } from '#/components/site/PageWash'
 import { StepRow } from '#/components/site/StepRow'
 import { StepTrail } from '#/components/site/StepTrail'
+import { StepSky } from '#/components/site/StepSky'
 import { ReachMap } from '#/components/site/ReachMap'
 import { seo } from '#/lib/seo'
 
@@ -24,30 +25,37 @@ export const Route = createFileRoute('/about')({
     }),
 })
 
+// The route crosses the section rather than running down its middle: the
+// first three beats take alternating sides and the fourth lands in the
+// centre, where the two sides meet.
 const STEPS = [
   {
     n: '01',
     icon: 1,
+    side: 'left',
     title: 'Understand',
-    desc: 'Clarify the problem and the goals.',
+    desc: 'We start with your problem, not a template: who this is for, what it has to do, and what counts as done.',
   },
   {
     n: '02',
     icon: 2,
+    side: 'right',
     title: 'Design',
-    desc: 'Craft intuitive flows and thoughtful UI.',
+    desc: 'We shape the flows before the pixels, then draw an interface that makes the next step obvious.',
   },
   {
     n: '03',
     icon: 3,
+    side: 'left',
     title: 'Build',
-    desc: 'Develop with quality and scalability.',
+    desc: 'We develop it properly — tested, reviewed, and built to hold up as the product and its traffic grow.',
   },
   {
     n: '04',
     icon: 4,
+    side: 'center',
     title: 'Ship & Evolve',
-    desc: 'Launch, measure and keep improving.',
+    desc: 'We launch, watch how it is actually used, and keep improving it release after release.',
   },
 ] as const
 
@@ -99,7 +107,10 @@ function About() {
       return
     }
 
-    const marks = [80, 300, 560, 820, 1180]
+    // the last mark is the basecamp callout: it lands after the headline copy
+    // has settled, so the label reads as a second thought rather than a
+    // competing one
+    const marks = [80, 300, 560, 820, 1180, 1520]
     const timers = marks.map((ms, i) =>
       window.setTimeout(() => setBeat(i + 1), ms),
     )
@@ -127,13 +138,10 @@ function About() {
           ease: 'power2.out',
         })
 
-        gsap.from('[data-callout]', {
-          opacity: 0,
-          x: 16,
-          duration: 0.9,
-          ease: 'power2.out',
-          delay: 0.9,
-        })
+        // the basecamp callout is not tweened here: its type runs on the same
+        // BlurText beat system as the headline and its leader line strikes on
+        // a stepped CSS flicker. A GSAP fade on the wrapper would smooth over
+        // exactly the hard on/off edges that make the strike read as retro.
 
         // an element already on-screen at mount (common on tall viewports,
         // or once the hero photo finishes loading and shrinks the page)
@@ -176,12 +184,9 @@ function About() {
       // animation setup failed for any reason (extension conflict, GSAP
       // load error, etc.) — bail out silently rather than leaving
       // scroll-gated content stuck at opacity:0 with no way to reveal it
-      gsap.set(
-        '[data-hero-art], [data-callout], [data-reveal], [data-step]',
-        {
-          clearProps: 'all',
-        },
-      )
+      gsap.set('[data-hero-art], [data-callout], [data-reveal], [data-step]', {
+        clearProps: 'all',
+      })
       return
     }
 
@@ -266,34 +271,52 @@ function About() {
               close to the text column, leaving no clean spot for the label */}
           <div
             data-callout
-            className="pointer-events-none absolute left-[40%] top-[48%] hidden w-[13.5rem] lg:block"
+            className={`callout pointer-events-none absolute left-[40%] top-[48%] hidden w-[13.5rem] lg:block ${
+              beat >= 6 ? 'is-on' : ''
+            }`}
           >
             <div className="flex items-center gap-3">
               <div className="w-[9.5rem] shrink-0">
-                <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--brand)]">
-                  MegaCloudWorks
-                </p>
-                <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--ink)]">
-                  Basecamp
-                </p>
+                <BlurText
+                  text="MegaCloudWorks"
+                  animateBy="letters"
+                  start={beat >= 6}
+                  delay={26}
+                  stepDuration={0.28}
+                  className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--brand)]"
+                />
+                <BlurText
+                  text="Basecamp"
+                  animateBy="letters"
+                  start={beat >= 6}
+                  delay={26}
+                  stepDuration={0.28}
+                  className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--ink)]"
+                />
               </div>
+              {/* the leader strikes rather than fades: it grows in stepped
+                  stutters like a tube light finding its charge */}
               <span
                 aria-hidden="true"
-                className="h-px flex-1 bg-[var(--brand)]"
+                className="callout__wire h-px flex-1 bg-[var(--brand)]"
               />
               <span
                 aria-hidden="true"
-                className="relative size-[7px] shrink-0 rounded-full bg-[var(--brand)]"
+                className="callout__pip relative size-[7px] shrink-0 rounded-full bg-[var(--brand)]"
               >
                 <span
                   aria-hidden="true"
-                  className="absolute left-1/2 top-full h-20 w-px -translate-x-1/2 bg-gradient-to-b from-[var(--brand)] to-[var(--brand)]/15"
+                  className="callout__drop absolute left-1/2 top-full h-20 w-px -translate-x-1/2 bg-gradient-to-b from-[var(--brand)] to-[var(--brand)]/15"
                 />
               </span>
             </div>
-            <p className="mt-1.5 w-[9.5rem] text-[10.5px] font-semibold uppercase leading-snug tracking-[0.06em] text-[var(--ink-soft)]">
-              App design &amp; development
-            </p>
+            <BlurText
+              text="App design & development"
+              start={beat >= 6}
+              delay={48}
+              stepDuration={0.3}
+              className="mt-1.5 w-[9.5rem] text-[10.5px] font-semibold uppercase leading-snug tracking-[0.06em] text-[var(--ink-soft)]"
+            />
           </div>
         </div>
 
@@ -431,11 +454,24 @@ function About() {
       {/* ================= 3. HOW WE WORK — the red stretch ================= */}
       {/* the section itself is flat: the colour lives in <PageWash>, which
           flips the whole page over as this band comes up */}
+      {/* This band paints itself. It used to hand the page over to <PageWash>,
+          but the wash's red and the red the sky plates are painted in are not
+          the same red, and the two met in a visible line at the band's edges —
+          so the band stays `paper` as far as the wash is concerned, keeps the
+          on-brand tokens for its white type, and carries the plates' own red
+          underneath them.
+
+          No overflow clipping here either: the plates are held by a sticky
+          frame, and a clipping ancestor would make this section its scroll
+          container — at which point it would never stick. */}
       <section
-        data-band="brand"
-        className="on-brand relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
+        data-band="paper"
+        className="step-band on-brand relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
       >
-        <div className="relative z-10 mx-auto max-w-[64rem]">
+        {/* the sky the four steps are walked across */}
+        <StepSky />
+
+        <div className="relative z-10 mx-auto max-w-[72rem]">
           <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink)]">
             <span
               aria-hidden="true"
@@ -447,16 +483,28 @@ function About() {
           <h2 className="mt-5 max-w-[22ch] font-display text-[clamp(2rem,4vw,3.25rem)] font-extrabold leading-[1.03] tracking-[-0.03em] text-[var(--ink)]">
             Four moves, in the same order, every time.
           </h2>
+        </div>
 
-          <div ref={steps} className="relative mt-20 sm:mt-24">
-            <StepTrail scope={steps} active={reached} />
+        {/* The route runs the full width of the band, not the width of the
+            heading above it: the marks are pushed right out to the page's
+            margins so the trail has real distance to cross. The copy is
+            unaffected — a two-column grid splits on the page's centre line
+            whatever its outer width, so the text still starts (or ends)
+            exactly where it did. */}
+        <div ref={steps} className="relative z-10 mt-20 sm:mt-24">
+          <StepTrail scope={steps} active={reached} />
 
-            <ol className="relative z-10 flex list-none flex-col gap-24 p-0 sm:gap-32">
-              {STEPS.map((step, i) => (
-                <StepRow key={step.n} step={step} index={i} onLit={reach} />
-              ))}
-            </ol>
-          </div>
+          <ol className="relative z-10 flex list-none flex-col gap-24 p-0 sm:gap-32">
+            {STEPS.map((step, i) => (
+              <StepRow
+                key={step.n}
+                step={step}
+                index={i}
+                side={step.side}
+                onLit={reach}
+              />
+            ))}
+          </ol>
         </div>
       </section>
 

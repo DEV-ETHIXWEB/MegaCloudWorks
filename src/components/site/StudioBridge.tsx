@@ -362,7 +362,10 @@ export function StudioBridge() {
       </div>
 
       {/* ---- row two: MegaCloudWorks' story left, the studio right ---- */}
-      <div className="relative z-10 mt-16 grid gap-8 sm:mt-[9.5rem] sm:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] sm:gap-14">
+      {/* the gap between the rows was tuned for a long diagonal; pulled in so
+          the two marks sit closer together and the whole card — escape hatch
+          included — lands inside one screen */}
+      <div className="relative z-10 mt-12 grid gap-8 sm:mt-16 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] sm:gap-14">
         <p
           className={`order-2 max-w-[46ch] border-l border-[var(--line)] pl-5 text-sm leading-[1.75] text-[var(--ink-soft)] transition-opacity duration-500 sm:order-1 sm:ml-auto sm:border-l-0 sm:border-r sm:pl-0 sm:pr-8 sm:text-right sm:text-[15px] ${veil(
             3,
@@ -376,7 +379,7 @@ export function StudioBridge() {
             ref={cloud}
             src="/logo-mark.svg"
             alt="MegaCloudWorks"
-            className={`bridge-cloud h-9 w-auto sm:h-10 ${
+            className={`bridge-cloud h-9 w-auto sm:-mt-8 sm:h-10 ${
               stage >= 2 ? 'is-live' : ''
             } ${armed && stage < 1 ? 'opacity-0' : ''}`}
             loading="eager"

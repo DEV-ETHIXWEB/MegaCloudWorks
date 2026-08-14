@@ -221,10 +221,11 @@ body {
   transition: filter 420ms ease;
 }
 
+/* The strike, and only the strike. There is no glow held behind the mark
+   afterwards — a permanent red bloom on paper read as a smudge rather than
+   as light, so the flicker settles on the plain, full-colour logo. */
 .bridge-cloud.is-live {
-  animation:
-    cloud-flicker 780ms steps(1, end) both,
-    cloud-breathe 3.2s 820ms ease-in-out infinite;
+  animation: cloud-flicker 780ms steps(1, end) both;
 }
 
 /* a tube light striking: three failed starts, then it holds */
@@ -240,26 +241,11 @@ body {
   13%,
   22%,
   36% {
-    filter: saturate(1) brightness(1)
-      drop-shadow(0 0 10px rgba(245, 51, 59, 0.9));
+    filter: saturate(1) brightness(1);
   }
   60%,
   100% {
-    filter: saturate(1) brightness(1)
-      drop-shadow(0 0 12px rgba(245, 51, 59, 0.85))
-      drop-shadow(0 0 26px rgba(245, 51, 59, 0.45));
-  }
-}
-
-@keyframes cloud-breathe {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 10px rgba(245, 51, 59, 0.7))
-      drop-shadow(0 0 22px rgba(245, 51, 59, 0.35));
-  }
-  50% {
-    filter: drop-shadow(0 0 16px rgba(245, 51, 59, 0.95))
-      drop-shadow(0 0 34px rgba(245, 51, 59, 0.5));
+    filter: saturate(1) brightness(1);
   }
 }
 
@@ -289,24 +275,18 @@ body {
   will-change: transform;
 }
 
-/* the photograph has to end on nothing, not on a cut: the left edge fades
-   into the copy column and the bottom fades into the paper the next section
-   sits on. Two mask layers, intersected. */
+/* only the left edge dissolves, into the copy column. The foot is left as a
+   clean horizon: the photograph ends on its own edge rather than bleeding
+   away into the paper. */
 .hero-mask {
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, black 34%),
-    linear-gradient(to bottom, black 73%, transparent 100%);
-  mask-image:
-    linear-gradient(to right, transparent 0%, black 34%),
-    linear-gradient(to bottom, black 73%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 34%);
+  mask-image: linear-gradient(to right, transparent 0%, black 34%);
 }
 
-/* the stacked version has no copy beside it, so only the foot dissolves */
+/* the stacked version has no copy beside it, so nothing is masked at all */
 .hero-mask--foot {
-  -webkit-mask-image: linear-gradient(to bottom, black 76%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 76%, transparent 100%);
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 @keyframes hero-drift {
@@ -377,11 +357,147 @@ body {
   }
 }
 
+/* ---- the basecamp callout: a leader line that strikes, not fades ----
+   Every stage is held on steps(1, end), so the line jumps between states
+   with no interpolation: it grows in three stutters, blinks twice on the
+   full length, then holds. The pip lands after the line reaches it and the
+   drop falls last, each on the same stepped charge. */
+.callout__wire {
+  transform-origin: left center;
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.callout__pip,
+.callout__drop {
+  opacity: 0;
+}
+
+.callout__drop {
+  transform-origin: top center;
+  transform: scaleY(0);
+}
+
+.callout.is-on .callout__wire {
+  animation: callout-strike 900ms steps(1, end) both;
+}
+
+.callout.is-on .callout__pip {
+  animation: callout-blink 620ms steps(1, end) 620ms both;
+}
+
+.callout.is-on .callout__drop {
+  animation: callout-drop 620ms steps(1, end) 820ms both;
+}
+
+@keyframes callout-strike {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  10% {
+    opacity: 1;
+    transform: scaleX(0.42);
+  }
+  17% {
+    opacity: 0.08;
+    transform: scaleX(0.42);
+  }
+  26% {
+    opacity: 1;
+    transform: scaleX(0.74);
+  }
+  33% {
+    opacity: 0.12;
+    transform: scaleX(0.74);
+  }
+  44% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  52% {
+    opacity: 0.18;
+  }
+  60% {
+    opacity: 1;
+  }
+  68% {
+    opacity: 0.35;
+  }
+  76%,
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes callout-blink {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(245, 51, 59, 0.9);
+  }
+  30% {
+    opacity: 0.1;
+  }
+  46% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 0.2;
+  }
+  70%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes callout-drop {
+  0% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  22% {
+    opacity: 1;
+    transform: scaleY(0.55);
+  }
+  36% {
+    opacity: 0.1;
+    transform: scaleY(0.55);
+  }
+  54% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  66% {
+    opacity: 0.25;
+  }
+  80%,
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-drift,
   .hero-haze,
   .hero-sheen {
     animation: none;
+  }
+
+  /* nothing strikes; the callout is simply drawn */
+  .callout__wire,
+  .callout__pip,
+  .callout__drop,
+  .callout.is-on .callout__wire,
+  .callout.is-on .callout__pip,
+  .callout.is-on .callout__drop {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   .hero-drift {
@@ -1010,13 +1126,14 @@ body {
   animation-delay: calc(var(--slot) + 440ms);
 }
 
-/* the mark itself drifts in from the side it will sit opposite */
+/* the mark rises into place on a long, soft curve — the icons carry the
+   section now, so they arrive slowly enough to be watched */
 .step-row__icon {
   opacity: 0;
-  transform: translateY(26px) scale(0.94);
+  transform: translateY(34px) scale(0.92);
   transition:
-    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1250ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .step-row.is-lit .step-row__icon {
@@ -1292,6 +1409,80 @@ body {
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * How we work — the sky behind it
+ *
+ * Three painted plates stacked in one sticky frame: whichever matches the
+ * step being read is the one at full opacity, and the swap is a long
+ * cross-fade so the sky thickens rather than cuts.
+ *
+ * The frame is sticky, not stretched: the band runs several screens tall
+ * and a single 16:9 plate scaled over all of it would leave the clouds
+ * enormous and the horizon nowhere. Sticky holds exactly one screenful of
+ * sky under the section for its whole length.
+ *
+ * NB the band must not carry `overflow: hidden` — that would make it the
+ * scroll container for its own sticky child, which then never sticks.
+ * ------------------------------------------------------------------ */
+/* the flat red the three plates are painted in, sampled from the artwork —
+   the band carries it edge to edge so the plates have nothing to seam
+   against, and so the section is already the right colour while they load */
+.step-band {
+  background-color: #ec2a37;
+
+  /* the on-brand tokens still name the old red; anything in this band that
+     paints itself the band colour has to use the plates' red instead */
+  --band: #ec2a37;
+  --paper: #ec2a37;
+}
+
+.step-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.step-sky__hold {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.step-sky__plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* bottom-anchored: every plate keeps its weather along the ground, and
+     that is the half that must survive the crop */
+  object-fit: cover;
+  object-position: center bottom;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.step-sky__plate.is-on {
+  opacity: 1;
+}
+
+/* a 16:9 plate cropped to a phone keeps only its middle strip, and on the
+   04 plate the middle is the one part with no weather in it — the banks are
+   piled at the edges. Pulling the crop left brings one of them back. */
+@media (max-width: 640px) {
+  .step-sky__plate {
+    object-position: 24% bottom;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-sky__plate {
+    transition: none;
+  }
+}
+
 /* ---- the dotted spine down the middle of the section ---- */
 /* stacked, the copy sits directly under its mark and the spine would run
    straight through the type, so below the two-column breakpoint the route is
@@ -1311,18 +1502,19 @@ body {
   }
 }
 
-/* a segment is walked, not faded: it is held back by a long dash offset and
-   pulled to zero when the row below it arrives */
+/* a segment is walked, not faded: the dots are always there, and the mask
+   over them opens from the mark above to the mark below once that next row
+   has arrived */
 .step-trail__seg {
-  opacity: 0;
-  stroke-dashoffset: 320;
-  transition:
-    opacity 500ms ease,
-    stroke-dashoffset 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.9;
 }
 
-.step-trail__seg.is-on {
-  opacity: 0.9;
+.step-trail__wipe {
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1400ms cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.step-trail__wipe.is-on {
   stroke-dashoffset: 0;
 }
 
@@ -1412,7 +1604,7 @@ body {
   }
 
   /* the spine and the marks arrive with no travel at all */
-  .step-trail__seg,
+  .step-trail__wipe,
   .step-row__icon {
     transition: none;
   }
@@ -1422,7 +1614,7 @@ body {
     transform: none;
   }
 
-  .step-trail__seg {
+  .step-trail__wipe {
     stroke-dashoffset: 0;
   }
 
@@ -1548,10 +1740,11 @@ body {
 }
 
 /* ---- the corridor: US ↔ India ----
-   Three strokes on the same geometry: a blurred bloom, the hard line, and a
-   short white charge running the length of it on a loop. The dasharray is a
-   flat 900 because the route is ~470 long — one number covers it whichever
-   way the pins move. */
+   A dotted arc rather than a stroke: 25 dots sitting on the curve, laid down
+   west to east once the pins have landed, after which the charge runs the
+   same way on a loop — each dot flaring from red to white in turn, so the
+   link reads as traffic moving rather than as a line sitting there. A very
+   soft blurred stroke sits under them to give the arc some body. */
 .reach-map--armed .reach-route {
   opacity: 0;
 }
@@ -1560,13 +1753,14 @@ body {
   animation: reach-fade 600ms cubic-bezier(0.22, 1, 0.36, 1) 900ms both;
 }
 
-.reach-route__line,
 .reach-route__glow {
   stroke-dasharray: 900;
+  opacity: 0.16;
+  filter: blur(4px);
 }
 
-.reach-map--in .reach-route__line {
-  animation: reach-route-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 980ms both;
+.reach-map--in .reach-route__glow {
+  animation: reach-route-draw 1600ms cubic-bezier(0.65, 0, 0.35, 1) 980ms both;
 }
 
 /* the shared reach-draw offsets by 200, which is shorter than this route —
@@ -1580,41 +1774,59 @@ body {
   }
 }
 
-.reach-route__glow {
-  opacity: 0.45;
-  filter: blur(3px);
+.reach-dot {
+  opacity: 0.42;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-.reach-map--in .reach-route__glow {
-  animation: reach-route-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 980ms both;
-}
-
-/* the charge only starts once the line it runs on exists. The offset runs
-   positive → negative so the dash enters at the US end and leaves past
-   India; the route is ~536 long, so -560 clears it. */
-.reach-route__pulse {
-  stroke-dasharray: 16 900;
-  stroke-dashoffset: 16;
+.reach-map--armed .reach-dot {
   opacity: 0;
-  filter: drop-shadow(0 0 4px var(--brand));
 }
 
-.reach-map--in .reach-route__pulse {
-  animation: reach-charge 3.6s linear 2.4s infinite;
+/* laid down first, then charged on a loop — the second delay clears the last
+   dot's arrival before the wave starts */
+.reach-map--in .reach-dot {
+  animation:
+    reach-dot-lay 520ms cubic-bezier(0.22, 1, 0.36, 1) var(--lay) both,
+    reach-dot-run 3s ease-in-out calc(2600ms + var(--run)) infinite;
 }
 
-@keyframes reach-charge {
-  0% {
-    stroke-dashoffset: 16;
+@keyframes reach-dot-lay {
+  from {
     opacity: 0;
+    transform: scale(0.2);
   }
-  8%,
-  82% {
+  60% {
     opacity: 1;
+    transform: scale(1.25);
   }
+  to {
+    opacity: 0.42;
+    transform: scale(1);
+  }
+}
+
+@keyframes reach-dot-run {
+  0%,
   100% {
-    stroke-dashoffset: -560;
-    opacity: 0;
+    opacity: 0.42;
+    fill: var(--brand);
+    filter: none;
+    transform: scale(1);
+  }
+  10% {
+    opacity: 1;
+    fill: #fff;
+    filter: drop-shadow(0 0 5px var(--brand))
+      drop-shadow(0 0 10px rgba(245, 51, 59, 0.7));
+    transform: scale(1.35);
+  }
+  26% {
+    opacity: 0.7;
+    fill: var(--brand);
+    filter: none;
+    transform: scale(1);
   }
 }
 
@@ -1809,9 +2021,8 @@ body {
   .reach-map--in .reach-title,
   .reach-map--in .reach-sub,
   .reach-map--in .reach-route,
-  .reach-map--in .reach-route__line,
   .reach-map--in .reach-route__glow,
-  .reach-map--in .reach-route__pulse {
+  .reach-map--in .reach-dot {
     animation: none;
   }
 
@@ -1820,14 +2031,15 @@ body {
     fill: var(--brand);
   }
 
-  /* no charge running the corridor, and the line is simply there */
-  .reach-route__line,
+  /* no charge running the corridor: the arc and its dots are simply there */
   .reach-route__glow {
     stroke-dasharray: none;
   }
 
-  .reach-route__pulse {
-    display: none;
+  .reach-map--armed .reach-dot,
+  .reach-dot {
+    opacity: 0.55;
+    transform: none;
   }
 
   .reach-tip__inner {

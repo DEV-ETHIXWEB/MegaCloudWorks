@@ -104,12 +104,17 @@ export function ContactForm({ className }: { className?: string }) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           required
-          className="min-h-[12rem] w-full flex-1 resize-y rounded-2xl border border-[var(--line-strong)] bg-[var(--paper)] px-5 py-3.5 text-sm text-[var(--ink)] shadow-sm outline-none transition-[color,box-shadow] placeholder:text-[var(--ink-faint)] selection:bg-[var(--brand)] selection:text-white focus-visible:border-[var(--brand)] focus-visible:ring-[3px] focus-visible:ring-[var(--brand-soft)]"
+          className="min-h-[10rem] w-full flex-1 resize-y rounded-2xl border border-[var(--line-strong)] bg-[var(--paper)] px-5 py-3.5 text-base sm:min-h-[12rem] sm:text-sm text-[var(--ink)] shadow-sm outline-none transition-[color,box-shadow] placeholder:text-[var(--ink-faint)] selection:bg-[var(--brand)] selection:text-white focus-visible:border-[var(--brand)] focus-visible:ring-[3px] focus-visible:ring-[var(--brand-soft)]"
         />
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
-        <Button type="submit" size="lg" disabled={mutation.isPending}>
+        <Button
+          type="submit"
+          size="lg"
+          disabled={mutation.isPending}
+          className="w-full sm:w-auto"
+        >
           {mutation.isPending ? 'Sending…' : 'Send message'}
         </Button>
         <p className="text-sm text-[var(--ink-soft)]">

@@ -215,7 +215,7 @@ function Services() {
       <SiteHeader />
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden px-6 pb-20 pt-36 sm:px-10 lg:px-20 lg:pt-44">
+      <section className="relative overflow-hidden px-6 pb-16 pt-28 sm:px-10 sm:pb-20 sm:pt-36 lg:px-20 lg:pt-44">
         <div
           data-glow
           aria-hidden="true"
@@ -250,7 +250,7 @@ function Services() {
         {/* approach columns */}
         <div
           data-columns
-          className="relative mt-20 grid gap-10 sm:grid-cols-2 lg:grid-cols-4"
+          className="relative mt-14 grid gap-8 sm:mt-20 sm:gap-10 sm:grid-cols-2 lg:grid-cols-4"
         >
           {COLUMNS.map((c) => (
             <div data-reveal key={c.kicker} className="relative pt-7">
@@ -279,7 +279,7 @@ function Services() {
       </section>
 
       {/* ================= HOW WE WORK — overlapping circles ================= */}
-      <section className="relative overflow-hidden px-6 py-24 sm:px-10 lg:px-20 lg:py-32">
+      <section className="relative overflow-hidden px-6 py-16 sm:px-10 sm:py-24 lg:px-20 lg:py-32">
         <div
           data-glow
           aria-hidden="true"
@@ -301,7 +301,7 @@ function Services() {
 
         <div
           data-circles
-          className="relative mt-16 flex flex-col items-center justify-center gap-6 md:flex-row md:gap-0"
+          className="relative mt-10 flex flex-col items-center justify-center gap-5 sm:mt-16 sm:gap-6 md:flex-row md:gap-0"
         >
           {/* decorative dashed rings */}
           <div
@@ -319,7 +319,7 @@ function Services() {
             <div
               key={c.n}
               data-circle
-              className="group relative aspect-square w-[13.5rem] md:-mx-4 lg:w-[19rem] lg:-mx-6"
+              className="group relative aspect-square w-[15rem] md:-mx-4 md:w-[13.5rem] lg:w-[19rem] lg:-mx-6"
             >
               {/* glowing halo behind the circle */}
               <span
@@ -359,9 +359,9 @@ function Services() {
               key={s.id}
               id={s.id}
               data-reveal
-              className="scroll-mt-28 overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-8 shadow-[0_1px_2px_rgba(16,16,20,0.04)] sm:p-10"
+              className="scroll-mt-28 overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 shadow-[0_1px_2px_rgba(16,16,20,0.04)] sm:p-10"
             >
-              <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+              <div className="grid gap-7 sm:gap-8 lg:grid-cols-[1fr_1.1fr]">
                 <div className="relative">
                   <span
                     aria-hidden="true"
@@ -372,7 +372,7 @@ function Services() {
                     }}
                   />
                   <div className="relative flex items-start justify-between gap-4">
-                    <span className="font-display text-5xl font-extrabold text-[var(--brand)]">
+                    <span className="font-display text-4xl font-extrabold text-[var(--brand)] sm:text-5xl">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <img
@@ -380,7 +380,7 @@ function Services() {
                       alt=""
                       aria-hidden="true"
                       loading="lazy"
-                      className="-mr-8 -mt-2 h-32 w-32 shrink-0 object-contain drop-shadow-[0_16px_24px_rgba(16,16,20,0.14)] sm:mr-0 sm:h-40 sm:w-40 lg:-mr-8 lg:h-44 lg:w-44"
+                      className="-mr-6 -mt-2 h-28 w-28 shrink-0 object-contain drop-shadow-[0_16px_24px_rgba(16,16,20,0.14)] sm:mr-0 sm:h-40 sm:w-40 lg:-mr-8 lg:h-44 lg:w-44"
                     />
                   </div>
                   <p className="relative mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
@@ -420,14 +420,14 @@ function Services() {
       </section>
 
       {/* ================= PROCESS ================= */}
-      <section className="px-6 py-24 sm:px-10 lg:px-20">
+      <section className="px-6 py-16 sm:px-10 sm:py-24 lg:px-20">
         <h2
           data-reveal
           className="font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-3xl"
         >
           How we work, step by step
         </h2>
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-7 sm:mt-10 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {PROCESS.map((p) => (
             <div
               data-reveal
@@ -449,10 +449,10 @@ function Services() {
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="px-6 pb-28 sm:px-10 lg:px-20">
+      <section className="px-6 pb-20 sm:px-10 sm:pb-28 lg:px-20">
         <div
           data-reveal
-          className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-8 sm:p-12"
+          className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-6 sm:p-12"
         >
           <div
             data-glow
@@ -463,7 +463,7 @@ function Services() {
                 'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.09) 45%, rgba(255,255,255,0) 72%)',
             }}
           />
-          <div className="relative flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative flex flex-col items-stretch gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-3xl">
                 Have something in mind?
@@ -472,7 +472,7 @@ function Services() {
                 Tell us about your project, we&apos;ll come back with a plan.
               </p>
             </div>
-            <Button asChild size="lg" className="shrink-0">
+            <Button asChild size="lg" className="w-full shrink-0 sm:w-auto">
               <Link to="/contact">Start a project</Link>
             </Button>
           </div>

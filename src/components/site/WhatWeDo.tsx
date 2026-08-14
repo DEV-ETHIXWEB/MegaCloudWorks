@@ -92,10 +92,12 @@ export function WhatWeDo() {
               <h3 className="relative z-10 font-display text-2xl font-extrabold leading-tight tracking-tight text-[var(--ink)]">
                 {item.title}
               </h3>
-              <p className="relative z-10 mt-2 max-w-[9.5rem] text-sm leading-snug text-[var(--ink-soft)]">
+              <p className="relative z-10 mt-2 max-w-[11rem] text-sm leading-snug text-[var(--ink-soft)] sm:max-w-[9.5rem]">
                 {item.desc}
               </p>
-              <span className="relative z-10 mt-4 inline-block text-sm font-semibold text-[var(--brand)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              {/* touch devices never hover, so the affordance stays visible
+                  below lg and only becomes a hover reveal on pointer screens */}
+              <span className="relative z-10 mt-4 inline-block text-sm font-semibold text-[var(--brand)] transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100">
                 Learn more →
               </span>
               <img

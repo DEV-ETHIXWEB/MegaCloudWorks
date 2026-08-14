@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
 
@@ -21,6 +21,25 @@ export function SiteHeader({
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
   const dark = tone === 'dark'
+
+  // while the mobile menu is up, the page behind it shouldn't scroll away
+  // under the panel, and Escape should get you out of it
+  useEffect(() => {
+    if (!open) return
+
+    const { overflow } = document.body.style
+    document.body.style.overflow = 'hidden'
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+
+    return () => {
+      document.body.style.overflow = overflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
 
   const logo = dark ? '/logo-light.svg' : '/logo-resized.svg'
   const navLink = dark
@@ -106,24 +125,34 @@ export function SiteHeader({
       </div>
 
       {open && (
-        <div className={`mx-6 rounded-2xl border p-2 lg:hidden ${panel}`}>
-          {NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              onClick={close}
-              className={`block rounded-xl px-4 py-3 text-sm font-semibold no-underline transition-colors ${panelLink}`}
-              activeProps={{ className: 'text-[var(--brand)]' }}
-            >
-              {item.to === '/services' ? servicesLabel : item.label}
-            </Link>
-          ))}
-          <Button asChild className="mt-1 w-full">
-            <Link to="/contact" onClick={close}>
-              {ctaLabel}
-            </Link>
-          </Button>
-        </div>
+        <>
+          {/* tap anywhere off the panel to dismiss */}
+          <div
+            aria-hidden="true"
+            onClick={close}
+            className="fixed inset-0 -z-10 bg-[rgba(16,16,20,0.35)] backdrop-blur-[2px] lg:hidden"
+          />
+          <div
+            className={`mx-6 rounded-2xl border p-2 sm:mx-10 lg:hidden ${panel}`}
+          >
+            {NAV.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={close}
+                className={`block rounded-xl px-4 py-3.5 text-base font-semibold no-underline transition-colors ${panelLink}`}
+                activeProps={{ className: 'text-[var(--brand)]' }}
+              >
+                {item.to === '/services' ? servicesLabel : item.label}
+              </Link>
+            ))}
+            <Button asChild className="mt-1 h-12 w-full text-base">
+              <Link to="/contact" onClick={close}>
+                {ctaLabel}
+              </Link>
+            </Button>
+          </div>
+        </>
       )}
     </header>
   )

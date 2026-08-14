@@ -32,6 +32,11 @@
   --line: rgba(16, 16, 20, 0.1);
   --line-strong: rgba(16, 16, 20, 0.16);
 
+  /* accent used inside the isometric step marks; flipped on red bands */
+  --icon-accent: var(--brand);
+  --icon-accent-mid: var(--brand-strong);
+  --icon-accent-deep: #a8121a;
+
   /* smoke backdrop stops (CSS fallback / blend under the WebGL canvas) */
   --smoke-red: rgba(245, 51, 59, 0.55);
   --smoke-dark: #0b0b0d;
@@ -200,6 +205,195 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
+ * Studio bridge — the Ethixweb → MegaCloudWorks connector on the About
+ * page. GSAP draws the line under scroll; when it lands, the cloud
+ * flickers awake and holds a neon glow.
+ * ------------------------------------------------------------------ */
+/* the neon connector's leading head — a hot white dot with a red bloom */
+.bridge-head {
+  filter: drop-shadow(0 0 4px var(--brand))
+    drop-shadow(0 0 10px rgba(245, 51, 59, 0.8));
+}
+
+/* the cloud sits dull until the line reaches it */
+.bridge-cloud {
+  filter: saturate(0.12) brightness(1.3);
+  transition: filter 420ms ease;
+}
+
+.bridge-cloud.is-live {
+  animation:
+    cloud-flicker 780ms steps(1, end) both,
+    cloud-breathe 3.2s 820ms ease-in-out infinite;
+}
+
+/* a tube light striking: three failed starts, then it holds */
+@keyframes cloud-flicker {
+  0%,
+  9%,
+  17%,
+  28%,
+  44% {
+    filter: saturate(0.12) brightness(1.3);
+  }
+  5%,
+  13%,
+  22%,
+  36% {
+    filter: saturate(1) brightness(1)
+      drop-shadow(0 0 10px rgba(245, 51, 59, 0.9));
+  }
+  60%,
+  100% {
+    filter: saturate(1) brightness(1)
+      drop-shadow(0 0 12px rgba(245, 51, 59, 0.85))
+      drop-shadow(0 0 26px rgba(245, 51, 59, 0.45));
+  }
+}
+
+@keyframes cloud-breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 10px rgba(245, 51, 59, 0.7))
+      drop-shadow(0 0 22px rgba(245, 51, 59, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(245, 51, 59, 0.95))
+      drop-shadow(0 0 34px rgba(245, 51, 59, 0.5));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bridge-head {
+    display: none;
+  }
+
+  .bridge-cloud,
+  .bridge-cloud.is-live {
+    animation: none;
+    filter: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * About hero — the photograph never sits perfectly still
+ *
+ * A very slow push/pan (the frame is over-scaled so the drift never
+ * exposes an edge), a brand-tinted haze crossing the ridge like the
+ * signal smoke in the shot, and a faint light sheen breathing over it.
+ * All three are long-period and low-amplitude on purpose: the intent is
+ * "this is a live place", not "something is moving on my screen".
+ * ------------------------------------------------------------------ */
+.hero-drift {
+  animation: hero-drift 34s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* the photograph has to end on nothing, not on a cut: the left edge fades
+   into the copy column and the bottom fades into the paper the next section
+   sits on. Two mask layers, intersected. */
+.hero-mask {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, black 34%),
+    linear-gradient(to bottom, black 73%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, black 34%),
+    linear-gradient(to bottom, black 73%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* the stacked version has no copy beside it, so only the foot dissolves */
+.hero-mask--foot {
+  -webkit-mask-image: linear-gradient(to bottom, black 76%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 76%, transparent 100%);
+}
+
+@keyframes hero-drift {
+  0% {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate3d(-1.4%, -1.1%, 0);
+  }
+}
+
+.hero-haze,
+.hero-sheen {
+  position: absolute;
+  inset: -10% -20%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.hero-haze {
+  background: radial-gradient(
+    42% 34% at 30% 58%,
+    rgba(245, 51, 59, 0.3) 0%,
+    rgba(245, 51, 59, 0.12) 42%,
+    rgba(245, 51, 59, 0) 72%
+  );
+  animation: hero-haze 19s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+@keyframes hero-haze {
+  0% {
+    transform: translate3d(-4%, 2%, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(6%, -5%, 0) scale(1.14);
+    opacity: 0.5;
+  }
+}
+
+.hero-sheen {
+  background: linear-gradient(
+    104deg,
+    rgba(255, 255, 255, 0) 38%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0) 62%
+  );
+  animation: hero-sheen 26s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes hero-sheen {
+  0%,
+  100% {
+    transform: translate3d(-22%, 0, 0);
+    opacity: 0;
+  }
+  45% {
+    opacity: 0.8;
+  }
+  60% {
+    transform: translate3d(24%, 0, 0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-drift,
+  .hero-haze,
+  .hero-sheen {
+    animation: none;
+  }
+
+  .hero-drift {
+    transform: none;
+  }
+
+  .hero-sheen {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * CTA — diagonal white wipe on hover
  * ------------------------------------------------------------------ */
 .cta-diagonal {
@@ -356,6 +550,1289 @@ body {
   }
   .cloud-cross:first-child {
     opacity: var(--cloud-o, 0.96);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Colour bands
+ *
+ * The page walks white → red → white → red as you scroll. Each red stretch
+ * paints itself and feathers into the paper at both ends over 9rem, so the
+ * change happens gradually under the scroll rather than snapping at a
+ * section edge — and because the fade lives inside the section's own top and
+ * bottom padding, no copy is ever sitting on the blend.
+ * ------------------------------------------------------------------ */
+/* One sheet behind the whole page. Sections stay flat — no band carries its
+   own block of colour — so there is never a seam between two of them; the
+   sheet simply crosses over as the next band comes up. */
+.page-wash {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--paper);
+  transition: background-color 620ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-wash[data-tone='brand'] {
+  background-color: #f5333b;
+}
+
+/* Everything inside a red band re-reads the same tokens the rest of the site
+   uses — ink becomes paper, the accent becomes white — so components keep
+   working without a single colour being hard-coded twice. */
+.on-brand {
+  --band: #f5333b;
+
+  --ink: #ffffff;
+  --ink-soft: rgba(255, 255, 255, 0.84);
+  --ink-faint: rgba(255, 255, 255, 0.66);
+  --paper: #f5333b;
+  --paper-2: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.24);
+  --line-strong: rgba(255, 255, 255, 0.34);
+
+  --brand: #ffffff;
+  --brand-strong: rgba(255, 255, 255, 0.88);
+  --brand-2: #ffe3e0;
+
+  /* the isometric marks keep their charcoal solids on red — only the lit
+     faces flip, so they read as objects under a red light */
+  --icon-accent: #ffffff;
+  --icon-accent-mid: rgba(255, 255, 255, 0.82);
+  --icon-accent-deep: rgba(255, 255, 255, 0.6);
+}
+
+/* The primary button is brand-on-white everywhere else; on red it has to be
+   the inverse or it disappears into the band (white text on a now-white
+   fill). The diagonal wipe flips with it: red sweeping under white type. */
+.on-brand .cta-diagonal {
+  background: #ffffff;
+  border-color: rgba(255, 255, 255, 0.9);
+  color: var(--band);
+  box-shadow: 0 12px 30px -10px rgba(16, 16, 20, 0.45);
+}
+
+.on-brand .cta-diagonal::before {
+  background: var(--band);
+}
+
+.on-brand .cta-diagonal:hover,
+.on-brand .cta-diagonal:focus-visible {
+  color: #ffffff;
+}
+
+/* the email field: a white rule and white type, not the black one that
+   belongs on paper */
+.on-brand input {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+}
+
+.on-brand input::placeholder {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.on-brand .mail-highlight {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.on-brand .mail-highlight:hover,
+.on-brand .mail-highlight:focus-visible {
+  background: #ffffff;
+  color: var(--band);
+}
+
+/* ------------------------------------------------------------------ *
+ * Pull cord — the rope in the Work hero
+ *
+ * Everything that moves is written straight to the <path> and the <g> by the
+ * simulation, so the only job here is how it looks and how it takes a grab.
+ * ------------------------------------------------------------------ */
+.pull-cord {
+  overflow: visible;
+  touch-action: none; /* a drag on the ball must not scroll the page */
+}
+
+.pull-cord__knob {
+  cursor: grab;
+  outline: none;
+}
+
+.pull-cord__knob:active {
+  cursor: grabbing;
+}
+
+/* an invisible, generous target around the ball: the ball itself is small,
+   and a 15px circle is a mean thing to ask a pointer to find */
+.pull-cord__grip {
+  fill: transparent;
+}
+
+.pull-cord__ball {
+  filter: drop-shadow(0 6px 14px rgba(245, 51, 59, 0.45));
+  transition: filter 200ms ease;
+}
+
+.pull-cord__knob:focus-visible .pull-cord__ball,
+.pull-cord.is-armed .pull-cord__ball {
+  filter: drop-shadow(0 0 0 3px rgba(245, 51, 59, 0.35))
+    drop-shadow(0 8px 22px rgba(245, 51, 59, 0.65));
+}
+
+/* past the line: the rope tightens up and the ball says so */
+.pull-cord.is-armed .pull-cord__rope {
+  stroke-width: 3.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pull-cord__ball {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * The closing CTA — staged, not simply revealed
+ *
+ * The block never moves in the document: the centred opening is a transform
+ * measured at run time (see SummitCta), so nothing below it shifts while the
+ * sequence plays and the whole thing costs one composited layer.
+ * ------------------------------------------------------------------ */
+.summit {
+  position: relative;
+}
+
+/* No transition in the opening state, on purpose. The offset is measured on
+   the client, so it lands one frame after mount — with a transition here that
+   first change animates too, and the block is seen sliding left-to-centre
+   before it has said anything. It snaps to centre (while still invisible) and
+   only the journey back to its real position is animated. */
+.summit__block {
+  transform: translate(var(--cta-dx, 0px), var(--cta-dy, 0px))
+    scale(var(--cta-scale, 1));
+  transform-origin: left center;
+}
+
+.summit.is-settled .summit__block {
+  transform: none;
+  transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 1 — the headline arrives on its own */
+.summit__head {
+  opacity: 0;
+  transform: translateY(26px) scale(0.97);
+  transition:
+    opacity 700ms ease,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.summit.is-head .summit__head {
+  opacity: 1;
+  transform: none;
+}
+
+/* 2 — the question mark writes itself */
+/* sized so the drawn hook matches the cap height of the type beside it —
+   the box carries the point as well, hence the overhang below the baseline */
+.summit__mark {
+  display: inline-block;
+  width: 0.52em;
+  height: 1.12em;
+  margin-left: 0.04em;
+  vertical-align: -0.26em;
+}
+
+.summit__mark svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+  overflow: visible;
+}
+
+.summit__hook {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.summit.is-mark .summit__hook {
+  animation: summit-ink 1050ms cubic-bezier(0.45, 0, 0.25, 1) 100ms both;
+}
+
+@keyframes summit-ink {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* the rider: out of the point, up the stem, over the top — the stroke is
+   laid down behind it. Its path is the hook with a lead-in from the point. */
+/* the lead-in out of the point is short on purpose: any longer and there is
+   a beat where the mark reads as a colon, two dots and no stroke yet */
+.summit__rider {
+  offset-path: path('M 23 68 L 23 60 C 23 40, 39 38, 39 24 C 39 6, 7 6, 7 24');
+  offset-distance: 0%;
+  offset-rotate: 0deg;
+  opacity: 0;
+}
+
+.summit.is-mark .summit__rider {
+  animation: summit-ride 1150ms cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+
+@keyframes summit-ride {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  88% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* the point stays where the rider set off from */
+.summit__point {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.summit.is-mark .summit__point {
+  animation: summit-point 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes summit-point {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 3 — the block settles left and the eyebrow comes with it */
+.summit__eyebrow {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 600ms ease 200ms,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1) 200ms;
+}
+
+.summit.is-settled .summit__eyebrow {
+  opacity: 1;
+  transform: none;
+}
+
+/* 4 — the field, then the button out from behind its right edge.
+   NotifyForm renders exactly one field and one button in that order, which
+   is what these positional selectors lean on. */
+.cta-form form > *:first-child {
+  position: relative;
+  z-index: 2;
+  background: var(--paper);
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 520ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.summit.is-field .cta-form form > *:first-child {
+  opacity: 1;
+  transform: none;
+}
+
+.cta-form form > *:last-child {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateX(-42%) scale(0.96);
+  transition:
+    opacity 420ms ease,
+    transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.summit.is-button .cta-form form > *:last-child {
+  opacity: 1;
+  transform: none;
+}
+
+/* and it holds a glow, so the eye ends on the thing to press */
+.summit.is-button .cta-form form > *:last-child {
+  animation: summit-glow 2.8s ease-in-out 900ms infinite;
+}
+
+@keyframes summit-glow {
+  0%,
+  100% {
+    box-shadow: 0 10px 30px -8px rgba(245, 51, 59, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 10px 30px -8px rgba(245, 51, 59, 0.7),
+      0 0 0 6px rgba(245, 51, 59, 0.16),
+      0 0 26px 4px rgba(245, 51, 59, 0.45);
+  }
+}
+
+/* the photograph comes up with the button it is pointing at */
+.summit__plate {
+  opacity: 0;
+  transition: opacity 1100ms ease;
+}
+
+.summit.is-button .summit__plate {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summit__block,
+  .summit__head,
+  .summit__eyebrow,
+  .cta-form form > *:first-child,
+  .cta-form form > *:last-child,
+  .summit__plate {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+
+  .summit__hook,
+  .summit__point {
+    animation: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .summit__rider {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Our coverage — the map runs edge to edge, the copy pops out of it
+ *
+ * The plate starts tucked under the map at the bottom-right corner and rises
+ * out of it once the block has arrived. Only from lg up, where it is an
+ * overlay; stacked it is an ordinary block below the map with nothing to pop
+ * out of.
+ * ------------------------------------------------------------------ */
+.coverage__map {
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 1024px) {
+  .coverage__copy {
+    opacity: 0;
+    transform: translate(38px, 26px) scale(0.94);
+    transform-origin: 100% 100%;
+    transition:
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1) 120ms,
+      opacity 520ms ease 200ms;
+  }
+
+  .coverage.is-out .coverage__copy {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .coverage__copy {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * How we work — the four step marks light in order, 01 → 04
+ *
+ * Everything is driven off --i (the step's index, set inline) so one rule
+ * covers all four: the charge arrives at 01 first and reaches 04 about a
+ * second later, and after the run each mark keeps a slow ember so the row
+ * never goes fully dead.
+ * ------------------------------------------------------------------ */
+.step-icon {
+  display: block;
+  overflow: visible;
+}
+
+.step-icon__pool {
+  opacity: 0;
+}
+
+/* Each row is armed by its own scroll position, so there is no page-level
+   cascade any more: --slot is simply zero, kept as a hook so the pieces
+   inside a row can still be ordered against each other. */
+[data-step] {
+  --slot: 0ms;
+}
+
+[data-step].is-lit .step-icon__pool {
+  animation:
+    step-pool 900ms ease-out var(--slot) both,
+    step-pool-idle 4.8s ease-in-out calc(var(--slot) + 1.4s) infinite;
+}
+
+[data-step].is-lit .step-icon__art {
+  animation: step-charge 1100ms cubic-bezier(0.22, 1, 0.36, 1) var(--slot) both;
+}
+
+[data-step].is-lit .step-num {
+  animation: step-num 1100ms ease-out var(--slot) both;
+}
+
+/* the copy only exists once its own mark is alive */
+.step-copy {
+  opacity: 0;
+}
+
+[data-step].is-lit .step-copy {
+  animation: step-copy 620ms cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--slot) + 300ms) both;
+}
+
+[data-step].is-lit .step-copy--late {
+  animation-delay: calc(var(--slot) + 440ms);
+}
+
+/* the mark itself drifts in from the side it will sit opposite */
+.step-row__icon {
+  opacity: 0;
+  transform: translateY(26px) scale(0.94);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.step-row.is-lit .step-row__icon {
+  opacity: 1;
+  transform: none;
+}
+
+/* the number is the loudest thing in the row, so it gets the most room */
+.step-row .step-num {
+  opacity: 0.9;
+}
+
+@keyframes step-copy {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* ---- the four marks, each doing the thing its step describes ---- */
+/* 01 — the glass sweeps across the readings */
+[data-step].is-lit .step-icon__lens {
+  animation: icon-scan 5.6s ease-in-out calc(var(--slot) + 800ms) infinite;
+}
+
+.step-icon__lens {
+  transform-box: view-box;
+  transform-origin: 68px 52px;
+}
+
+@keyframes icon-scan {
+  0%,
+  100% {
+    transform: rotate(0deg) translate(0, 0);
+  }
+  28% {
+    transform: rotate(-11deg) translate(-3px, 1px);
+  }
+  62% {
+    transform: rotate(9deg) translate(4px, -1px);
+  }
+}
+
+/* 02 — the stylus writes the curve, then lifts and starts over. The pen
+   offsets are the same bezier the curve uses, sampled at quarters, measured
+   from the tip's resting point at (57,52). */
+.step-icon__pen,
+.step-icon__curve,
+.step-icon__endpoint {
+  transform-box: view-box;
+  transform-origin: center;
+}
+
+.step-icon__curve {
+  stroke-dasharray: 84;
+  stroke-dashoffset: 84;
+}
+
+[data-step].is-lit .step-icon__curve {
+  animation: icon-ink 5.6s ease-in-out calc(var(--slot) + 800ms) infinite;
+}
+
+[data-step].is-lit .step-icon__pen {
+  animation: icon-write 5.6s ease-in-out calc(var(--slot) + 800ms) infinite;
+}
+
+[data-step].is-lit .step-icon__endpoint {
+  animation: icon-endpoint 5.6s ease-in-out calc(var(--slot) + 800ms) infinite;
+}
+
+@keyframes icon-ink {
+  0% {
+    stroke-dashoffset: 84;
+    opacity: 1;
+  }
+  55%,
+  84% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  95%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes icon-write {
+  0% {
+    transform: translate(-32.5px, -10.5px);
+  }
+  14% {
+    transform: translate(-23.7px, -19.3px);
+  }
+  28% {
+    transform: translate(-11.3px, -20.5px);
+  }
+  42% {
+    transform: translate(1.5px, -21.7px);
+  }
+  55%,
+  84% {
+    transform: translate(11.5px, -30.5px);
+  }
+  92% {
+    transform: translate(14px, -38px);
+    opacity: 0;
+  }
+  93% {
+    transform: translate(-32.5px, -18px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-32.5px, -10.5px);
+    opacity: 1;
+  }
+}
+
+/* the end handle only lands when the stroke reaches it */
+@keyframes icon-endpoint {
+  0%,
+  48% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  58%,
+  88% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+/* 03 — the red block comes down the guide and seats itself between the two
+   black courses, with a small squash on contact */
+.step-icon__drop {
+  transform-box: view-box;
+  transform-origin: 48px 44px;
+}
+
+[data-step].is-lit .step-icon__drop {
+  animation: icon-seat 4.6s cubic-bezier(0.4, 0, 0.2, 1)
+    calc(var(--slot) + 800ms) infinite;
+}
+
+@keyframes icon-seat {
+  0% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  38% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  44% {
+    transform: translateY(1px) scale(1.05, 0.92);
+  }
+  50%,
+  86% {
+    transform: none;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+}
+
+/* 04 — lift-off: the craft rises off the pad, the burn stretches and the
+   exhaust rolls out across the deck */
+.step-icon__craft,
+.step-icon__flame,
+.step-icon__smoke {
+  transform-box: view-box;
+}
+
+.step-icon__craft {
+  transform-origin: 48px 56px;
+}
+
+.step-icon__flame {
+  transform-origin: 49px 56px;
+}
+
+.step-icon__smoke {
+  transform-origin: 48px 74px;
+  opacity: 0;
+}
+
+[data-step].is-lit .step-icon__craft {
+  animation: icon-liftoff 7s cubic-bezier(0.4, 0, 0.2, 1)
+    calc(var(--slot) + 800ms) infinite;
+}
+
+[data-step].is-lit .step-icon__flame {
+  animation: icon-burn 220ms steps(2, end) calc(var(--slot) + 800ms) infinite;
+}
+
+[data-step].is-lit .step-icon__smoke {
+  animation: icon-exhaust 7s ease-out calc(var(--slot) + 800ms) infinite;
+}
+
+/* most of the cycle is spent on the pad — an empty pad is the one frame this
+   mark must not be caught in */
+@keyframes icon-liftoff {
+  0%,
+  34% {
+    transform: none;
+    opacity: 1;
+  }
+  39% {
+    transform: translateY(2px) scaleY(0.97);
+  }
+  58% {
+    transform: translateY(-30px);
+    opacity: 1;
+  }
+  64% {
+    transform: translateY(-52px);
+    opacity: 0;
+  }
+  66% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  74%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes icon-burn {
+  0% {
+    transform: scaleY(0.8) scaleX(1.05);
+  }
+  100% {
+    transform: scaleY(1.25) scaleX(0.9);
+  }
+}
+
+@keyframes icon-exhaust {
+  0%,
+  36% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  48% {
+    opacity: 0.9;
+    transform: scale(1.15);
+  }
+  66% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* ---- the dotted spine down the middle of the section ---- */
+/* stacked, the copy sits directly under its mark and the spine would run
+   straight through the type, so below the two-column breakpoint the route is
+   simply not drawn */
+.step-trail {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+@media (min-width: 640px) {
+  .step-trail {
+    display: block;
+  }
+}
+
+/* a segment is walked, not faded: it is held back by a long dash offset and
+   pulled to zero when the row below it arrives */
+.step-trail__seg {
+  opacity: 0;
+  stroke-dashoffset: 320;
+  transition:
+    opacity 500ms ease,
+    stroke-dashoffset 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.step-trail__seg.is-on {
+  opacity: 0.9;
+  stroke-dashoffset: 0;
+}
+
+/* the mark itself: rises a touch as the glow hits, then settles */
+@keyframes step-charge {
+  0% {
+    opacity: 0.55;
+    transform: translateY(6px) scale(0.96);
+    filter: none;
+  }
+  45% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.03);
+    filter: drop-shadow(0 0 10px rgba(245, 51, 59, 0.75))
+      drop-shadow(0 0 22px rgba(245, 51, 59, 0.4));
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: drop-shadow(0 6px 12px rgba(16, 16, 20, 0.18));
+  }
+}
+
+@keyframes step-pool {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 0.55;
+    transform: none;
+  }
+}
+
+/* the ember it holds afterwards */
+@keyframes step-pool-idle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+@keyframes step-num {
+  0% {
+    opacity: 0.35;
+    text-shadow: none;
+  }
+  45% {
+    opacity: 1;
+    text-shadow:
+      0 0 10px rgba(245, 51, 59, 0.65),
+      0 0 24px rgba(245, 51, 59, 0.35);
+  }
+  100% {
+    opacity: 1;
+    text-shadow: none;
+  }
+}
+
+.step-icon__pool,
+.step-icon__art {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-step].is-lit .step-icon__pool,
+  [data-step].is-lit .step-icon__art,
+  [data-step].is-lit .step-num,
+  [data-step].is-lit .step-copy,
+  [data-step].is-lit .step-icon__lens,
+  [data-step].is-lit .step-icon__curve,
+  [data-step].is-lit .step-icon__pen,
+  [data-step].is-lit .step-icon__endpoint,
+  [data-step].is-lit .step-icon__drop,
+  [data-step].is-lit .step-icon__craft,
+  [data-step].is-lit .step-icon__flame,
+  [data-step].is-lit .step-icon__smoke {
+    animation: none;
+  }
+
+  /* the spine and the marks arrive with no travel at all */
+  .step-trail__seg,
+  .step-row__icon {
+    transition: none;
+  }
+
+  .step-row__icon {
+    opacity: 1;
+    transform: none;
+  }
+
+  .step-trail__seg {
+    stroke-dashoffset: 0;
+  }
+
+  .step-icon__pool {
+    opacity: 0.5;
+  }
+
+  /* nothing animates, so everything is simply in its finished state */
+  .step-copy,
+  .step-trail__seg {
+    opacity: 1;
+  }
+
+  .step-icon__curve {
+    stroke-dashoffset: 0;
+  }
+
+  .step-icon__smoke {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Reach map — Natural Earth world map on the About page.
+ * Everything that moves is opacity, transform or stroke/fill colour, so the
+ * reveal and the hover response both stay cheap.
+ * ------------------------------------------------------------------ */
+.reach-map {
+  overflow: visible;
+}
+
+/* borders are drawn in ink rather than paper: the grey fill is pale enough
+   that paper-coloured seams left neighbouring countries reading as one mass */
+.reach-country {
+  fill: rgba(16, 16, 20, 0.07);
+  stroke: rgba(16, 16, 20, 0.28);
+  stroke-width: 0.45;
+  stroke-linejoin: round;
+  outline: none;
+  transition:
+    fill 240ms ease,
+    opacity 240ms ease;
+}
+
+/* everywhere we don't work stays grey, on hover too — only the darkness
+   changes, so the map never competes with the US for attention */
+.reach-country:hover,
+.reach-country:focus-visible {
+  fill: rgba(16, 16, 20, 0.2);
+}
+
+.reach-country.is-us,
+.reach-country.is-india {
+  fill: var(--brand);
+  stroke: rgba(16, 16, 20, 0.5);
+  stroke-width: 0.6;
+}
+
+.reach-country.is-us:hover,
+.reach-country.is-us:focus-visible,
+.reach-country.is-india:hover,
+.reach-country.is-india:focus-visible {
+  fill: var(--brand-strong);
+  /* both carry a permanent callout, so there is nothing to point at for a
+     name — the cursor shouldn't promise one */
+  cursor: default;
+}
+
+/* reveal: the world fades up, the US arrives a beat later */
+/* the callout groups are NOT hidden here — every child of one runs its own
+   `both`-filled animation, so they start invisible on their own, and a group
+   opacity would win over .is-dim's transition and freeze the dimming */
+.reach-map--armed .reach-countries,
+.reach-map--armed .reach-halo {
+  opacity: 0;
+}
+
+.reach-map--in .reach-countries {
+  animation: reach-fade 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reach-map--in .reach-halo {
+  animation: reach-fade 900ms cubic-bezier(0.22, 1, 0.36, 1) 420ms both;
+}
+
+.reach-map--armed .reach-country.is-us,
+.reach-map--armed .reach-country.is-india {
+  fill: rgba(16, 16, 20, 0.07);
+}
+
+.reach-map--in .reach-country.is-us {
+  animation: reach-usa 900ms cubic-bezier(0.22, 1, 0.36, 1) 360ms both;
+}
+
+/* India colours a beat after the US, so the eye is led left-to-right into
+   the route line rather than seeing both light up at once */
+.reach-map--in .reach-country.is-india {
+  animation: reach-usa 900ms cubic-bezier(0.22, 1, 0.36, 1) 560ms both;
+}
+
+@keyframes reach-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* the US bleeds from grey into brand red, then settles */
+@keyframes reach-usa {
+  0% {
+    fill: rgba(16, 16, 20, 0.07);
+  }
+  55% {
+    fill: var(--brand-2);
+  }
+  100% {
+    fill: var(--brand);
+  }
+}
+
+/* ---- the corridor: US ↔ India ----
+   Three strokes on the same geometry: a blurred bloom, the hard line, and a
+   short white charge running the length of it on a loop. The dasharray is a
+   flat 900 because the route is ~470 long — one number covers it whichever
+   way the pins move. */
+.reach-map--armed .reach-route {
+  opacity: 0;
+}
+
+.reach-map--in .reach-route {
+  animation: reach-fade 600ms cubic-bezier(0.22, 1, 0.36, 1) 900ms both;
+}
+
+.reach-route__line,
+.reach-route__glow {
+  stroke-dasharray: 900;
+}
+
+.reach-map--in .reach-route__line {
+  animation: reach-route-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 980ms both;
+}
+
+/* the shared reach-draw offsets by 200, which is shorter than this route —
+   it would start half-drawn. This one clears the whole 900 dash. */
+@keyframes reach-route-draw {
+  from {
+    stroke-dashoffset: 900;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.reach-route__glow {
+  opacity: 0.45;
+  filter: blur(3px);
+}
+
+.reach-map--in .reach-route__glow {
+  animation: reach-route-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 980ms both;
+}
+
+/* the charge only starts once the line it runs on exists. The offset runs
+   positive → negative so the dash enters at the US end and leaves past
+   India; the route is ~536 long, so -560 clears it. */
+.reach-route__pulse {
+  stroke-dasharray: 16 900;
+  stroke-dashoffset: 16;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px var(--brand));
+}
+
+.reach-map--in .reach-route__pulse {
+  animation: reach-charge 3.6s linear 2.4s infinite;
+}
+
+@keyframes reach-charge {
+  0% {
+    stroke-dashoffset: 16;
+    opacity: 0;
+  }
+  8%,
+  82% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -560;
+    opacity: 0;
+  }
+}
+
+/* ---- the callout: line draws itself, then the wordmark rises ---- */
+.reach-pin {
+  transition: opacity 320ms ease;
+}
+
+.reach-pin.is-dim {
+  opacity: 0.28;
+}
+
+.reach-map--in .reach-lead {
+  stroke-dasharray: 200;
+  animation: reach-draw 720ms cubic-bezier(0.65, 0, 0.35, 1) 620ms both;
+}
+
+@keyframes reach-draw {
+  from {
+    stroke-dashoffset: 200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.reach-pip,
+.reach-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.reach-map--in .reach-pip {
+  animation: reach-pop 520ms cubic-bezier(0.22, 1, 0.36, 1) 520ms both;
+}
+
+@keyframes reach-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* a slow ping off the pin, so the US callout always has a pulse of life */
+.reach-map--in .reach-ring {
+  animation: reach-ping 3.2s cubic-bezier(0.16, 1, 0.3, 1) 1s infinite;
+}
+
+@keyframes reach-ping {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.reach-title,
+.reach-sub {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+.reach-title {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.reach-sub {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.reach-map--in .reach-title {
+  animation: reach-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) 880ms both;
+}
+
+.reach-map--in .reach-sub {
+  animation: reach-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) 1000ms both;
+}
+
+/* the India callout lands after the route has finished crossing to it */
+.reach-map--in .reach-pin--in .reach-lead {
+  animation-delay: 2.15s;
+}
+
+.reach-map--in .reach-pin--in .reach-pip {
+  animation-delay: 2.05s;
+}
+
+.reach-map--in .reach-pin--in .reach-ring {
+  animation-delay: 2.5s;
+}
+
+.reach-map--in .reach-pin--in .reach-title {
+  animation-delay: 2.4s;
+}
+
+.reach-map--in .reach-pin--in .reach-sub {
+  animation-delay: 2.52s;
+}
+
+@keyframes reach-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- hovered country label: bare type, no card ---- */
+/* the outer node is moved imperatively to the pointer (no transition, so it
+   never lags the cursor); the inner node owns the offset and the fade */
+.reach-tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.reach-tip__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, calc(-100% - 16px));
+  transition:
+    opacity 180ms ease,
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* the map underneath is pale grey, so a soft paper halo is all the
+     separation the type needs — no box */
+  text-shadow:
+    0 0 6px var(--paper),
+    0 0 12px var(--paper),
+    0 0 18px var(--paper);
+}
+
+.reach-tip.is-on .reach-tip__inner {
+  opacity: 1;
+  transform: translate(-50%, calc(-100% - 10px));
+}
+
+.reach-tip__name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.reach-tip__note {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reach-map--armed .reach-countries,
+  .reach-map--armed .reach-halo,
+  .reach-map--armed .reach-route {
+    opacity: 1;
+  }
+
+  .reach-map--in .reach-countries,
+  .reach-map--in .reach-halo,
+  .reach-map--in .reach-country.is-us,
+  .reach-map--in .reach-country.is-india,
+  .reach-map--in .reach-lead,
+  .reach-map--in .reach-pip,
+  .reach-map--in .reach-ring,
+  .reach-map--in .reach-title,
+  .reach-map--in .reach-sub,
+  .reach-map--in .reach-route,
+  .reach-map--in .reach-route__line,
+  .reach-map--in .reach-route__glow,
+  .reach-map--in .reach-route__pulse {
+    animation: none;
+  }
+
+  .reach-map--armed .reach-country.is-us,
+  .reach-map--armed .reach-country.is-india {
+    fill: var(--brand);
+  }
+
+  /* no charge running the corridor, and the line is simply there */
+  .reach-route__line,
+  .reach-route__glow {
+    stroke-dasharray: none;
+  }
+
+  .reach-route__pulse {
+    display: none;
+  }
+
+  .reach-tip__inner {
+    transition: opacity 160ms ease;
+    transform: translate(-50%, calc(-100% - 10px));
   }
 }
 

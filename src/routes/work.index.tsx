@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -6,6 +6,7 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { SiteHeader } from '#/components/site/SiteHeader'
 import { SiteFooter } from '#/components/site/SiteFooter'
 import { CONCEPT_PREVIEWS } from '#/components/site/ConceptPreviews'
+import { PullCord } from '#/components/site/PullCord'
 import { CONCEPTS } from '#/lib/concepts'
 import { seo } from '#/lib/seo'
 
@@ -30,6 +31,9 @@ export const Route = createFileRoute('/work/')({
 
 function Work() {
   const root = useRef<HTMLDivElement>(null)
+  // the cord in the hero flips the whole page over to brand red and back
+  const [pulled, setPulled] = useState(false)
+  const toggle = useCallback(() => setPulled((cur) => !cur), [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -65,13 +69,22 @@ function Work() {
   return (
     <div
       ref={root}
-      className="relative min-h-screen bg-[var(--paper)] text-[var(--ink)]"
+      className={`relative min-h-screen text-[var(--ink)] ${
+        pulled ? 'on-brand' : ''
+      }`}
     >
+      {/* the page's colour, cross-faded rather than switched */}
+      <div
+        aria-hidden="true"
+        className="page-wash"
+        data-tone={pulled ? 'brand' : 'paper'}
+      />
+
       <SiteHeader />
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden px-6 pb-16 pt-32 sm:px-10 lg:px-20 lg:pb-20 lg:pt-44">
-        <div className="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <section className="relative overflow-hidden px-6 pb-14 pt-28 sm:px-10 sm:pb-16 sm:pt-32 lg:px-20 lg:pb-20 lg:pt-44">
+        <div className="relative flex flex-col gap-8 sm:gap-10 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <p
               data-hero
@@ -97,10 +110,17 @@ function Work() {
             </p>
           </div>
 
+          {/* the cord hangs from the top of the hero, clear of the copy */}
+          <PullCord
+            pulled={pulled}
+            onToggle={toggle}
+            className="pointer-events-auto absolute -top-24 right-2 hidden lg:block"
+          />
+
           <div data-hero className="shrink-0">
             <Link
               to="/contact"
-              className="group inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--paper)] px-5 py-3 text-sm font-semibold text-[var(--ink)] no-underline transition-colors hover:border-[var(--brand)]/50 hover:text-[var(--brand)]"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--paper)] px-5 py-3.5 text-sm font-semibold text-[var(--ink)] no-underline transition-colors hover:border-[var(--brand)]/50 hover:text-[var(--brand)] sm:w-auto sm:py-3"
             >
               Get notified when we launch
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -110,7 +130,7 @@ function Work() {
       </section>
 
       {/* ================= CONCEPT GRID ================= */}
-      <section className="px-6 pb-24 sm:px-10 lg:px-20 lg:pb-32">
+      <section className="px-6 pb-20 sm:px-10 sm:pb-24 lg:px-20 lg:pb-32">
         <div className="card-grid">
           {CONCEPTS.map((c, i) => {
             const Preview = CONCEPT_PREVIEWS[c.slug]

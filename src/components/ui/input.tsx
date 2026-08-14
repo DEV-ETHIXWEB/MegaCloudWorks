@@ -8,7 +8,9 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
       type={type}
       data-slot="input"
       className={cn(
-        'flex h-11 w-full min-w-0 rounded-full border border-[var(--line-strong)] bg-[var(--paper)] px-5 py-1 text-sm text-[var(--ink)] shadow-sm transition-[color,box-shadow] outline-none',
+        // 16px on mobile keeps iOS Safari from zooming the viewport on focus;
+        // the 14px design size comes back from sm up
+        'flex h-11 w-full min-w-0 rounded-full border border-[var(--line-strong)] bg-[var(--paper)] px-5 py-1 text-base sm:text-sm text-[var(--ink)] shadow-sm transition-[color,box-shadow] outline-none',
         'placeholder:text-[var(--ink-faint)] selection:bg-[var(--brand)] selection:text-white',
         'focus-visible:border-[var(--brand)] focus-visible:ring-[3px] focus-visible:ring-[var(--brand-soft)]',
         'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',

@@ -222,7 +222,7 @@ function ConceptDetail() {
                       onClick={() => setActiveScreen(i)}
                       aria-label={`Show ${concept.screens[i]}`}
                       aria-current={activeScreen === i}
-                      className="group/dot flex h-6 items-center px-1"
+                      className="group/dot flex h-11 min-w-11 items-center justify-center px-2"
                     >
                       <span
                         className="block h-1.5 rounded-full transition-all duration-300"
@@ -428,7 +428,7 @@ function ConceptDetail() {
             {concept.palette.map((c) => (
               <div
                 key={c.hex}
-                className="flex items-center gap-4 border-b border-[var(--line)] px-6 py-4 last:border-b-0"
+                className="flex items-center gap-4 border-b border-[var(--line)] px-5 py-4 last:border-b-0 sm:px-6"
               >
                 <span
                   className="size-9 shrink-0 rounded-lg"
@@ -503,7 +503,7 @@ function ConceptDetail() {
         <div className="mx-auto max-w-[1400px]">
           <div
             data-reveal
-            className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-8 sm:rounded-3xl sm:p-12"
+            className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-6 sm:rounded-3xl sm:p-12"
           >
             <div
               aria-hidden="true"

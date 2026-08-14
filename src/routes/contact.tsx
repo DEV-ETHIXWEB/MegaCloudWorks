@@ -65,7 +65,7 @@ function Contact() {
     >
       <SiteHeader />
 
-      <section className="relative px-6 pb-24 pt-32 sm:px-10 lg:px-20 lg:pb-32 lg:pt-40">
+      <section className="relative px-6 pb-20 pt-28 sm:px-10 sm:pb-24 sm:pt-32 lg:px-20 lg:pb-32 lg:pt-40">
         {/* ---- centered heading ---- */}
         <div className="mx-auto max-w-xl text-center">
           <h1
@@ -86,17 +86,23 @@ function Contact() {
         {/* ---- unified contact card ---- */}
         <div
           data-hero
-          className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] shadow-[0_20px_60px_-24px_rgba(16,16,20,0.15)] sm:mt-16"
+          className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--paper)] shadow-[0_20px_60px_-24px_rgba(16,16,20,0.15)] sm:mt-16"
         >
           <div className="grid lg:grid-cols-[0.85fr_1.15fr] lg:items-stretch">
             {/* ---- left: contact info over photo ---- */}
-            <div className="relative flex min-h-[36rem] flex-col overflow-hidden p-8 sm:p-10">
+            <div className="relative flex min-h-[22rem] flex-col overflow-hidden p-6 sm:min-h-[30rem] sm:p-10 lg:min-h-[36rem]">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 bg-[image:url('/contact-background.png')] bg-cover bg-[position:85%_100%] bg-no-repeat"
               />
+              {/* on mobile the photo sits directly under the copy, so a soft
+                  paper wash keeps the text legible over it */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,var(--paper)_0%,rgba(255,255,255,0.72)_55%,rgba(255,255,255,0)_100%)] lg:hidden"
+              />
 
-              <div className="relative max-w-[16rem]">
+              <div className="relative max-w-[18rem] sm:max-w-[16rem]">
                 <h2 className="font-display text-xl font-extrabold tracking-tight text-[var(--ink)] sm:text-2xl">
                   Contact information
                 </h2>
@@ -139,7 +145,7 @@ function Contact() {
             </div>
 
             {/* ---- right: form ---- */}
-            <div className="flex border-t border-[var(--line)] p-8 sm:p-10 lg:border-l lg:border-t-0">
+            <div className="flex border-t border-[var(--line)] p-6 sm:p-10 lg:border-l lg:border-t-0">
               <ContactForm className="flex flex-1 flex-col" />
             </div>
           </div>

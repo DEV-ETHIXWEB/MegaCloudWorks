@@ -88,11 +88,22 @@ function Understand({ id }: { id: string }) {
       <path d="M22 66 L48 78 L48 82 L22 70 Z" fill={FACE.left} />
       <path d="M74 66 L48 78 L48 82 L74 70 Z" fill={FACE.right} />
 
-      {/* three rows of readings across the top plate */}
-      <g className="step-icon__rows" stroke="var(--icon-accent)" strokeLinecap="round">
-        <path d="M36 62 L52 70" strokeWidth="2.4" opacity="0.9" />
-        <path d="M44 58 L58 65" strokeWidth="2.4" opacity="0.55" />
-        <path d="M52 54 L62 59" strokeWidth="2.4" opacity="0.3" />
+      {/* Three rows of readings across the top plate. The plate is the diamond
+          (48,54) (74,66) (48,78) (22,66) — in the isometric axes A=(26,12) and
+          B=(-26,12) about its centre (48,66) it is the square |s| ≤ 0.5 and
+          |u| ≤ 0.5, so a point centre + sA + uB is on the surface only while
+          both hold. The rows run along A and step along B; every end below
+          sits well inside, with room left over for the round cap. The third
+          row used to be plotted at u = -0.58 — off the far edge — and hung in
+          mid-air beside the slab. */}
+      <g
+        className="step-icon__rows"
+        stroke="var(--icon-accent)"
+        strokeLinecap="round"
+      >
+        <path d="M37.9 64.9 L50.3 70.7" strokeWidth="2.4" opacity="0.9" />
+        <path d="M42.3 63.4 L53.7 68.6" strokeWidth="2.4" opacity="0.55" />
+        <path d="M47.7 62.3 L56.1 66.1" strokeWidth="2.4" opacity="0.3" />
       </g>
 
       {/* the glass */}
@@ -178,7 +189,13 @@ function Design({ id }: { id: string }) {
         stroke="var(--icon-accent)"
         strokeWidth="2.4"
       />
-      <circle className="step-icon__endpoint" cx="70" cy="20" r="4" fill="var(--icon-accent)" />
+      <circle
+        className="step-icon__endpoint"
+        cx="70"
+        cy="20"
+        r="4"
+        fill="var(--icon-accent)"
+      />
 
       {/* stylus, tip at (57,52) — every offset in the write keyframes is
           measured from there */}
@@ -234,7 +251,6 @@ function Build({ id }: { id: string }) {
         <path d={cap.left} fill="var(--icon-accent-mid)" />
         <path d={cap.right} fill="var(--icon-accent-deep)" />
       </g>
-
     </>
   )
 }
@@ -263,17 +279,17 @@ function Ship({ id }: { id: string }) {
         <path d="M56 44 L64 52 L56 52 Z" fill="var(--icon-accent-mid)" />
 
         {/* body: lit left face, dark right face, so it sits on the same grid */}
-        <path
-          d="M49 8 C 58 18, 58 38, 56 52 L49 56 Z"
-          fill={FACE.right}
-        />
+        <path d="M49 8 C 58 18, 58 38, 56 52 L49 56 Z" fill={FACE.right} />
         <path
           d="M49 8 C 40 18, 40 38, 42 52 L49 56 Z"
           fill={`url(#${id}-top)`}
         />
 
         {/* nose and window */}
-        <path d="M49 8 C 54 14, 56 20, 56 24 L42 24 C 42 20, 44 14, 49 8 Z" fill={`url(#${id}-brand)`} />
+        <path
+          d="M49 8 C 54 14, 56 20, 56 24 L42 24 C 42 20, 44 14, 49 8 Z"
+          fill={`url(#${id}-brand)`}
+        />
         <circle cx="49" cy="34" r="5" fill={`url(#${id}-glass)`} />
 
         {/* burn */}

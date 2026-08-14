@@ -28,7 +28,13 @@ export function StepTrail({
     if (!el) return
 
     const box = el.getBoundingClientRect()
-    const icons = Array.from(el.querySelectorAll<SVGSVGElement>('.step-icon'))
+    // the wrappers, not the icons: an icon mid-reveal is translated and its
+    // client rect would put this route's ends wherever the animation had got
+    // to. The wrapper shrink-wraps the icon and never moves, so measuring it
+    // gives the position the mark actually settles at.
+    const icons = Array.from(
+      el.querySelectorAll<HTMLElement>('.step-row__mark'),
+    )
     if (icons.length < 2) return
 
     const marks = icons.map((icon) => {
@@ -78,14 +84,28 @@ export function StepTrail({
 
   useEffect(() => {
     measure()
+
+    // the display face swapping in re-wraps the copy and moves every mark
+    // below it; without this the route stays aimed at the fallback layout
+    let live = true
+    void document.fonts.ready.then(() => {
+      if (live) measure()
+    })
+
     const el = scope.current
     if (!el || typeof ResizeObserver === 'undefined') {
       window.addEventListener('resize', measure)
-      return () => window.removeEventListener('resize', measure)
+      return () => {
+        live = false
+        window.removeEventListener('resize', measure)
+      }
     }
     const ro = new ResizeObserver(measure)
     ro.observe(el)
-    return () => ro.disconnect()
+    return () => {
+      live = false
+      ro.disconnect()
+    }
   }, [measure, scope])
 
   if (!segments.length) return null

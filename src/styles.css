@@ -718,6 +718,654 @@ body {
   --icon-accent-deep: rgba(255, 255, 255, 0.6);
 }
 
+/* ------------------------------------------------------------------ *
+ * Contact — the page's own surface
+ *
+ * The layout is the dark reference's, but on the site's own paper: no
+ * token overrides, so <Input>, <Button> and everything else behave here
+ * exactly as they do on every other page.
+ * ------------------------------------------------------------------ */
+
+/* the room's light: a wide brand wash above the fold and a weaker second
+   one off to the right, so the paper is never flat white */
+.contact-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      52rem 28rem at 50% 0%,
+      rgba(245, 51, 59, 0.1),
+      transparent 68%
+    ),
+    radial-gradient(
+      34rem 24rem at 86% 22%,
+      rgba(245, 51, 59, 0.055),
+      transparent 70%
+    ),
+    radial-gradient(
+      30rem 22rem at 4% 62%,
+      rgba(16, 16, 20, 0.035),
+      transparent 72%
+    );
+}
+
+/* ---- the word the page is about ----
+   Drawn as outline only and dying out before it reaches the cards it sits
+   behind. Two copies are stacked exactly on top of each other: a faint one
+   that is always there, and a lit red one masked down to a narrow band that
+   travels across the word.
+
+   The glow is a stack of drop-shadows rather than text-shadows on purpose:
+   drop-shadow blooms from what is actually painted, and with the fill left
+   transparent that is the stroke alone — so the light comes off the outline
+   of each letter instead of off a solid glyph. */
+/* NB no `position` here: the element carries Tailwind's `absolute`, and this
+   rule is emitted after the utilities, so setting one would win and drop the
+   word back into the flow — it is already the containing block the lit copy
+   positions against. */
+.contact-word {
+  /* smaller on a phone than the raw 17vw: at full size the outline ran
+     straight through "Get in touch" instead of sitting behind it */
+  font-size: clamp(3.25rem, 13vw, 15rem);
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 26%,
+    rgba(0, 0, 0, 0.35) 70%,
+    transparent 96%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 26%,
+    rgba(0, 0, 0, 0.35) 70%,
+    transparent 96%
+  );
+}
+
+.contact-word__base,
+.contact-word__glow {
+  display: block;
+  color: transparent;
+}
+
+.contact-word__base {
+  -webkit-text-stroke: 1.5px rgba(16, 16, 20, 0.14);
+}
+
+.contact-word__glow {
+  position: absolute;
+  inset: 0;
+  -webkit-text-stroke: 1.5px rgba(245, 51, 59, 0.9);
+  /* two shadows, not three: this element repaints every frame while the band
+     moves, and the widest pass was costing the most for the least light */
+  filter: drop-shadow(0 0 2px rgba(245, 51, 59, 0.9))
+    drop-shadow(0 0 12px rgba(245, 51, 59, 0.5));
+
+  /* The band is a slice of a mask three times the width of the word, so it
+     is off the element entirely at both ends of the travel — the sweep gets
+     a rest between passes instead of looping back immediately. Animating
+     mask-position rather than a conic angle keeps this working without
+     @property, and a cone rotating about the centre of something this wide
+     and short would dwell on the two ends and skim the middle anyway. */
+  -webkit-mask-image: linear-gradient(
+    100deg,
+    transparent 40%,
+    #000 47%,
+    #000 53%,
+    transparent 60%
+  );
+  mask-image: linear-gradient(
+    100deg,
+    transparent 40%,
+    #000 47%,
+    #000 53%,
+    transparent 60%
+  );
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: contact-sweep 7s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+/* Once a pointer has moved, the band stops looping and follows it instead:
+   --sweep is the cursor's x across the window, 0 to 1, and the mask position
+   runs the opposite way because a 300%-wide mask moves its window, not its
+   band. The loop is the fallback for touch and for before the first move. */
+.contact-word.is-tracking .contact-word__glow {
+  animation: none;
+  -webkit-mask-position: calc((1 - var(--sweep, 0.5)) * 100%) 0;
+  mask-position: calc((1 - var(--sweep, 0.5)) * 100%) 0;
+  transition:
+    -webkit-mask-position 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    mask-position 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes contact-sweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+/* the whole word arrives with the first beat rather than being there before
+   the headline it sits behind */
+.contact-word {
+  opacity: 0;
+  transition: opacity 1200ms ease-out;
+}
+
+.contact-word.is-in {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-word {
+    opacity: 1;
+    transition: none;
+  }
+
+  .contact-word__glow,
+  .contact-word.is-tracking .contact-word__glow {
+    animation: none;
+    transition: none;
+    -webkit-mask-position: 50% 0;
+    mask-position: 50% 0;
+  }
+}
+
+/* ---- the surfaces: paper, hairline edge, lifted off the page ---- */
+.contact-card,
+.contact-panel {
+  background-color: var(--paper);
+  border: 1px solid var(--line);
+}
+
+.contact-card {
+  box-shadow: 0 10px 30px -20px rgba(16, 16, 20, 0.28);
+  transition:
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The panel is left slightly short of solid so the lit word sweeping past
+   behind it stays faintly readable through the form, with just enough blur
+   to keep the fields' own type crisp against whatever is moving under it. */
+.contact-panel {
+  background-color: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  box-shadow: 0 34px 80px -46px rgba(16, 16, 20, 0.42);
+}
+
+a.contact-card:hover {
+  border-color: rgba(245, 51, 59, 0.55);
+  box-shadow: 0 18px 44px -22px rgba(245, 51, 59, 0.35);
+  transform: translateY(-2px);
+}
+
+/* ---- the details card: the summit plate carries the three rows ---- */
+.contact-reach__art,
+.contact-reach__wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Anchored to the bottom so the ridge line lands on the card's foot rather
+   than being cropped through the middle of the peaks — and never quite
+   still, on the same long, low-amplitude drift the About hero uses. The
+   frame is over-scaled so the travel can never expose an edge. */
+.contact-reach__art {
+  background-image: url('/contact-background.png');
+  background-size: cover;
+  background-position: 50% 100%;
+  background-repeat: no-repeat;
+  animation: contact-drift 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes contact-drift {
+  0% {
+    transform: scale(1.05) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.11) translate3d(-1.6%, -1%, 0);
+  }
+}
+
+/* the signal smoke keeps moving with it: a slow brand haze crossing the
+   ridge, so the plate reads as weather rather than as a still */
+.contact-reach__haze {
+  position: absolute;
+  inset: -12% -18%;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background: radial-gradient(
+    38% 30% at 72% 76%,
+    rgba(245, 51, 59, 0.22) 0%,
+    rgba(245, 51, 59, 0.08) 44%,
+    rgba(245, 51, 59, 0) 74%
+  );
+  animation: contact-haze 21s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+@keyframes contact-haze {
+  0% {
+    transform: translate3d(-5%, 3%, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(7%, -6%, 0) scale(1.16);
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-reach__art,
+  .contact-reach__haze {
+    animation: none;
+  }
+
+  .contact-reach__art {
+    transform: none;
+  }
+}
+
+/* solid paper where the rows are, clearing to nothing over the ridge */
+.contact-reach__wash {
+  background: linear-gradient(
+    to bottom,
+    var(--paper) 0%,
+    rgba(255, 255, 255, 0.95) 34%,
+    rgba(255, 255, 255, 0.6) 58%,
+    rgba(255, 255, 255, 0) 82%
+  );
+}
+
+.contact-row {
+  transition: background-color 240ms ease;
+}
+
+.contact-row:hover {
+  background-color: rgba(245, 51, 59, 0.05);
+}
+
+.contact-row:hover .contact-go {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+/* the icon tile inside a card, and the arrow slot opposite it */
+.contact-tile {
+  background-color: var(--paper-2);
+  border: 1px solid var(--line);
+}
+
+.contact-go {
+  border: 1px solid var(--line-strong);
+  transition:
+    background-color 260ms ease,
+    border-color 260ms ease,
+    color 260ms ease;
+}
+
+a.contact-card:hover .contact-go {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+/* ---- form fields: set into the panel rather than sitting on it, so the
+   two read as different depths of the same white. Slightly short of solid
+   too, so the sweep behind carries across the whole panel instead of
+   showing only in the gaps between fields ---- */
+.contact-field-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  background-color: rgba(247, 247, 248, 0.72);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-field-wrap:focus-within {
+  transform: translateY(-1px);
+}
+
+.contact-input {
+  position: relative;
+  z-index: 1;
+}
+
+/* the caption rides above the value once the field has one, and sits where a
+   placeholder would when it does not */
+.contact-label {
+  position: absolute;
+  left: 1.25rem;
+  top: 1.05rem;
+  z-index: 2;
+  transform-origin: left top;
+  pointer-events: none;
+  color: var(--ink-faint);
+  font-size: 15px;
+  line-height: 1;
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 240ms ease;
+}
+
+.contact-field-wrap:focus-within .contact-label,
+.contact-field-wrap.is-filled .contact-label {
+  transform: translateY(-0.62rem) scale(0.72);
+}
+
+.contact-field-wrap:focus-within .contact-label {
+  color: var(--brand);
+}
+
+/* the message box's caption sits at the top of a tall field, so it has
+   further to travel and starts lower down the box */
+.contact-field-wrap:has(textarea) .contact-label {
+  top: 1.35rem;
+}
+
+.contact-field-wrap:has(textarea):focus-within .contact-label,
+.contact-field-wrap:has(textarea).is-filled .contact-label {
+  transform: translateY(-0.75rem) scale(0.72);
+}
+
+/* the focus mark draws in from the left rather than the border changing
+   colour all at once — the same "a line arrives" language the studio bridge
+   and the step trail are built on */
+.contact-underline {
+  position: absolute;
+  inset-inline: 0.9rem;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 420ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.contact-field-wrap:focus-within .contact-underline {
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * The lit edge — adapted from the BorderGlow pattern
+ *
+ * `--edge` is how far out towards the border the pointer is (0 centre,
+ * 1 edge) and `--bearing` is its direction from the centre. The ring is
+ * a hairline inset shadow stack; the conic mask shows only the arc the
+ * pointer is nearest, so the light appears to sit under the cursor.
+ * ------------------------------------------------------------------ */
+.contact-lit {
+  --edge: 0;
+  --bearing: 0deg;
+  position: relative;
+  isolation: isolate;
+}
+
+.contact-lit__ring {
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+
+  /* the light only starts once the pointer is past halfway out, so crossing
+     the middle of a card does not raise a glow on every side of it */
+  opacity: calc(max(var(--edge) - 0.45, 0) / 0.55);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(245, 51, 59, 0.9),
+    inset 0 0 6px 0 rgba(245, 51, 59, 0.45),
+    inset 0 0 16px 0 rgba(245, 51, 59, 0.25),
+    0 0 10px 0 rgba(245, 51, 59, 0.25),
+    0 0 26px 2px rgba(245, 51, 59, 0.14);
+
+  -webkit-mask-image: conic-gradient(
+    from calc(var(--bearing) - 55deg) at center,
+    #000 0deg,
+    rgba(0, 0, 0, 0.35) 38deg,
+    transparent 78deg,
+    transparent 282deg,
+    rgba(0, 0, 0, 0.35) 322deg,
+    #000 360deg
+  );
+  mask-image: conic-gradient(
+    from calc(var(--bearing) - 55deg) at center,
+    #000 0deg,
+    rgba(0, 0, 0, 0.35) 38deg,
+    transparent 78deg,
+    transparent 282deg,
+    rgba(0, 0, 0, 0.35) 322deg,
+    #000 360deg
+  );
+
+  transition: opacity 320ms ease-out;
+}
+
+/* both lit surfaces arrive on the entry clock */
+.contact-lit {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-lit.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* the rows inside the details card land one after another, once the card
+   they sit in has arrived */
+.contact-row-in {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--row) + 260ms),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--row) + 260ms);
+}
+
+.contact-lit.is-in .contact-row-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * What happens next — the three beats under the form
+ * ------------------------------------------------------------------ */
+.contact-next__step {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 760ms cubic-bezier(0.22, 1, 0.36, 1) var(--step),
+    transform 760ms cubic-bezier(0.22, 1, 0.36, 1) var(--step);
+}
+
+.contact-next.is-in .contact-next__step {
+  opacity: 1;
+  transform: none;
+}
+
+/* each beat is topped by a rule that draws itself out from the left */
+.contact-next__rule {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--brand), rgba(245, 51, 59, 0.12));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 900ms cubic-bezier(0.65, 0, 0.35, 1)
+    calc(var(--step) + 160ms);
+}
+
+.contact-next.is-in .contact-next__rule {
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Sent — the panel becomes the acknowledgement
+ * ------------------------------------------------------------------ */
+.contact-sent {
+  position: relative;
+  overflow: hidden;
+  animation: contact-sent-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes contact-sent-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* the red signal smoke off the summit, rising behind the mark */
+.contact-sent__plume {
+  position: absolute;
+  left: 50%;
+  bottom: -10%;
+  width: 26rem;
+  height: 26rem;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    rgba(245, 51, 59, 0.3),
+    rgba(245, 51, 59, 0.1) 55%,
+    transparent 78%
+  );
+  animation: contact-plume 3.4s cubic-bezier(0.33, 0, 0.2, 1) 120ms both;
+}
+
+@keyframes contact-plume {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(18%) scale(0.7);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.35;
+    transform: translateX(-50%) translateY(-24%) scale(1.25);
+  }
+}
+
+.contact-sent__seal {
+  color: #fff;
+  background: var(--brand);
+  box-shadow:
+    0 0 0 8px rgba(245, 51, 59, 0.12),
+    0 18px 40px -18px rgba(245, 51, 59, 0.8);
+  animation: contact-seal 640ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms both;
+}
+
+@keyframes contact-seal {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* the tick is drawn, not faded — pathLength is 100 so one offset covers it */
+.contact-sent__tick {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: contact-tick 520ms cubic-bezier(0.65, 0, 0.35, 1) 420ms both;
+}
+
+@keyframes contact-tick {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.contact-sent__line {
+  animation: contact-sent-line 620ms cubic-bezier(0.22, 1, 0.36, 1) 620ms both;
+}
+
+.contact-sent__line--late {
+  animation-delay: 780ms;
+}
+
+@keyframes contact-sent-line {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-lit,
+  .contact-lit.is-in,
+  .contact-row-in,
+  .contact-next__step {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .contact-next__rule,
+  .contact-underline {
+    transition: none;
+  }
+
+  .contact-next.is-in .contact-next__rule {
+    transform: scaleX(1);
+  }
+
+  .contact-sent,
+  .contact-sent__plume,
+  .contact-sent__seal,
+  .contact-sent__tick,
+  .contact-sent__line {
+    animation: none;
+  }
+
+  .contact-sent__tick {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a.contact-card:hover {
+    transform: none;
+  }
+}
+
 /* The primary button is brand-on-white everywhere else; on red it has to be
    the inverse or it disappears into the band (white text on a now-white
    fill). The diagonal wipe flips with it: red sweeping under white type. */
@@ -1126,14 +1774,19 @@ body {
   animation-delay: calc(var(--slot) + 440ms);
 }
 
-/* the mark rises into place on a long, soft curve — the icons carry the
-   section now, so they arrive slowly enough to be watched */
+/* The mark rises into place on one long, soft curve, and that is the only
+   movement it makes. It used to travel here *and* again inside `step-charge`
+   on the art within it — two easings of different lengths running on nested
+   elements, which is what made the arrival look loose. The charge is now
+   light only; all the motion is this one transform.
+   No scale either: a mark that changes size on the way in never looks square
+   with the route drawn between the marks until it has settled. */
 .step-row__icon {
   opacity: 0;
-  transform: translateY(34px) scale(0.92);
+  transform: translateY(28px);
   transition:
-    opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 1250ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 800ms cubic-bezier(0.33, 0, 0.2, 1),
+    transform 900ms cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .step-row.is-lit .step-row__icon {
@@ -1518,22 +2171,21 @@ body {
   stroke-dashoffset: 0;
 }
 
-/* the mark itself: rises a touch as the glow hits, then settles */
+/* the charge that runs through the mark as it lands: light only, no travel.
+   The wrapper is already carrying it up the page, and a second transform
+   here fought that one for the same pixels. */
 @keyframes step-charge {
   0% {
     opacity: 0.55;
-    transform: translateY(6px) scale(0.96);
     filter: none;
   }
   45% {
     opacity: 1;
-    transform: translateY(-2px) scale(1.03);
     filter: drop-shadow(0 0 10px rgba(245, 51, 59, 0.75))
       drop-shadow(0 0 22px rgba(245, 51, 59, 0.4));
   }
   100% {
     opacity: 1;
-    transform: none;
     filter: drop-shadow(0 6px 12px rgba(16, 16, 20, 0.18));
   }
 }

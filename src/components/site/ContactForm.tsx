@@ -2,23 +2,92 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { Button } from '#/components/ui/button'
-import { Input } from '#/components/ui/input'
 import { sendContact } from '#/server/contact'
 import { cn } from '#/lib/utils'
 
-const fieldLabel =
-  'mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-[var(--ink-faint)]'
+/**
+ * One field, with its label riding above the text once there is anything to
+ * label. A placeholder alone is not a label — it is gone the moment you type,
+ * which leaves a filled form with no visible names on any of its boxes — so
+ * the caption floats up and stays.
+ */
+function Field({
+  id,
+  label,
+  value,
+  onChange,
+  type = 'text',
+  autoComplete,
+  inputMode,
+  rows,
+}: {
+  id: string
+  label: string
+  value: string
+  onChange: (v: string) => void
+  type?: string
+  autoComplete?: string
+  inputMode?: 'email'
+  /** supplied for the one field that is a textarea */
+  rows?: number
+}) {
+  const filled = value.trim().length > 0
+  const shared =
+    'contact-input peer w-full rounded-2xl border border-[var(--line)] bg-transparent px-5 text-base text-[var(--ink)] outline-none selection:bg-[var(--brand)] selection:text-white sm:text-[15px]'
+
+  return (
+    <div className={cn('contact-field-wrap', filled && 'is-filled')}>
+      {rows ? (
+        <textarea
+          id={id}
+          rows={rows}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          required
+          placeholder=" "
+          className={cn(
+            shared,
+            'min-h-[11rem] flex-1 resize-y pb-4 pt-7 sm:min-h-[13rem]',
+          )}
+        />
+      ) : (
+        <input
+          id={id}
+          type={type}
+          inputMode={inputMode}
+          autoComplete={autoComplete}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          required
+          placeholder=" "
+          className={cn(shared, 'h-14 pb-1 pt-5')}
+        />
+      )}
+
+      <label htmlFor={id} className="contact-label">
+        {label}
+      </label>
+
+      {/* the focus mark: a red rule that draws itself in from the left along
+          the foot of the field, rather than the border simply changing colour */}
+      <span aria-hidden="true" className="contact-underline" />
+    </div>
+  )
+}
 
 export function ContactForm({ className }: { className?: string }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
+  const [sent, setSent] = useState<string | null>(null)
 
   const mutation = useMutation({
     mutationFn: () => sendContact({ data: { name, email, subject, message } }),
     onSuccess: (result) => {
+      // the panel itself becomes the acknowledgement; the toast is kept for
+      // screen readers and for anyone who has already scrolled past it
+      setSent(result.name)
       toast.success(`Thanks, ${result.name}.`, {
         description: "Your message is in, we'll reply within one business day.",
       })
@@ -43,90 +112,98 @@ export function ContactForm({ className }: { className?: string }) {
     mutation.mutate()
   }
 
+  if (sent) {
+    return (
+      <div
+        className={cn(
+          'contact-sent flex flex-col items-center justify-center px-6 py-16 text-center sm:py-20',
+          className,
+        )}
+      >
+        {/* the smoke off the summit plate, drifting up behind the mark */}
+        <span aria-hidden="true" className="contact-sent__plume" />
+
+        <span className="contact-sent__seal relative flex size-16 items-center justify-center rounded-full">
+          <svg
+            viewBox="0 0 48 48"
+            className="size-8"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              className="contact-sent__tick"
+              d="M13 24.5 L21 32.5 L35 16.5"
+              stroke="currentColor"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength={100}
+            />
+          </svg>
+        </span>
+
+        <h2 className="contact-sent__line mt-6 font-display text-2xl font-extrabold tracking-tight text-[var(--ink)]">
+          Thanks, {sent}.
+        </h2>
+        <p className="contact-sent__line contact-sent__line--late mt-2 max-w-[26rem] text-[15px] leading-relaxed text-[var(--ink-soft)]">
+          Your message is in. A person reads it and replies within one business
+          day &mdash; no autoresponder.
+        </p>
+
+        <button
+          type="button"
+          onClick={() => setSent(null)}
+          className="contact-sent__line contact-sent__line--late mt-7 text-sm font-semibold text-[var(--ink)] underline-offset-4 transition-colors hover:text-[var(--brand)]"
+        >
+          Send another message
+        </button>
+      </div>
+    )
+  }
+
   return (
     <form
       onSubmit={onSubmit}
-      className={cn('flex flex-col gap-5', className)}
+      className={cn('flex flex-col gap-3', className)}
       noValidate
     >
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label htmlFor="contact-name" className={fieldLabel}>
-            Your name
-          </label>
-          <Input
-            id="contact-name"
-            autoComplete="name"
-            placeholder="Jane Doe"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="contact-email" className={fieldLabel}>
-            Email
-          </label>
-          <Input
-            id="contact-email"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            placeholder="you@company.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-      </div>
+      <Field
+        id="contact-name"
+        label="Name"
+        value={name}
+        onChange={setName}
+        autoComplete="name"
+      />
+      <Field
+        id="contact-email"
+        label="Email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        value={email}
+        onChange={setEmail}
+      />
+      <Field
+        id="contact-subject"
+        label="Subject"
+        value={subject}
+        onChange={setSubject}
+      />
+      <Field
+        id="contact-message"
+        label="Message"
+        value={message}
+        onChange={setMessage}
+        rows={7}
+      />
 
-      <div>
-        <label htmlFor="contact-subject" className={fieldLabel}>
-          Subject
-        </label>
-        <Input
-          id="contact-subject"
-          placeholder="What's this about?"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="flex flex-1 flex-col">
-        <label htmlFor="contact-message" className={fieldLabel}>
-          About your project
-        </label>
-        <textarea
-          id="contact-message"
-          rows={6}
-          placeholder="What are you building, and where are you today?"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          required
-          className="min-h-[10rem] w-full flex-1 resize-y rounded-2xl border border-[var(--line-strong)] bg-[var(--paper)] px-5 py-3.5 text-base sm:min-h-[12rem] sm:text-sm text-[var(--ink)] shadow-sm outline-none transition-[color,box-shadow] placeholder:text-[var(--ink-faint)] selection:bg-[var(--brand)] selection:text-white focus-visible:border-[var(--brand)] focus-visible:ring-[3px] focus-visible:ring-[var(--brand-soft)]"
-        />
-      </div>
-
-      <div className="flex flex-wrap items-center gap-4">
-        <Button
-          type="submit"
-          size="lg"
-          disabled={mutation.isPending}
-          className="w-full sm:w-auto"
-        >
-          {mutation.isPending ? 'Sending…' : 'Send message'}
-        </Button>
-        <p className="text-sm text-[var(--ink-soft)]">
-          Prefer email?{' '}
-          <a
-            href="mailto:hello@megacloudworks.com"
-            className="font-semibold text-[var(--ink)] no-underline hover:text-[var(--brand)]"
-          >
-            hello@megacloudworks.com
-          </a>
-        </p>
-      </div>
+      <button
+        type="submit"
+        disabled={mutation.isPending}
+        className="cta-diagonal mt-1 inline-flex h-14 w-full items-center justify-center rounded-2xl bg-[var(--brand)] text-[15px] font-bold text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {mutation.isPending ? 'Sending…' : 'Submit'}
+      </button>
     </form>
   )
 }

@@ -320,7 +320,7 @@ function About() {
           </div>
         </div>
 
-        <SiteHeader servicesLabel="What we do" ctaLabel="Get notified" />
+        <SiteHeader ctaLabel="Get notified" />
 
         {/* ---- headline copy, floats over the photograph's left/top ---- */}
         <div className="relative z-10 px-6 pb-10 pt-28 sm:px-10 sm:pb-12 sm:pt-32 lg:px-20 lg:pb-0 lg:pt-40">
@@ -494,7 +494,10 @@ function About() {
         <div ref={steps} className="relative z-10 mt-20 sm:mt-24">
           <StepTrail scope={steps} active={reached} />
 
-          <ol className="relative z-10 flex list-none flex-col gap-24 p-0 sm:gap-32">
+          {/* stacked there is no route drawn between the rows, so the gap is
+              doing nothing but separating them — a desktop-sized one just
+              leaves a phone scrolling through empty red */}
+          <ol className="relative z-10 flex list-none flex-col gap-12 p-0 sm:gap-32">
             {STEPS.map((step, i) => (
               <StepRow
                 key={step.n}

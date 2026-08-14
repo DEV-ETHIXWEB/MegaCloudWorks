@@ -74,7 +74,10 @@ export function StepRow({
       data-step
       data-side={side}
       style={{ '--i': index } as CSSProperties}
-      className={`step-row grid grid-cols-1 items-center gap-5 sm:gap-10 ${
+      // stacked, the mark sits directly above its own copy and needs almost no
+      // air between them — the marks carry a lot of their own padding already,
+      // and a desktop-sized gutter on a phone reads as a break in the list
+      className={`step-row grid grid-cols-1 items-center gap-2 sm:gap-10 ${
         centred
           ? 'sm:grid-cols-1 sm:justify-items-center'
           : 'sm:grid-cols-2 sm:gap-12'
@@ -122,10 +125,18 @@ export function StepRow({
               : 'sm:order-none sm:col-start-2 sm:row-start-1 sm:justify-end'
         }`}
       >
-        <StepIcon
-          step={step.icon}
-          className="step-row__icon h-36 w-36 sm:h-48 sm:w-48 lg:h-56 lg:w-56"
-        />
+        {/* The mark is measured through this wrapper, never through the icon
+            itself: the icon carries the reveal transform, so its own client
+            rect is wherever the animation happens to be rather than where it
+            lands — and the trail drawn from that would aim at a moving
+            target. The wrapper shrink-wraps the icon and never transforms, so
+            its box is the settled one. */}
+        <span className="step-row__mark inline-flex">
+          <StepIcon
+            step={step.icon}
+            className="step-row__icon h-[9.9rem] w-[9.9rem] sm:h-[13.2rem] sm:w-[13.2rem] lg:h-[15.4rem] lg:w-[15.4rem]"
+          />
+        </span>
       </div>
     </li>
   )

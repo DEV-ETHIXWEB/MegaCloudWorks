@@ -11,7 +11,7 @@ export const Route = createFileRoute('/services')({
   component: Services,
   head: () =>
     seo({
-      title: 'Services',
+      title: 'What we do',
       description:
         'App design, development, and brand & UI, one team handling strategy, design, and engineering end to end.',
       path: '/services',

@@ -35,6 +35,7 @@ import { Button } from '#/components/ui/button'
 import { CONCEPTS, getConcept } from '#/lib/concepts'
 import type { ConceptIconName } from '#/lib/concepts'
 import { CONCEPT_SCREENS } from '#/lib/conceptScreens'
+import { useReveal } from '#/lib/useReveal'
 import { seo } from '#/lib/seo'
 
 const ICONS: Record<ConceptIconName, typeof CalendarClock> = {
@@ -84,6 +85,8 @@ const META = ['platform', 'timeline', 'category'] as const
 function ConceptDetail() {
   const concept = Route.useLoaderData()
   const root = useRef<HTMLDivElement>(null)
+  // the hero pins itself against this element while the name lifts away
+  const hero = useRef<HTMLElement>(null)
   const screens = CONCEPT_SCREENS[concept.slug] ?? []
   const [activeScreen, setActiveScreen] = useState(0)
   const ActiveScreen = screens[activeScreen]
@@ -95,28 +98,58 @@ function ConceptDetail() {
 
     gsap.registerPlugin(ScrollTrigger)
 
-    const ctx = gsap.context(() => {
-      gsap.from('[data-hero]', {
-        y: 34,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        stagger: 0.1,
-      })
+    let ctx: gsap.Context | undefined
 
-      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
-        gsap.from(el, {
-          y: 42,
+    try {
+      // the hero is on screen at mount, so it plays straight away
+      ctx = gsap.context(() => {
+        gsap.from('[data-hero]', {
+          y: 34,
           opacity: 0,
-          duration: 0.9,
+          duration: 1,
           ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 88%' },
+          stagger: 0.1,
         })
-      })
-    }, root)
+
+        // ---- the hero drifts apart as you leave it ----
+        //
+        // Not a pin. Pinning this hero held a screen that was taller than the
+        // viewport, so lifting the copy out of it left the reader staring at
+        // an empty dark frame with a phone in the corner. Instead the two
+        // columns simply part company on the way out — copy rising faster
+        // than the device — which gives the departure some depth without ever
+        // taking the scroll away.
+        //
+        // Desktop only: stacked, the two are already one column.
+        if (!window.matchMedia('(min-width: 1024px)').matches) return
+
+        const stage = hero.current
+        if (!stage) return
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: stage,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.7,
+              invalidateOnRefresh: true,
+            },
+          })
+          .to('[data-hero-lift]', { y: -70, ease: 'none' }, 0)
+          .to('[data-hero-anchor]', { y: -18, ease: 'none' }, 0)
+      }, root)
+    } catch {
+      // the pin is decoration; if GSAP cannot set it up the page still reads
+      return
+    }
 
     return () => ctx.revert()
   }, [concept.slug])
+
+  // everything below the fold arrives on the shared reveal system, re-armed
+  // whenever the route swaps to another concept
+  useReveal(root, concept.slug)
 
   useEffect(() => {
     setActiveScreen(0)
@@ -134,6 +167,7 @@ function ConceptDetail() {
 
       {/* ================= HERO ================= */}
       <section
+        ref={hero}
         className="relative overflow-hidden pt-24 lg:pt-28"
         style={{
           background: `linear-gradient(160deg, ${concept.heroFrom} 0%, ${concept.heroTo} 100%)`,
@@ -150,18 +184,25 @@ function ConceptDetail() {
           </Link>
 
           <div className="mt-8 grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-            <div>
-              <span
+            {/* the block the pinned scroll lifts out of frame */}
+            <div data-hero-lift>
+              {/* the folio carries over from the Work index: this is concept
+                  n of five, not a page floating on its own */}
+              <p
                 data-hero
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white/85"
+                className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white/55"
               >
+                <span style={{ color: concept.accent }}>
+                  {String(currentIndex + 1).padStart(2, '0')}
+                </span>
+                <span aria-hidden="true" className="h-px w-8 bg-white/30" />
+                {concept.category}
                 <span
                   aria-hidden="true"
-                  className="size-1.5 rounded-full"
-                  style={{ background: concept.accent }}
+                  className="size-[3px] rounded-full bg-white/40"
                 />
-                {concept.category} · Case Study
-              </span>
+                Case study
+              </p>
               <h1
                 data-hero
                 className="mt-5 font-display text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[0.92] tracking-[-0.03em] text-white"
@@ -193,28 +234,56 @@ function ConceptDetail() {
             <div
               data-hero
               data-hero-anchor
-              className="mx-auto w-full max-w-[260px]"
+              className="mx-auto w-full max-w-[330px]"
             >
-              <div className="mb-4 flex items-center justify-center gap-2">
-                <span className="relative flex size-1.5">
-                  <span
-                    className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
-                    style={{ background: concept.accent }}
-                  />
-                  <span
-                    className="relative inline-flex size-1.5 rounded-full"
-                    style={{ background: concept.accent }}
-                  />
-                </span>
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/60">
-                  {concept.screens[activeScreen]}
-                </p>
+              {/* the controls flank the device, where a thumb or a cursor
+                  already is, rather than sitting in a row underneath it */}
+              <div className="phone-nav__wrap relative">
+                {screens.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveScreen(
+                          (cur) => (cur - 1 + screens.length) % screens.length,
+                        )
+                      }
+                      aria-label="Previous screen"
+                      className="phone-nav phone-nav--prev"
+                    >
+                      <ArrowLeft className="size-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveScreen((cur) => (cur + 1) % screens.length)
+                      }
+                      aria-label="Next screen"
+                      className="phone-nav phone-nav--next"
+                    >
+                      <ArrowRight className="size-4" />
+                    </button>
+                  </>
+                )}
+
+                {/* the screen's name is announced by the Dynamic Island rather
+                    than captioned above the device */}
+                <PhoneMockup
+                  live={concept.screens[activeScreen]}
+                  track={concept.track}
+                  accent={concept.accent}
+                  onSwipe={(d) =>
+                    setActiveScreen(
+                      (cur) => (cur + d + screens.length) % screens.length,
+                    )
+                  }
+                >
+                  <ActiveScreen accent={concept.accent} />
+                </PhoneMockup>
               </div>
-              <PhoneMockup>
-                <ActiveScreen accent={concept.accent} />
-              </PhoneMockup>
+
               {screens.length > 1 && (
-                <div className="mt-6 flex items-center justify-center gap-2">
+                <div className="mt-5 flex items-center justify-center gap-1">
                   {screens.map((_, i) => (
                     <button
                       key={i}
@@ -222,12 +291,12 @@ function ConceptDetail() {
                       onClick={() => setActiveScreen(i)}
                       aria-label={`Show ${concept.screens[i]}`}
                       aria-current={activeScreen === i}
-                      className="group/dot flex h-11 min-w-11 items-center justify-center px-2"
+                      className="flex h-11 min-w-9 items-center justify-center px-1.5"
                     >
                       <span
                         className="block h-1.5 rounded-full transition-all duration-300"
                         style={{
-                          width: activeScreen === i ? '20px' : '6px',
+                          width: activeScreen === i ? '22px' : '6px',
                           background:
                             activeScreen === i
                               ? concept.accent
@@ -330,17 +399,19 @@ function ConceptDetail() {
                 className="group block text-left"
               >
                 <div
-                  className="relative aspect-[9/18.5] w-full overflow-hidden rounded-[1.75rem] border-2 bg-[var(--paper)] p-1.5 shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg"
-                  style={{
-                    borderColor: isActive ? concept.accent : 'var(--line)',
-                    boxShadow: isActive
-                      ? `0 12px 32px -12px ${concept.accent}55`
-                      : undefined,
-                  }}
+                  className="phone-pick"
+                  data-active={isActive ? '' : undefined}
+                  style={{ '--accent': concept.accent } as React.CSSProperties}
                 >
-                  <div className="h-full w-full overflow-hidden rounded-[1.4rem]">
+                  <PhoneMockup
+                    variant="mini"
+                    accent={concept.accent}
+                    /* the one being shown stands square on; the rest are
+                       turned away until the pointer picks them up */
+                    restY={isActive ? 0 : -15}
+                  >
                     <Screen accent={concept.accent} />
-                  </div>
+                  </PhoneMockup>
                 </div>
                 <p
                   className="mt-3 text-center text-sm font-semibold transition-colors"
@@ -501,27 +572,30 @@ function ConceptDetail() {
       {/* ================= CTA ================= */}
       <section className="px-6 pb-16 sm:px-10 sm:pb-20 lg:px-20">
         <div className="mx-auto max-w-[1400px]">
-          <div
-            data-reveal
-            className="relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-6 sm:rounded-3xl sm:p-12"
-          >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-70 blur-3xl"
-              style={{
-                background:
-                  'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.09) 45%, rgba(255,255,255,0) 72%)',
-              }}
-            />
-            <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-3xl">
-                  Want an app like {concept.name}?
+          {/* the same closing plate the Work index ends on, so the two pages
+              finish in one voice */}
+          <div data-reveal className="work-close">
+            <span aria-hidden="true" className="work-plate__grain" />
+            <span aria-hidden="true" className="work-plate__ghost">
+              {String(currentIndex + 1).padStart(2, '0')}
+            </span>
+
+            <div className="work-close__inner">
+              <div className="min-w-0">
+                <p className="work-close__eyebrow">
+                  <span aria-hidden="true" className="work-close__tick" />
+                  Next step
+                </p>
+                <h2 className="work-close__head font-display">
+                  Want an app like{' '}
+                  <span style={{ color: concept.accent }}>{concept.name}?</span>
                 </h2>
-                <p className="mt-2 text-sm text-[var(--ink-soft)] sm:text-base">
-                  We design and build focused tools for real industries.
+                <p className="work-close__sub">
+                  We design and build focused tools for real industries — same
+                  process, pointed at your problem.
                 </p>
               </div>
+
               <Button
                 asChild
                 size="lg"

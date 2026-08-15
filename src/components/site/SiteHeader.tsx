@@ -11,11 +11,9 @@ const NAV = [
 
 export function SiteHeader({
   tone = 'light',
-  servicesLabel = 'Services',
   ctaLabel = 'Get in touch',
 }: {
   tone?: 'light' | 'dark'
-  servicesLabel?: string
   ctaLabel?: string
 }) {
   const [open, setOpen] = useState(false)
@@ -80,7 +78,7 @@ export function SiteHeader({
                 className: 'text-[var(--brand)] after:scale-x-100',
               }}
             >
-              {item.to === '/services' ? servicesLabel : item.label}
+              {item.label}
             </Link>
           ))}
         </nav>
@@ -143,7 +141,7 @@ export function SiteHeader({
                 className={`block rounded-xl px-4 py-3.5 text-base font-semibold no-underline transition-colors ${panelLink}`}
                 activeProps={{ className: 'text-[var(--brand)]' }}
               >
-                {item.to === '/services' ? servicesLabel : item.label}
+                {item.label}
               </Link>
             ))}
             <Button asChild className="mt-1 h-12 w-full text-base">

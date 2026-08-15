@@ -9,10 +9,14 @@ export type Step = {
   desc: string
 }
 
+/** which side of the section this beat sits on */
+export type StepSide = 'left' | 'right' | 'center'
+
 /**
- * One beat of "How we work", set on a timeline: the mark rides the spine down
- * the middle of the section and its copy sits to one side, swapping sides each
- * step so the eye zig-zags down the page.
+ * One beat of "How we work": the mark takes a side of the section and its copy
+ * sits beside it, so the route drawn between the marks swings across the page
+ * rather than running straight down it. The last beat lands in the middle —
+ * the two sides converging on the ship.
  *
  * Each row arms itself — the mark only starts working, and the copy only
  * arrives, once that row is the thing you are looking at. Nothing here is on a
@@ -22,10 +26,12 @@ export type Step = {
 export function StepRow({
   step,
   index,
+  side,
   onLit,
 }: {
   step: Step
   index: number
+  side: StepSide
   onLit: (index: number) => void
 }) {
   const ref = useRef<HTMLLIElement>(null)
@@ -60,25 +66,34 @@ export function StepRow({
     return () => io.disconnect()
   }, [index, onLit])
 
-  const flipped = index % 2 === 1
+  const centred = side === 'center'
 
   return (
     <li
       ref={ref}
       data-step
+      data-side={side}
       style={{ '--i': index } as CSSProperties}
-      className={`step-row grid grid-cols-1 items-center gap-5 sm:grid-cols-[minmax(0,1fr)_9rem_minmax(0,1fr)] sm:gap-8 ${
-        lit ? 'is-lit' : ''
-      }`}
+      // stacked, the mark sits directly above its own copy and needs almost no
+      // air between them — the marks carry a lot of their own padding already,
+      // and a desktop-sized gutter on a phone reads as a break in the list
+      className={`step-row grid grid-cols-1 items-center gap-2 sm:gap-10 ${
+        centred
+          ? 'sm:grid-cols-1 sm:justify-items-center'
+          : 'sm:grid-cols-2 sm:gap-12'
+      } ${lit ? 'is-lit' : ''}`}
     >
-      {/* both cells are pinned to row 1: grid auto-placement is sparse, so a
-          copy block placed in column 3 would otherwise push the mark that
-          follows it in the DOM down into a second row */}
+      {/* on a side row both cells are pinned to row 1: grid auto-placement is
+          sparse, so a copy block placed in column 2 would otherwise push the
+          mark that follows it in the DOM down into a second row. The centred
+          row wants exactly that stacking, so it pins nothing. */}
       <div
-        className={`step-row__copy order-2 text-center sm:order-none sm:row-start-1 ${
-          flipped
-            ? 'sm:col-start-3 sm:text-left'
-            : 'sm:col-start-1 sm:text-right'
+        className={`step-row__copy order-2 text-center ${
+          centred
+            ? ''
+            : side === 'left'
+              ? 'sm:order-none sm:col-start-2 sm:row-start-1 sm:text-left'
+              : 'sm:order-none sm:col-start-1 sm:row-start-1 sm:text-right'
         }`}
       >
         <p className="step-num font-display text-[2.75rem] font-extrabold leading-none tracking-tight text-[var(--brand)] sm:text-[3.25rem]">
@@ -89,18 +104,39 @@ export function StepRow({
         </h3>
         <p
           className={`step-copy step-copy--late mx-auto mt-2 max-w-[24rem] text-[15px] leading-relaxed text-[var(--ink-soft)] ${
-            flipped ? 'sm:mx-0' : 'sm:ml-auto sm:mr-0'
+            centred ? '' : side === 'left' ? 'sm:mx-0' : 'sm:ml-auto sm:mr-0'
           }`}
         >
           {step.desc}
         </p>
       </div>
 
-      <div className="order-1 flex justify-center sm:order-none sm:col-start-2 sm:row-start-1">
-        <StepIcon
-          step={step.icon}
-          className="step-row__icon h-28 w-28 sm:h-32 sm:w-32"
-        />
+      <div
+        // the centred row keeps the mark above its copy at every width, so the
+        // route arriving from 03 lands on the mark rather than being cut off
+        // by the type on its way down
+        // a side mark is pushed to the outer edge of its column, which — the
+        // column being half the page — puts it out at the page's margin
+        className={`order-1 flex justify-center ${
+          centred
+            ? ''
+            : side === 'left'
+              ? 'sm:order-none sm:col-start-1 sm:row-start-1 sm:justify-start'
+              : 'sm:order-none sm:col-start-2 sm:row-start-1 sm:justify-end'
+        }`}
+      >
+        {/* The mark is measured through this wrapper, never through the icon
+            itself: the icon carries the reveal transform, so its own client
+            rect is wherever the animation happens to be rather than where it
+            lands — and the trail drawn from that would aim at a moving
+            target. The wrapper shrink-wraps the icon and never transforms, so
+            its box is the settled one. */}
+        <span className="step-row__mark inline-flex">
+          <StepIcon
+            step={step.icon}
+            className="step-row__icon h-[9.9rem] w-[9.9rem] sm:h-[13.2rem] sm:w-[13.2rem] lg:h-[15.4rem] lg:w-[15.4rem]"
+          />
+        </span>
       </div>
     </li>
   )

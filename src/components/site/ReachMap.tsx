@@ -41,32 +41,38 @@ const PIN_IN = { x: 648, y: 197 }
 const LEAD_ELBOW_IN = { x: 606, y: 260 }
 const LABEL_IN = { x: 594, y: 282 }
 
-// The route: a stepped bolt from the US pin to the India pin, zig-zagging
-// about the straight line between them rather than arcing over it — a single
-// cut, so it reads as a deliberate corridor and not a scribble.
-// Built once here so the geometry stays honest if either pin moves.
-const ROUTE = (() => {
-  const dx = PIN_IN.x - PIN.x
-  const dy = PIN_IN.y - PIN.y
-  const len = Math.hypot(dx, dy)
-  // unit normal to the run — the zig-zag swings along this, not along y, so
-  // the steps stay square to the route however the pins are placed
-  const nx = -dy / len
-  const ny = dx / len
-  // two legs, so the bolt cuts exactly once between the two pins
-  const STEPS = 2
-  const AMP = 34
+// The route: a single arc from the US pin to the India pin, bowing north over
+// the Atlantic and Europe the way a flight path does, rather than cutting
+// straight across. It is drawn as a run of dots rather than as a stroke, so
+// the connection can be shown travelling — each dot in turn flaring from red
+// to white, west to east.
+const ARC = {
+  c1: { x: PIN.x + (PIN_IN.x - PIN.x) * 0.28, y: PIN.y - 96 },
+  c2: { x: PIN.x + (PIN_IN.x - PIN.x) * 0.72, y: PIN_IN.y - 112 },
+}
 
-  const points = [`M ${PIN.x} ${PIN.y}`]
-  for (let i = 1; i < STEPS; i += 1) {
-    const t = i / STEPS
-    const swing = (i % 2 === 1 ? 1 : -1) * AMP
-    const x = PIN.x + dx * t + nx * swing
-    const y = PIN.y + dy * t + ny * swing
-    points.push(`L ${x.toFixed(1)} ${y.toFixed(1)}`)
+const ROUTE =
+  `M ${PIN.x} ${PIN.y} ` +
+  `C ${ARC.c1.x.toFixed(1)} ${ARC.c1.y.toFixed(1)}, ` +
+  `${ARC.c2.x.toFixed(1)} ${ARC.c2.y.toFixed(1)}, ` +
+  `${PIN_IN.x} ${PIN_IN.y}`
+
+// The dots themselves, sampled off the same cubic so they sit exactly on the
+// arc. The two ends are left off: the pins are already there.
+const DOTS = (() => {
+  const COUNT = 26
+  const at = (t: number, a: number, b: number, c: number, d: number) => {
+    const u = 1 - t
+    return u * u * u * a + 3 * u * u * t * b + 3 * u * t * t * c + t * t * t * d
   }
-  points.push(`L ${PIN_IN.x} ${PIN_IN.y}`)
-  return points.join(' ')
+
+  return Array.from({ length: COUNT - 1 }, (_, i) => {
+    const t = (i + 1) / COUNT
+    return {
+      x: at(t, PIN.x, ARC.c1.x, ARC.c2.x, PIN_IN.x),
+      y: at(t, PIN.y, ARC.c1.y, ARC.c2.y, PIN_IN.y),
+    }
+  })
 })()
 
 type Hover = { name: string; region: WorldRegionId }
@@ -185,36 +191,37 @@ export function ReachMap({ className = '' }: { className?: string }) {
           })}
         </g>
 
-        {/* the corridor between the two: a stepped bolt that draws itself in
-            once the pins have landed, then keeps a charge running along it */}
+        {/* the corridor between the two: a dotted arc that lays itself down
+            once the pins have landed, then keeps a charge running along it —
+            one dot at a time flaring from red to white, US → India */}
         <g className="reach-route" aria-hidden="true">
           <path
             className="reach-route__glow"
             d={ROUTE}
             fill="none"
             stroke="var(--brand)"
-            strokeWidth="4"
+            strokeWidth="3"
             strokeLinecap="round"
-            strokeLinejoin="round"
           />
-          <path
-            className="reach-route__line"
-            d={ROUTE}
-            fill="none"
-            stroke="var(--brand)"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            className="reach-route__pulse"
-            d={ROUTE}
-            fill="none"
-            stroke="#fff"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          {DOTS.map((dot, i) => (
+            <circle
+              key={i}
+              className="reach-dot"
+              cx={dot.x.toFixed(1)}
+              cy={dot.y.toFixed(1)}
+              r="2.4"
+              fill="var(--brand)"
+              style={
+                {
+                  // two staggers off the same index: the dots settle west to
+                  // east as the route is laid, then the charge runs the same
+                  // way on a loop
+                  '--lay': `${900 + i * 46}ms`,
+                  '--run': `${i * 90}ms`,
+                } as React.CSSProperties
+              }
+            />
+          ))}
         </g>
 
         {/* United States callout — the leader line draws itself in, then the

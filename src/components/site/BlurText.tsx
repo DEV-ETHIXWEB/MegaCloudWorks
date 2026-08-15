@@ -32,7 +32,7 @@ export function BlurText({
   animateBy = 'words',
   direction = 'top',
   threshold = 0.1,
-  rootMargin = '0px',
+  rootMargin = '0px 0px -5% 0px',
   start,
   onAnimationComplete,
   stepDuration = 0.35,

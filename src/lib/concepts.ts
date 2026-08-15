@@ -35,6 +35,21 @@ export type ConceptPalette = {
   note: string
 }
 
+/**
+ * What the concept's Dynamic Island is playing.
+ *
+ * Invented tracks, named for the world each product lives in — the island on
+ * the case-study page is a live activity you can open, and it should be that
+ * concept's music, not a shared placeholder.
+ */
+export type ConceptTrack = {
+  title: string
+  artist: string
+  album: string
+  /** running time in seconds, used by the player's progress bar */
+  length: number
+}
+
 export type Concept = {
   slug: string
   name: string
@@ -56,6 +71,7 @@ export type Concept = {
   typeface: string
   heroFrom: string
   heroTo: string
+  track: ConceptTrack
 }
 
 export const CONCEPTS: Concept[] = [
@@ -140,6 +156,12 @@ export const CONCEPTS: Concept[] = [
     typeface: 'Barlow',
     heroFrom: '#2c3524',
     heroTo: '#0e120b',
+    track: {
+      title: 'Service Call',
+      artist: 'The Overtime',
+      album: 'Dispatch',
+      length: 214,
+    },
   },
   {
     slug: 'stamp',
@@ -222,6 +244,12 @@ export const CONCEPTS: Concept[] = [
     typeface: 'Fraunces',
     heroFrom: '#241c33',
     heroTo: '#0d0a12',
+    track: {
+      title: 'Punch Card',
+      artist: 'Corner Store',
+      album: 'Regulars',
+      length: 187,
+    },
   },
   {
     slug: 'slate',
@@ -305,6 +333,12 @@ export const CONCEPTS: Concept[] = [
     typeface: 'Manrope',
     heroFrom: '#12312d',
     heroTo: '#081a17',
+    track: {
+      title: 'Open Slot',
+      artist: 'Waiting Room',
+      album: 'Ten Minutes Early',
+      length: 231,
+    },
   },
   {
     slug: 'prophy',
@@ -387,6 +421,12 @@ export const CONCEPTS: Concept[] = [
     typeface: 'Source Sans 3',
     heroFrom: '#132038',
     heroTo: '#080d18',
+    track: {
+      title: 'Recall',
+      artist: 'Second Molar',
+      album: 'Chairside',
+      length: 168,
+    },
   },
   {
     slug: 'leadr',
@@ -470,6 +510,12 @@ export const CONCEPTS: Concept[] = [
     typeface: 'Work Sans',
     heroFrom: '#132b1c',
     heroTo: '#07130c',
+    track: {
+      title: 'Follow Up',
+      artist: 'Warm Lead',
+      album: 'Pipeline',
+      length: 202,
+    },
   },
 ]
 

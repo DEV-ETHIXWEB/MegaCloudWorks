@@ -1,0 +1,1927 @@
+/* ------------------------------------------------------------------ *
+ * Phone story — the scroll-driven opening of the home page.
+ *
+ * Five acts share one sticky stage: the welcome, the group story read off
+ * a landscape phone, the process, the ready mark, and the screen expanding
+ * into the brief.
+ * Everything here is layout and skin; the motion lives in PhoneStory.tsx
+ * and PhoneRig.tsx.
+ *
+ * The palette is the site's own — paper, ink, brand red — so the story
+ * reads as the top of this website rather than a widget dropped onto it.
+ * `--heat` is written by the timeline and runs 0.2 → 1 across the story,
+ * warming the backdrop toward the brand as it goes.
+ * ------------------------------------------------------------------ */
+
+.phone-story {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  isolation: isolate;
+  --heat: 0.2;
+  --rail: 0;
+}
+
+.phone-story__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* the light: a warm brand wash that grows as the story advances, over a
+   cool paper ground so the whites do not all sit on the same note */
+.phone-story__stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(
+      58% 52% at 72% 26%,
+      rgba(245, 51, 59, calc(0.16 * var(--heat))),
+      transparent 70%
+    ),
+    radial-gradient(
+      46% 44% at 16% 82%,
+      rgba(255, 106, 61, calc(0.13 * var(--heat))),
+      transparent 74%
+    ),
+    linear-gradient(180deg, #ffffff 0%, #fbfbfc 46%, #f4f4f6 100%);
+}
+
+/* a faint engineering grid — the studio is a build shop, and the ground it
+   all sits on says so quietly */
+.phone-story__stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(16, 16, 20, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 16, 20, 0.028) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(
+    70% 60% at 50% 45%,
+    #000,
+    transparent 82%
+  );
+  mask-image: radial-gradient(70% 60% at 50% 45%, #000, transparent 82%);
+}
+
+/* ---------------- the welcome sky ---------------- *
+ *
+ * The cloud plate is pale at the top and dense red at the foot, so it is hung
+ * from the top of the stage and masked away before it reaches the bottom —
+ * otherwise the section would end on a hard band of colour instead of easing
+ * into the paper the rest of the page is made of.
+ */
+
+.phone-story__sky {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+
+.phone-story__sky-img {
+  position: absolute;
+  inset: 0;
+  background-image: url('/hero-background.png');
+  background-size: cover;
+  background-position: center 62%;
+  background-repeat: no-repeat;
+  /* the fade: full strength through the middle, gone well before the foot */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 42%,
+    rgba(0, 0, 0, 0.55) 68%,
+    rgba(0, 0, 0, 0.16) 85%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 42%,
+    rgba(0, 0, 0, 0.55) 68%,
+    rgba(0, 0, 0, 0.16) 85%,
+    transparent 100%
+  );
+}
+
+/* a left-weighted wash of paper, so the headline keeps its contrast where the
+   cloud is densest */
+.phone-story__sky-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.66) 26%,
+    rgba(255, 255, 255, 0.18) 52%,
+    rgba(255, 255, 255, 0) 72%
+  );
+}
+
+.phone-story__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.phone-story__canvas canvas {
+  display: block;
+  touch-action: pan-y;
+}
+
+/* ---------------- copy blocks ---------------- */
+
+.phone-story__copy {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  width: min(30rem, 38vw);
+  translate: 0 -50%;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.phone-story__copy--left {
+  left: clamp(1.5rem, 6vw, 6rem);
+}
+
+.phone-story__copy--right {
+  right: clamp(1.5rem, 5vw, 5rem);
+  width: min(34rem, 42vw);
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* act two is carried by the display, so the page keeps only a title for it,
+   centred above the phone lying on its side */
+.phone-story__rail-head {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: clamp(5.5rem, 12vh, 8rem);
+  translate: -50% 0;
+  width: min(46rem, 88vw);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.phone-story__rail-title {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(1.75rem, 3.4vw, 3.25rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+
+.phone-story__rail-title span {
+  color: var(--brand);
+}
+
+.phone-story__eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.phone-story__headline {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(2.5rem, 4.4vw, 4.25rem);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+
+.phone-story__headline span {
+  color: var(--brand);
+}
+
+.phone-story__headline--sm {
+  font-size: clamp(1.75rem, 2.8vw, 2.75rem);
+}
+
+.phone-story__lede {
+  margin: 1.5rem 0 0;
+  max-width: 24rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+/* the hem: everything on the stage, panel artwork included, dissolves into
+   the story's own end colour so the cloud seam below has a clean edge to
+   take over from */
+.phone-story__hem {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 14vh;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(244, 244, 246, 0) 0%, #f4f4f6 88%);
+}
+
+@keyframes phone-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(11px);
+    opacity: 0.2;
+  }
+}
+
+/* ================================================================== *
+ * ACT TWO — the load line, and the phone on its side
+ * ================================================================== */
+
+/* The load line. It runs edge to edge across the top of the stage rather than
+   sitting inside the text column — the act opens with the page loading a line,
+   and the copy is what that line delivers. */
+.phone-story__wire {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  top: clamp(4.5rem, 10vh, 6.5rem);
+  height: 10px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+.phone-story__wire-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  translate: 0 -50%;
+  background: var(--line);
+}
+.phone-story__wire-lit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  translate: 0 -50%;
+  transform-origin: left center;
+  transform: scaleX(var(--rail, 0));
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  box-shadow: 0 0 14px rgba(245, 51, 59, 0.45);
+}
+/* the packet running along the drawn part of the line */
+.phone-story__wire-head {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--rail, 0) * 100%);
+  translate: -50% -50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--brand);
+  box-shadow: 0 0 0 4px rgba(245, 51, 59, 0.16);
+  opacity: calc(var(--rail, 0) * (1 - var(--rail, 0)) * 4);
+}
+
+/* ================================================================== *
+ * ACT THREE — the process, in full
+ * ================================================================== */
+
+.detail {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+  pointer-events: auto;
+}
+
+.detail__ticks {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: none;
+}
+
+.detail__ticks li span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  background: #fff;
+  transition:
+    color 0.4s ease,
+    border-color 0.4s ease,
+    background 0.4s ease,
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.detail__ticks li.is-done span {
+  color: var(--brand);
+  border-color: rgba(245, 51, 59, 0.35);
+}
+
+.detail__ticks li.is-active span {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
+  transform: scale(1.12);
+  box-shadow: 0 6px 18px -6px rgba(245, 51, 59, 0.7);
+}
+
+.detail__card {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  box-shadow: 0 30px 60px -40px rgba(16, 16, 20, 0.45);
+  animation: detail-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes detail-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.detail__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.detail__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 1rem;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.detail__meta {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.detail__title {
+  margin: 1rem 0 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.625rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.detail__body {
+  margin: 0.625rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.detail__points {
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.detail__points li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  opacity: 0;
+  animation: detail-point 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(0.18s + var(--i) * 0.07s);
+}
+
+.detail__points svg {
+  color: var(--brand);
+  flex: none;
+}
+
+@keyframes detail-point {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ================================================================== *
+ * ACT FOUR — the ready mark, behind the phone
+ * ================================================================== */
+
+.phone-story__ready {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* behind the canvas, which is z-2 */
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.phone-story__ghost {
+  margin: 0;
+}
+
+/* the name banner across the top of the stage */
+.phone-story__ready-top {
+  position: absolute;
+  left: clamp(1rem, 4vw, 4rem);
+  right: clamp(1rem, 4vw, 4rem);
+  top: clamp(4.5rem, 9vh, 6.5rem);
+}
+
+.phone-story__ready-kicker {
+  margin: 0 0 0.75rem;
+  font-size: clamp(0.625rem, 0.8vw, 0.8125rem);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.phone-story__ghost--name {
+  font-size: clamp(2.25rem, 8.4vw, 9.5rem);
+  max-width: 58vw;
+}
+
+/* and the offer answering it from the far corner */
+.phone-story__ready-foot {
+  position: absolute;
+  right: clamp(1rem, 4vw, 4rem);
+  bottom: 8%;
+  max-width: 44vw;
+}
+
+.phone-story__ghost--honour {
+  font-size: clamp(1.125rem, 3.1vw, 2.875rem);
+  line-height: 0.98;
+}
+
+/* the CONTACT-page treatment, generalised: an outlined word with a band of
+   brand light sweeping along the stroke */
+.ghost-word {
+  /* the lit copy is absolutely positioned over the base one, so each word has
+     to be its own containing block or the two drift apart */
+  position: relative;
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.ghost-word__base,
+.ghost-word__glow {
+  display: block;
+  color: transparent;
+}
+
+.ghost-word__base {
+  -webkit-text-stroke: 1.5px rgba(16, 16, 20, 0.14);
+}
+
+.ghost-word__glow {
+  position: absolute;
+  inset: 0;
+  -webkit-text-stroke: 1.5px rgba(245, 51, 59, 0.9);
+  filter: drop-shadow(0 0 2px rgba(245, 51, 59, 0.9))
+    drop-shadow(0 0 12px rgba(245, 51, 59, 0.5));
+  -webkit-mask-image: linear-gradient(
+    100deg,
+    transparent 40%,
+    #000 47%,
+    #000 53%,
+    transparent 60%
+  );
+  mask-image: linear-gradient(
+    100deg,
+    transparent 40%,
+    #000 47%,
+    #000 53%,
+    transparent 60%
+  );
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: ghost-sweep 7s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.ghost-word.is-tracking .ghost-word__glow {
+  animation: none;
+  -webkit-mask-position: calc((1 - var(--sweep, 0.5)) * 100%) 0;
+  mask-position: calc((1 - var(--sweep, 0.5)) * 100%) 0;
+  transition:
+    -webkit-mask-position 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    mask-position 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes ghost-sweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+/* ================================================================== *
+ * ACT FIVE — the expanding panel
+ * ================================================================== */
+
+.phone-story__panel {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  /* hidden until the hand-off; the story fades it up over the 3D display */
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
+  transform-origin: center 42%;
+}
+
+/* the veil below is a pseudo-element on the frame, so it paints after the
+   overlay unless the overlay is lifted out of the default paint order */
+.phone-story__panel .scroll-expand__overlay {
+  padding: 0;
+  z-index: 2;
+}
+
+/* the summit artwork is drawn on white and the page is white, so it needs
+   no treatment at all here — it simply keeps going past the frame */
+.phone-story__panel .scroll-expand__frame,
+.launch {
+  background: var(--paper);
+}
+
+/* a soft veil so the brief keeps its contrast over the busiest part of the
+   artwork, without flattening the plume */
+.phone-story__panel .scroll-expand__frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.7) 38%,
+    rgba(255, 255, 255, 0.28) 68%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.phone-panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  width: min(1240px, 92vw);
+  max-height: 100%;
+  /* the header is fixed over the whole story, so the brief has to start below
+     it rather than sliding under the nav */
+  padding: clamp(4rem, 9vh, 5.5rem) 0 4vh;
+  overflow-y: auto;
+  text-align: left;
+  scrollbar-width: none;
+}
+
+.phone-panel::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .phone-panel {
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 3.5rem;
+  }
+}
+
+.phone-panel__eyebrow {
+  margin: 0 0 0.875rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.phone-panel__title {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(2rem, 3.6vw, 3.25rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+
+.phone-panel__lede {
+  margin: 1.125rem 0 0;
+  max-width: 26rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.phone-panel__facts {
+  margin: 2rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+  max-width: 26rem;
+}
+
+.phone-panel__facts > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.phone-panel__facts dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.phone-panel__facts dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.phone-panel__card {
+  border-radius: 1.75rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  box-shadow: 0 50px 90px -50px rgba(16, 16, 20, 0.6);
+  text-align: left;
+}
+
+/* ---------------- the studio brief ---------------- */
+
+.brief {
+  display: grid;
+  gap: 1.125rem;
+}
+
+.brief__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brief__step {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.brief__title {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.brief__gauge {
+  display: block;
+  width: 84px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  overflow: hidden;
+  flex: none;
+}
+
+.brief__gauge span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brief__set {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.brief__set legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.brief__pair {
+  display: grid;
+  gap: 1.125rem;
+}
+
+@media (min-width: 560px) {
+  .brief__pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.brief__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4375rem;
+}
+
+.brief__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.5rem 0.8125rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.brief__chip:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.brief__chip.is-on {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+
+.brief__chip:active {
+  transform: scale(0.97);
+}
+
+.brief__fields {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.brief__row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 560px) {
+  .brief__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.brief__opt {
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+.brief__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.brief__send:hover {
+  background: var(--brand-strong);
+}
+
+.brief__send:active {
+  transform: scale(0.99);
+}
+
+.brief__send:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.brief__spin {
+  animation: brief-spin 0.9s linear infinite;
+}
+
+@keyframes brief-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.brief__note {
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.brief--sent {
+  justify-items: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  gap: 0.75rem;
+}
+
+.brief__seal {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.brief__sent-title {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.brief__sent-body {
+  margin: 0;
+  max-width: 24rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.brief__again {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.brief__again:hover {
+  color: var(--brand);
+}
+
+/* ================================================================== *
+ * The DOM screens, drawn onto the display
+ * ================================================================== */
+
+.phone-screen-host {
+  transform-origin: center;
+  will-change: opacity;
+}
+
+.phone-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-sans, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+.phone-screen button {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* status bar */
+.phone-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.phone-status__icons {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.phone-status__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.phone-status__bars i {
+  display: block;
+  width: 3px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.phone-status__battery {
+  display: block;
+  width: 22px;
+  height: 11px;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  position: relative;
+  opacity: 0.9;
+}
+
+.phone-status__battery::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  right: 7px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+/* ---------------- act one: boot ---------------- */
+
+.boot {
+  background:
+    radial-gradient(120% 70% at 50% 0%, #ffffff 0%, #f6f6f8 62%), #ffffff;
+}
+
+/* the display is off when the page arrives: black, then a hot line, then
+   the UI underneath is revealed */
+.boot__off {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: #050507;
+  animation: boot-off 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes boot-off {
+  0%,
+  32% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+  55% {
+    clip-path: inset(46% 0 46% 0);
+    opacity: 1;
+  }
+  100% {
+    clip-path: inset(50% 0 50% 0);
+    opacity: 0;
+  }
+}
+
+.boot__flash {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  z-index: 5;
+  translate: 0 -50%;
+  background: #fff;
+  box-shadow: 0 0 24px 6px rgba(255, 255, 255, 0.95);
+  transform-origin: center;
+  animation: boot-line 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes boot-line {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  30% {
+    opacity: 1;
+    transform: scaleX(0.06);
+  }
+  46% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+.boot__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: 24px;
+}
+
+.boot__mark {
+  margin: 30px 22px 0;
+  opacity: 0;
+  animation: boot-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.95s forwards;
+}
+
+.boot__mark img {
+  display: block;
+}
+
+.boot__greeting {
+  margin: 22px 22px 0;
+}
+
+.boot__hello {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand);
+  opacity: 0;
+  animation: boot-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
+}
+
+.boot__title {
+  margin: 9px 0 0;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  opacity: 0;
+  animation: boot-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.22s forwards;
+}
+
+.boot__title span {
+  color: var(--brand);
+}
+
+.boot__sub {
+  margin: 13px 0 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  opacity: 0;
+  animation: boot-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.34s forwards;
+}
+
+.boot__tiles {
+  display: flex;
+  gap: 8px;
+  margin: 24px 22px 0;
+}
+
+.boot__tile {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 13px 8px;
+  border-radius: 15px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0;
+  animation: boot-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(1.46s + var(--i) * 0.09s);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.boot__tile:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+
+.boot__tile svg {
+  opacity: 0.55;
+}
+
+.boot__hint {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  opacity: 0;
+  animation: boot-in 0.8s ease 1.85s forwards;
+}
+
+.boot__mouse {
+  display: block;
+  width: 15px;
+  height: 24px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  position: relative;
+}
+
+.boot__mouse i {
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  translate: -50% 0;
+  width: 2.5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--brand);
+  animation: phone-cue 1.7s ease-in-out infinite;
+}
+
+@keyframes boot-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------- act two: the group, read on its side ---------------- */
+
+/* The phone turns a quarter turn counter-clockwise in the scene, so this
+   turns the same amount the other way inside the portrait display — which
+   lands the content upright and lets it be written landscape. */
+.fam {
+  background: #fff;
+}
+
+.fam__rot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 30px 22px;
+}
+
+.fam__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.fam__logo {
+  height: 20px;
+  width: auto;
+  transition: opacity 0.5s ease;
+}
+
+.fam__rule {
+  height: 14px;
+  width: 1px;
+  background: var(--line-strong);
+  transform: scaleY(0);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fam__rule[data-in='true'] {
+  transform: scaleY(1);
+}
+
+.fam__kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.fam__cols {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px 0 18px;
+  flex: 1;
+}
+
+.fam__col {
+  flex: 1;
+  min-width: 0;
+}
+
+.fam__badge {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fam__badge[data-in='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+.fam__badge--us {
+  border-color: rgba(245, 51, 59, 0.35);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+
+.fam__title {
+  margin-top: 9px;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.fam__title--us {
+  color: var(--brand);
+}
+
+.fam__body {
+  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* the hand-off between the two studios, drawn rather than described */
+.fam__link {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fam__link[data-in='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+.fam__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.fam__foot[data-in='true'] {
+  opacity: 1;
+}
+
+.fam__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transition: background 0.2s ease;
+}
+
+.fam__cta:hover {
+  background: var(--brand);
+}
+
+/* Portrait fallback: no quarter turn, and the two studios stack rather than
+   sitting side by side. Same content, same beats — only the shape changes. */
+.fam--portrait .fam__rot {
+  transform: translate(-50%, -50%);
+  padding: 26px 22px 22px;
+}
+
+.fam--portrait .fam__head {
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.fam--portrait .fam__rule {
+  display: none;
+}
+
+.fam--portrait .fam__kicker {
+  flex-basis: 100%;
+  font-size: 10px;
+}
+
+.fam--portrait .fam__cols {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: 18px 0;
+}
+
+.fam--portrait .fam__link {
+  transform: rotate(90deg) scale(0.6);
+  margin: 0 auto;
+}
+
+.fam--portrait .fam__link[data-in='true'] {
+  transform: rotate(90deg);
+}
+
+.fam--portrait .fam__title {
+  font-size: 19px;
+}
+
+.fam--portrait .fam__body {
+  font-size: 12.5px;
+}
+
+.fam--portrait .fam__foot {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* ---------------- act three: process ---------------- */
+
+.proc {
+  background: #fff;
+}
+
+.proc__body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: 20px;
+}
+
+.proc__head {
+  margin: 28px 22px 0;
+}
+
+.proc__eyebrow {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.proc__title {
+  margin: 8px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.proc__meter {
+  margin-top: 16px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+
+.proc__meter span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.proc__count {
+  margin: 8px 0 0;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+}
+
+.proc__list {
+  margin: 18px 14px 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+}
+
+.proc__item button {
+  display: flex;
+  width: 100%;
+  gap: 11px;
+  padding: 11px;
+  border-radius: 15px;
+  border: 1px solid var(--line);
+  background: #fff;
+  opacity: 0.5;
+  transition:
+    opacity 0.5s ease,
+    border-color 0.5s ease,
+    background 0.5s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.proc__item.is-done button {
+  opacity: 0.7;
+}
+
+.proc__item.is-active button {
+  opacity: 1;
+  transform: translateX(3px);
+  border-color: rgba(245, 51, 59, 0.4);
+  background: var(--brand-soft);
+}
+
+.proc__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: var(--paper-2);
+  color: var(--ink-faint);
+  transition:
+    background 0.5s ease,
+    color 0.5s ease;
+}
+
+.proc__item.is-active .proc__icon {
+  background: var(--brand);
+  color: #fff;
+}
+
+.proc__text {
+  display: block;
+  min-width: 0;
+  flex: 1;
+}
+
+.proc__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.proc__row strong {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.proc__row em {
+  font-style: normal;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.proc__blurb {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.proc__foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.proc__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--brand);
+  animation: proc-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes proc-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+
+/* ---------------- act five: launch ---------------- */
+
+.launch__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.24);
+  transform-origin: center;
+}
+
+/* The mark, lit in the middle of the glass.
+ *
+ * `--mark` is written onto the screen host by the frame loop; it holds at 1
+ * through the fly-in and falls to 0 as the story turns toward the brief. The
+ * halo behind it is a separate radial so the glow can bloom well past the
+ * edges of the glyph without a drop-shadow having to blur the whole svg.
+ */
+.launch__mark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  opacity: var(--mark, 1);
+  will-change: opacity;
+}
+
+.launch__halo {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(245, 51, 59, 0.42) 0%,
+    rgba(245, 51, 59, 0.18) 38%,
+    rgba(245, 51, 59, 0) 70%
+  );
+  animation: launch-breathe 3.6s ease-in-out infinite;
+}
+
+.launch__mark img {
+  position: relative;
+  width: 178px;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(245, 51, 59, 0.75))
+    drop-shadow(0 0 34px rgba(245, 51, 59, 0.45));
+  animation: launch-breathe 3.6s ease-in-out infinite;
+}
+
+@keyframes launch-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.045);
+    opacity: 0.88;
+  }
+}
+
+.launch__label {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 32px;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.launch__kicker {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.launch__line {
+  width: 44px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+/* ================================================================== *
+ * Narrow screens
+ * ================================================================== */
+
+@media (max-width: 1023px) {
+  .phone-story__copy {
+    width: min(34rem, 88vw);
+    left: 50%;
+    right: auto;
+    translate: -50% 0;
+    text-align: center;
+  }
+
+  .phone-story__copy--left {
+    /* clear of the fixed header, which the stage scrolls underneath */
+    top: 9%;
+  }
+
+  .phone-story__rail-head {
+    top: clamp(4.5rem, 10vh, 6.5rem);
+    width: 88vw;
+  }
+
+  .phone-story__copy--right {
+    top: auto;
+    bottom: 3%;
+    translate: -50% 0;
+    text-align: left;
+    width: min(34rem, 92vw);
+  }
+
+  .phone-story__headline {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+  }
+
+  .phone-story__headline--sm {
+    font-size: clamp(1.375rem, 5vw, 2rem);
+  }
+
+  /* there is no room for a standfirst once the phone owns the lower half —
+     the headline and the screen carry the message between them */
+  .phone-story__lede {
+    display: none;
+  }
+
+  .phone-story__copy--right .phone-story__eyebrow,
+  .phone-story__copy--right .phone-story__headline {
+    display: none;
+  }
+
+  .detail {
+    margin-top: 0;
+  }
+
+  .detail__ticks {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .detail {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* the card sits over the foot of the phone at this width, so it is solid
+     rather than frosted — translucency here just reads as muddy */
+  .detail__card {
+    padding: 1.125rem;
+    background: #fff;
+    backdrop-filter: none;
+  }
+
+  .detail__body {
+    font-size: 0.875rem;
+  }
+
+  .detail__points {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 1rem;
+  }
+
+  .phone-story__ready-top {
+    top: 8%;
+  }
+
+  .phone-story__ghost--name {
+    font-size: clamp(1.75rem, 11vw, 4rem);
+  }
+
+  .phone-story__ready-foot {
+    bottom: 5%;
+    max-width: 82vw;
+  }
+
+  .phone-story__ghost--honour {
+    font-size: clamp(1rem, 5.4vw, 2rem);
+  }
+
+  /* the load line clears the header at this width too, but there is less of
+     it, so it rides closer to the top */
+  .phone-story__wire {
+    top: clamp(3.5rem, 7vh, 4.75rem);
+  }
+}
+
+/* ================================================================== *
+ * Reduced motion
+ * ================================================================== */
+
+.phone-story[data-reduced='true'] {
+  height: auto !important;
+}
+
+.phone-story[data-reduced='true'] .phone-story__stage {
+  position: relative;
+  height: auto;
+  min-height: 100svh;
+  padding: 6rem 0;
+}
+
+.phone-story[data-reduced='true'] .phone-story__canvas,
+.phone-story[data-reduced='true'] .phone-story__ready,
+.phone-story[data-reduced='true'] .phone-story__rail-head,
+.phone-story[data-reduced='true'] .phone-story__copy--right {
+  display: none;
+}
+
+.phone-story[data-reduced='true'] .phone-story__copy--left {
+  position: static;
+  translate: none;
+  width: min(34rem, 88vw);
+  margin: 0 auto 3rem;
+  text-align: center;
+  opacity: 1;
+  visibility: visible;
+}
+
+.phone-story[data-reduced='true'] .phone-story__panel {
+  position: relative;
+  inset: auto;
+  height: auto;
+  min-height: 80svh;
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proc__dot,
+  .boot__mouse i {
+    animation: none;
+  }
+
+  .ghost-word__glow,
+  .ghost-word.is-tracking .ghost-word__glow {
+    animation: none;
+    transition: none;
+    -webkit-mask-position: 50% 0;
+    mask-position: 50% 0;
+  }
+
+  .boot__off,
+  .boot__flash {
+    display: none;
+  }
+
+  .launch__halo,
+  .launch__mark img,
+  .boot__mark,
+  .boot__hello,
+  .boot__title,
+  .boot__sub,
+  .boot__tile,
+  .boot__hint,
+  .detail__card,
+  .detail__points li {
+    animation: none;
+    opacity: 1;
+    translate: 0 0;
+    transform: none;
+  }
+}

@@ -35,6 +35,7 @@ import { Button } from '#/components/ui/button'
 import { CONCEPTS, getConcept } from '#/lib/concepts'
 import type { ConceptIconName } from '#/lib/concepts'
 import { CONCEPT_SCREENS } from '#/lib/conceptScreens'
+import { PhoneNavProvider } from '#/lib/phoneUI'
 import { useReveal } from '#/lib/useReveal'
 import { seo } from '#/lib/seo'
 
@@ -268,18 +269,33 @@ function ConceptDetail() {
 
                 {/* the screen's name is announced by the Dynamic Island rather
                     than captioned above the device */}
-                <PhoneMockup
-                  live={concept.screens[activeScreen]}
-                  track={concept.track}
-                  accent={concept.accent}
-                  onSwipe={(d) =>
-                    setActiveScreen(
-                      (cur) => (cur + d + screens.length) % screens.length,
-                    )
-                  }
+                {/* The screens navigate each other from inside the glass —
+                    tapping a job opens the job — so the router the page already
+                    owns is handed down to them.
+
+                    It has to sit outside <PhoneMockup>, not inside it: the
+                    mockup keys its screen wrapper by screen name so each change
+                    animates, which remounts everything below it. From in there
+                    the provider would be rebuilt on every tap and the app would
+                    forget what you just did to it. */}
+                <PhoneNavProvider
+                  index={activeScreen}
+                  count={screens.length}
+                  onGo={setActiveScreen}
                 >
-                  <ActiveScreen accent={concept.accent} />
-                </PhoneMockup>
+                  <PhoneMockup
+                    live={concept.screens[activeScreen]}
+                    track={concept.track}
+                    accent={concept.accent}
+                    onSwipe={(d) =>
+                      setActiveScreen(
+                        (cur) => (cur + d + screens.length) % screens.length,
+                      )
+                    }
+                  >
+                    <ActiveScreen accent={concept.accent} />
+                  </PhoneMockup>
+                </PhoneNavProvider>
               </div>
 
               {screens.length > 1 && (

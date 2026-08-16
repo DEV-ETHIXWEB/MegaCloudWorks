@@ -94,7 +94,7 @@
 .phone-story__sky-img {
   position: absolute;
   inset: 0;
-  background-image: url('/hero-background.png');
+  background-image: url('/hero-background.webp');
   background-size: cover;
   background-position: center 62%;
   background-repeat: no-repeat;
@@ -975,6 +975,18 @@
   color: var(--ink);
   font-family: var(--font-sans, system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
+
+  /* The display lives inside drei's CSS3D layer, which is a preserve-3d
+     context. WebKit clips a rotated child against its *untransformed* box when
+     the parent combines overflow:hidden with a border-radius — which blanks the
+     landscape screen in act two, since its content is rotated a quarter turn
+     and is wider than the glass before that rotation. Painting through a mask
+     forces the clip to be applied after the transform, and flattening the
+     stacking context here keeps the child out of the parent's 3D space. */
+  -webkit-mask-image: -webkit-radial-gradient(#fff, #000);
+  mask-image: radial-gradient(#fff, #000);
+  transform-style: flat;
+  isolation: isolate;
 }
 
 .phone-screen button {
@@ -1257,8 +1269,14 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  /* kept flat and off the compositing fence of its 3D ancestor: a rotated
+     child that still participates in preserve-3d is the case WebKit drops */
+  -webkit-transform: translate(-50%, -50%) rotate(90deg);
   transform: translate(-50%, -50%) rotate(90deg);
   transform-origin: center;
+  transform-style: flat;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   display: flex;
   flex-direction: column;
   padding: 26px 30px 22px;
@@ -1423,6 +1441,7 @@
 /* Portrait fallback: no quarter turn, and the two studios stack rather than
    sitting side by side. Same content, same beats — only the shape changes. */
 .fam--portrait .fam__rot {
+  -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   padding: 26px 22px 22px;
 }

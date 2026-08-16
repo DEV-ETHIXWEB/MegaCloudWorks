@@ -1,6 +1,6 @@
 import { ScreenShell } from './ScreenShell'
 
-export const LAUNCH_MEDIA = '/contact-background.png'
+export const LAUNCH_MEDIA = '/contact-background.webp'
 
 /**
  * The last act, on the device. The display drops its UI and goes full-bleed on

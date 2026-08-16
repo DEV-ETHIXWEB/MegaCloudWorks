@@ -1063,7 +1063,7 @@ a.contact-card:hover {
    still, on the same long, low-amplitude drift the About hero uses. The
    frame is over-scaled so the travel can never expose an edge. */
 .contact-reach__art {
-  background-image: url('/contact-background.png');
+  background-image: url('/contact-background.webp');
   background-size: cover;
   background-position: 50% 100%;
   background-repeat: no-repeat;
@@ -4624,7 +4624,7 @@ a.contact-card:hover .contact-go {
       rgba(15, 15, 19, 0.55) 50%,
       rgba(15, 15, 19, 0.82) 100%
     ),
-    url('/about-background.png') center / cover no-repeat;
+    url('/about-background.webp') center / cover no-repeat;
   box-shadow: 0 40px 90px -50px rgba(10, 10, 14, 0.85);
 }
 

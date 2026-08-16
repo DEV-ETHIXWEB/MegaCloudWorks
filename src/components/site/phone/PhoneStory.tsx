@@ -81,6 +81,7 @@ export function PhoneStory() {
   const [screen, setScreen] = useState<Stage>('boot')
   const [step, setStep] = useState(0)
   const [narrow, setNarrow] = useState(false)
+  const [inView, setInView] = useState(true)
   const [rect, setRect] = useState(() => openingRect(0, 0))
 
   // the canvas is client-only; SSR renders the copy and the panel alone
@@ -134,6 +135,13 @@ export function PhoneStory() {
     const ro = new ResizeObserver(measure)
     ro.observe(host)
 
+    // the canvas is parked once the story has scrolled away
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: '10% 0px' },
+    )
+    io.observe(host)
+
     // reduced motion gets the end state outright: no pinning, no scrubbing
     if (motionQuery.matches) {
       story.current.progress = 1
@@ -143,6 +151,7 @@ export function PhoneStory() {
       root.dataset.reduced = 'true'
       return () => {
         ro.disconnect()
+        io.disconnect()
         narrowQuery.removeEventListener('change', syncQueries)
         motionQuery.removeEventListener('change', syncQueries)
       }
@@ -295,6 +304,7 @@ export function PhoneStory() {
     return () => {
       trigger.kill()
       ro.disconnect()
+      io.disconnect()
       window.removeEventListener('pointermove', onPointer)
       narrowQuery.removeEventListener('change', syncQueries)
       motionQuery.removeEventListener('change', syncQueries)
@@ -332,6 +342,7 @@ export function PhoneStory() {
                 stage={screen}
                 activeStep={step}
                 narrow={narrow}
+                active={inView}
                 onSelectStep={selectStep}
                 onOpenService={openService}
               />

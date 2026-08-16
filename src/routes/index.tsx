@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SiteHeader } from '#/components/site/SiteHeader'
-import { Hero } from '#/components/site/Hero'
+import { PhoneStory } from '#/components/site/phone/PhoneStory'
 import { WhatWeDo } from '#/components/site/WhatWeDo'
 import { SiteFooter } from '#/components/site/SiteFooter'
 import { seo } from '#/lib/seo'
@@ -19,8 +19,10 @@ export const Route = createFileRoute('/')({
 function App() {
   return (
     <main className="relative min-h-screen bg-[var(--paper)] text-[var(--ink)]">
-      <SiteHeader />
-      <Hero />
+      {/* the story pins for seven screens, so an absolutely-positioned header
+          would scroll off after the first one and never come back */}
+      <SiteHeader fixed />
+      <PhoneStory />
       <WhatWeDo />
       <SiteFooter />
     </main>

@@ -728,6 +728,136 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
+ * What we do — the "How we work" band
+ *
+ * The About page's band, reused rather than re-invented: the same red the
+ * sky plates are painted in, carried edge to edge so the plate has
+ * nothing to seam against, and the same `.step-sky` sticky frame holding
+ * one screenful of sky under the whole section.
+ * ------------------------------------------------------------------ */
+.svc-band {
+  background-color: #ec2a37;
+
+  /* the on-brand tokens name the site's other red; anything in this band
+     that paints itself the band colour has to use the plate's */
+  --band: #ec2a37;
+  --paper: #ec2a37;
+}
+
+/* the bank the three discs stand in — white at low alpha over the band,
+   which is how the sky plate's own clouds are made */
+.svc-cloud {
+  position: absolute;
+  bottom: -2.5rem;
+  height: 13rem;
+  border-radius: 999px;
+  background: radial-gradient(
+    60% 70% at 50% 60%,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.28) 45%,
+    rgba(255, 255, 255, 0) 78%
+  );
+  pointer-events: none;
+  filter: blur(6px);
+  animation: svc-cloud-drift 34s ease-in-out infinite;
+}
+
+.svc-cloud--l {
+  left: -4rem;
+  width: 32rem;
+}
+
+.svc-cloud--r {
+  right: -4rem;
+  width: 28rem;
+  animation-duration: 41s;
+  animation-direction: reverse;
+}
+
+/* begins and ends at rest, so the loop has no seam */
+@keyframes svc-cloud-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  33% {
+    transform: translate3d(1.4rem, -0.5rem, 0);
+  }
+  66% {
+    transform: translate3d(-0.9rem, 0.4rem, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ---- the three discs ----
+   Cloud-white, not glass: on a painted sky a translucent card reads as a
+   hole in the picture, while a solid white disc reads as another piece of
+   weather with something written on it. */
+.svc-disc {
+  background: linear-gradient(170deg, #ffffff 0%, #ffffff 55%, #f2f3f7 100%);
+  box-shadow:
+    0 24px 60px -28px rgba(120, 12, 18, 0.55),
+    inset 0 -1px 0 rgba(16, 16, 20, 0.06);
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The copy inside is dark on white. The band's tokens are all inverted for
+   white-on-red — `--ink` is white and `--brand-strong` is white too — so on
+   a white disc every one of them would be invisible. These are the only
+   place on the page that has to opt out of the band. */
+.svc-disc__n {
+  color: #f5333b;
+  letter-spacing: 0.18em;
+}
+
+.svc-disc__title {
+  color: #101014;
+}
+
+.svc-disc__more {
+  color: #72747d;
+  transition: color 300ms ease;
+}
+
+.group:hover .svc-disc {
+  transform: translateY(-6px);
+  box-shadow:
+    0 34px 70px -26px rgba(120, 12, 18, 0.6),
+    inset 0 -1px 0 rgba(16, 16, 20, 0.06);
+}
+
+.group:hover .svc-disc__more {
+  color: var(--brand-strong);
+}
+
+.svc-disc__halo {
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.2) 48%,
+    rgba(255, 255, 255, 0) 74%
+  );
+  opacity: 0.85;
+}
+
+.group:hover .svc-disc__halo {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-cloud {
+    animation: none;
+  }
+
+  .group:hover .svc-disc {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Contact — the page's own surface
  *
  * The layout is the dark reference's, but on the site's own paper: no
@@ -1765,6 +1895,67 @@ a.contact-card:hover .contact-go {
   animation: step-charge 1100ms cubic-bezier(0.22, 1, 0.36, 1) var(--slot) both;
 }
 
+/* ---- the weather each mark stands in ----
+   Two animations on one element: the bank slides in from off to the side and
+   settles, then hands the transform over to an endless drift. The drift never
+   touches opacity, so the arrival's `both` fill keeps holding it — which is
+   what lets the two run back to back on the same element without the second
+   snapping the cloud back to full brightness. */
+.step-icon__cloud {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+[data-step].is-lit .step-icon__cloud {
+  animation:
+    step-cloud-in 1600ms cubic-bezier(0.33, 0, 0.15, 1)
+      calc(var(--slot) + var(--cloud-d)) both,
+    step-cloud-drift var(--cloud-p) ease-in-out
+      calc(var(--slot) + var(--cloud-d) + 1600ms) infinite;
+}
+
+/* the arrival is a drift, not an entrance: barely any scale, so the cloud
+   grows into place rather than popping */
+@keyframes step-cloud-in {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--cloud-from), 0, 0) scale(0.96);
+  }
+  to {
+    opacity: var(--cloud-o);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* The wander has to begin and end at rest. The first version ran between
+   -x and +x, which meant the moment the drift took over it jumped the cloud
+   from where the arrival left it (0) straight to -x — a visible snap on every
+   cloud, and again on every loop. Starting and ending at 0 makes both seams
+   invisible, and the two axes moving on one curve read as air rather than as
+   a slider. */
+@keyframes step-cloud-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  33% {
+    transform: translate3d(var(--cloud-x), calc(var(--cloud-y) * -1), 0);
+  }
+  66% {
+    transform: translate3d(calc(var(--cloud-x) * -0.6), var(--cloud-y), 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* the mark settles onto cloud, not onto a hard floor, so its contact shadow
+   is a soft lift rather than the dark drop it used to cast on flat red */
+[data-step].is-lit .step-icon__sky--front {
+  filter: drop-shadow(0 -1px 2px rgba(255, 255, 255, 0.35));
+}
+
 [data-step].is-lit .step-num {
   animation: step-num 1100ms ease-out var(--slot) both;
 }
@@ -2183,6 +2374,11 @@ a.contact-card:hover .contact-go {
 /* the charge that runs through the mark as it lands: light only, no travel.
    The wrapper is already carrying it up the page, and a second transform
    here fought that one for the same pixels. */
+/* The charge that runs through a mark as it lands. Both passes had to invert
+   with the solids: a red glow is invisible against the red band, and a
+   near-black contact shadow under a white object reads as grime rather than
+   as shade — so the charge is white and the shadow it settles into is a
+   deeper tone of the band itself. */
 @keyframes step-charge {
   0% {
     opacity: 0.55;
@@ -2190,12 +2386,12 @@ a.contact-card:hover .contact-go {
   }
   45% {
     opacity: 1;
-    filter: drop-shadow(0 0 10px rgba(245, 51, 59, 0.75))
-      drop-shadow(0 0 22px rgba(245, 51, 59, 0.4));
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9))
+      drop-shadow(0 0 26px rgba(255, 255, 255, 0.5));
   }
   100% {
     opacity: 1;
-    filter: drop-shadow(0 6px 12px rgba(16, 16, 20, 0.18));
+    filter: drop-shadow(0 8px 14px rgba(139, 18, 24, 0.28));
   }
 }
 
@@ -2260,8 +2456,15 @@ a.contact-card:hover .contact-go {
   [data-step].is-lit .step-icon__drop,
   [data-step].is-lit .step-icon__craft,
   [data-step].is-lit .step-icon__flame,
-  [data-step].is-lit .step-icon__smoke {
+  [data-step].is-lit .step-icon__smoke,
+  [data-step].is-lit .step-icon__cloud {
     animation: none;
+  }
+
+  /* the weather is simply there, at rest */
+  .step-icon__cloud {
+    opacity: var(--cloud-o);
+    transform: none;
   }
 
   /* the spine and the marks arrive with no travel at all */

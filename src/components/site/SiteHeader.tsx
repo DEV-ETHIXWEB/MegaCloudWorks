@@ -12,13 +12,32 @@ const NAV = [
 export function SiteHeader({
   tone = 'light',
   ctaLabel = 'Get in touch',
+  fixed = false,
 }: {
   tone?: 'light' | 'dark'
   ctaLabel?: string
+  /**
+   * Pin the header to the viewport instead of to the top of the document.
+   * Pages whose first section is taller than one screen — the home story runs
+   * to seven — need this, or the header scrolls away and never returns.
+   */
+  fixed?: boolean
 }) {
   const [open, setOpen] = useState(false)
+  const [lifted, setLifted] = useState(false)
   const close = () => setOpen(false)
   const dark = tone === 'dark'
+
+  // A fixed header has the whole page passing underneath it, so once anything
+  // has scrolled it needs a ground of its own — over the phone story the nav
+  // would otherwise sit on top of the copy with nothing between them.
+  useEffect(() => {
+    if (!fixed || typeof window === 'undefined') return
+    const onScroll = () => setLifted(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [fixed])
 
   // while the mobile menu is up, the page behind it shouldn't scroll away
   // under the panel, and Escape should get you out of it
@@ -54,8 +73,18 @@ export function SiteHeader({
     : 'text-[var(--ink)] hover:bg-[var(--paper-2)]'
 
   return (
-    <header className="absolute inset-x-0 top-0 z-40">
-      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-6 py-5 sm:px-10 lg:px-20">
+    <header
+      className={`${fixed ? 'fixed' : 'absolute'} inset-x-0 top-0 z-40 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
+        lifted
+          ? dark
+            ? 'bg-[rgba(10,10,12,0.5)] shadow-[0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md'
+            : 'bg-[rgba(255,255,255,0.5)] shadow-[0_1px_0_var(--line)] backdrop-blur-md'
+          : ''
+      }`}
+    >
+      {/* kept deliberately shallow: it is fixed over a seven-screen story, so
+          every pixel of height is a pixel taken off every act underneath it */}
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 px-6 py-2.5 sm:px-10 sm:py-3 lg:px-20">
         <Link
           to="/"
           className="flex shrink-0 items-center no-underline"
@@ -64,7 +93,7 @@ export function SiteHeader({
           <img
             src={logo}
             alt="MegaCloudWorks"
-            className="h-[30px] w-auto sm:h-[34px]"
+            className="h-[24px] w-auto sm:h-[27px]"
           />
         </Link>
 
@@ -84,7 +113,11 @@ export function SiteHeader({
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button asChild size="sm" className="hidden h-10 px-5 sm:inline-flex">
+          <Button
+            asChild
+            size="sm"
+            className="hidden h-9 px-4 text-[13px] sm:inline-flex"
+          >
             <Link to="/contact">{ctaLabel}</Link>
           </Button>
 
@@ -93,7 +126,7 @@ export function SiteHeader({
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
-            className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors lg:hidden ${iconBtn}`}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors lg:hidden ${iconBtn}`}
           >
             <svg
               width="20"

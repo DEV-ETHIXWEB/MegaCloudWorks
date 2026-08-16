@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SiteHeader } from '#/components/site/SiteHeader'
 import { SiteFooter } from '#/components/site/SiteFooter'
+import { BlurText } from '#/components/site/BlurText'
 import { Button } from '#/components/ui/button'
 import { seo } from '#/lib/seo'
 
@@ -117,6 +118,22 @@ const PROCESS = [
 
 function Services() {
   const root = useRef<HTMLDivElement>(null)
+  const [beat, setBeat] = useState(0)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      setBeat(99)
+      return
+    }
+
+    const marks = [60, 280, 560, 820]
+    const timers = marks.map((ms, i) =>
+      window.setTimeout(() => setBeat(i + 1), ms),
+    )
+    return () => timers.forEach((t) => window.clearTimeout(t))
+  }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -225,26 +242,53 @@ function Services() {
               'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.09) 40%, rgba(255,255,255,0) 70%)',
           }}
         />
+        {/* the hero runs on the same beat clock as the About hero — one
+            language for big type across the site. These carry no `data-hero`,
+            so the page's GSAP pass leaves them to BlurText. */}
         <div className="relative max-w-2xl">
-          <p
-            data-hero
-            className="text-xs font-bold uppercase tracking-[0.28em] text-[var(--brand)]"
-          >
-            About our approach to work
+          <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-[var(--brand)]">
+            <BlurText
+              as="span"
+              text="About our approach to work"
+              start={beat >= 1}
+              delay={38}
+              stepDuration={0.3}
+            />
+            <span
+              aria-hidden="true"
+              className={`h-px w-8 origin-left bg-[var(--brand)] transition-transform duration-700 ease-out ${
+                beat >= 1 ? 'scale-x-100' : 'scale-x-0'
+              }`}
+            />
           </p>
-          <h1
-            data-hero
-            className="mt-6 font-display text-[clamp(2.75rem,6.5vw,5rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]"
-          >
-            Design and engineering, under one roof.
+          {/* by words, not letters: BlurText wraps each unit in an
+              inline-block, and per-letter units let a line break inside a
+              word — "engin / eering" */}
+          <h1 className="mt-6 font-display text-[clamp(2.75rem,6.5vw,5rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]">
+            <BlurText
+              as="span"
+              text="Design and engineering,"
+              start={beat >= 2}
+              delay={90}
+              stepDuration={0.34}
+              className="block"
+            />
+            <BlurText
+              as="span"
+              text="under one roof."
+              start={beat >= 3}
+              delay={90}
+              stepDuration={0.34}
+              className="block"
+            />
           </h1>
-          <p
-            data-hero
+          <BlurText
+            text="Three tightly connected services. Take one, or hand us the whole journey, from first sketch to shipped product."
+            start={beat >= 4}
+            delay={26}
+            stepDuration={0.3}
             className="mt-7 text-lg leading-relaxed text-[var(--ink-soft)]"
-          >
-            Three tightly connected services. Take one, or hand us the whole
-            journey, from first sketch to shipped product.
-          </p>
+          />
         </div>
 
         {/* approach columns */}
@@ -278,21 +322,34 @@ function Services() {
         </div>
       </section>
 
-      {/* ================= HOW WE WORK — overlapping circles ================= */}
-      <section className="relative overflow-hidden px-6 py-16 sm:px-10 sm:py-24 lg:px-20 lg:py-32">
-        <div
-          data-glow
-          aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[38rem] w-[38rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70 blur-3xl"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(245,51,59,0.12) 0%, rgba(255,106,61,0.08) 40%, rgba(255,255,255,0) 72%)',
-          }}
-        />
+      {/* ================= HOW WE WORK — overlapping circles =================
+          The About page's band, brought over whole: the same painted sky held
+          under the section by a sticky frame, the same red, the same white
+          type. The circles are unchanged in structure — they just stand in
+          weather now instead of on paper.
+
+          No `overflow-hidden` on this section: a clipping ancestor would make
+          it the scroll container for its own sticky sky, which then never
+          sticks. */}
+      <section
+        data-band="paper"
+        className="svc-band on-brand relative px-6 py-20 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
+      >
+        <div aria-hidden="true" className="step-sky">
+          <div className="step-sky__hold">
+            <img
+              src="/about/sky-2.png"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="step-sky__plate is-on"
+            />
+          </div>
+        </div>
 
         <h2
           data-reveal
-          className="relative font-display text-[clamp(2.5rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.03em] text-[var(--ink)]"
+          className="relative z-10 font-display text-[clamp(2.5rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.03em] text-[var(--ink)]"
         >
           How we
           <br />
@@ -301,48 +358,50 @@ function Services() {
 
         <div
           data-circles
-          className="relative mt-10 flex flex-col items-center justify-center gap-5 sm:mt-16 sm:gap-6 md:flex-row md:gap-0"
+          className="relative z-10 mt-10 flex flex-col items-center justify-center gap-5 sm:mt-16 sm:gap-6 md:flex-row md:gap-0"
         >
-          {/* decorative dashed rings */}
+          {/* the dashed rings survive the move — white on red now */}
           <div
             data-ring
             aria-hidden="true"
-            className="pointer-events-none absolute hidden h-[22rem] w-[22rem] rounded-full border border-dashed border-[var(--line-strong)] md:block lg:h-[26rem] lg:w-[26rem]"
+            className="pointer-events-none absolute hidden h-[22rem] w-[22rem] rounded-full border border-dashed border-white/30 md:block lg:h-[26rem] lg:w-[26rem]"
           />
           <div
             data-ring
             aria-hidden="true"
-            className="pointer-events-none absolute hidden h-[29rem] w-[29rem] rounded-full border border-dashed border-[var(--line)] md:block lg:h-[34rem] lg:w-[34rem]"
+            className="pointer-events-none absolute hidden h-[29rem] w-[29rem] rounded-full border border-dashed border-white/18 md:block lg:h-[34rem] lg:w-[34rem]"
           />
+
+          {/* the bank the three discs stand in, the same construction the step
+              marks use: shapes drawn white at a low alpha, which over this red
+              comes out as the lighter red the sky plate is painted in */}
+          <span aria-hidden="true" className="svc-cloud svc-cloud--l" />
+          <span aria-hidden="true" className="svc-cloud svc-cloud--r" />
 
           {CIRCLES.map((c) => (
             <div
               key={c.n}
               data-circle
-              className="group relative aspect-square w-[15rem] md:-mx-4 md:w-[13.5rem] lg:w-[19rem] lg:-mx-6"
+              className="group relative aspect-square w-[15rem] md:-mx-4 md:w-[13.5rem] lg:-mx-6 lg:w-[19rem]"
             >
-              {/* glowing halo behind the circle */}
+              {/* the disc's own weather, sitting just behind it */}
               <span
                 data-cglow
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-[-5%] rounded-full opacity-90 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
-                style={{
-                  background:
-                    'radial-gradient(circle, rgba(245,51,59,0.40) 0%, rgba(255,106,61,0.22) 45%, rgba(255,255,255,0) 72%)',
-                }}
+                className="svc-disc__halo pointer-events-none absolute inset-[-8%] rounded-full blur-2xl transition-opacity duration-500"
               />
               <Link
                 to="/services"
                 hash={c.to}
-                className="absolute inset-0 flex flex-col items-center justify-center rounded-full border border-[rgba(16,16,20,0.22)] bg-[var(--paper)]/70 px-4 text-center no-underline shadow-[0_18px_50px_-20px_rgba(16,16,20,0.25)] backdrop-blur-sm transition-colors duration-500 group-hover:border-[var(--brand)] group-hover:bg-[var(--paper-2)]/80"
+                className="svc-disc absolute inset-0 flex flex-col items-center justify-center rounded-full px-4 text-center no-underline"
               >
-                <span className="font-display text-sm font-bold text-[var(--brand)]">
+                <span className="svc-disc__n font-display text-sm font-bold">
                   {c.n}
                 </span>
-                <span className="mt-1 font-display text-xl font-extrabold tracking-tight text-[var(--ink)] lg:text-3xl">
+                <span className="svc-disc__title mt-1 font-display text-xl font-extrabold tracking-tight lg:text-3xl">
                   {c.title}
                 </span>
-                <span className="mt-3 text-sm font-semibold text-[var(--ink-faint)] transition-colors duration-300 group-hover:text-[var(--ink)]">
+                <span className="svc-disc__more mt-3 text-sm font-semibold">
                   Find out more →
                 </span>
               </Link>

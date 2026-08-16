@@ -7,6 +7,7 @@ import { BlurText } from '#/components/site/BlurText'
 import { PageWash } from '#/components/site/PageWash'
 import { PullCord } from '#/components/site/PullCord'
 import { WorkIndex } from '#/components/site/WorkIndex'
+import { WorkSky } from '#/components/site/WorkSky'
 import { Odometer } from '#/components/site/Odometer'
 import { CONCEPTS } from '#/lib/concepts'
 import { useReveal } from '#/lib/useReveal'
@@ -152,6 +153,9 @@ function Work() {
         data-band="paper"
         className="relative overflow-hidden px-6 pb-16 pt-28 sm:px-10 sm:pb-20 sm:pt-32 lg:px-20 lg:pb-28 lg:pt-44"
       >
+        {/* the hero stands in weather */}
+        <WorkSky />
+
         <div className="relative z-10 mx-auto max-w-[1600px]">
           {/* the cord hangs from the top of the hero, clear of the copy */}
           <PullCord

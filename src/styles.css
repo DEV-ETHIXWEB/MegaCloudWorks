@@ -3144,6 +3144,17 @@ a.contact-card:hover .contact-go {
   .work-rows__item + .work-rows__item {
     margin-top: 0;
   }
+
+  /* The stage is sticky inside the grid row, so it lets go the instant the
+     list's box ends — which was happening ~180px before the fifth row reached
+     the centre line and claimed the stage. The result was the last concept
+     taking a plate that had already started sliding off the top.
+     This run-out keeps the container alive past that crossing, so every one of
+     the five gets its turn held still. The space is not empty: the plate is
+     still pinned beside it the whole way down. */
+  .work-rows {
+    padding-bottom: clamp(20rem, 40vh, 30rem);
+  }
 }
 
 .work-row {
@@ -3249,7 +3260,12 @@ a.contact-card:hover .contact-go {
    one fully present, the rest step back out of focus. */
 @media (min-width: 1024px) {
   .work-row {
-    padding: 2.5rem 0;
+    /* A sticky element can only hold for as long as its own container is
+       taller than it is. With tight rows the list ran out before the stage had
+       done any holding at all, so the plate slid straight off. Opening the rows
+       up buys the stage a screen and a half of travel to sit still through —
+       and five names set this large want the air anyway. */
+    padding: 4.4rem 0;
     opacity: 0.4;
     filter: blur(1.2px);
     transition:
@@ -4521,4 +4537,167 @@ a.contact-card:hover .contact-go {
   .work-row:not([data-active]) {
     opacity: 0.75;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Work — the hero cloud bank
+
+   One looping clip, composited rather than keyed: the footage is white-backed,
+   and `multiply` against the paper drops the white out and leaves the pink.
+--------------------------------------------------------------------------- */
+.work-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.work-sky__video {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* the clip's own bottom is its densest bank of cloud — anchoring there keeps
+     it under the headline instead of letting cover crop it away */
+  object-position: center bottom;
+  opacity: 0.72;
+  mix-blend-mode: multiply;
+  animation: sky-arrive 1.9s cubic-bezier(0.22, 0.9, 0.24, 1) 0.15s both;
+}
+
+/* out of haze, not out of nothing: an unblur reads as weather clearing */
+@keyframes sky-arrive {
+  from {
+    opacity: 0;
+    filter: blur(22px);
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 0.72;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+.work-sky__fade {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: block;
+  height: 30%;
+  background: linear-gradient(to bottom, transparent, var(--paper) 92%);
+}
+
+/* the pull cord takes the page to brand red, where pale pink cloud on multiply
+   would simply disappear — so on red the bank is knocked back to a texture */
+.on-brand .work-sky__video {
+  opacity: 0.28;
+  mix-blend-mode: screen;
+}
+
+/* on phones the headline owns the box; the bank steps back to a wash */
+@media (max-width: 640px) {
+  .work-sky__video {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-sky__video {
+    animation: none;
+    opacity: 0.72;
+    filter: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Phone screens — the touch layer
+
+   Everything touchable inside a concept screen is a <button> carrying
+   .phone-tap. It has no chrome of its own: the screen draws the row, this only
+   adds the press. Two responses, because a phone gives two — the surface takes
+   the weight, and the point of contact throws a ripple.
+--------------------------------------------------------------------------- */
+.phone-tap {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 180ms ease;
+}
+
+.phone-tap[data-down] {
+  transform: scale(0.972);
+  filter: brightness(0.97);
+}
+
+/* small controls flash rather than sink — a chip that shrinks reads as broken */
+.phone-tap--flat[data-down] {
+  transform: none;
+  filter: brightness(0.94);
+}
+
+.phone-tap:disabled {
+  cursor: default;
+}
+
+/* the screen is ~250px wide, so the keyboard ring has to be tight to fit */
+.phone-tap:focus-visible {
+  outline: 2px solid var(--ripple, currentColor);
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+
+.phone-tap__ripple {
+  position: absolute;
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 999px;
+  background: var(--ripple, currentColor);
+  opacity: 0.32;
+  pointer-events: none;
+  animation: phone-ripple 620ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes phone-ripple {
+  from {
+    transform: scale(1);
+    opacity: 0.32;
+  }
+  to {
+    transform: scale(34);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-tap,
+  .phone-tap[data-down] {
+    transition: none;
+    transform: none;
+  }
+
+  .phone-tap__ripple {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* the same box, with nothing behind it — see phoneUI.tsx */
+.phone-tap--inert {
+  cursor: inherit;
 }

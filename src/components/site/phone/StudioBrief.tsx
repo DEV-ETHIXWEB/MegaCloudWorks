@@ -35,7 +35,7 @@ function Chip({
       aria-pressed={selected}
       className={cn('brief__chip', selected && 'is-on')}
     >
-      {selected ? <Check size={13} strokeWidth={3.2} /> : null}
+      {selected ? <Check size={11} strokeWidth={3.4} /> : null}
       {label}
     </button>
   )
@@ -63,8 +63,10 @@ function Field({
   optional?: boolean
 }) {
   const filled = value.trim().length > 0
+  // the brief is a card inside an already busy panel, so its fields run a size
+  // down from the standalone contact form: same language, less furniture
   const shared =
-    'contact-input peer w-full rounded-2xl border border-[var(--line)] bg-white px-5 text-base text-[var(--ink)] outline-none selection:bg-[var(--brand)] selection:text-white sm:text-[15px]'
+    'contact-input peer w-full rounded-xl border border-transparent bg-transparent px-3.5 text-[0.875rem] text-[var(--ink)] outline-none selection:bg-[var(--brand)] selection:text-white'
 
   return (
     <div className={cn('contact-field-wrap', filled && 'is-filled')}>
@@ -76,7 +78,7 @@ function Field({
           onChange={(e) => onChange(e.target.value)}
           required={!optional}
           placeholder=" "
-          className={cn(shared, 'min-h-[7.5rem] flex-1 resize-y pb-4 pt-7')}
+          className={cn(shared, 'min-h-[4.75rem] flex-1 resize-none pb-2 pt-6')}
         />
       ) : (
         <input
@@ -88,7 +90,7 @@ function Field({
           onChange={(e) => onChange(e.target.value)}
           required={!optional}
           placeholder=" "
-          className={cn(shared, 'h-14 pb-1 pt-5')}
+          className={cn(shared, 'h-11 pb-0.5 pt-4')}
         />
       )}
       <label htmlFor={id} className="contact-label">
@@ -297,7 +299,7 @@ export function StudioBrief({ className }: { className?: string }) {
           label="What are you building?"
           value={message}
           onChange={setMessage}
-          rows={3}
+          rows={2}
         />
       </div>
 
@@ -308,13 +310,13 @@ export function StudioBrief({ className }: { className?: string }) {
       >
         {mutation.isPending ? (
           <>
-            <Loader2 size={17} className="brief__spin" strokeWidth={2.6} />
+            <Loader2 size={15} className="brief__spin" strokeWidth={2.6} />
             Sending…
           </>
         ) : (
           <>
             Send the brief
-            <ArrowRight size={17} strokeWidth={2.6} />
+            <ArrowRight size={15} strokeWidth={2.6} />
           </>
         )}
       </button>

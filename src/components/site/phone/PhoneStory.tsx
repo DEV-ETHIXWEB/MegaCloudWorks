@@ -15,6 +15,7 @@ import { ScrollExpand } from './ScrollExpand'
 import type { ScrollExpandController } from './ScrollExpand'
 import { ProcessDetail } from './ProcessDetail'
 import { GhostWord } from './GhostWord'
+import { warmPhoneModel } from './phoneAsset'
 import { StudioBrief } from './StudioBrief'
 import { STEPS } from './process'
 import { LAUNCH_MEDIA } from './screens/LaunchScreen'
@@ -35,10 +36,51 @@ import type { Stage } from './story'
 
 import './phone-story.css'
 
-const PhoneCanvas = lazy(() => import('./PhoneCanvas'))
+const loadCanvas = () => import('./PhoneCanvas')
+const PhoneCanvas = lazy(loadCanvas)
+
+/**
+ * Getting the device on screen early, without paying for it during the opening.
+ *
+ * React.lazy would not ask for the chunk until the mount effect below has run
+ * and re-rendered, which puts the whole WebGL download — and the model fetch it
+ * starts — behind hydration. So the model, which needs nothing from three, is
+ * fetched the moment this module is parsed, and the chunk itself is asked for as
+ * soon as the browser is done with the first paint: evaluating three is several
+ * hundred milliseconds of script, and run inline it lands on top of hydration
+ * and holds up the first interaction. By the time the idle callback fires the
+ * page is up, and the phone still arrives long before anyone has scrolled.
+ */
+if (typeof window !== 'undefined') {
+  void warmPhoneModel()
+
+  const start = () =>
+    window.requestIdleCallback(() => void loadCanvas(), { timeout: 800 })
+
+  if (document.readyState === 'complete') start()
+  else window.addEventListener('load', start, { once: true })
+}
 
 /** Total scroll the story consumes. Five acts want room to breathe. */
 const STORY_VH = 720
+
+/**
+ * The backdrop, one plate per act.
+ *
+ * Each is held at full for its own act and dissolves across the boundary into
+ * the next, so the ridge behind the phone grows through the story rather than
+ * cutting. `hold` is the stretch of scroll where the plate is the only one up;
+ * SKY_FADE is how much scroll the hand-over either side takes.
+ */
+const SKY_FADE = 0.05
+
+const SKY = [
+  { src: '/sky/welcome.webp', hold: [0, ACT.welcome[1]] },
+  { src: '/sky/studios.webp', hold: [ACT.signal[0], ACT.signal[1]] },
+  { src: '/sky/process.webp', hold: [ACT.travel[0], ACT.process[1]] },
+  { src: '/sky/ready.webp', hold: [ACT.zoom[0], ACT.zoom[1]] },
+  { src: '/sky/contact.webp', hold: [ACT.handoff[0], 1] },
+] as const
 
 /**
  * The opening rectangle of the expanding panel, in stage percentages. It is
@@ -61,7 +103,9 @@ export function PhoneStory() {
   const section = useRef<HTMLElement>(null)
   const stage = useRef<HTMLDivElement>(null)
   const welcome = useRef<HTMLDivElement>(null)
-  const sky = useRef<HTMLDivElement>(null)
+  const plates = useRef<Array<HTMLDivElement | null>>([])
+  /** which plates have had their source attached; the opening one ships with it */
+  const skyLoaded = useRef<Array<boolean>>([true])
   const rail = useRef<HTMLDivElement>(null)
   const wire = useRef<HTMLDivElement>(null)
   const detail = useRef<HTMLDivElement>(null)
@@ -82,7 +126,19 @@ export function PhoneStory() {
   const [step, setStep] = useState(0)
   const [narrow, setNarrow] = useState(false)
   const [inView, setInView] = useState(true)
+  const [ready3d, setReady3d] = useState(false)
+  const [standIn, setStandIn] = useState(true)
   const [rect, setRect] = useState(() => openingRect(0, 0))
+
+  const onCanvasReady = useCallback(() => setReady3d(true), [])
+
+  // the stand-in is blurred, and a blurred element keeps costing paint even at
+  // zero opacity — so once it has faded it comes out of the tree entirely
+  useEffect(() => {
+    if (!ready3d) return
+    const id = window.setTimeout(() => setStandIn(false), 600)
+    return () => window.clearTimeout(id)
+  }, [ready3d])
 
   // the canvas is client-only; SSR renders the copy and the panel alone
   useEffect(() => setMounted(true), [])
@@ -129,10 +185,20 @@ export function PhoneStory() {
     narrowQuery.addEventListener('change', syncQueries)
     motionQuery.addEventListener('change', syncQueries)
 
-    const measure = () =>
+    // A drag-resize fires this every frame, and each call re-renders the story
+    // and redraws the expanding panel. One measurement per frame is all the
+    // layout can actually show, so coalesce onto rAF.
+    let measureFrame = 0
+    const measure = () => {
+      measureFrame = 0
       setRect(openingRect(host.clientWidth, host.clientHeight))
+    }
+    const scheduleMeasure = () => {
+      if (measureFrame) return
+      measureFrame = requestAnimationFrame(measure)
+    }
     measure()
-    const ro = new ResizeObserver(measure)
+    const ro = new ResizeObserver(scheduleMeasure)
     ro.observe(host)
 
     // the canvas is parked once the story has scrolled away
@@ -150,6 +216,7 @@ export function PhoneStory() {
       expand.current?.setProgress(1)
       root.dataset.reduced = 'true'
       return () => {
+        cancelAnimationFrame(measureFrame)
         ro.disconnect()
         io.disconnect()
         narrowQuery.removeEventListener('change', syncQueries)
@@ -206,17 +273,28 @@ export function PhoneStory() {
         ACT.signal[0] + 0.03,
         40,
       )
-      // The sky belongs to the welcome. It clears before the rail so the later
-      // acts keep the plain paper ground their contrast depends on — a card of
-      // grey body copy over a bank of red cloud is unreadable.
-      band(
-        sky.current,
-        -0.02,
-        0,
-        ACT.welcome[1] - 0.04,
-        ACT.signal[0] + 0.04,
-        0,
-      )
+      // The sky is a stack of plates, one per act, and the scroll dissolves one
+      // into the next. Each is held at full through the middle of its own act
+      // and hands over across the boundary, so there is never a cut — only the
+      // range where two are both partly up, which reads as the ridge growing.
+      for (let i = 0; i < SKY.length; i++) {
+        const el = plates.current[i]
+        if (!el) continue
+        const [from, to] = SKY[i].hold
+
+        // roughly a viewport of warning, so the plate is fetched and decoded
+        // before the dissolve into it starts
+        if (!skyLoaded.current[i] && p > from - SKY_FADE - 0.12) {
+          skyLoaded.current[i] = true
+          el.style.backgroundImage = `url(${SKY[i].src})`
+        }
+
+        const shown =
+          range(p, from - SKY_FADE, from) * (1 - range(p, to, to + SKY_FADE))
+        el.style.opacity = `${shown}`
+        // a plate at zero still costs a full-screen composite every frame
+        el.style.visibility = shown > 0.004 ? 'visible' : 'hidden'
+      }
       band(
         rail.current,
         ACT.signal[0] + 0.01,
@@ -303,6 +381,7 @@ export function PhoneStory() {
 
     return () => {
       trigger.kill()
+      cancelAnimationFrame(measureFrame)
       ro.disconnect()
       io.disconnect()
       window.removeEventListener('pointermove', onPointer)
@@ -323,18 +402,47 @@ export function PhoneStory() {
       ref={section}
       id="story"
       className="phone-story"
+      // the compositor hints in the stylesheet hang off this: the story's
+      // layers are only promoted while the story actually owns the viewport
+      data-story-live={inView ? 'true' : 'false'}
       style={{ height: `${STORY_VH}vh` }}
       aria-label="MegaCloudWorks, from hello to hire us"
     >
       <div ref={stage} className="phone-story__stage">
-        {/* ---------- the sky the welcome sits in ---------- */}
-        <div ref={sky} className="phone-story__sky" aria-hidden="true">
-          <div className="phone-story__sky-img" />
+        {/* ---------- the sky, a plate per act ---------- */}
+        <div className="phone-story__sky" aria-hidden="true">
+          {SKY.map((plate, i) => (
+            <div
+              key={plate.src}
+              ref={(el) => {
+                plates.current[i] = el
+              }}
+              className="phone-story__plate"
+              style={{
+                // only the opening plate carries its source up front; the rest
+                // are attached by the timeline as the scroll comes up on them,
+                // so the first paint pays for one backdrop rather than five
+                backgroundImage: i === 0 ? `url(${plate.src})` : undefined,
+                opacity: i === 0 ? 1 : 0,
+                visibility: i === 0 ? 'visible' : 'hidden',
+              }}
+            />
+          ))}
           <div className="phone-story__sky-scrim" />
         </div>
 
         {/* ---------- the 3D phone ---------- */}
         <div className="phone-story__canvas">
+          {/* the device is a few hundred kilobytes of WebGL away on first load;
+              this holds its silhouette so the welcome does not open on an empty
+              half of the stage, and fades the moment the real one is drawn */}
+          {standIn ? (
+            <div
+              aria-hidden="true"
+              className="phone-story__placeholder"
+              data-gone={ready3d ? 'true' : undefined}
+            />
+          ) : null}
           {mounted ? (
             <Suspense fallback={null}>
               <PhoneCanvas
@@ -343,6 +451,7 @@ export function PhoneStory() {
                 activeStep={step}
                 narrow={narrow}
                 active={inView}
+                onReady={onCanvasReady}
                 onSelectStep={selectStep}
                 onOpenService={openService}
               />

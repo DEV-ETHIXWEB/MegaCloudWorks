@@ -24,9 +24,9 @@ export const Route = createFileRoute('/')({
         {
           rel: 'preload',
           as: 'image',
-          href: '/hero-background.webp',
+          href: '/sky/welcome.webp',
           type: 'image/webp',
-          fetchpriority: 'high',
+          fetchPriority: 'high',
         },
       ],
     }

@@ -1,4 +1,4 @@
-import { Suspense, useRef } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import type * as THREE from 'three'
@@ -10,6 +10,9 @@ import { BootScreen } from './screens/BootScreen'
 import { FamilyScreen } from './screens/FamilyScreen'
 import { ProcessScreen } from './screens/ProcessScreen'
 import { LaunchScreen } from './screens/LaunchScreen'
+
+/** How long one screen takes to dissolve into the next. Matches the CSS. */
+const SWAP_MS = 420
 
 export type StoryState = {
   /** master scroll progress, written by the ScrollTrigger on the DOM side */
@@ -34,6 +37,8 @@ export type RigProps = {
   /** the display is a control surface: tapping a step drives the scroll */
   onSelectStep?: (index: number) => void
   onOpenService?: (hash: string) => void
+  /** fired once the shell is in the scene, so the DOM can drop its placeholder */
+  onReady?: () => void
 }
 
 export function PhoneRig({
@@ -43,13 +48,50 @@ export function PhoneRig({
   narrow,
   onSelectStep,
   onOpenService,
+  onReady,
 }: RigProps) {
   const group = useRef<THREE.Group>(null)
-  const screen = useRef<THREE.Mesh>(null)
   const backlight = useRef<THREE.PointLight>(null)
   const screenHtml = useRef<HTMLDivElement>(null)
   const tilt = useRef({ x: 0, y: 0 })
 
+  /* ---- the screen the act before this one was showing, held while it fades ---- */
+  const [leaving, setLeaving] = useState<Stage | null>(null)
+  const shown = useRef(stage)
+
+  useEffect(() => {
+    if (stage === shown.current) return
+    setLeaving(shown.current)
+    shown.current = stage
+    const id = window.setTimeout(() => setLeaving(null), SWAP_MS)
+    return () => window.clearTimeout(id)
+  }, [stage])
+
+  const renderScreen = (which: Stage) =>
+    which === 'boot' ? (
+      <BootScreen onOpen={onOpenService} />
+    ) : which === 'signal' ? (
+      <FamilyScreen landscape={!narrow} onOpen={onOpenService} />
+    ) : which === 'process' ? (
+      <ProcessScreen active={activeStep} onSelect={onSelectStep} />
+    ) : (
+      <LaunchScreen />
+    )
+
+  /**
+   * Priority −1, and the reason matters.
+   *
+   * The DOM screen is drawn by drei's <Html transform>, which reads this
+   * group's world matrix inside its own frame callback. Callbacks run in
+   * subscription order, and React mounts children before parents — so the
+   * Html, a child of this component, was subscribing first and placing the
+   * markup from the pose written on the *previous* frame while the GL model
+   * drew the current one. One frame of skew, which reads as the screen
+   * sliding off the glass whenever the phone moves.
+   *
+   * A negative priority sorts this callback ahead of it. Only a priority above
+   * zero hands rendering over to the caller, so the automatic render stays.
+   */
   useFrame((_, rawDelta) => {
     const g = group.current
     const s = state.current
@@ -101,7 +143,7 @@ export function PhoneRig({
         markAt(s.progress).toFixed(3),
       )
     }
-  })
+  }, -1)
 
   return (
     <>
@@ -119,16 +161,16 @@ export function PhoneRig({
 
       <group ref={group}>
         <Suspense fallback={null}>
-          <PhoneModel screenRef={screen} backlightRef={backlight} />
+          <PhoneModel backlightRef={backlight} onReady={onReady} />
         </Suspense>
 
         {/* the live UI, drawn onto the display in a CSS3D layer so the contact
             form and the process list stay real DOM rather than a texture */}
         <Html
           transform
-          // PhoneModel spins the shell to face the camera, so in this group's
-          // space the display sits at +z and needs no rotation of its own
-          position={[0, SCREEN.centerY, -SCREEN.z + 0.001]}
+          // the model faces the camera, so the markup sits a hair in front of
+          // the glass on the same axis
+          position={[0, SCREEN.centerY, SCREEN.z + 0.001]}
           scale={SCREEN_SCALE}
           zIndexRange={[10, 0]}
           // the wrapper below owns pointer events so the empty space around the
@@ -140,15 +182,18 @@ export function PhoneRig({
             className="phone-screen-host"
             style={{ width: SCREEN_PX.w, height: SCREEN_PX.h }}
           >
-            {stage === 'boot' ? (
-              <BootScreen onOpen={onOpenService} />
-            ) : stage === 'signal' ? (
-              <FamilyScreen landscape={!narrow} onOpen={onOpenService} />
-            ) : stage === 'process' ? (
-              <ProcessScreen active={activeStep} onSelect={onSelectStep} />
-            ) : (
-              <LaunchScreen />
-            )}
+            {/* The outgoing screen is held for the length of the dissolve and
+                stacked under the incoming one. Act three is the reason: it goes
+                from a white screen to a black one, and swapped outright that is
+                a flash rather than a change of light. */}
+            {leaving ? (
+              <div className="phone-screen-swap is-out" key={`out-${leaving}`}>
+                {renderScreen(leaving)}
+              </div>
+            ) : null}
+            <div className="phone-screen-swap is-in" key={`in-${stage}`}>
+              {renderScreen(stage)}
+            </div>
           </div>
         </Html>
       </group>

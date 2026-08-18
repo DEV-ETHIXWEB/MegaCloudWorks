@@ -47,8 +47,96 @@ export function ConceptDevice({
     reduced: false,
   })
 
-  // the canvas is client-only; the server paints the CSS frame and the app
-  useEffect(() => setReady(true), [])
+  /*
+    The canvas is client-only - the server paints the CSS frame and the app -
+    but it must also not mount until this box has a real size.
+
+    r3f measures its container once on mount and sizes the drawing buffer from
+    that. Measure it at zero and the canvas stays at the default 300x150, the
+    scene never renders, and drei's <Html> - which is where the entire app
+    screen lives - is projected through a camera that was never fitted. The app
+    then lands somewhere off the device instead of on its glass.
+
+    In dev the box happens to be measurable by the time the lazy chunk arrives.
+    In a production build the chunk can land inside the same frame as
+    hydration, the box is still 0x0, and the mockup ends up outside the phone.
+    It looks like a caching problem because any later layout change - a resize,
+    a font swap, a scroll that triggers reflow - silently corrects it.
+
+    So: wait for a non-zero box, then mount. There is no race left to lose.
+  */
+  useEffect(() => {
+    const node = host.current
+    if (!node || typeof window === 'undefined') return
+
+    const check = () => {
+      const { width, height } = node.getBoundingClientRect()
+      if (width > 0 && height > 0) {
+        setReady(true)
+        return true
+      }
+      return false
+    }
+
+    if (check()) return
+
+    const ro = new ResizeObserver(() => {
+      if (check()) ro.disconnect()
+    })
+    ro.observe(node)
+    return () => ro.disconnect()
+  }, [])
+
+  /*
+    Then make r3f actually look.
+
+    Mounting into a sized box is necessary but not sufficient: react-use-measure
+    - which is what <Canvas> sizes itself from - can settle on a zero reading
+    and then never hear about it again, because the box does not subsequently
+    *change*. The renderer is left at the canvas element's intrinsic 300x150,
+    the scene is never fitted, and <Html> puts the app somewhere off the glass.
+
+    It listens to window resize, so that is the lever. Watch the real canvas
+    for a couple of seconds after it appears and, while its CSS box does not
+    match the frame it lives in, nudge it. In the good case this costs one
+    check and stops; in the bad case it corrects on the first tick instead of
+    waiting for whatever incidental reflow the reader triggers first.
+  */
+  useEffect(() => {
+    if (!ready || typeof window === 'undefined') return
+    const node = host.current
+    if (!node) return
+
+    let frame = 0
+    const started = performance.now()
+
+    const nudge = () => {
+      const canvas = node.querySelector('canvas')
+      const box = node.getBoundingClientRect()
+
+      if (canvas && box.width > 0 && box.height > 0) {
+        const c = canvas.getBoundingClientRect()
+        /*
+          Both axes, deliberately. A canvas that has never been fitted sits at
+          its intrinsic 300x150, and this device is often *exactly* 300 wide -
+          so comparing width alone reports a healthy canvas while the height is
+          out by a factor of three.
+        */
+        const wrong =
+          Math.abs(c.width - box.width) > 2 ||
+          Math.abs(c.height - box.height) > 2
+        if (!wrong) return
+        window.dispatchEvent(new Event('resize'))
+      }
+
+      if (performance.now() - started < 2000) {
+        frame = window.requestAnimationFrame(nudge)
+      }
+    }
+
+    frame = window.requestAnimationFrame(nudge)
+    return () => window.cancelAnimationFrame(frame)
+  }, [ready])
 
   useEffect(() => {
     if (typeof window === 'undefined') return

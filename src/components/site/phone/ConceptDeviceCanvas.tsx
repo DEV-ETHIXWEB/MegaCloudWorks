@@ -60,7 +60,13 @@ export type ConceptDeviceCanvasProps = {
  *   turn      scroll rotates it away as the hero leaves, so the device hands
  *             the page over rather than being cut off by it
  */
-function Rig({ state, accent, pulse, nav, children }: ConceptDeviceCanvasProps) {
+function Rig({
+  state,
+  accent,
+  pulse,
+  nav,
+  children,
+}: ConceptDeviceCanvasProps) {
   const rig = useRef<THREE.Group>(null)
   const screen = useRef<THREE.Mesh>(null)
   const backlight = useRef<THREE.PointLight>(null)
@@ -153,8 +159,16 @@ function Rig({ state, accent, pulse, nav, children }: ConceptDeviceCanvasProps) 
       <ambientLight intensity={1.25} />
       <hemisphereLight args={['#ffffff', '#c9d6e4', 1.1]} />
       <directionalLight position={[3.4, 6.2, 5.4]} intensity={2.1} />
-      <directionalLight position={[-4.6, 1.4, 3]} intensity={0.7} color="#dce9f7" />
-      <directionalLight position={[0, -3.4, 2.2]} intensity={0.34} color="#ffffff" />
+      <directionalLight
+        position={[-4.6, 1.4, 3]}
+        intensity={0.7}
+        color="#dce9f7"
+      />
+      <directionalLight
+        position={[0, -3.4, 2.2]}
+        intensity={0.34}
+        color="#ffffff"
+      />
 
       {/* the accent, thrown from behind the device onto whatever is around it */}
       <pointLight
@@ -221,6 +235,11 @@ export function ConceptDeviceCanvas(props: ConceptDeviceCanvasProps) {
   return (
     <Canvas
       dpr={[1, 1.75]}
+      /* belt to the ConceptDevice's braces: measure on every box change and do
+         not sit on it, so a canvas that ever does start life at zero corrects
+         itself on the next frame rather than staying 300x150 forever */
+      resize={{ debounce: 0, scroll: false }}
+      style={{ width: '100%', height: '100%' }}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       camera={{
         fov: DEVICE_CAMERA.fov,

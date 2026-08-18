@@ -104,7 +104,16 @@
 
 .cdev__glass--fit {
   height: 88%;
-  aspect-ratio: 300 / 628;
+  /*
+    The same rectangle the app is authored into.
+
+    DEVICE_PX in deviceStage.ts is 300 wide by the model glass's own aspect -
+    662 - and the CSS bezel has to agree with it, because the two states swap
+    live. When this said 628 the fallback cropped 34px off the foot of every
+    screen, which is precisely where a tab bar sits: the bar fell below the
+    visible glass and only the part standing proud of it showed.
+  */
+  aspect-ratio: 300 / 662;
   box-shadow:
     0 2px 0 1px rgba(255, 255, 255, 0.5),
     0 0 0 9px #14181f,

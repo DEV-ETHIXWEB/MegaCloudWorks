@@ -35,13 +35,9 @@ export const DEVICE_SCREEN_SCALE = SCREEN.width / (DEVICE_PX.w * HTML_PX_TO_UNIT
 /**
  * Where the DOM screen sits.
  *
- * PhoneModel spins its whole subtree a half turn so the display faces the
- * camera, which puts the glass at *positive* z. Anything parented outside that
- * group - as the screen is, so a re-render of the app does not touch the
- * loaded shell - has to use the mirrored value, or it ends up behind the body
- * facing into the scene.
+ * PhoneModel faces the camera, which puts the glass at *positive* z.
  */
-export const DEVICE_SCREEN_Z = -(FRONT_Z - 0.002) + 0.004
+export const DEVICE_SCREEN_Z = FRONT_Z + 0.002
 
 /** Vertical centre of the display, in the same mirrored space. */
 export const DEVICE_SCREEN_Y = SCREEN.centerY

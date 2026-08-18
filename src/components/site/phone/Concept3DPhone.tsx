@@ -31,13 +31,12 @@ export function Concept3DPhone({
         <directionalLight position={[-4, -6, -2]} intensity={0.4} color="#88aaff" />
 
         <Suspense fallback={null}>
-          <group rotation={[0.08, Math.PI, 0]}>
+          <group rotation={[0.08, 0, 0]}>
             <PhoneModel screenRef={screenRef} />
             <Html
               transform
               occlude="blending"
               position={[0, SCREEN.centerY, SCREEN.z + 0.005]}
-              rotation={[0, Math.PI, 0]}
               scale={SCREEN_SCALE}
             >
               <div className="ios h-[712px] w-[340px] overflow-hidden rounded-[44px] bg-[#0c0e12]">

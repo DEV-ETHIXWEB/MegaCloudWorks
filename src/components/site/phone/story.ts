@@ -36,6 +36,7 @@ export const SCREEN = {
 } as const
 
 export const SCREEN_ASPECT = SCREEN.width / SCREEN.height
+export const FRONT_Z = SCREEN.z
 
 /**
  * CSS pixel size of the DOM screen. Content is authored at this size and then

@@ -39,12 +39,14 @@ function materialFor(name: string): THREE.Material {
         clearcoat: 0.5,
         clearcoatRoughness: 0.3,
       })
-    // grilles, camera housings, home indicator — matte near-black
-    case 'mat23':
-      return new THREE.MeshStandardMaterial({
-        color: '#08080a',
-        metalness: 0.4,
-        roughness: 0.65,
+    // the sheet over the display, and the notch cut into it
+    case 'Black Glass':
+      return new THREE.MeshPhysicalMaterial({
+        color: '#0a0d16',
+        metalness: 0.3,
+        roughness: 0.08,
+        clearcoat: 1,
+        clearcoatRoughness: 0.04,
       })
     /* The display itself. Unlit on purpose: the DOM screen is drawn over this
        rectangle, and anything the scene lights would show through the gaps in
@@ -63,23 +65,8 @@ function materialFor(name: string): THREE.Material {
         clearcoat: 1,
         clearcoatRoughness: 0.02,
       })
-    // front sensor
-    case 'mat5':
-      return new THREE.MeshStandardMaterial({
-        color: '#0d1626',
-        metalness: 0.8,
-        roughness: 0.25,
-      })
-    // alert switch — the one spot of brand colour on the hardware
-    case 'mat8':
-      return new THREE.MeshStandardMaterial({
-        color: '#f5333b',
-        emissive: '#f5333b',
-        emissiveIntensity: 0.25,
-        metalness: 0.2,
-        roughness: 0.5,
-      })
-    default:
+    // side rails and the buttons cut into them
+    case 'Buttons':
       return new THREE.MeshStandardMaterial({
         color: '#3a3a44',
         metalness: 0.85,
@@ -106,14 +93,15 @@ const alertSwitch = () =>
   })
 
 /**
- * The phone itself: the loaded shell, a generated display, and the backlight
- * that spills out of it. Nothing here animates — the story drives the parent
- * group so this stays a plain, cheap subtree.
+ * The phone itself: the loaded shell and the backlight that spills out of its
+ * display. Nothing here animates — the story drives the parent group so this
+ * stays a plain, cheap subtree.
  */
 export function PhoneModel({
   backlightRef,
   onReady,
 }: {
+  screenRef?: React.RefObject<THREE.Mesh | null>
   backlightRef?: React.RefObject<THREE.PointLight | null>
   /** the shell is in the scene — the DOM placeholder can go */
   onReady?: () => void
@@ -180,17 +168,8 @@ export function PhoneModel({
     <group>
       <primitive object={shell} />
 
-      {/* generated display — black glass that the DOM screen is drawn onto */}
-      <mesh
-        ref={screenRef}
-        geometry={screenGeo}
-        position={[0, SCREEN.centerY, SCREEN.z]}
-        rotation={[0, Math.PI, 0]}
-      >
-        <meshBasicMaterial color="#050507" toneMapped={false} />
-      </mesh>
-
-      {/* the glow the screen throws back onto the body and the scene */}
+      {/* the glow the screen throws back onto the body and the scene: it sits
+          out in front of the glass, on the display's own axis */}
       <pointLight
         ref={backlightRef}
         position={[0, SCREEN.centerY, SCREEN.z + 0.45]}

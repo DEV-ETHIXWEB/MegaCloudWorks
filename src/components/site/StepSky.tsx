@@ -21,11 +21,11 @@ import { useEffect, useRef, useState } from 'react'
 
 const PLATES = [
   {
-    src: '/about/sky-1.png',
+    src: '/about/sky-1.webp',
     alt: '',
   },
-  { src: '/about/sky-2.png', alt: '' },
-  { src: '/about/sky-3.png', alt: '' },
+  { src: '/about/sky-2.webp', alt: '' },
+  { src: '/about/sky-3.webp', alt: '' },
 ] as const
 
 /** step index → plate index */

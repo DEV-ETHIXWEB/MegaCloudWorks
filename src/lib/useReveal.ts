@@ -59,7 +59,10 @@ export function useReveal(
       (entries) => {
         entries.forEach((e) => {
           // Trigger ONLY when the element intersects the screen or is above the fold
-          if (e.isIntersecting || e.boundingClientRect.top < window.innerHeight) {
+          if (
+            e.isIntersecting ||
+            e.boundingClientRect.top < window.innerHeight
+          ) {
             show(e.target as HTMLElement)
             io.unobserve(e.target)
           }

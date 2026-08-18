@@ -338,7 +338,7 @@ function Services() {
         <div aria-hidden="true" className="step-sky">
           <div className="step-sky__hold">
             <img
-              src="/about/sky-2.png"
+              src="/about/sky-2.webp"
               alt=""
               loading="lazy"
               decoding="async"

@@ -30,6 +30,10 @@ export function SiteFooter({
             <img
               src={dark ? '/logo-light.svg' : '/logo-resized.svg'}
               alt="MegaCloudWorks"
+              width={236}
+              height={32}
+              loading="lazy"
+              decoding="async"
               className="h-7 w-auto"
             />
           </Link>
@@ -70,6 +74,10 @@ export function SiteFooter({
           <img
             src={dark ? '/logo-light.svg' : '/logo-resized.svg'}
             alt="MegaCloudWorks"
+            width={236}
+            height={32}
+            loading="lazy"
+            decoding="async"
             className="h-9 w-auto"
           />
         </Link>

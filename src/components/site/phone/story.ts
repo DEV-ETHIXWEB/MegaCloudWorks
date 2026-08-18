@@ -1,35 +1,38 @@
 /**
  * Shared geometry + timing for the interactive phone story.
  *
- * The supplied model (raw-assets/Phone by Alex Safayan) is a low-poly OBJ with
- * no display mesh and no usable material names beyond `usemtl` ids, so the
- * screen is generated here instead of read off the model. Every number below is
- * measured from the model's own front plane, which after recentering sits at
- * z = -0.06 spanning exactly x ±0.35 and y ±0.73.
+ * The device is raw-assets/megacloudworks_phone_3d_model.glb — a purpose-built
+ * shell whose parts and materials are named (Phone_Body, Front_Glass, Screen,
+ * Top_Notch …), authored in millimetres, centred on its own origin and facing
+ * +Z. Everything below is read off that model rather than eyeballed: the body
+ * spans x ±35.5 and y ±74, and the display sits at x ±31.9, y ±70.4, z 4.60
+ * with a 5.6 corner.
  */
-
-/** Offset that moves the model's body centre onto the origin. */
-export const MODEL_OFFSET = [0.005, -0.074, 0.011] as const
-
-/** Front face of the phone body, in recentred model space. */
-export const FRONT_Z = -0.06
 
 /**
- * The generated display.
- *
- * The body's front face spans exactly x ±0.35 and y ±0.73, and the model's
- * earpiece slot starts at y 0.666 - which is the one hard limit here, since the
- * display cannot run under it. Everywhere else the bezel is cut to 0.025, so
- * the glass reaches nearly to the edge of the shell.
+ * The shell the story loads. It lives here rather than beside the loader so the
+ * route bundle can start fetching it without importing anything from three.
  */
+export const PHONE_MODEL_URL = '/models/phone/phone.glb'
+
+/**
+ * Millimetres to world units.
+ *
+ * Chosen so the body lands on exactly the footprint the story was staged
+ * around — 0.70 wide, 1.46 tall — which is why every pose, camera distance and
+ * hand-off rectangle in this file carries over from the model it replaces.
+ */
+export const MODEL_SCALE = 0.7 / 71
+
+/** The display, in world units, straight off the model's Screen mesh. */
 export const SCREEN = {
-  width: 0.65,
-  height: 1.36,
-  /** the top is fixed by the earpiece, so the extra height comes off the chin */
-  centerY: -0.025,
-  radius: 0.062,
-  /** floated in front of the body so it never z-fights */
-  z: FRONT_Z - 0.002,
+  width: 63.8 * MODEL_SCALE,
+  height: 140.8 * MODEL_SCALE,
+  /** the glass is centred on the body's own axis */
+  centerY: 0,
+  radius: 5.6 * MODEL_SCALE,
+  /** the front face of the glass; the DOM screen floats a hair in front */
+  z: 4.6 * MODEL_SCALE,
 } as const
 
 export const SCREEN_ASPECT = SCREEN.width / SCREEN.height
@@ -37,8 +40,10 @@ export const SCREEN_ASPECT = SCREEN.width / SCREEN.height
 /**
  * CSS pixel size of the DOM screen. Content is authored at this size and then
  * scaled into world units, so screens can be written as ordinary mobile UI.
+ * The height is the width carried through the glass's own aspect, so the
+ * markup covers the display exactly with nothing letterboxed at the ends.
  */
-export const SCREEN_PX = { w: 340, h: 712 } as const
+export const SCREEN_PX = { w: 340, h: 750 } as const
 
 /**
  * drei's <Html transform> maps one CSS pixel to (distanceFactor || 10) / 400

@@ -312,6 +312,10 @@ export function ScrollExpand({
         src={src}
         alt={alt}
         draggable={false}
+        /* the panel sits hidden until the last act, so its plate must not race
+           the opening one for bandwidth */
+        fetchPriority="low"
+        decoding="async"
       />
     ) : null
 

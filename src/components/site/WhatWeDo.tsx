@@ -6,6 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 const ITEMS = [
   {
     img: '/card-design.webp',
+    small: '/card-design-400.webp',
+    w: 640,
+    h: 581,
     title: 'App Design',
     desc: 'Thoughtful UX and polished interfaces.',
     to: '/services',
@@ -14,6 +17,9 @@ const ITEMS = [
   },
   {
     img: '/card-development.webp',
+    small: '/card-development-400.webp',
+    w: 640,
+    h: 636,
     title: 'App Development',
     desc: 'Clean, and performant code, shipped on time.',
     to: '/services',
@@ -22,6 +28,9 @@ const ITEMS = [
   },
   {
     img: '/card-brand.webp',
+    small: '/card-brand-400.webp',
+    w: 640,
+    h: 615,
     title: 'Brand & UI',
     desc: 'Visual systems that feel cohesive.',
     to: '/services',
@@ -100,11 +109,20 @@ export function WhatWeDo() {
               <span className="relative z-10 mt-4 inline-block text-sm font-semibold text-[var(--brand)] transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100">
                 Learn more →
               </span>
+              {/* The card art is never drawn wider than 190 css px, so a phone
+                  has no use for the full plate. The intrinsic size is declared
+                  with it, so the box is reserved before the art arrives; the
+                  classes below still drive the layout. */}
               <img
                 src={item.img}
+                srcSet={`${item.small} 400w, ${item.img} 640w`}
+                sizes="(max-width: 640px) 60vw, 190px"
                 alt=""
                 aria-hidden="true"
                 loading="lazy"
+                decoding="async"
+                width={item.w}
+                height={item.h}
                 className={`pointer-events-none absolute bottom-0 right-0 w-[60%] max-w-[190px] translate-x-3 object-contain transition-transform duration-300 ${item.imgY}`}
               />
             </Link>

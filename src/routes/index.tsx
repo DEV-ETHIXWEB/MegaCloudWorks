@@ -7,13 +7,30 @@ import { seo } from '#/lib/seo'
 
 export const Route = createFileRoute('/')({
   component: App,
-  head: () =>
-    seo({
+  head: () => {
+    const head = seo({
       title: 'MegaCloudWorks · App Design & Development Studio',
       description:
         'MegaCloudWorks is an app design & development studio crafting clean, fast, beautiful products. Our new home is almost ready.',
       path: '/',
-    }),
+    })
+    return {
+      ...head,
+      links: [
+        ...head.links,
+        // the hero plate is referenced from a CSS background, so the browser
+        // cannot find it until the stylesheet has parsed — which is the whole
+        // first paint. Preloading it moves the request up to the document.
+        {
+          rel: 'preload',
+          as: 'image',
+          href: '/sky/welcome.webp',
+          type: 'image/webp',
+          fetchPriority: 'high',
+        },
+      ],
+    }
+  },
 })
 
 function App() {

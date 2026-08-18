@@ -46,6 +46,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: 'stylesheet',
         href: appCss,
       },
+      // every headline on the site is set in Geologica, and the browser cannot
+      // discover it until the stylesheet has parsed — which is late enough that
+      // the first paint lands in the fallback face and reflows to this one.
+      // Fonts are fetched anonymously even same-origin, hence the crossOrigin.
+      {
+        rel: 'preload',
+        as: 'font',
+        type: 'font/woff2',
+        href: '/fonts/Geologica-Variable.woff2',
+        crossOrigin: 'anonymous',
+      },
       {
         rel: 'icon',
         type: 'image/svg+xml',

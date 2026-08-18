@@ -35,7 +35,10 @@ export function FamilyScreen({
       setBeat(BEATS)
       return
     }
-    let n = 0
+    // the first beat lands on arrival rather than one tick later: the header is
+    // the anchor for everything under it and waiting on it reads as a stall
+    let n = 1
+    setBeat(1)
     const id = window.setInterval(() => {
       n += 1
       setBeat(n)
@@ -44,11 +47,15 @@ export function FamilyScreen({
     return () => window.clearInterval(id)
   }, [])
 
-  const head = (
-    <header className="fam__head">
+  /* ---------- EthixWeb's half: their site's black and red ---------- */
+  const them = (
+    <section className="fam__col fam__col--them">
       <img
-        src="/ethixweb-black.png"
+        src="/ethixweb-light.png"
         alt="EthixWeb"
+        width={422}
+        height={63}
+        decoding="async"
         className="fam__logo"
         style={{ opacity: beat >= 1 ? 1 : 0 }}
       />
@@ -106,7 +113,7 @@ export function FamilyScreen({
           className="fam__title fam__title--us"
         />
         <BlurText
-          text="Not a prototype and not a demo - the product our clients actually asked for, in the store."
+          text="Not a prototype and not a demo — the product our clients actually asked for, in the store."
           start={beat >= 5}
           delay={26}
           stepDuration={0.28}
@@ -120,7 +127,7 @@ export function FamilyScreen({
     <footer className="fam__foot" data-in={beat >= 6}>
       <BlurText
         as="span"
-        text="One group, two studios - the web team and the app team sit in the same room."
+        text="One group, two studios — the web team and the app team sit in the same room."
         start={beat >= 6}
         delay={20}
         stepDuration={0.26}
@@ -151,9 +158,13 @@ export function FamilyScreen({
             : { width: SCREEN_PX.w, height: SCREEN_PX.h }
         }
       >
-        {head}
-        {columns}
-        {foot}
+        {them}
+        {us}
+
+        {/* the hand-off, sitting on the seam between the two houses */}
+        <span className="fam__link" data-in={beat >= 3} aria-hidden="true">
+          <ArrowRight size={14} strokeWidth={2.6} />
+        </span>
       </div>
     </div>
   )

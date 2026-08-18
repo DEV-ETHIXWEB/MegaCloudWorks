@@ -1,6 +1,6 @@
 import { ScreenShell } from './ScreenShell'
 
-export const LAUNCH_MEDIA = '/contact-background.png'
+export const LAUNCH_MEDIA = '/sky/contact.webp'
 
 /**
  * The last act, on the device. The display drops its UI and goes full-bleed on
@@ -19,6 +19,8 @@ export function LaunchScreen() {
         alt=""
         className="launch__media"
         draggable={false}
+        fetchPriority="low"
+        decoding="async"
       />
 
       <div className="launch__mark">

@@ -93,6 +93,9 @@ export function SiteHeader({
           <img
             src={logo}
             alt="MegaCloudWorks"
+            width={236}
+            height={32}
+            fetchPriority="high"
             className="h-[24px] w-auto sm:h-[27px]"
           />
         </Link>

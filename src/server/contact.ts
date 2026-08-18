@@ -23,7 +23,7 @@ const shortText = (value: unknown, max = 120) =>
 export type ContactResult = { ok: true; name: string }
 
 /**
- * sendContact — TanStack Start server function backing the Contact form.
+ * sendContact - TanStack Start server function backing the Contact form.
  *
  * Validates on the server and (in a real deployment) is where you'd forward
  * the enquiry to your inbox / CRM. For now it acknowledges so the UI has a
@@ -78,7 +78,7 @@ export const sendContact = createServerFn({ method: 'POST' })
     }
   })
   .handler(async ({ data }): Promise<ContactResult> => {
-    // TODO(production): this only logs — enquiries are not persisted or
+    // TODO(production): this only logs - enquiries are not persisted or
     // delivered anywhere yet. Before launch, replace this block with a call
     // to an email provider (e.g. Resend, Postmark) or CRM webhook using an
     // API key read from an environment variable (e.g. RESEND_API_KEY),
@@ -94,7 +94,7 @@ export const sendContact = createServerFn({ method: 'POST' })
 
     console.log(
       `[megacloudworks] new enquiry from ${data.name} <${data.email}> · ${data.subject}: ${data.message}${
-        brief ? ` — ${brief}` : ''
+        brief ? ` - ${brief}` : ''
       }`,
     )
     return { ok: true, name: data.name }

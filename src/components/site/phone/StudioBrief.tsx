@@ -13,7 +13,7 @@ const SERVICES = [
   'Rescue an existing app',
 ] as const
 
-const BUDGETS = ['Under $10k', '$10k — $25k', '$25k — $60k', '$60k+'] as const
+const BUDGETS = ['Under $10k', '$10k - $25k', '$25k - $60k', '$60k+'] as const
 
 const TIMELINES = ['ASAP', 'Next quarter', 'Just exploring'] as const
 
@@ -95,7 +95,7 @@ function Field({
       )}
       <label htmlFor={id} className="contact-label">
         {label}
-        {optional ? <span className="brief__opt"> — optional</span> : null}
+        {optional ? <span className="brief__opt"> - optional</span> : null}
       </label>
       <span aria-hidden="true" className="contact-underline" />
     </div>
@@ -103,14 +103,14 @@ function Field({
 }
 
 /**
- * The studio brief — the enquiry form the expanded panel carries.
+ * The studio brief - the enquiry form the expanded panel carries.
  *
  * It asks more than the plain contact form does, but almost all of it is taps:
  * what you want, roughly what you can spend, roughly when. Those three answers
  * are what decide whether we are the right studio for the job, and asking for
  * them here saves the two emails it would otherwise take to find out.
  *
- * Nothing but name, email and a description is actually required — the chips
+ * Nothing but name, email and a description is actually required - the chips
  * are there for people who want to be precise, not a gate for people who don't.
  */
 export function StudioBrief({ className }: { className?: string }) {
@@ -189,7 +189,7 @@ export function StudioBrief({ className }: { className?: string }) {
         <h3 className="brief__sent-title">Thanks, {sent}.</h3>
         <p className="brief__sent-body">
           Your brief is in. A person reads it and replies within one business
-          day — no autoresponder, no sequence.
+          day - no autoresponder, no sequence.
         </p>
         <button
           type="button"

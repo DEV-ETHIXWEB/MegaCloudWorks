@@ -144,7 +144,7 @@ export function PhoneStory() {
   useEffect(() => setMounted(true), [])
 
   // one act per gesture, and the only thing that moves the page inside the
-  // story — including the phone screen's own controls
+  // story - including the phone screen's own controls
   const { goTo } = useSectionScroll({
     sectionRef: section,
     points: SNAP_POINTS,
@@ -157,7 +157,7 @@ export function PhoneStory() {
 
   /**
    * Tapping a step on the device drives the story to it, rather than just
-   * repainting the list — the display is a control surface.
+   * repainting the list - the display is a control surface.
    */
   const selectStep = useCallback(
     (index: number) => goTo(FIRST_STEP_STOP + index),
@@ -255,7 +255,7 @@ export function PhoneStory() {
 
       // … and until then it is not on screen at all: it fades up over the
       // display it is replacing, on the same rectangle, as the phone dissolves.
-      // Once it is up it stays up — a form that dims while you are filling it
+      // Once it is up it stays up - a form that dims while you are filling it
       // in is worse than a section that simply scrolls away like any other.
       if (panel.current) {
         const inn = range(p, ACT.handoff[0], ACT.handoff[1])
@@ -327,7 +327,7 @@ export function PhoneStory() {
         20,
       )
 
-      // the hem is only wanted where it does its job — at the very end, as the
+      // the hem is only wanted where it does its job - at the very end, as the
       // pin releases. Left on, it would sit as a grey wash under the phone.
       if (hem.current) hem.current.style.opacity = `${range(p, 0.9, 0.99)}`
 
@@ -390,7 +390,7 @@ export function PhoneStory() {
     }
   }, [])
 
-  // the panel's opening rectangle changed — redraw at the current progress
+  // the panel's opening rectangle changed - redraw at the current progress
   useEffect(() => {
     expand.current?.setProgress(
       range(story.current.progress, ACT.expand[0], ACT.expand[1]),
@@ -475,7 +475,7 @@ export function PhoneStory() {
             describing.
           </h1>
           <p className="phone-story__lede">
-            Design and development under one roof. Pick it up — the phone is the
+            Design and development under one roof. Pick it up - the phone is the
             real thing, it follows your cursor, and everything on it works.
           </p>
         </div>
@@ -487,7 +487,7 @@ export function PhoneStory() {
           <span className="phone-story__wire-head" />
         </div>
 
-        {/* the act itself is read off the display — the page only frames it */}
+        {/* the act itself is read off the display - the page only frames it */}
         <div ref={rail} className="phone-story__rail-head">
           <p className="phone-story__eyebrow">What we do best</p>
           <h2 className="phone-story__rail-title">

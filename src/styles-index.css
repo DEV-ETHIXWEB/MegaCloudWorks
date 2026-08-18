@@ -1,0 +1,221 @@
+/* ===========================================================================
+   THE INDEX
+   ---------------------------------------------------------------------------
+   The five names, and whichever one you are on shown whole beside them.
+
+   This used to be a black spec-sheet card on a white page, which was correct
+   when the case studies behind it were black too. They are snow now, and a
+   dark plate on the index meant clicking a concept was a hard cut from one
+   design system into another. So the plate is made of the same three tokens
+   the case studies are: the product's accent as a graphic colour, its darkened
+   twin for small type, and its palest wash for whole surfaces.
+
+   The other change is what is on the plate. It carried a low-fidelity drawing
+   of the product; it carries the product now - the actual first screen of the
+   actual app, running, in a device. There is no argument for a sketch of a
+   thing when the thing itself is four kilobytes of components away.
+   =========================================================================== */
+
+.work-index {
+  --ix-hair: rgba(14, 18, 24, 0.09);
+  --ix-ink: #0e1218;
+  --ix-soft: #5a6472;
+  --ix-faint: #8a939f;
+}
+
+/* ---------------------------------------------------------------------------
+   The plate
+   ------------------------------------------------------------------------ */
+
+.work-index .work-plate {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  border-radius: 24px;
+  border: 1px solid var(--ix-hair);
+  background: linear-gradient(
+    168deg,
+    #ffffff 0%,
+    color-mix(in srgb, var(--accent) 7%, #ffffff) 62%,
+    color-mix(in srgb, var(--accent) 13%, #ffffff) 100%
+  );
+  color: var(--ix-ink);
+  box-shadow: 0 34px 70px -46px color-mix(in srgb, var(--accent) 62%, transparent);
+}
+
+/* the grain was there to keep a flat black field from banding; on paper it
+   only makes the card look dirty */
+.work-index .work-plate__grain {
+  display: none;
+}
+
+/* the folio, hollow rather than filled - at this size a solid number is a
+   second headline competing with the name */
+.work-index .work-plate__ghost {
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--accent) 26%, transparent);
+  opacity: 1;
+}
+
+.work-index .work-plate__inner {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 0;
+  padding: 1.9rem 1.9rem 1.6rem;
+}
+
+.work-index .work-plate__eyebrow {
+  color: var(--ix-soft);
+}
+
+.work-index .work-plate__rule {
+  background: var(--accent);
+}
+
+.work-index .work-plate__index {
+  color: var(--ix-faint);
+}
+
+.work-index .work-plate__name {
+  color: var(--ix-ink);
+}
+
+.work-index .work-plate__tag {
+  color: var(--ix-soft);
+}
+
+.work-index .work-plate__screen {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, #ffffff);
+  color: var(--ix-soft);
+}
+
+.work-index .work-plate__foot {
+  border-top: 1px solid var(--ix-hair);
+  color: var(--ix-faint);
+}
+
+.work-index .work-plate__swatch {
+  box-shadow: inset 0 0 0 1px rgba(14, 18, 24, 0.14);
+}
+
+.work-index .work-plate__dot {
+  background: var(--ix-faint);
+}
+
+/* ---- the device on the plate ---- */
+
+.work-plate__device {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 1.1rem 0 0.4rem;
+}
+
+/* the bloom the device stands in, in the product's own colour */
+.work-plate__device::before {
+  content: '';
+  position: absolute;
+  inset: 12% 22% 6%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 30%, transparent),
+    transparent 72%
+  );
+  filter: blur(26px);
+  opacity: 0.7;
+  animation: ix-bloom 7s ease-in-out infinite;
+}
+
+@keyframes ix-bloom {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+.work-plate__device > span {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 168px;
+}
+
+/*
+  The kit is authored against a ~300px display, so a 158px device has to be
+  told the app is running at half scale or a nav-bar title wraps mid-word.
+  `zoom` rather than a transform, because the slide already carries one.
+*/
+.work-plate__device .phone3d__slide {
+  zoom: 0.5;
+}
+
+.work-index .work-plate__preview {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   The list
+   ------------------------------------------------------------------------ */
+
+/* the live row is underscored in its own colour, drawn from the left */
+.work-row::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 2px;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 12%, transparent)
+  );
+  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.work-row[data-active]::after {
+  transform: scaleX(1);
+}
+
+@media (min-width: 1024px) {
+  /* the wash under the live row, so the eye has somewhere to rest between the
+     name on the left and the plate on the right */
+  .work-row[data-active] .work-row__glow {
+    opacity: 0.1;
+  }
+}
+
+.work-row__n {
+  font-variant-numeric: tabular-nums;
+}
+
+.work-row[data-active] .work-row__n {
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   Small screens
+   ------------------------------------------------------------------------ */
+
+@media (max-width: 1023px) {
+  .work-index .work-plate__inner {
+    padding: 1.5rem 1.35rem 1.3rem;
+  }
+
+  .work-plate__device > span {
+    max-width: 148px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-plate__device::before {
+    animation: none;
+  }
+}

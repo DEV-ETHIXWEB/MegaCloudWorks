@@ -1,6 +1,6 @@
 /**
  * Small, low-fidelity product snapshots shown inside the concept cards on the
- * Work page. Purely decorative — no data, no interaction.
+ * Work page. Purely decorative - no data, no interaction.
  */
 
 function Panel({
@@ -20,7 +20,7 @@ function Panel({
   )
 }
 
-/** Prophy — recall list with a small month chart underneath. */
+/** Prophy - recall list with a small month chart underneath. */
 export function ProphyPreview() {
   const rows = [
     { name: 'Sarah M.', sub: 'Overdue 12d', hot: true, w: '84%' },
@@ -80,7 +80,7 @@ export function ProphyPreview() {
   )
 }
 
-/** Leadr — pipeline stage counters. */
+/** Leadr - pipeline stage counters. */
 export function LeadrPreview() {
   const stages = [
     { label: 'New', n: '24' },
@@ -115,13 +115,13 @@ export function LeadrPreview() {
   )
 }
 
-/** Slate — a week strip with the booked day highlighted. */
+/** Slate - a week strip with the booked day highlighted. */
 export function SlatePreview() {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const slots = ['9:00', '11:30', '2:15']
 
   // Slate's card is the narrow one in the bento grid, so the strip runs on
-  // single-letter initials and an equal-track grid — seven three-letter pills
+  // single-letter initials and an equal-track grid - seven three-letter pills
   // would wrap mid-word at that width. Chips wrap rather than squeeze.
   return (
     <Panel label="Week of 9 Nov">

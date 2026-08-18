@@ -3,7 +3,7 @@ import { STEPS } from '../process'
 
 /**
  * Act three, on the device. The display becomes the studio's process and the
- * active step follows the scroll — the phone is standing in for the product
+ * active step follows the scroll - the phone is standing in for the product
  * being built. Tapping a step drives the scroll to it, so the list is a control
  * rather than a picture of one.
  */
@@ -59,7 +59,7 @@ export function ProcessScreen({
 
         <div className="proc__foot">
           <span className="proc__dot" />
-          Building live — keep scrolling
+          Building live - keep scrolling
         </div>
       </div>
     </ScreenShell>

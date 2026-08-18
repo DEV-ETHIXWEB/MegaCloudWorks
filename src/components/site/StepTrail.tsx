@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 /**
  * The dotted route of "How we work": one red trail sweeping between the four
- * marks — which sit left, right, left and centre — so it reads as a path being
+ * marks - which sit left, right, left and centre - so it reads as a path being
  * walked rather than a rule being drawn: the same dashed line that climbs the
  * mountain in the CTA.
  *
@@ -48,7 +48,7 @@ export function StepTrail({
 
     const next: Array<string> = []
 
-    // One curve per gap — no lead-in above the first mark and no tail below
+    // One curve per gap - no lead-in above the first mark and no tail below
     // the last, both of which read as loose dotted lines rather than as part
     // of the route.
     //
@@ -119,8 +119,8 @@ export function StepTrail({
       viewBox={`0 0 ${size.w} ${size.h}`}
       fill="none"
     >
-      {/* A dotted stroke cannot draw itself — its dash pattern is already
-          spoken for — so each segment is revealed through a mask holding a
+      {/* A dotted stroke cannot draw itself - its dash pattern is already
+          spoken for - so each segment is revealed through a mask holding a
           solid stroke that does. pathLength normalises every segment to 100
           units, so one dash offset covers curves of any length. */}
       <defs>

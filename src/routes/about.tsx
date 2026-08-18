@@ -48,7 +48,7 @@ const STEPS = [
     icon: 3,
     side: 'left',
     title: 'Build',
-    desc: 'We develop it properly — tested, reviewed, and built to hold up as the product and its traffic grow.',
+    desc: 'We develop it properly - tested, reviewed, and built to hold up as the product and its traffic grow.',
   },
   {
     n: '04',
@@ -62,9 +62,9 @@ const STEPS = [
 function About() {
   const root = useRef<HTMLDivElement>(null)
   // the hero headline blurs in a line at a time, on the same beat system the
-  // studio bridge uses further down the page — one language for big type
+  // studio bridge uses further down the page - one language for big type
   const [beat, setBeat] = useState(0)
-  // how far down the "How we work" route the reader has walked — each row
+  // how far down the "How we work" route the reader has walked - each row
   // reports in as it arrives, and the spine draws itself to match
   const steps = useRef<HTMLDivElement>(null)
   const [reached, setReached] = useState(0)
@@ -129,7 +129,7 @@ function About() {
 
       ctx = gsap.context(() => {
         // the headline copy is driven by BlurText (see `beat` above), so the
-        // only thing left for GSAP here is the photograph. It fades — the slow
+        // only thing left for GSAP here is the photograph. It fades - the slow
         // drift/scale lives in CSS on the <img> itself, and a GSAP transform on
         // the same element would be steamrolled by that animation anyway.
         gsap.from('[data-hero-art]', {
@@ -146,7 +146,7 @@ function About() {
         // an element already on-screen at mount (common on tall viewports,
         // or once the hero photo finishes loading and shrinks the page)
         // will never fire ScrollTrigger's onEnter, since that only fires on
-        // a scroll/refresh crossing — so those play immediately instead of
+        // a scroll/refresh crossing - so those play immediately instead of
         // waiting on a trigger that has already been passed
         const revealables = gsap.utils.toArray<HTMLElement>('[data-reveal]')
         const inView = (el: HTMLElement) =>
@@ -176,13 +176,13 @@ function About() {
         })
 
         // "How we work" is not animated here. Its four marks run their own
-        // sequence off the `lit` flag above — mark, then copy, then the
-        // dotted trail on to the next one — and a GSAP tween on the card
+        // sequence off the `lit` flag above - mark, then copy, then the
+        // dotted trail on to the next one - and a GSAP tween on the card
         // would be fading the same pixels a second time, out of step.
       }, root)
     } catch {
       // animation setup failed for any reason (extension conflict, GSAP
-      // load error, etc.) — bail out silently rather than leaving
+      // load error, etc.) - bail out silently rather than leaving
       // scroll-gated content stuck at opacity:0 with no way to reveal it
       gsap.set('[data-hero-art], [data-callout], [data-reveal], [data-step]', {
         clearProps: 'all',
@@ -232,7 +232,7 @@ function About() {
           between paper and brand as the bands come up */}
       <PageWash />
 
-      {/* ================= 1. HERO — Design. Build. Ship. ================= */}
+      {/* ================= 1. HERO - Design. Build. Ship. ================= */}
       {/* the mountain photograph sits behind the (transparent, absolutely
           positioned) SiteHeader from y:0, so it reads as one continuous
           backdrop rather than starting below the nav */}
@@ -267,7 +267,7 @@ function About() {
           </div>
 
           {/* ---- basecamp callout ---- */}
-          {/* only shown from lg up — below that the mask keeps the mast/tent
+          {/* only shown from lg up - below that the mask keeps the mast/tent
               close to the text column, leaving no clean spot for the label */}
           <div
             data-callout
@@ -342,7 +342,7 @@ function About() {
                 />
               </p>
               <h1 className="mt-5 font-display text-[clamp(3rem,7vw,5.25rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]">
-                {/* one BlurText per line, letter by letter — the words are
+                {/* one BlurText per line, letter by letter - the words are
                     short enough that per-word staggering would land them all
                     at once and lose the cascade */}
                 <BlurText
@@ -428,7 +428,7 @@ function About() {
         </div>
       </section>
 
-      {/* ================= 2. TWO STUDIOS — on paper ================= */}
+      {/* ================= 2. TWO STUDIOS - on paper ================= */}
       <section
         data-band="paper"
         className="relative px-6 pb-24 pt-12 sm:px-10 sm:pb-28 sm:pt-16 lg:px-20 lg:pb-32 lg:pt-20"
@@ -451,19 +451,19 @@ function About() {
         </div>
       </section>
 
-      {/* ================= 3. HOW WE WORK — the red stretch ================= */}
+      {/* ================= 3. HOW WE WORK - the red stretch ================= */}
       {/* the section itself is flat: the colour lives in <PageWash>, which
           flips the whole page over as this band comes up */}
       {/* This band paints itself. It used to hand the page over to <PageWash>,
           but the wash's red and the red the sky plates are painted in are not
-          the same red, and the two met in a visible line at the band's edges —
+          the same red, and the two met in a visible line at the band's edges -
           so the band stays `paper` as far as the wash is concerned, keeps the
           on-brand tokens for its white type, and carries the plates' own red
           underneath them.
 
           No overflow clipping here either: the plates are held by a sticky
           frame, and a clipping ancestor would make this section its scroll
-          container — at which point it would never stick. */}
+          container - at which point it would never stick. */}
       <section
         data-band="paper"
         className="step-band on-brand relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
@@ -488,14 +488,14 @@ function About() {
         {/* The route runs the full width of the band, not the width of the
             heading above it: the marks are pushed right out to the page's
             margins so the trail has real distance to cross. The copy is
-            unaffected — a two-column grid splits on the page's centre line
+            unaffected - a two-column grid splits on the page's centre line
             whatever its outer width, so the text still starts (or ends)
             exactly where it did. */}
         <div ref={steps} className="relative z-10 mt-20 sm:mt-24">
           <StepTrail scope={steps} active={reached} />
 
           {/* stacked there is no route drawn between the rows, so the gap is
-              doing nothing but separating them — a desktop-sized one just
+              doing nothing but separating them - a desktop-sized one just
               leaves a phone scrolling through empty red */}
           <ol className="relative z-10 flex list-none flex-col gap-12 p-0 sm:gap-32">
             {STEPS.map((step, i) => (
@@ -511,7 +511,7 @@ function About() {
         </div>
       </section>
 
-      {/* ================= 4. OUR COVERAGE — back on paper ================= */}
+      {/* ================= 4. OUR COVERAGE - back on paper ================= */}
       <section
         data-band="paper"
         className="relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-32"
@@ -555,7 +555,7 @@ function About() {
         </div>
       </section>
 
-      {/* ================= 5. NOTIFY CTA — back on paper ================= */}
+      {/* ================= 5. NOTIFY CTA - back on paper ================= */}
       <section
         data-band="paper"
         className="relative overflow-hidden bg-[var(--paper)]"

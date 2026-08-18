@@ -1,0 +1,200 @@
+/* ===========================================================================
+   THE WORK HERO
+   ---------------------------------------------------------------------------
+   This was a looping cloud clip composited with `multiply`. It was a decent
+   trick and it cost a megabyte of video to say "weather", which the studio's
+   own photograph says better: a monochrome valley, black rock in the near
+   ground, and one red tent with red smoke coming off it on the right.
+
+   The picture is not decoration here. Everything else on the site is built
+   from it - the case studies are snow with one red plume, the concept plates
+   are snow with one accent - so the index opening on the frame those pages
+   are derived from is the page saying where its own colour comes from.
+
+   The whole treatment is three layers and no filter on the subject: a wedge of
+   paper down the left where the headline sits, a hem at the foot where the
+   picture becomes the page, and one slow ember over the smoke.
+   =========================================================================== */
+
+.work-sky {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.work-sky__plate {
+  position: absolute;
+  /* overscanned so the drift never walks an edge into frame, and unclamped
+     because preflight caps every image at the width of its container */
+  inset: -7%;
+  width: 114%;
+  height: 114%;
+  max-width: none;
+  object-fit: cover;
+  /*
+    Framed on the tent, not on the centre.
+
+    Cover crops the sides first, and the whole reason to use this photograph is
+    the one red thing in it. Holding the frame right of centre keeps the tent
+    and the plume on screen down to a phone, where a centred crop loses both
+    and leaves a grey valley.
+  */
+  object-position: 68% 44%;
+  /* no blur: the photograph is the point, and the veil below already holds the
+     type off it - softening the subject as well only made it look cheap */
+  filter: saturate(104%) contrast(103%);
+  opacity: 0.94;
+  will-change: transform;
+  animation: work-sky-drift 46s ease-in-out infinite alternate;
+}
+
+/* a long, slow push toward the camp - forty-six seconds, so it is never the
+   thing you notice, only the reason the page does not feel like a poster */
+@keyframes work-sky-drift {
+  from {
+    transform: scale(1.01) translate3d(0.8%, 0.5%, 0);
+  }
+  to {
+    transform: scale(1.08) translate3d(-1%, -1.2%, 0);
+  }
+}
+
+/*
+  The wedge.
+
+  Paper at full strength under the eyebrow and the headline, gone by the time
+  it reaches the ridge on the right. A scrim across the whole frame is what
+  turns a photograph into a grey rectangle; this only covers the part with
+  words on it.
+*/
+.work-sky__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      98deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.82) 24%,
+      rgba(255, 255, 255, 0.42) 46%,
+      rgba(255, 255, 255, 0.08) 66%,
+      transparent 82%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.2) 26%,
+      transparent 58%
+    );
+}
+
+/*
+  The ember.
+
+  One soft pulse of the studio red over the plume, on a period long enough that
+  it reads as the smoke breathing rather than as a light blinking. It is the
+  only added colour in the frame, and it is the same red the whole site is
+  built on.
+*/
+.work-sky__ember {
+  position: absolute;
+  top: 12%;
+  right: 2%;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(245, 51, 59, 0.22) 0%,
+    rgba(245, 51, 59, 0.08) 44%,
+    transparent 72%
+  );
+  filter: blur(38px);
+  mix-blend-mode: screen;
+  animation: work-sky-ember 11s ease-in-out infinite;
+}
+
+@keyframes work-sky-ember {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate3d(0, 2%, 0) scale(0.96);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate3d(-2%, -4%, 0) scale(1.06);
+  }
+}
+
+/* the picture becomes the page rather than ending on a ruled line */
+.work-sky__hem {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 46%;
+  background: linear-gradient(
+    to top,
+    var(--paper) 0%,
+    color-mix(in srgb, var(--paper) 90%, transparent) 22%,
+    color-mix(in srgb, var(--paper) 55%, transparent) 52%,
+    color-mix(in srgb, var(--paper) 16%, transparent) 78%,
+    transparent 100%
+  );
+}
+
+/*
+  The cord.
+
+  Pulling it takes the page over to brand red, and the photograph has to come
+  with it or the hero is suddenly two pictures. The grade pushes everything
+  that is already red and drops the rest toward the paper the section is now
+  painted in - the same monochrome-plus-one the frame started as, with the
+  studio's own red doing the talking.
+*/
+.work-sky__plate,
+.work-sky__veil {
+  transition: opacity 700ms ease;
+}
+
+.on-brand .work-sky__plate {
+  opacity: 0.42;
+}
+
+.on-brand .work-sky__veil {
+  opacity: 0.28;
+}
+
+.on-brand .work-sky__ember {
+  opacity: 0;
+}
+
+@media (max-width: 767px) {
+  /* on a phone the wedge would have to cover most of the frame to clear the
+     headline, so the veil goes flat and the picture sits further back */
+  .work-sky__plate {
+    opacity: 0.7;
+    object-position: 74% 46%;
+  }
+
+  .work-sky__veil {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.62) 40%,
+      rgba(255, 255, 255, 0.28) 70%,
+      transparent 100%
+    );
+  }
+
+  .work-sky__ember {
+    width: 70vmax;
+    height: 70vmax;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-sky__plate,
+  .work-sky__ember {
+    animation: none;
+  }
+}

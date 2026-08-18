@@ -3,8 +3,12 @@
 
 @import 'tw-animate-css';
 
+/* the concept case study: the iOS kit its phone screens are built from, and
+   the ridge/smoke hero the page opens on */
+@import './styles-concept.css';
+
 /* ------------------------------------------------------------------ *
- * Geologica — self-hosted variable font (weight 100—900)
+ * Geologica - self-hosted variable font (weight 100-900)
  * ------------------------------------------------------------------ */
 @font-face {
   font-family: 'Geologica';
@@ -175,7 +179,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
- * Link track — the connector between the Ethixweb / MegaCloudWorks
+ * Link track - the connector between the Ethixweb / MegaCloudWorks
  * wordmarks. A short brand-coloured pulse travels the rail out and back.
  * ------------------------------------------------------------------ */
 .link-track {
@@ -214,11 +218,11 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
- * Studio bridge — the Ethixweb → MegaCloudWorks connector on the About
+ * Studio bridge - the Ethixweb → MegaCloudWorks connector on the About
  * page. GSAP draws the line under scroll; when it lands, the cloud
  * flickers awake and holds a neon glow.
  * ------------------------------------------------------------------ */
-/* the neon connector's leading head — a hot white dot with a red bloom */
+/* the neon connector's leading head - a hot white dot with a red bloom */
 .bridge-head {
   filter: drop-shadow(0 0 4px var(--brand))
     drop-shadow(0 0 10px rgba(245, 51, 59, 0.8));
@@ -231,7 +235,7 @@ body {
 }
 
 /* The strike, and only the strike. There is no glow held behind the mark
-   afterwards — a permanent red bloom on paper read as a smudge rather than
+   afterwards - a permanent red bloom on paper read as a smudge rather than
    as light, so the flicker settles on the plain, full-colour logo. */
 .bridge-cloud.is-live {
   animation: cloud-flicker 780ms steps(1, end) both;
@@ -271,7 +275,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
- * About hero — the photograph never sits perfectly still
+ * About hero - the photograph never sits perfectly still
  *
  * A very slow push/pan (the frame is over-scaled so the drift never
  * exposes an edge), a brand-tinted haze crossing the ridge like the
@@ -519,7 +523,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
- * CTA — diagonal white wipe on hover
+ * CTA - diagonal white wipe on hover
  * ------------------------------------------------------------------ */
 .cta-diagonal {
   position: relative;
@@ -684,11 +688,11 @@ body {
  * The page walks white → red → white → red as you scroll. Each red stretch
  * paints itself and feathers into the paper at both ends over 9rem, so the
  * change happens gradually under the scroll rather than snapping at a
- * section edge — and because the fade lives inside the section's own top and
+ * section edge - and because the fade lives inside the section's own top and
  * bottom padding, no copy is ever sitting on the blend.
  * ------------------------------------------------------------------ */
-/* One sheet behind the whole page. Sections stay flat — no band carries its
-   own block of colour — so there is never a seam between two of them; the
+/* One sheet behind the whole page. Sections stay flat - no band carries its
+   own block of colour - so there is never a seam between two of them; the
    sheet simply crosses over as the next band comes up. */
 .page-wash {
   position: fixed;
@@ -703,7 +707,7 @@ body {
 }
 
 /* Everything inside a red band re-reads the same tokens the rest of the site
-   uses — ink becomes paper, the accent becomes white — so components keep
+   uses - ink becomes paper, the accent becomes white - so components keep
    working without a single colour being hard-coded twice. */
 .on-brand {
   --band: #f5333b;
@@ -720,7 +724,7 @@ body {
   --brand-strong: rgba(255, 255, 255, 0.88);
   --brand-2: #ffe3e0;
 
-  /* the isometric marks keep their charcoal solids on red — only the lit
+  /* the isometric marks keep their charcoal solids on red - only the lit
      faces flip, so they read as objects under a red light */
   --icon-accent: #ffffff;
   --icon-accent-mid: rgba(255, 255, 255, 0.82);
@@ -728,7 +732,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
- * What we do — the "How we work" band
+ * What we do - the "How we work" band
  *
  * The About page's band, reused rather than re-invented: the same red the
  * sky plates are painted in, carried edge to edge so the plate has
@@ -744,7 +748,7 @@ body {
   --paper: #ec2a37;
 }
 
-/* the bank the three discs stand in — white at low alpha over the band,
+/* the bank the three discs stand in - white at low alpha over the band,
    which is how the sky plate's own clouds are made */
 .svc-cloud {
   position: absolute;
@@ -805,7 +809,7 @@ body {
 }
 
 /* The copy inside is dark on white. The band's tokens are all inverted for
-   white-on-red — `--ink` is white and `--brand-strong` is white too — so on
+   white-on-red - `--ink` is white and `--brand-strong` is white too - so on
    a white disc every one of them would be invisible. These are the only
    place on the page that has to opt out of the band. */
 .svc-disc__n {
@@ -858,7 +862,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
- * Contact — the page's own surface
+ * Contact - the page's own surface
  *
  * The layout is the dark reference's, but on the site's own paper: no
  * token overrides, so <Input>, <Button> and everything else behave here
@@ -897,11 +901,11 @@ body {
 
    The glow is a stack of drop-shadows rather than text-shadows on purpose:
    drop-shadow blooms from what is actually painted, and with the fill left
-   transparent that is the stroke alone — so the light comes off the outline
+   transparent that is the stroke alone - so the light comes off the outline
    of each letter instead of off a solid glyph. */
 /* NB no `position` here: the element carries Tailwind's `absolute`, and this
    rule is emitted after the utilities, so setting one would win and drop the
-   word back into the flow — it is already the containing block the lit copy
+   word back into the flow - it is already the containing block the lit copy
    positions against. */
 .contact-word {
   /* smaller on a phone than the raw 17vw: at full size the outline ran
@@ -943,7 +947,7 @@ body {
     drop-shadow(0 0 12px rgba(245, 51, 59, 0.5));
 
   /* The band is a slice of a mask three times the width of the word, so it
-     is off the element entirely at both ends of the travel — the sweep gets
+     is off the element entirely at both ends of the travel - the sweep gets
      a rest between passes instead of looping back immediately. Animating
      mask-position rather than a conic angle keeps this working without
      @property, and a cone rotating about the centre of something this wide
@@ -1059,7 +1063,7 @@ a.contact-card:hover {
 }
 
 /* Anchored to the bottom so the ridge line lands on the card's foot rather
-   than being cropped through the middle of the peaks — and never quite
+   than being cropped through the middle of the peaks - and never quite
    still, on the same long, low-amplitude drift the About hero uses. The
    frame is over-scaled so the travel can never expose an edge. */
 .contact-reach__art {
@@ -1227,7 +1231,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* the focus mark draws in from the left rather than the border changing
-   colour all at once — the same "a line arrives" language the studio bridge
+   colour all at once - the same "a line arrives" language the studio bridge
    and the step trail are built on */
 .contact-underline {
   position: absolute;
@@ -1246,7 +1250,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * The lit edge — adapted from the BorderGlow pattern
+ * The lit edge - adapted from the BorderGlow pattern
  *
  * `--edge` is how far out towards the border the pointer is (0 centre,
  * 1 edge) and `--bearing` is its direction from the centre. The ring is
@@ -1330,7 +1334,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * What happens next — the three beats under the form
+ * What happens next - the three beats under the form
  * ------------------------------------------------------------------ */
 .contact-next__step {
   opacity: 0;
@@ -1362,7 +1366,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * Sent — the panel becomes the acknowledgement
+ * Sent - the panel becomes the acknowledgement
  * ------------------------------------------------------------------ */
 .contact-sent {
   position: relative;
@@ -1433,7 +1437,7 @@ a.contact-card:hover .contact-go {
   }
 }
 
-/* the tick is drawn, not faded — pathLength is 100 so one offset covers it */
+/* the tick is drawn, not faded - pathLength is 100 so one offset covers it */
 .contact-sent__tick {
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
@@ -1547,7 +1551,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * Pull cord — the rope in the Work hero
+ * Pull cord - the rope in the Work hero
  *
  * Everything that moves is written straight to the <path> and the <g> by the
  * simulation, so the only job here is how it looks and how it takes a grab.
@@ -1595,7 +1599,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * The closing CTA — staged, not simply revealed
+ * The closing CTA - staged, not simply revealed
  *
  * The block never moves in the document: the centred opening is a transform
  * measured at run time (see SummitCta), so nothing below it shifts while the
@@ -1606,7 +1610,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* No transition in the opening state, on purpose. The offset is measured on
-   the client, so it lands one frame after mount — with a transition here that
+   the client, so it lands one frame after mount - with a transition here that
    first change animates too, and the block is seen sliding left-to-centre
    before it has said anything. It snaps to centre (while still invisible) and
    only the journey back to its real position is animated. */
@@ -1621,7 +1625,7 @@ a.contact-card:hover .contact-go {
   transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* 1 — the headline arrives on its own */
+/* 1 - the headline arrives on its own */
 .summit__head {
   opacity: 0;
   transform: translateY(26px) scale(0.97);
@@ -1635,8 +1639,8 @@ a.contact-card:hover .contact-go {
   transform: none;
 }
 
-/* 2 — the question mark writes itself */
-/* sized so the drawn hook matches the cap height of the type beside it —
+/* 2 - the question mark writes itself */
+/* sized so the drawn hook matches the cap height of the type beside it -
    the box carries the point as well, hence the overhang below the baseline */
 .summit__mark {
   display: inline-block;
@@ -1668,7 +1672,7 @@ a.contact-card:hover .contact-go {
   }
 }
 
-/* the rider: out of the point, up the stem, over the top — the stroke is
+/* the rider: out of the point, up the stem, over the top - the stroke is
    laid down behind it. Its path is the hook with a lead-in from the point. */
 /* the lead-in out of the point is short on purpose: any longer and there is
    a beat where the mark reads as a colon, two dots and no stroke yet */
@@ -1723,7 +1727,7 @@ a.contact-card:hover .contact-go {
   }
 }
 
-/* 3 — the block settles left and the eyebrow comes with it */
+/* 3 - the block settles left and the eyebrow comes with it */
 .summit__eyebrow {
   opacity: 0;
   transform: translateY(10px);
@@ -1737,7 +1741,7 @@ a.contact-card:hover .contact-go {
   transform: none;
 }
 
-/* 4 — the field, then the button out from behind its right edge.
+/* 4 - the field, then the button out from behind its right edge.
    NotifyForm renders exactly one field and one button in that order, which
    is what these positional selectors lean on. */
 .cta-form form > *:first-child {
@@ -1825,7 +1829,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * Our coverage — the map runs edge to edge, the copy pops out of it
+ * Our coverage - the map runs edge to edge, the copy pops out of it
  *
  * The plate starts tucked under the map at the bottom-right corner and rises
  * out of it once the block has arrived. Only from lg up, where it is an
@@ -1862,7 +1866,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * How we work — the four step marks light in order, 01 → 04
+ * How we work - the four step marks light in order, 01 → 04
  *
  * Everything is driven off --i (the step's index, set inline) so one rule
  * covers all four: the charge arrives at 01 first and reaches 04 about a
@@ -1898,7 +1902,7 @@ a.contact-card:hover .contact-go {
 /* ---- the weather each mark stands in ----
    Two animations on one element: the bank slides in from off to the side and
    settles, then hands the transform over to an endless drift. The drift never
-   touches opacity, so the arrival's `both` fill keeps holding it — which is
+   touches opacity, so the arrival's `both` fill keeps holding it - which is
    what lets the two run back to back on the same element without the second
    snapping the cloud back to full brightness. */
 .step-icon__cloud {
@@ -1931,7 +1935,7 @@ a.contact-card:hover .contact-go {
 
 /* The wander has to begin and end at rest. The first version ran between
    -x and +x, which meant the moment the drift took over it jumped the cloud
-   from where the arrival left it (0) straight to -x — a visible snap on every
+   from where the arrival left it (0) straight to -x - a visible snap on every
    cloud, and again on every loop. Starting and ending at 0 makes both seams
    invisible, and the two axes moving on one curve read as air rather than as
    a slider. */
@@ -1976,7 +1980,7 @@ a.contact-card:hover .contact-go {
 
 /* The mark rises into place on one long, soft curve, and that is the only
    movement it makes. It used to travel here *and* again inside `step-charge`
-   on the art within it — two easings of different lengths running on nested
+   on the art within it - two easings of different lengths running on nested
    elements, which is what made the arrival look loose. The charge is now
    light only; all the motion is this one transform.
    No scale either: a mark that changes size on the way in never looks square
@@ -2013,7 +2017,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---- the four marks, each doing the thing its step describes ---- */
-/* 01 — the glass sweeps across the readings */
+/* 01 - the glass sweeps across the readings */
 [data-step].is-lit .step-icon__lens {
   animation: icon-scan 5.6s ease-in-out calc(var(--slot) + 800ms) infinite;
 }
@@ -2036,7 +2040,7 @@ a.contact-card:hover .contact-go {
   }
 }
 
-/* 02 — the stylus writes the curve, then lifts and starts over. The pen
+/* 02 - the stylus writes the curve, then lifts and starts over. The pen
    offsets are the same bezier the curve uses, sampled at quarters, measured
    from the tip's resting point at (57,52). */
 .step-icon__pen,
@@ -2130,7 +2134,7 @@ a.contact-card:hover .contact-go {
   }
 }
 
-/* 03 — the red block comes down the guide and seats itself between the two
+/* 03 - the red block comes down the guide and seats itself between the two
    black courses, with a small squash on contact */
 .step-icon__drop {
   transform-box: view-box;
@@ -2169,7 +2173,7 @@ a.contact-card:hover .contact-go {
   }
 }
 
-/* 04 — lift-off: the craft rises off the pad, the burn stretches and the
+/* 04 - lift-off: the craft rises off the pad, the burn stretches and the
    exhaust rolls out across the deck */
 .step-icon__craft,
 .step-icon__flame,
@@ -2203,7 +2207,7 @@ a.contact-card:hover .contact-go {
   animation: icon-exhaust 7s ease-out calc(var(--slot) + 800ms) infinite;
 }
 
-/* most of the cycle is spent on the pad — an empty pad is the one frame this
+/* most of the cycle is spent on the pad - an empty pad is the one frame this
    mark must not be caught in */
 @keyframes icon-liftoff {
   0%,
@@ -2263,7 +2267,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * How we work — the sky behind it
+ * How we work - the sky behind it
  *
  * Three painted plates stacked in one sticky frame: whichever matches the
  * step being read is the one at full opacity, and the swap is a long
@@ -2274,10 +2278,10 @@ a.contact-card:hover .contact-go {
  * enormous and the horizon nowhere. Sticky holds exactly one screenful of
  * sky under the section for its whole length.
  *
- * NB the band must not carry `overflow: hidden` — that would make it the
+ * NB the band must not carry `overflow: hidden` - that would make it the
  * scroll container for its own sticky child, which then never sticks.
  * ------------------------------------------------------------------ */
-/* the flat red the three plates are painted in, sampled from the artwork —
+/* the flat red the three plates are painted in, sampled from the artwork -
    the band carries it edge to edge so the plates have nothing to seam
    against, and so the section is already the right colour while they load */
 .step-band {
@@ -2322,7 +2326,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* a 16:9 plate cropped to a phone keeps only its middle strip, and on the
-   04 plate the middle is the one part with no weather in it — the banks are
+   04 plate the middle is the one part with no weather in it - the banks are
    piled at the edges. Pulling the crop left brings one of them back. */
 @media (max-width: 640px) {
   .step-sky__plate {
@@ -2377,7 +2381,7 @@ a.contact-card:hover .contact-go {
 /* The charge that runs through a mark as it lands. Both passes had to invert
    with the solids: a red glow is invisible against the red band, and a
    near-black contact shadow under a white object reads as grime rather than
-   as shade — so the charge is white and the shadow it settles into is a
+   as shade - so the charge is white and the shadow it settles into is a
    deeper tone of the band itself. */
 @keyframes step-charge {
   0% {
@@ -2502,7 +2506,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ------------------------------------------------------------------ *
- * Reach map — Natural Earth world map on the About page.
+ * Reach map - Natural Earth world map on the About page.
  * Everything that moves is opacity, transform or stroke/fill colour, so the
  * reveal and the hover response both stay cheap.
  * ------------------------------------------------------------------ */
@@ -2523,7 +2527,7 @@ a.contact-card:hover .contact-go {
     opacity 240ms ease;
 }
 
-/* everywhere we don't work stays grey, on hover too — only the darkness
+/* everywhere we don't work stays grey, on hover too - only the darkness
    changes, so the map never competes with the US for attention */
 .reach-country:hover,
 .reach-country:focus-visible {
@@ -2543,12 +2547,12 @@ a.contact-card:hover .contact-go {
 .reach-country.is-india:focus-visible {
   fill: var(--brand-strong);
   /* both carry a permanent callout, so there is nothing to point at for a
-     name — the cursor shouldn't promise one */
+     name - the cursor shouldn't promise one */
   cursor: default;
 }
 
 /* reveal: the world fades up, the US arrives a beat later */
-/* the callout groups are NOT hidden here — every child of one runs its own
+/* the callout groups are NOT hidden here - every child of one runs its own
    `both`-filled animation, so they start invisible on their own, and a group
    opacity would win over .is-dim's transition and freeze the dimming */
 .reach-map--armed .reach-countries,
@@ -2606,7 +2610,7 @@ a.contact-card:hover .contact-go {
 /* ---- the corridor: US ↔ India ----
    A dotted arc rather than a stroke: 25 dots sitting on the curve, laid down
    west to east once the pins have landed, after which the charge runs the
-   same way on a loop — each dot flaring from red to white in turn, so the
+   same way on a loop - each dot flaring from red to white in turn, so the
    link reads as traffic moving rather than as a line sitting there. A very
    soft blurred stroke sits under them to give the arc some body. */
 .reach-map--armed .reach-route {
@@ -2627,7 +2631,7 @@ a.contact-card:hover .contact-go {
   animation: reach-route-draw 1600ms cubic-bezier(0.65, 0, 0.35, 1) 980ms both;
 }
 
-/* the shared reach-draw offsets by 200, which is shorter than this route —
+/* the shared reach-draw offsets by 200, which is shorter than this route -
    it would start half-drawn. This one clears the whole 900 dash. */
 @keyframes reach-route-draw {
   from {
@@ -2648,7 +2652,7 @@ a.contact-card:hover .contact-go {
   opacity: 0;
 }
 
-/* laid down first, then charged on a loop — the second delay clears the last
+/* laid down first, then charged on a loop - the second delay clears the last
    dot's arrival before the wave starts */
 .reach-map--in .reach-dot {
   animation:
@@ -2839,7 +2843,7 @@ a.contact-card:hover .contact-go {
     opacity 180ms ease,
     transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
   /* the map underneath is pale grey, so a soft paper halo is all the
-     separation the type needs — no box */
+     separation the type needs - no box */
   text-shadow:
     0 0 6px var(--paper),
     0 0 12px var(--paper),
@@ -2919,7 +2923,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   Work — blocks rising into focus
+   Work - blocks rising into focus
 
    `data-armed` is written by JavaScript, never by the markup, so a block whose
    observer never runs is simply visible rather than stranded invisible.
@@ -2929,7 +2933,7 @@ a.contact-card:hover .contact-go {
   --arrive: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* rise — up and out of a blur. The default, and most of the page. */
+/* rise - up and out of a blur. The default, and most of the page. */
 [data-reveal][data-armed] {
   opacity: 0;
   transform: translate3d(0, 40px, 0);
@@ -2948,7 +2952,7 @@ a.contact-card:hover .contact-go {
   will-change: auto;
 }
 
-/* mask — a wipe upward. Type stays sharp the whole way, which is what makes
+/* mask - a wipe upward. Type stays sharp the whole way, which is what makes
    it read as printing rather than fading. */
 [data-reveal='mask'][data-armed] {
   opacity: 1;
@@ -2965,7 +2969,7 @@ a.contact-card:hover .contact-go {
   transform: none;
 }
 
-/* sweep — a wipe from the left, for rules and anything wide */
+/* sweep - a wipe from the left, for rules and anything wide */
 [data-reveal='sweep'][data-armed] {
   opacity: 1;
   filter: none;
@@ -2978,7 +2982,7 @@ a.contact-card:hover .contact-go {
   clip-path: inset(0 0 0 0);
 }
 
-/* scale — settles in from slightly too far away, for plates and cards */
+/* scale - settles in from slightly too far away, for plates and cards */
 [data-reveal='scale'][data-armed] {
   opacity: 0;
   transform: translate3d(0, 34px, 0) scale(0.965);
@@ -3013,7 +3017,7 @@ a.contact-card:hover .contact-go {
   filter: blur(0);
 }
 
-/* a single light sweeping across a dark plate as it lands. Once, on arrival —
+/* a single light sweeping across a dark plate as it lands. Once, on arrival -
    it is a highlight catching the edge of an object, not a loop. */
 .sheen-on-arrival {
   position: relative;
@@ -3067,7 +3071,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   Work — the index
+   Work - the index
 
    Five names, set large, and one stage beside them. Whichever concept the
    reader is on takes the stage; the other four sit back, dimmed and slightly
@@ -3139,7 +3143,7 @@ a.contact-card:hover .contact-go {
   isolation: isolate;
   border-radius: 1.25rem;
   /* one ink for all five. The concept's own colour is allowed in exactly two
-     places — the eyebrow rule and the palette swatches — so the plate reads as
+     places - the eyebrow rule and the palette swatches - so the plate reads as
      a printed spec sheet rather than five different gradients */
   background: #0f0f13;
   color: #fff;
@@ -3240,7 +3244,7 @@ a.contact-card:hover .contact-go {
   color: rgba(255, 255, 255, 0.82);
 }
 
-/* the product snapshot is a detail, not the point — it is allowed to run off
+/* the product snapshot is a detail, not the point - it is allowed to run off
    the bottom of the plate and dissolve rather than dictate the height */
 .work-plate__preview {
   position: relative;
@@ -3349,7 +3353,7 @@ a.contact-card:hover .contact-go {
   }
 
   /* The stage is sticky inside the grid row, so it lets go the instant the
-     list's box ends — which was happening ~180px before the fifth row reached
+     list's box ends - which was happening ~180px before the fifth row reached
      the centre line and claimed the stage. The result was the last concept
      taking a plate that had already started sliding off the top.
      This run-out keeps the container alive past that crossing, so every one of
@@ -3466,7 +3470,7 @@ a.contact-card:hover .contact-go {
     /* A sticky element can only hold for as long as its own container is
        taller than it is. With tight rows the list ran out before the stage had
        done any holding at all, so the plate slid straight off. Opening the rows
-       up buys the stage a screen and a half of travel to sit still through —
+       up buys the stage a screen and a half of travel to sit still through -
        and five names set this large want the air anyway. */
     padding: 4.4rem 0;
     opacity: 0.4;
@@ -3508,7 +3512,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   Work — what is inside every concept (the red band)
+   Work - what is inside every concept (the red band)
 --------------------------------------------------------------------------- */
 .work-tally {
   display: grid;
@@ -3922,7 +3926,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   The device — a phone standing in 3D space
+   The device - a phone standing in 3D space
 
    Everything that moves is written to --rx / --ry / --sheen by the component;
    this file only says what the object is made of. The layers sit on their own
@@ -3965,7 +3969,7 @@ a.contact-card:hover .contact-go {
   will-change: transform;
 }
 
-/* the slab of aluminium behind the face — what you see along the edge that
+/* the slab of aluminium behind the face - what you see along the edge that
    turns away from you */
 .phone3d__body {
   position: absolute;
@@ -4069,6 +4073,7 @@ a.contact-card:hover .contact-go {
   top: 15%;
   width: 3px;
   height: 4.5%;
+  background: #f5333b;
 }
 
 .phone3d__btn--up {
@@ -4428,20 +4433,20 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   The device, small — the screen picker on a case-study page
+   The device, small - the screen picker on a case-study page
 
    Four of these sit side by side, so none of them runs a frame loop. They hold
    a fixed three-quarter turn and straighten when the card they belong to is
    hovered or focused, which is enough to read as the same object.
 --------------------------------------------------------------------------- */
 .phone3d--mini {
-  padding: 0.75rem 0 1.25rem;
+  padding: 0.25rem 0 0.5rem;
   perspective: 900px;
 }
 
 /* the angles come from --rx/--ry exactly as they do on the full device, so the
    shared tilt loop drives these too. The component writes the resting pair
-   inline, which is what a mini looks like before the loop's first frame — and
+   inline, which is what a mini looks like before the loop's first frame - and
    all it ever looks like under reduced motion. */
 .phone3d--mini .phone3d__device {
   max-width: none;
@@ -4546,7 +4551,7 @@ a.contact-card:hover .contact-go {
   transform: translateY(-50%) scale(1);
 }
 
-/* no hover on a touch screen, and no cursor to put them beside — the swipe is
+/* no hover on a touch screen, and no cursor to put them beside - the swipe is
    the gesture there, so the arrows are simply always on */
 @media (hover: none) {
   .phone-nav {
@@ -4626,7 +4631,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   Work — the closing band
+   Work - the closing band
 --------------------------------------------------------------------------- */
 .work-close {
   position: relative;
@@ -4743,7 +4748,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   Work — the hero cloud bank
+   Work - the hero cloud bank
 
    One looping clip, composited rather than keyed: the footage is white-backed,
    and `multiply` against the paper drops the white out and leaves the pink.
@@ -4763,7 +4768,7 @@ a.contact-card:hover .contact-go {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* the clip's own bottom is its densest bank of cloud — anchoring there keeps
+  /* the clip's own bottom is its densest bank of cloud - anchoring there keeps
      it under the headline instead of letting cover crop it away */
   object-position: center bottom;
   opacity: 0.72;
@@ -4794,7 +4799,7 @@ a.contact-card:hover .contact-go {
 }
 
 /* the pull cord takes the page to brand red, where pale pink cloud on multiply
-   would simply disappear — so on red the bank is knocked back to a texture */
+   would simply disappear - so on red the bank is knocked back to a texture */
 .on-brand .work-sky__video {
   opacity: 0.28;
   mix-blend-mode: screen;
@@ -4816,11 +4821,11 @@ a.contact-card:hover .contact-go {
 }
 
 /* ---------------------------------------------------------------------------
-   Phone screens — the touch layer
+   Phone screens - the touch layer
 
    Everything touchable inside a concept screen is a <button> carrying
    .phone-tap. It has no chrome of its own: the screen draws the row, this only
-   adds the press. Two responses, because a phone gives two — the surface takes
+   adds the press. Two responses, because a phone gives two - the surface takes
    the weight, and the point of contact throws a ripple.
 --------------------------------------------------------------------------- */
 .phone-tap {
@@ -4846,7 +4851,7 @@ a.contact-card:hover .contact-go {
   filter: brightness(0.97);
 }
 
-/* small controls flash rather than sink — a chip that shrinks reads as broken */
+/* small controls flash rather than sink - a chip that shrinks reads as broken */
 .phone-tap--flat[data-down] {
   transform: none;
   filter: brightness(0.94);
@@ -4900,7 +4905,7 @@ a.contact-card:hover .contact-go {
   }
 }
 
-/* the same box, with nothing behind it — see phoneUI.tsx */
+/* the same box, with nothing behind it - see phoneUI.tsx */
 .phone-tap--inert {
   cursor: inherit;
 }

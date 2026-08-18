@@ -18,8 +18,8 @@ export function SiteHeader({
   ctaLabel?: string
   /**
    * Pin the header to the viewport instead of to the top of the document.
-   * Pages whose first section is taller than one screen — the home story runs
-   * to seven — need this, or the header scrolls away and never returns.
+   * Pages whose first section is taller than one screen - the home story runs
+   * to seven - need this, or the header scrolls away and never returns.
    */
   fixed?: boolean
 }) {
@@ -29,7 +29,7 @@ export function SiteHeader({
   const dark = tone === 'dark'
 
   // A fixed header has the whole page passing underneath it, so once anything
-  // has scrolled it needs a ground of its own — over the phone story the nav
+  // has scrolled it needs a ground of its own - over the phone story the nav
   // would otherwise sit on top of the copy with nothing between them.
   useEffect(() => {
     if (!fixed || typeof window === 'undefined') return

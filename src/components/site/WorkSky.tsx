@@ -1,55 +1,38 @@
-import { useEffect, useRef } from 'react'
 import { cn } from '#/lib/utils'
 
+import './work-sky.css'
+
 /**
- * The drifting cloud bank behind the Work hero.
+ * The frame behind the Work hero.
  *
- * It is one looping clip rather than a field of stills, so the movement is the
- * clip's own and nothing has to be faked in CSS. Three things are done to it:
+ * It used to be a looping cloud clip composited with `multiply` - a decent
+ * trick that cost a megabyte of video to say "weather". This says it with the
+ * studio's own photograph instead: a monochrome valley, black rock in the near
+ * ground, and one red tent with red smoke coming off it.
  *
- *  - The source is white-backed, so it is composited with `multiply`: white
- *    drops out against the paper and only the pink survives. No alpha channel
- *    and no matte needed.
- *  - It plays /clouds-loop.mp4, which is video-cloud.mp4 with its bottom-right
- *    corner cropped away — that corner carried the generator's watermark, and
- *    cropping the file is the only way to be sure of it at every viewport.
- *  - It resolves out of haze over about two seconds on arrival, then is left
- *    alone; the drift after that is the footage.
+ * The picture is not decoration. Every other page on the site is derived from
+ * it, so the index opening on it is the page saying where its own colour comes
+ * from. Three layers do the work and none of them touch the subject: a wedge of
+ * paper down the left where the headline sits, a hem at the foot where the
+ * picture becomes the page, and one slow ember over the plume.
  *
- * Decorative, SSR-safe, and paused under prefers-reduced-motion — the first
- * frame stays as a still.
+ * Decorative, SSR-safe, and still under prefers-reduced-motion.
  */
 export function WorkSky({ className }: { className?: string }) {
-  const video = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const el = video.current
-    if (!el || typeof window === 'undefined') return
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.pause()
-      return
-    }
-    // autoplay is rejected on some setups until the page is interacted with;
-    // a still cloud bank is a perfectly acceptable fallback
-    void el.play().catch(() => {})
-  }, [])
-
   return (
     <div aria-hidden="true" className={cn('work-sky', className)}>
-      <video
-        ref={video}
-        className="work-sky__video"
-        src="/clouds-loop.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        disablePictureInPicture
+      <img
+        className="work-sky__plate"
+        src="/work/work-bg.jpeg"
+        alt=""
+        /* the hero is the first thing on the route, so this is never lazy */
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
       />
-      {/* the bank dissolves into the paper instead of ending on a line */}
-      <span className="work-sky__fade" />
+      <span className="work-sky__ember" />
+      <span className="work-sky__veil" />
+      <span className="work-sky__hem" />
     </div>
   )
 }

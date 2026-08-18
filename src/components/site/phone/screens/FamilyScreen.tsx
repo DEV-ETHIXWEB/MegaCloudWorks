@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import { BlurText } from '../../BlurText'
 import { SCREEN_PX } from '../story'
 
-/** Beats per second-ish — the same unhurried cadence the About hero runs at. */
+/** Beats per second-ish - the same unhurried cadence the About hero runs at. */
 const BEAT_MS = 420
 const BEATS = 6
 
@@ -12,12 +12,12 @@ const BEATS = 6
  *
  * On a wide screen the phone turns a quarter turn in the scene, so the content
  * here is pre-rotated by the same amount inside the portrait display, which
- * lands it upright — that is why the landscape branch is written at 712 × 340
+ * lands it upright - that is why the landscape branch is written at 712 × 340
  * rather than 340 × 712. A portrait viewport has no room for that, so there the
  * phone stays upright and the two studios stack instead.
  *
  * The copy arrives on the BlurText beat system the About hero uses, on its own
- * clock rather than on scroll — the act is a single resting stop, so there is
+ * clock rather than on scroll - the act is a single resting stop, so there is
  * no scroll left to drive it with once you are here.
  */
 export function FamilyScreen({
@@ -106,7 +106,7 @@ export function FamilyScreen({
           className="fam__title fam__title--us"
         />
         <BlurText
-          text="Not a prototype and not a demo — the product our clients actually asked for, in the store."
+          text="Not a prototype and not a demo - the product our clients actually asked for, in the store."
           start={beat >= 5}
           delay={26}
           stepDuration={0.28}
@@ -120,7 +120,7 @@ export function FamilyScreen({
     <footer className="fam__foot" data-in={beat >= 6}>
       <BlurText
         as="span"
-        text="One group, two studios — the web team and the app team sit in the same room."
+        text="One group, two studios - the web team and the app team sit in the same room."
         start={beat >= 6}
         delay={20}
         stepDuration={0.26}

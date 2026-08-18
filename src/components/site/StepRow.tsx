@@ -15,10 +15,10 @@ export type StepSide = 'left' | 'right' | 'center'
 /**
  * One beat of "How we work": the mark takes a side of the section and its copy
  * sits beside it, so the route drawn between the marks swings across the page
- * rather than running straight down it. The last beat lands in the middle —
+ * rather than running straight down it. The last beat lands in the middle -
  * the two sides converging on the ship.
  *
- * Each row arms itself — the mark only starts working, and the copy only
+ * Each row arms itself - the mark only starts working, and the copy only
  * arrives, once that row is the thing you are looking at. Nothing here is on a
  * page-load timer, so the four steps are paced by the scroll rather than
  * racing each other while off screen.
@@ -49,8 +49,8 @@ export function StepRow({
 
     const io = new IntersectionObserver(
       (entries) => {
-        // a row the reader has already passed — a reload part-way down the
-        // page, a jump to an anchor, a flick of the wheel that skips it —
+        // a row the reader has already passed - a reload part-way down the
+        // page, a jump to an anchor, a flick of the wheel that skips it -
         // is simply already arrived; it must never be left invisible
         const passed = entries.some((e) => e.boundingClientRect.bottom < 0)
         if (!passed && !entries.some((e) => e.isIntersecting)) return
@@ -75,7 +75,7 @@ export function StepRow({
       data-side={side}
       style={{ '--i': index } as CSSProperties}
       // stacked, the mark sits directly above its own copy and needs almost no
-      // air between them — the marks carry a lot of their own padding already,
+      // air between them - the marks carry a lot of their own padding already,
       // and a desktop-sized gutter on a phone reads as a break in the list
       className={`step-row grid grid-cols-1 items-center gap-2 sm:gap-10 ${
         centred
@@ -115,8 +115,8 @@ export function StepRow({
         // the centred row keeps the mark above its copy at every width, so the
         // route arriving from 03 lands on the mark rather than being cut off
         // by the type on its way down
-        // a side mark is pushed to the outer edge of its column, which — the
-        // column being half the page — puts it out at the page's margin
+        // a side mark is pushed to the outer edge of its column, which - the
+        // column being half the page - puts it out at the page's margin
         className={`order-1 flex justify-center ${
           centred
             ? ''
@@ -128,7 +128,7 @@ export function StepRow({
         {/* The mark is measured through this wrapper, never through the icon
             itself: the icon carries the reveal transform, so its own client
             rect is wherever the animation happens to be rather than where it
-            lands — and the trail drawn from that would aim at a moving
+            lands - and the trail drawn from that would aim at a moving
             target. The wrapper shrink-wraps the icon and never transforms, so
             its box is the settled one. */}
         <span className="step-row__mark inline-flex">

@@ -3,7 +3,7 @@ import { cn } from '#/lib/utils'
 
 /**
  * Oversized outlined type sitting behind something else, with a band of brand
- * light sweeping along the stroke — the same treatment the giant CONTACT wears
+ * light sweeping along the stroke - the same treatment the giant CONTACT wears
  * behind the contact form, reused here so the two pages speak with one voice.
  *
  * The band follows the pointer once there is one, and runs its own slow loop

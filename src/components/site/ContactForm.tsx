@@ -7,8 +7,8 @@ import { cn } from '#/lib/utils'
 
 /**
  * One field, with its label riding above the text once there is anything to
- * label. A placeholder alone is not a label — it is gone the moment you type,
- * which leaves a filled form with no visible names on any of its boxes — so
+ * label. A placeholder alone is not a label - it is gone the moment you type,
+ * which leaves a filled form with no visible names on any of its boxes - so
  * the caption floats up and stays.
  */
 function Field({

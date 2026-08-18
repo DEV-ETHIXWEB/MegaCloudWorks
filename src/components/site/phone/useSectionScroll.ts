@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
  * One act per gesture.
  *
  * GSAP's own `snap` settles *after* a scroll has already run, which means a
- * fast flick still tears through three acts before anything catches it — and
+ * fast flick still tears through three acts before anything catches it - and
  * near the ends it fights the reader trying to leave the section. This takes
  * the opposite approach: while the story fills the viewport, a scroll gesture
  * is a discrete instruction to move to the next stop, and the page is animated
@@ -25,7 +25,7 @@ import { useEffect, useRef } from 'react'
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 
-/** Which stop is nearest a given progress — used to resync after free scroll. */
+/** Which stop is nearest a given progress - used to resync after free scroll. */
 function nearest(points: ReadonlyArray<number>, p: number) {
   let best = 0
   let bestGap = Infinity
@@ -116,7 +116,7 @@ export function useSectionScroll({
       if (raf) cancelAnimationFrame(raf)
       const tick = (now: number) => {
         const t = clamp01((now - start) / (seconds * 1000))
-        // a long, symmetrical ease — no snap at either end
+        // a long, symmetrical ease - no snap at either end
         const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
         window.scrollTo(0, from + (to - from) * eased)
         if (t < 1) {
@@ -217,7 +217,7 @@ export function useSectionScroll({
     }
   }, [sectionRef, points, enabled, onIndexChange])
 
-  /** Jump to a stop from outside — the phone screen uses this. */
+  /** Jump to a stop from outside - the phone screen uses this. */
   return { goTo: (i: number) => goRef.current(i) }
 }
 

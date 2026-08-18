@@ -5,7 +5,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export type SubscribeResult = { ok: true; email: string }
 
 /**
- * subscribe — TanStack Start server function backing the "Notify me" form.
+ * subscribe - TanStack Start server function backing the "Notify me" form.
  *
  * Validates the email on the server and (in a real deployment) is where you'd
  * persist it / hand it to your ESP. For now it just acknowledges so the UI has
@@ -19,7 +19,7 @@ export const subscribe = createServerFn({ method: 'POST' })
     return email.trim().toLowerCase()
   })
   .handler(async ({ data: email }): Promise<SubscribeResult> => {
-    // TODO(production): this only logs — signups are not persisted anywhere
+    // TODO(production): this only logs - signups are not persisted anywhere
     // yet. Before launch, replace this block with a call to your email
     // provider's list/audience API (e.g. Resend Audiences, Mailchimp) or a
     // database insert, using credentials from an environment variable,

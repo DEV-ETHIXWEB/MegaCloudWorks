@@ -13,7 +13,7 @@ const smoothstep = (edge0: number, edge1: number, x: number) => {
 /**
  * Handle handed back through `controllerRef`. The phone story drives the panel
  * straight from its ScrollTrigger, so progress is pushed imperatively rather
- * than through state — a scrubbed timeline would otherwise re-render React on
+ * than through state - a scrubbed timeline would otherwise re-render React on
  * every frame.
  */
 export type ScrollExpandController = { setProgress: (p: number) => void }
@@ -160,7 +160,7 @@ export function ScrollExpand({
   }, [])
 
   /* -------------------------------------------------------------- *
-   * driven mode — the parent owns progress
+   * driven mode - the parent owns progress
    * -------------------------------------------------------------- */
   useEffect(() => {
     if (!driven || !controllerRef) return
@@ -192,7 +192,7 @@ export function ScrollExpand({
   }, [driven, startWidth, startHeight, startRadius, applyProgress])
 
   /* -------------------------------------------------------------- *
-   * standalone mode — the original self-scrolling behaviour
+   * standalone mode - the original self-scrolling behaviour
    * -------------------------------------------------------------- */
   useEffect(() => {
     if (driven) return

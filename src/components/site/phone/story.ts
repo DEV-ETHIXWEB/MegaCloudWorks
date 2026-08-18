@@ -18,7 +18,7 @@ export const FRONT_Z = -0.06
  * The generated display.
  *
  * The body's front face spans exactly x ±0.35 and y ±0.73, and the model's
- * earpiece slot starts at y 0.666 — which is the one hard limit here, since the
+ * earpiece slot starts at y 0.666 - which is the one hard limit here, since the
  * display cannot run under it. Everywhere else the bezel is cut to 0.025, so
  * the glass reaches nearly to the edge of the shell.
  */
@@ -49,8 +49,8 @@ const HTML_PX_TO_UNITS = 10 / 400
 export const SCREEN_SCALE = SCREEN.width / (SCREEN_PX.w * HTML_PX_TO_UNITS)
 
 /**
- * Camera. Close enough that the phone is a presence rather than a prop — the
- * body covers about two thirds of the viewport height at rest — while still
+ * Camera. Close enough that the phone is a presence rather than a prop - the
+ * body covers about two thirds of the viewport height at rest - while still
  * leaving the last act somewhere to fly to.
  */
 export const CAMERA = { fov: 30, z: 4.4 } as const
@@ -67,7 +67,7 @@ export const visibleHeightAt = (distance: number) => 2 * distance * TAN_HALF_FOV
 export const ZOOM_Z =
   CAMERA.z - SCREEN.height / ZOOM_SCREEN_VH / (2 * TAN_HALF_FOV)
 
-/** Visible world height once zoomed — used to size the DOM hand-off panel. */
+/** Visible world height once zoomed - used to size the DOM hand-off panel. */
 export const ZOOM_VISIBLE_H = SCREEN.height / ZOOM_SCREEN_VH
 
 /* ------------------------------------------------------------------ *
@@ -84,14 +84,14 @@ export const ACT = {
   /**
    * The last act is given nearly a third of the story to itself. Turning a
    * phone screen into a full page is the biggest move here, and at the pace the
-   * earlier acts run at it went past before it registered — so the fly-in, the
+   * earlier acts run at it went past before it registered - so the fly-in, the
    * hand-off and the opening each get real distance rather than sharing a
    * sliver at the end.
    */
   zoom: [0.62, 0.82],
   /**
    * The hand-off. The phone has stopped moving, so the DOM panel can take its
-   * place on exactly the rectangle the display is projected at — one fades out
+   * place on exactly the rectangle the display is projected at - one fades out
    * as the other fades in, and only then does the frame start to open.
    */
   handoff: [0.82, 0.9],
@@ -104,7 +104,7 @@ export const ACT = {
 } as const
 
 /**
- * Where the story rests — one stop per gesture.
+ * Where the story rests - one stop per gesture.
  *
  * Each is the middle of an act, or through the process the middle of a step, so
  * whatever a scroll lands on is a complete picture and never a transition
@@ -140,7 +140,7 @@ export const smoothstep = (edge0: number, edge1: number, x: number) => {
   return t * t * (3 - 2 * t)
 }
 
-/** Slightly weightier than smoothstep — used for the big positional moves. */
+/** Slightly weightier than smoothstep - used for the big positional moves. */
 export const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
@@ -171,7 +171,7 @@ export type PhonePose = {
   scale: number
 }
 
-/** A quarter turn counter-clockwise — act two lays the phone on its side. */
+/** A quarter turn counter-clockwise - act two lays the phone on its side. */
 export const LANDSCAPE = Math.PI / 2
 
 export function poseAt(p: number, narrow: boolean): PhonePose {
@@ -202,7 +202,7 @@ export function poseAt(p: number, narrow: boolean): PhonePose {
 
   // wide layouts get a shallow rise, so the travel reads as an arc rather than
   // a slide; narrow ones have no room sideways, so the phone trades places with
-  // the copy vertically instead — low under the welcome, high above the process
+  // the copy vertically instead - low under the welcome, high above the process
   const y = mix(
     narrow
       ? mix(mix(-0.44, -0.22, toRail), 0.5, toLeft)
@@ -218,7 +218,7 @@ export function poseAt(p: number, narrow: boolean): PhonePose {
   )
 
   // Act two is read off the display itself, so the phone is held much larger
-  // there — on its side it is 1.36 wide, and at this scale that covers half the
+  // there - on its side it is 1.36 wide, and at this scale that covers half the
   // stage. The process act is the next largest; everything eases back to 1 for
   // the hand-off.
   const rail = narrow ? 0.84 : 1.42
@@ -247,7 +247,7 @@ export function poseAt(p: number, narrow: boolean): PhonePose {
  * How lit the mark on the last screen is.
  *
  * It holds at full through the fly-in and then burns off as the story turns
- * toward the brief, finishing a beat before the phone itself dissolves — so the
+ * toward the brief, finishing a beat before the phone itself dissolves - so the
  * glass is already empty by the time the panel takes its place, rather than the
  * mark and the device going at once.
  */

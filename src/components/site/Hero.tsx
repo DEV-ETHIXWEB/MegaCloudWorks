@@ -19,7 +19,7 @@ export function Hero() {
       />
 
       <div className="relative mx-auto grid max-w-[1600px] grid-cols-1 items-center gap-0 px-6 pt-28 sm:px-10 lg:min-h-screen lg:grid-cols-2 lg:gap-4 lg:px-20 lg:pb-0 lg:pt-0">
-        {/* ---- left: copy (dark ink pinned — hero band is always light) ---- */}
+        {/* ---- left: copy (dark ink pinned - hero band is always light) ---- */}
         <div className="relative z-10 max-w-xl">
           <h1 className="reveal-up font-display text-[clamp(3.75rem,11vw,7rem)] font-extrabold leading-[0.9] tracking-[-0.03em] text-[#101014]">
             <span className="block whitespace-nowrap">COMING</span>

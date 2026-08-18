@@ -7,7 +7,7 @@ import { MODEL_OFFSET, SCREEN } from './story'
 export const PHONE_OBJ_URL = '/models/phone/phone.obj'
 
 /**
- * The OBJ ships with SketchUp's default palette — flat mid-blues and greys that
+ * The OBJ ships with SketchUp's default palette - flat mid-blues and greys that
  * read as a toy. The `usemtl` ids survive the load as `material.name`, so each
  * one is swapped here for a material that belongs on this site: graphite body,
  * true-black grilles and lenses, brand red on the alert switch.
@@ -24,7 +24,7 @@ function materialFor(name: string): THREE.Material {
         clearcoat: 0.5,
         clearcoatRoughness: 0.3,
       })
-    // grilles, camera housings, home indicator — matte near-black
+    // grilles, camera housings, home indicator - matte near-black
     case 'mat23':
       return new THREE.MeshStandardMaterial({
         color: '#08080a',
@@ -48,7 +48,7 @@ function materialFor(name: string): THREE.Material {
         metalness: 0.8,
         roughness: 0.25,
       })
-    // alert switch — the one spot of brand colour on the hardware
+    // alert switch - the one spot of brand colour on the hardware
     case 'mat8':
       return new THREE.MeshStandardMaterial({
         color: '#f5333b',
@@ -93,7 +93,7 @@ export type PhoneModelHandle = {
 
 /**
  * The phone itself: the loaded shell, a generated display, and the backlight
- * that spills out of it. Nothing here animates — the story drives the parent
+ * that spills out of it. Nothing here animates - the story drives the parent
  * group so this stays a plain, cheap subtree.
  */
 export function PhoneModel({
@@ -153,7 +153,7 @@ export function PhoneModel({
       {/* the model's own origin sits off-centre; this puts the body on 0,0,0 */}
       <primitive object={shell} position={[...MODEL_OFFSET]} />
 
-      {/* generated display — black glass that the DOM screen is drawn onto */}
+      {/* generated display - black glass that the DOM screen is drawn onto */}
       <mesh
         ref={screenRef}
         geometry={screenGeo}

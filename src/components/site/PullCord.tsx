@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  * it stretches; pull it past the line and let go and the page flips to red;
  * pull it again to put the page back.
  *
- * The rope is a verlet chain solved in plain pixels — position, previous
+ * The rope is a verlet chain solved in plain pixels - position, previous
  * position, gravity, then a few passes of "put the links back to length".
  * That is the whole simulation, which is why this needs no physics engine and
  * no WebGL: it is one <path> and one <circle>, redrawn on demand.
@@ -91,7 +91,7 @@ export function PullCord({
 
     for (let i = 1; i < pts.length; i += 1) {
       // the ball is carried by the pointer while it is held, so it does not
-      // integrate — the rest of the chain is pulled along by the constraints
+      // integrate - the rest of the chain is pulled along by the constraints
       if (held && i === pts.length - 1) continue
       const p = pts[i]
       let vx = (p.x - p.px) * FRICTION
@@ -161,7 +161,7 @@ export function PullCord({
 
   useEffect(() => {
     // settle the rope off-screen before the first paint rather than letting
-    // the reader watch it sag into place — and for anyone who has asked for
+    // the reader watch it sag into place - and for anyone who has asked for
     // less motion, that settled state is simply where it stays until they
     // take hold of it themselves
     for (let i = 0; i < 140; i += 1) step()

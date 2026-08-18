@@ -1,0 +1,2515 @@
+/* ===========================================================================
+   iOS kit - the chrome the concept screens are built from
+
+   Proportioned for a ~300px-wide glass, which is about 0.78x a real iPhone,
+   so Apple's type scale is applied at that factor: 17pt body reads as 13px,
+   a 34pt large title as ~25px, a 10pt tab label as ~8px.
+
+   Everything here is themed by custom properties published on `.ios` by
+   AppCanvas (see lib/iosKit.tsx). No colour is hardcoded below except pure
+   white and black used as a light source or a shadow.
+=========================================================================== */
+
+.ios {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ios__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding-bottom: 0.75rem;
+  /* a flick inside the glass has to feel like a phone, not like a div */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.ios__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* content has to be able to run *under* the floating bar, or frosting it is
+   pointless - this is the clearance that keeps the last row reachable */
+.ios__scroll--inset {
+  padding-bottom: 5.1rem;
+}
+
+/* ---- status bar ---- */
+
+.ios-status {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0.75rem 1.05rem 0.28rem;
+  /* clears the Dynamic Island, which sits at the top centre of the glass */
+  min-height: 2.6rem;
+  color: var(--ink);
+}
+
+.ios-status__time {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-status__right {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.ios-status__glyph {
+  height: auto;
+  opacity: 0.9;
+}
+
+/* ---- large title ---- */
+
+.ios-large {
+  padding: 0.35rem 1.05rem 0.5rem;
+}
+
+.ios-large__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.ios-large__eyebrow {
+  margin: 0 0 2px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--a);
+}
+
+.ios-large__title {
+  margin: 0;
+  font-size: 20.5px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  color: var(--ink);
+}
+
+.ios-large__sub {
+  margin: 4px 0 0;
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--ink2);
+}
+
+.ios-large__right {
+  flex-shrink: 0;
+}
+
+/* ---- compact nav bar ---- */
+
+.ios-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.85rem 0.55rem;
+}
+
+.ios-nav__back {
+  justify-self: start;
+  width: auto !important;
+}
+
+.ios-nav__backInner {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--a);
+}
+
+.ios-nav__title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.ios-nav__right {
+  justify-self: end;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--a);
+}
+
+/* ---- search field ---- */
+
+.ios-search {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 1.05rem 0.6rem;
+  padding: 5px 8px;
+  border-radius: var(--r-field, 8px);
+  background: var(--fill);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink2);
+}
+
+/* ---- segmented control ---- */
+
+.ios-seg {
+  position: relative;
+  display: flex;
+  margin: 0 1.05rem 0.7rem;
+  padding: 2px;
+  border-radius: var(--r-field, 8px);
+  background: var(--fill);
+  isolation: isolate;
+}
+
+.ios-seg__thumb {
+  position: absolute;
+  z-index: 0;
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  border-radius: calc(var(--r-field, 8px) - 2px);
+  background: var(--card);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.14),
+    0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-seg__cell {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 4px 0;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink2);
+}
+
+.ios-seg__cell span[data-on] {
+  color: var(--ink);
+}
+
+/* ---- buttons ---- */
+
+.ios-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--r-btn, 11px);
+  background-image: linear-gradient(120deg, var(--a) 0%, var(--a2) 140%);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: -0.005em;
+  box-shadow: 0 6px 16px -8px var(--a);
+  transition: background 220ms ease;
+}
+
+.ios-btn--ghost {
+  background-image: none;
+  background: var(--fill);
+  color: var(--ink);
+  box-shadow: none;
+  font-weight: 700;
+}
+
+/* ---- cards ---- */
+
+.ios-card {
+  border-radius: var(--r-card, 14px);
+  background: var(--card);
+  /* two layers, always in the same order: the skin's own edge treatment, then
+     whatever elevation it asked for. Either may be `none`. */
+  box-shadow: var(--edge, none), var(--shadow);
+}
+
+.ios[data-surface='dark'] .ios-card {
+  box-shadow: var(--edge, none), inset 0 0 0 0.5px var(--hair);
+}
+
+.ios-card--glass {
+  background: var(--glass);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: inset 0 0 0 0.5px var(--hair);
+}
+
+/* ---- inset grouped list ---- */
+
+.ios-group {
+  margin: 0 1.05rem 0.75rem;
+}
+
+.ios-group__header {
+  margin: 0 0 5px 2px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.ios-group__body {
+  overflow: hidden;
+  border-radius: var(--r-group, 13px);
+  background: var(--card);
+  box-shadow: var(--edge, 0 0 #0000), var(--shadow);
+}
+
+.ios[data-surface='dark'] .ios-group__body {
+  box-shadow: var(--edge, 0 0 #0000), inset 0 0 0 0.5px var(--hair);
+}
+
+/* the hairline stops short of the left edge, the way iOS insets its
+   separators to line up with the row's text rather than its container */
+.ios-group__body > * + * .ios-row::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 0;
+  top: 0;
+  height: 0.5px;
+  background: var(--hair);
+}
+
+.ios-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  text-align: left;
+  transition: background 200ms ease;
+}
+
+.ios-row[data-active] {
+  background: color-mix(in srgb, var(--a) 12%, transparent);
+}
+
+.ios-row__lead {
+  flex-shrink: 0;
+  display: flex;
+}
+
+.ios-row__text {
+  min-width: 0;
+  flex: 1;
+  display: block;
+}
+
+.ios-row__title {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ios-row__sub {
+  display: block;
+  margin-top: 1px;
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--ink2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ios-row__trail {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink2);
+}
+
+.ios-row__chev {
+  flex-shrink: 0;
+  color: var(--ink2);
+  opacity: 0.55;
+}
+
+/* ---- small parts ---- */
+
+.ios-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-glyph, 6px);
+  flex-shrink: 0;
+}
+
+.ios-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.ios-stat {
+  display: block;
+  text-align: center;
+}
+
+.ios-stat__n {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-stat__label {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.ios-track {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--fill);
+}
+
+.ios-track__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+/* ===========================================================================
+   Sheet presentation
+
+   iOS does not slide a panel over a static screen. It shrinks the screen the
+   sheet came from, rounds its corners and pushes it back a step, so the sheet
+   reads as a card laid on top of a stack rather than a drawer over a picture.
+   That recession is the whole effect - without it a sheet looks pasted on.
+=========================================================================== */
+
+/* the stage is everything the sheet pushes back: canvas, content, tab bar */
+.ios__stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0;
+  background: inherit;
+  transform-origin: 50% 0%;
+  transition:
+    transform 500ms cubic-bezier(0.32, 0.72, 0, 1),
+    border-radius 500ms cubic-bezier(0.32, 0.72, 0, 1),
+    filter 500ms ease;
+}
+
+.ios[data-sheet] .ios__stage {
+  transform: scale(0.925) translateY(10px);
+  border-radius: 20px;
+  filter: brightness(0.72);
+}
+
+.ios-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* the scrim is what the recessed stage is seen through; it also catches the
+   tap that dismisses */
+.ios-sheet__scrim {
+  position: absolute !important;
+  inset: 0;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.28);
+  transition: opacity 400ms ease;
+}
+
+.ios-sheet__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 1.05rem 1.5rem;
+  border-radius: var(--r-sheet, 22px) var(--r-sheet, 22px) 0 0;
+  background: var(--glass);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.4),
+    0 -14px 40px -16px rgba(0, 0, 0, 0.55);
+  transform: translateY(102%);
+  transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-sheet[data-open] {
+  pointer-events: auto;
+}
+
+.ios-sheet[data-open] .ios-sheet__scrim {
+  opacity: 1;
+}
+
+.ios-sheet[data-open] .ios-sheet__panel {
+  transform: translateY(0);
+}
+
+.ios-sheet__grabber {
+  display: block;
+  width: 34px;
+  height: 5px;
+  margin: 0 auto 10px;
+  border-radius: 999px;
+  background: var(--ink2);
+  opacity: 0.35;
+}
+
+/* ===========================================================================
+   The tab bar
+
+   This was a floating capsule with a tinted pebble behind the live tab and a
+   word under every icon. At the size these screens are actually looked at -
+   a device in a case study, not a phone in a hand - that is three signals
+   competing inside eleven pixels of height, and the word loses: it renders at
+   four pixels tall and reads as grey mush under the icon.
+
+   So it is now the bar the reference gallery uses, and for the reason that
+   gallery uses it: one rounded frosted bar across the foot of the screen,
+   icons at a size you can actually name, and a single accent dot under the
+   live one. The screen-level action still rides outside it in its own circle,
+   because a destination and a verb are not the same kind of control, and the
+   bar is still frosted, because content has to be visible running under it.
+=========================================================================== */
+
+.ios-tabbar {
+  position: absolute;
+  z-index: 5;
+  left: 10px;
+  right: 10px;
+  bottom: 14px;
+  display: flex;
+  align-items: stretch;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.ios-tabbar > * {
+  pointer-events: auto;
+}
+
+.ios-tabs {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  isolation: isolate;
+  padding: 12px 6px 11px;
+  border-radius: var(--r-tab, 18px);
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 0 0 0.5px var(--hair),
+    0 10px 24px -14px rgba(0, 0, 0, 0.55);
+}
+
+.ios-tab {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.ios-tab__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 2px 0;
+  color: var(--ink2);
+  transition: color 260ms ease;
+}
+
+.ios-tab__inner[data-on] {
+  color: var(--a);
+}
+
+.ios-tab__icon {
+  width: 21px;
+  height: 21px;
+  transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-tab__inner[data-on] .ios-tab__icon {
+  transform: translateY(-1px);
+}
+
+/* the one mark that says which destination you are on */
+.ios-tab__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 240ms ease,
+    transform 380ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-tab__inner[data-on] .ios-tab__dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---- the detached action ---- */
+
+/*
+  A fixed track, not an auto one.
+
+  `Tap` renders a full-width block, so left to `width: auto` the action was
+  simply whatever the flex line had left over - which in the mini phones was
+  six pixels, and the circle collapsed into a sliver beside the bar. The basis
+  is stated on the wrapper and the face fills it.
+*/
+.ios-tabaction {
+  flex: 0 0 46px;
+  width: 46px !important;
+}
+
+.ios-tabaction__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  isolation: isolate;
+  border-radius: var(--r-tab, 18px);
+  color: var(--a);
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 0 0 0.5px var(--hair),
+    0 12px 28px -12px rgba(0, 0, 0, 0.6);
+  transition: transform 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-tabaction:active .ios-tabaction__inner {
+  transform: scale(0.92);
+}
+
+/* ---- the gesture bar ---- */
+
+.ios-home {
+  position: absolute;
+  z-index: 7;
+  left: 50%;
+  bottom: 5px;
+  width: 32%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--ink);
+  opacity: 0.24;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* Backdrop blur is the effect; without it the bar is a tinted rectangle
+   sitting on top of the content. Where it is unsupported, fall back to
+   something opaque enough to keep the labels legible. */
+@supports not (backdrop-filter: blur(1px)) {
+  .ios-tabs,
+  .ios-tabaction__inner,
+  .ios-card--glass,
+  .ios-sheet__panel {
+    background: color-mix(in srgb, var(--glass), #000 14%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ios__stage,
+  .ios-seg__thumb,
+  .ios-tab__inner,
+  .ios-tab__dot,
+  .ios-tab__icon,
+  .ios-tabaction__inner,
+  .ios-track__fill,
+  .ios-sheet__panel,
+  .ios-sheet__scrim {
+    transition: none;
+  }
+}
+
+/* ===========================================================================
+   Skins - what is left when you take the colour away
+
+   Radius, face and elevation come through as custom properties from
+   `skinVars` in lib/iosKit.tsx, so most of the difference is already applied
+   by the rules above. What lives here is the handful of treatments a variable
+   cannot carry: whether the glass is actually frosted, where the light comes
+   from, and what the chrome does with the accent.
+=========================================================================== */
+
+/* ---- industrial (Fieldly): a fitted instrument, not a floating capsule ---- */
+
+.ios[data-skin='industrial'] .ios-tabs,
+.ios[data-skin='industrial'] .ios-tabaction__inner {
+  /* less blur, more tint: a screen read through a dirty windscreen needs the
+     labels to win, and heavy saturation on a dark board just smears */
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 0 0 1px var(--hair),
+    0 10px 22px -14px #000;
+}
+
+/* the specular pass is a machined highlight along the top edge, not a dome */
+.ios[data-skin='industrial'] .ios-tabs::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.02) 22%,
+    transparent 40%
+  );
+}
+
+/* hi-vis: the live tab is marked in the vest colour, not the orange */
+/* the one skin whose live mark is a machined bar rather than a dot */
+.ios[data-skin='industrial'] .ios-tab__inner[data-on] .ios-tab__dot {
+  width: 14px;
+  height: 3px;
+  border-radius: 1px;
+  background: var(--a);
+}
+
+/* ---- paper (Stamp): printed stock, warm light from above ---- */
+
+.ios[data-skin='paper'] .ios-tabs,
+.ios[data-skin='paper'] .ios-tabaction__inner {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 0.5px var(--hair),
+    0 10px 24px -12px rgba(64, 34, 20, 0.5);
+}
+
+/* ---- glass (Slate): the one skin that really is glass ---- */
+
+.ios[data-skin='glass'] .ios-card {
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+}
+
+.ios[data-skin='glass'] .ios-tabs,
+.ios[data-skin='glass'] .ios-tabaction__inner {
+  backdrop-filter: blur(30px) saturate(210%);
+  -webkit-backdrop-filter: blur(30px) saturate(210%);
+}
+
+/* ---- clinical (Prophy): flat, outlined, no light source at all ---- */
+
+.ios[data-skin='clinical'] .ios-tabs,
+.ios[data-skin='clinical'] .ios-tabaction__inner {
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  box-shadow:
+    inset 0 0 0 1px var(--hair),
+    0 6px 16px -12px rgba(5, 39, 34, 0.5);
+}
+
+/* squared off: nothing in a surgery is a lozenge */
+.ios[data-skin='clinical'] .ios-tab__dot {
+  border-radius: 1px;
+}
+
+.ios[data-skin='clinical'] .ios-btn {
+  box-shadow: none;
+}
+
+/* ---- neon (Leadr): the only app that emits light ---- */
+
+.ios[data-skin='neon'] .ios-tabs,
+.ios[data-skin='neon'] .ios-tabaction__inner {
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--a) 26%, transparent),
+    0 16px 34px -18px color-mix(in srgb, var(--a) 70%, transparent);
+}
+
+.ios[data-skin='neon'] .ios-tab__inner[data-on] {
+  text-shadow: 0 0 12px color-mix(in srgb, var(--a) 55%, transparent);
+}
+
+.ios[data-skin='neon'] .ios-btn {
+  box-shadow:
+    0 8px 22px -10px var(--a),
+    0 0 0 0.5px color-mix(in srgb, var(--a2) 40%, transparent);
+}
+
+/* The mini phones in the screen picker render the same screens at about a
+   third of the size. Blur radii do not scale with a transform here - nothing
+   is transformed, the box is simply smaller - so the chrome is tightened
+   rather than left to smear, and the labels go: at 90px wide four of them are
+   a grey smear, and the pebble already says which tab is current. */
+.phone3d--mini .ios-tabbar {
+  left: 4px;
+  right: 4px;
+  bottom: 5px;
+  gap: 3px;
+}
+
+.phone3d--mini .ios-tabs {
+  padding: 3px;
+  backdrop-filter: blur(10px) saturate(190%);
+  -webkit-backdrop-filter: blur(10px) saturate(190%);
+}
+
+/* the mini's action keeps the bar's own track - pinning it to a hard 18px
+   here is what used to crush the circle into a sliver beside the bar */
+.phone3d--mini .ios-tabaction__inner {
+  backdrop-filter: blur(10px) saturate(190%);
+  -webkit-backdrop-filter: blur(10px) saturate(190%);
+}
+
+.phone3d--mini .ios-tab__label {
+  display: none;
+}
+
+.phone3d--mini .ios-tab__inner {
+  padding: 4px 1px;
+}
+
+.phone3d--mini .ios__scroll--inset {
+  padding-bottom: 2rem;
+}
+
+.phone3d--mini .ios-home {
+  height: 2px;
+  bottom: 2.5px;
+}
+
+
+/* ===========================================================================
+   Screen transitions
+
+   A phone does not animate every navigation the same way. Drilling into a
+   record pushes the new screen in from the right and pops back out to it;
+   switching tabs cross-fades, because the two destinations are siblings with
+   no depth between them. Using a push for a tab change is the single most
+   common tell that a mockup is not a real app, so the two are kept apart -
+   see PhoneNavMode in lib/phoneUI.tsx.
+
+   The base .phone3d__slide push lives in styles.css; this refines it and adds
+   the tab case.
+=========================================================================== */
+
+/*
+  The slide is animated inside a CSS3D layer on the device's glass, where a
+  repaint is expensive. Promoting it means the change is composited rather
+  than re-rasterised, which is the difference between these transitions
+  reading as a screen changing and as a page stuttering.
+*/
+.phone3d__slide {
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+.phone3d__slide[data-mode='tab'] {
+  animation: screen-tab 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes screen-tab {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion signatures
+
+   The push/cross-fade pair above is correct, and it is also the reason five
+   apps built on one kit feel like one app. So each concept overrides it with a
+   signature of its own, chosen from how the product is actually held:
+
+     console   a tool bolted into a van - cuts, square and fast, no easing in
+     deck      a wallet - cards come off the top and land, with weight
+     calendar  a week - everything travels along the horizontal, and only that
+     chart     chairside - dissolves, because travel reads as a slipped hand
+     board     a pipeline - the whole shelf racks across, heavy, no bounce
+
+   Published by PhoneMockup as `data-motion`; see ConceptMotion in
+   lib/concepts.ts. Each one has to answer for both navigation modes, or the
+   signature evaporates the moment someone taps a tab.
+--------------------------------------------------------------------------- */
+
+/* ---- console: Fieldly ---- */
+
+.phone3d__slide[data-motion='console'] {
+  animation: screen-console 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.phone3d__slide[data-motion='console'][data-dir='-1'] {
+  animation-name: screen-console-back;
+}
+
+/*
+  The wipe used to run on `steps(4)` - four hard jumps, on the argument that a
+  machine you operate at speed should not ease. Read at this size it was not
+  decisive, it was dropped frames, so it is a continuous wipe now: still a
+  wipe rather than a fade, still square-edged, but it moves.
+*/
+.phone3d__slide[data-motion='console'][data-mode='tab'] {
+  animation: screen-console-cut 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes screen-console {
+  from {
+    opacity: 0;
+    transform: translate3d(9%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-console-back {
+  from {
+    opacity: 0;
+    transform: translate3d(-9%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* a hard vertical wipe rather than a fade - the tab change reads as a channel
+   being switched, which is what the board is */
+@keyframes screen-console-cut {
+  from {
+    opacity: 0.6;
+    clip-path: inset(0 100% 0 0);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ---- deck: Stamp ---- */
+
+.phone3d__slide[data-motion='deck'] {
+  animation: screen-deck 460ms cubic-bezier(0.2, 1.06, 0.4, 1) both;
+  transform-origin: 50% 0%;
+}
+
+.phone3d__slide[data-motion='deck'][data-dir='-1'] {
+  animation-name: screen-deck-back;
+}
+
+.phone3d__slide[data-motion='deck'][data-mode='tab'] {
+  animation: screen-deck-lift 460ms cubic-bezier(0.18, 1.15, 0.4, 1) both;
+}
+
+@keyframes screen-deck {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -13%, 0) rotate(-1.6deg) scale(0.955);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-deck-back {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 9%, 0) rotate(1.4deg) scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-deck-lift {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -7%, 0) rotate(-0.9deg) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- calendar: Slate ---- */
+
+.phone3d__slide[data-motion='calendar'] {
+  animation: screen-calendar 480ms cubic-bezier(0.4, 0, 0.1, 1) both;
+}
+
+.phone3d__slide[data-motion='calendar'][data-dir='-1'] {
+  animation-name: screen-calendar-back;
+}
+
+/* even a tab change travels sideways here: the week is the one axis this app
+   has, and a cross-fade would be the only thing in it that does not run along
+   that axis */
+.phone3d__slide[data-motion='calendar'][data-mode='tab'] {
+  animation: screen-calendar-step 380ms cubic-bezier(0.4, 0, 0.1, 1) both;
+}
+
+@keyframes screen-calendar {
+  from {
+    opacity: 0;
+    transform: translate3d(34%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-calendar-back {
+  from {
+    opacity: 0;
+    transform: translate3d(-34%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-calendar-step {
+  from {
+    opacity: 0;
+    transform: translate3d(14%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- chart: Prophy ---- */
+
+.phone3d__slide[data-motion='chart'],
+.phone3d__slide[data-motion='chart'][data-dir='-1'],
+.phone3d__slide[data-motion='chart'][data-mode='tab'] {
+  animation: screen-chart 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* no travel in either direction - the whole point of this one */
+@keyframes screen-chart {
+  from {
+    opacity: 0;
+    filter: blur(9px);
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+/* ---- board: Leadr ---- */
+
+.phone3d__slide[data-motion='board'] {
+  animation: screen-board 500ms cubic-bezier(0.32, 0.9, 0.2, 1) both;
+}
+
+.phone3d__slide[data-motion='board'][data-dir='-1'] {
+  animation-name: screen-board-back;
+}
+
+.phone3d__slide[data-motion='board'][data-mode='tab'] {
+  animation: screen-board-rack 400ms cubic-bezier(0.32, 0.9, 0.2, 1) both;
+}
+
+@keyframes screen-board {
+  from {
+    opacity: 0.15;
+    transform: translate3d(26%, 0, 0) skewX(-2.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-board-back {
+  from {
+    opacity: 0.15;
+    transform: translate3d(-26%, 0, 0) skewX(2.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-board-rack {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8%, 0) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone3d__slide[data-mode='tab'],
+  .phone3d__slide[data-motion] {
+    animation: none;
+  }
+}
+
+
+/* ===========================================================================
+   Concept case study - page furniture
+
+   The page is paper-first like the rest of the site: the mountain photograph,
+   the brand red, and the same section rhythm the About page runs on. Only the
+   pieces that do not already exist elsewhere live here.
+=========================================================================== */
+
+/* ---- the hero plate ---------------------------------------------------- */
+
+/*
+  The hero is the concept's own colour, edge to edge, with the figure drawn on
+  it - so the tokens under it flip to a dark ground. `--brand` is deliberately
+  *not* touched: it already holds the concept accent from the page root, and
+  that accent is the one thing on the plate that must stay itself.
+*/
+.concept-hero {
+  --ink: #ffffff;
+  --ink-soft: rgba(255, 255, 255, 0.76);
+  --ink-faint: rgba(255, 255, 255, 0.54);
+  --paper: var(--c-ink);
+  --paper-2: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.16);
+  --line-strong: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.concept-folio {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.concept-folio__n {
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--brand);
+}
+
+.concept-folio__rule {
+  display: block;
+  height: 1px;
+  width: 4.5rem;
+  transform-origin: left center;
+  background: var(--brand);
+  transform: scaleX(0);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.concept-folio__rule.is-on {
+  transform: scaleX(1);
+}
+
+.concept-folio__label {
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.concept-tag {
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  padding: 0.4rem 0.85rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ---- the headline, three ways ------------------------------------------
+
+   One family - Geologica, 100–900 - set three ways, because five case
+   studies that all open on the same extrabold grotesque are five case
+   studies that look like one template. `mass` is the studio's own voice,
+   `editorial` runs the face thin and large, `kinetic` opens the tracking
+   up and lets the second line carry the weight.
+------------------------------------------------------------------------- */
+
+.chead {
+  margin: 0;
+  font-family: var(--font-display);
+  color: var(--ink);
+}
+
+.chead__name,
+.chead__line {
+  display: block;
+}
+
+/* mass - Fieldly, Leadr */
+.chead--mass .chead__name {
+  font-size: clamp(3.4rem, 11vw, 9rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+.chead--mass .chead__line {
+  margin-top: 0.7rem;
+  font-size: clamp(1.35rem, 3.1vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--brand);
+}
+
+/* editorial - Stamp, Prophy */
+.chead--editorial .chead__name {
+  font-size: clamp(3.1rem, 10.5vw, 8.5rem);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+.chead--editorial .chead__line {
+  margin-top: 1.1rem;
+  font-size: clamp(1.2rem, 2.7vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  color: var(--brand);
+}
+
+/* kinetic - Slate */
+.chead--kinetic .chead__name {
+  font-size: clamp(2.9rem, 9vw, 7.2rem);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.chead--kinetic .chead__line {
+  margin-top: 1rem;
+  font-size: clamp(1.3rem, 2.9vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  color: var(--brand);
+}
+
+/* the same three voices at section scale, where there is no wordmark above
+   and the line has to carry it alone */
+.chead--section .chead__line {
+  margin-top: 0;
+  color: var(--ink);
+  text-transform: none;
+}
+
+.chead--mass.chead--section .chead__line {
+  max-width: 20ch;
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.chead--editorial.chead--section .chead__line {
+  max-width: 22ch;
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.032em;
+}
+
+.chead--kinetic.chead--section .chead__line {
+  max-width: 21ch;
+  font-size: clamp(2rem, 4.2vw, 3.3rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+}
+
+/* ---- the ticker -------------------------------------------------------- */
+
+/* The one place the wordmark is set at this size, and the join between the
+   dark plate and the paper below it - the page changes ground under a moving
+   line rather than at a seam. */
+.concept-ticker {
+  position: relative;
+  overflow: hidden;
+  padding: 0.85rem 0;
+}
+
+.concept-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: concept-ticker 38s linear infinite;
+}
+
+.concept-ticker__run {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding-right: 1.4rem;
+}
+
+.concept-ticker__word {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.concept-ticker__note {
+  font-size: clamp(0.72rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+  white-space: nowrap;
+}
+
+.concept-ticker__dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+/* four identical runs, so a quarter of the track is exactly one run */
+@keyframes concept-ticker {
+  to {
+    transform: translate3d(-25%, 0, 0);
+  }
+}
+
+/* ---- the problem paragraphs ------------------------------------------- */
+
+.concept-para {
+  position: relative;
+  max-width: 62ch;
+  padding-left: 3.25rem;
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+
+.concept-para__n {
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--brand);
+}
+
+@media (max-width: 640px) {
+  .concept-para {
+    padding-left: 0;
+  }
+
+  .concept-para__n {
+    position: static;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+}
+
+/* ---- the screen picker, on the coloured band --------------------------- */
+
+.concept-pick {
+  position: relative;
+  display: block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.concept-pick:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+  border-radius: 22px;
+}
+
+.concept-pick__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0 0.25rem 0.35rem;
+}
+
+.concept-pick__n {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 300ms ease;
+}
+
+.concept-pick[data-active] .concept-pick__n {
+  color: #ffffff;
+}
+
+.concept-pick__tab {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 300ms ease;
+}
+
+.concept-pick[data-active] .concept-pick__tab {
+  color: #ffffff;
+}
+
+/* the plinth the device stands on: it is what actually lights up, so the
+   selected screen reads as *on a stand* rather than as a highlighted button */
+.concept-pick__plinth {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 0.5rem 0.35rem 0.65rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  transition:
+    background 380ms ease,
+    box-shadow 380ms ease,
+    transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.concept-pick:hover .concept-pick__plinth {
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 10px 20px -6px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+}
+
+.concept-pick[data-active] .concept-pick__plinth {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45), 0 16px 32px -8px rgba(0, 0, 0, 0.45);
+  transform: translateY(-5px);
+}
+
+/* a shaft of light behind the one that is showing */
+.concept-pick__plinth::before {
+  content: '';
+  position: absolute;
+  inset: -40% -10% auto;
+  height: 90%;
+  background: radial-gradient(
+    60% 60% at 50% 100%,
+    rgba(255, 255, 255, 0.38) 0%,
+    transparent 75%
+  );
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.concept-pick[data-active] .concept-pick__plinth::before {
+  opacity: 1;
+}
+
+.concept-pick__label {
+  display: block;
+  margin-top: 0.4rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.74);
+  transition: color 300ms ease;
+}
+
+.concept-pick[data-active] .concept-pick__label {
+  color: #ffffff;
+}
+
+/* ---- the feature index ------------------------------------------------- */
+
+.concept-features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.concept-feature {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.75rem 2.75rem 1fr;
+  align-items: start;
+  gap: 0 1.1rem;
+  overflow: hidden;
+  padding: 1.6rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.concept-feature__n {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 2.9;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+
+.concept-feature__icon {
+  display: inline-flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.85rem;
+  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.concept-feature:hover .concept-feature__icon {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.concept-feature__text {
+  display: block;
+  padding-top: 0.15rem;
+}
+
+.concept-feature__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.concept-feature__body {
+  display: block;
+  margin-top: 0.35rem;
+  max-width: 58ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* the accent crosses the row rather than sitting on it - six tinted rows at
+   rest would be a swatch page again */
+.concept-feature__sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-40%);
+  transition:
+    opacity 420ms ease,
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.concept-feature:hover .concept-feature__sweep {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .concept-feature {
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0 0.9rem;
+  }
+
+  .concept-feature__n {
+    grid-column: 1;
+    grid-row: 1;
+    line-height: 2.6;
+  }
+
+  .concept-feature__icon {
+    display: none;
+  }
+}
+
+/* ---- the palette, as one strip ----------------------------------------- */
+
+.concept-strip {
+  display: flex;
+  gap: 4px;
+  overflow: hidden;
+  border-radius: 1.25rem;
+}
+
+.concept-strip__col {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.15rem;
+  min-height: 15rem;
+  transition: flex-grow 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* the pointer opens one column and closes the others: four colours edge to
+   edge can finally be judged against each other, which is what a palette is
+   for and what four separate tiles never allow */
+.concept-strip:hover .concept-strip__col {
+  flex-grow: 0.8;
+}
+
+.concept-strip:hover .concept-strip__col:hover {
+  flex-grow: 1.8;
+}
+
+.concept-strip__hex {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.72;
+  white-space: nowrap;
+}
+
+.concept-strip__name {
+  margin-top: 3px;
+  font-family: var(--font-display);
+  font-size: 17.5px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.concept-strip__note {
+  margin-top: 5px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  opacity: 0.7;
+}
+
+@media (max-width: 700px) {
+  .concept-strip {
+    flex-wrap: wrap;
+  }
+
+  .concept-strip__col {
+    flex: 1 1 calc(50% - 4px);
+    min-height: 11rem;
+  }
+
+  /* no hover on a touch screen, so nothing should be able to collapse */
+  .concept-strip:hover .concept-strip__col,
+  .concept-strip:hover .concept-strip__col:hover {
+    flex-grow: 1;
+  }
+}
+
+/* ---- the type plate and the note panels -------------------------------- */
+
+.concept-typeplate {
+  overflow: hidden;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  color: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .concept-typeplate {
+    padding: 2.5rem;
+  }
+}
+
+.concept-typeplate__mark {
+  margin-top: 1.4rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.concept-panel {
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 2rem;
+}
+
+@media (min-width: 640px) {
+  .concept-panel {
+    padding: 2.5rem;
+  }
+}
+
+.concept-panel__eyebrow {
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.concept-panel__body {
+  margin-top: 1rem;
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+/* ---- the next concept -------------------------------------------------- */
+
+.concept-next {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  padding: clamp(1.6rem, 4vw, 3.25rem);
+  background: var(--n-ink);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* the next product's colour rises into the plate on approach, so the page
+   ends by already being somewhere else */
+.concept-next__fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(118deg, var(--n-accent) 0%, var(--n-band) 100%);
+  transform: translateY(101%);
+  transition: transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.concept-next:hover .concept-next__fill,
+.concept-next:focus-visible .concept-next__fill {
+  transform: none;
+}
+
+.concept-next__body {
+  display: block;
+  min-width: 0;
+}
+
+.concept-next__eyebrow {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.concept-next__name {
+  display: block;
+  margin-top: 0.6rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 6vw, 4.25rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+
+.concept-next__tag {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.concept-next__go {
+  display: flex;
+  height: 3.25rem;
+  width: 3.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.concept-next:hover .concept-next__go {
+  transform: translate(3px, -3px) scale(1.06);
+}
+
+@media (min-width: 640px) {
+  .concept-next__go {
+    height: 4rem;
+    width: 4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-ticker__track,
+  .concept-feature__sweep,
+  .concept-next__fill,
+  .concept-next__go,
+  .concept-pick__plinth {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ===========================================================================
+   The launch screen
+
+   Every real app has this moment and no mockup ever does, which is exactly why
+   it earns the second it costs.
+=========================================================================== */
+
+.ios-launch {
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 0 1.4rem 2.4rem;
+  color: #fff;
+}
+
+.ios-launch__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.ios-launch__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  /* the app's own corner radius, or all five products open on the same
+     squircle and the launch moment says nothing about which one you opened */
+  border-radius: calc(var(--r-card, 14px) + 2px);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  animation: launch-mark 700ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.ios-launch__name {
+  margin-top: 14px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  animation: launch-copy 620ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both;
+}
+
+.ios-launch__tagline {
+  margin-top: 4px;
+  max-width: 15rem;
+  font-size: 10px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.72);
+  animation: launch-copy 620ms cubic-bezier(0.22, 1, 0.36, 1) 260ms both;
+}
+
+.ios-launch__track {
+  display: block;
+  width: 84px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.ios-launch__fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: #fff;
+  transform-origin: left center;
+  animation: launch-fill 1s cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+
+@keyframes launch-mark {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes launch-copy {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes launch-fill {
+  from {
+    transform: scaleX(0.04);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Each product opens differently, because the launch is the first second of
+   the app and it should already be telling you which one this is. Same beat
+   and the same total length in all five - only the manner changes. */
+
+.ios-launch[data-skin='industrial'] .ios-launch__mark {
+  animation: launch-cut 420ms steps(5, end) both;
+}
+
+.ios-launch[data-skin='paper'] .ios-launch__mark {
+  animation: launch-drop 760ms cubic-bezier(0.18, 1.3, 0.4, 1) both;
+}
+
+.ios-launch[data-skin='glass'] .ios-launch__mark {
+  animation: launch-slide 700ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.ios-launch[data-skin='clinical'] .ios-launch__mark {
+  animation: launch-resolve 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ios-launch[data-skin='neon'] .ios-launch__mark {
+  animation: launch-bloom 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes launch-cut {
+  from {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes launch-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-26px) rotate(-6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes launch-slide {
+  from {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes launch-resolve {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+@keyframes launch-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.03);
+    box-shadow: 0 0 34px 6px rgba(255, 255, 255, 0.32);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 18px 0 rgba(255, 255, 255, 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ios-launch__mark,
+  .ios-launch__name,
+  .ios-launch__tagline,
+  .ios-launch__fill,
+  .ios-launch[data-skin] .ios-launch__mark {
+    animation: none;
+  }
+}
+
+/* ===========================================================================
+   Page arrival
+
+   The case study announces itself in the concept's own colour before the page
+   under it is legible - the same idea as the studio's page-transition wipe,
+   pointed at whichever product is being opened. It runs once per concept and
+   never blocks input: the sheet is pointer-transparent from the first frame.
+=========================================================================== */
+
+.concept-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: linear-gradient(
+    155deg,
+    var(--c-accent) 0%,
+    var(--c-band) 62%,
+    var(--c-ink) 120%
+  );
+  transform-origin: 50% 100%;
+  /* off the screen by 700ms - the whole arrival has a two-second budget and
+     the curtain is the only part of it that is in the reader's way */
+  animation: curtain-lift 560ms cubic-bezier(0.65, 0, 0.2, 1) 140ms both;
+}
+
+.concept-curtain__mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  font-size: clamp(2.5rem, 9vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: rgba(255, 255, 255, 0.94);
+  animation: curtain-mark 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes curtain-lift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-101%);
+  }
+}
+
+@keyframes curtain-mark {
+  0% {
+    opacity: 0;
+    filter: blur(14px);
+    transform: scale(0.94);
+  }
+  46% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-curtain {
+    display: none;
+  }
+}
+
+/* ===========================================================================
+   The motif - the figure behind each case study
+
+   Five products used to open on one photograph of one ridge, re-tinted. The
+   tint was carrying the whole identity and losing: arriving from the work
+   index meant seeing the picture you had just left, in a slightly different
+   colour. Each concept now gets a plate drawn out of what the product is
+   actually about - see components/site/ConceptMotif.tsx.
+
+   Everything below animates transform, opacity and fill only. Under
+   `prefers-reduced-motion` all of it stops, and every plate is composed to
+   still read standing still - which is the test for whether the movement was
+   decoration or a crutch.
+=========================================================================== */
+
+.cmotif {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cmotif__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      70% 60% at 78% 28%,
+      color-mix(in srgb, var(--m-a) 26%, transparent) 0%,
+      transparent 68%
+    ),
+    linear-gradient(152deg, var(--m-from) 0%, var(--m-to) 100%);
+}
+
+/*
+  The figure fades in; the wash never does.
+
+  The hero's type is white and the wash is the only thing making it legible, so
+  the coloured ground has to be painted from the first frame with nothing -
+  no animation, no script - standing between it and being visible. Only the
+  drawing on top arrives.
+*/
+.cmotif__svg {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  animation: cmotif-in 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cmotif-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.cmotif__sheen {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    104deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  animation: cm-sheen 27s ease-in-out infinite;
+}
+
+@keyframes cm-sheen {
+  0%,
+  100% {
+    transform: translate3d(-24%, 0, 0);
+    opacity: 0;
+  }
+  46% {
+    opacity: 0.9;
+  }
+  62% {
+    transform: translate3d(26%, 0, 0);
+    opacity: 0;
+  }
+}
+
+/* film grain, generated rather than fetched: a flat plate this large bands
+   badly without it, and an image request for noise is a request too many */
+.cmotif__grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* the copy sits over the lower left of every plate, so every plate is darkened
+   there - one scrim rather than five hand-tuned compositions */
+.cmotif::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to top,
+      color-mix(in srgb, var(--m-to) 88%, transparent) 0%,
+      transparent 58%
+    ),
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--m-to) 62%, transparent) 0%,
+      transparent 52%
+    );
+}
+
+/* ---- grid: Fieldly ---- */
+
+.cmotif__streets line {
+  stroke: #ffffff;
+  stroke-opacity: 0.06;
+  stroke-width: 1;
+}
+
+.cmotif__arterial line {
+  stroke: var(--m-a);
+  stroke-opacity: 0.32;
+  stroke-width: 2;
+}
+
+.cmotif__leg {
+  fill: none;
+  stroke: var(--m-a);
+  stroke-opacity: 0.2;
+  stroke-width: 3;
+  stroke-dasharray: 9 15;
+  animation: cm-dash 2.4s linear infinite;
+}
+
+.cmotif__van {
+  fill: var(--m-a2);
+  filter: drop-shadow(0 0 9px var(--m-a2));
+}
+
+@keyframes cm-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+/* ---- strata: Stamp ---- */
+
+.cmotif__card > rect {
+  fill: #ffffff;
+  fill-opacity: var(--o);
+}
+
+/* the group already carries a `transform` attribute for its position; CSS
+   `translate` composes with it, where a CSS `transform` would replace it */
+.cmotif__card {
+  animation: cm-float 16s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -2.6s);
+}
+
+.cmotif__holes circle {
+  fill: #ffffff;
+  fill-opacity: 0.14;
+  animation: cm-fill 11s ease-in-out infinite;
+  animation-delay: calc(var(--h) * -0.42s);
+}
+
+@keyframes cm-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -22px;
+  }
+}
+
+@keyframes cm-fill {
+  0%,
+  38% {
+    fill: #ffffff;
+    fill-opacity: 0.14;
+  }
+  52%,
+  84% {
+    fill: var(--m-a2);
+    fill-opacity: 0.9;
+  }
+  100% {
+    fill: #ffffff;
+    fill-opacity: 0.14;
+  }
+}
+
+/* ---- week: Slate ---- */
+
+.cmotif__slot {
+  fill: #ffffff;
+  fill-opacity: 0.06;
+}
+
+.cmotif__slot.is-booked {
+  fill: var(--m-a);
+  fill-opacity: 0.6;
+  animation: cm-book 13s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.29s);
+}
+
+.cmotif__cursor {
+  fill: var(--m-a2);
+  fill-opacity: 0.1;
+  animation: cm-walk 18s steps(7, end) infinite;
+}
+
+@keyframes cm-book {
+  0%,
+  44% {
+    fill-opacity: 0.6;
+  }
+  58%,
+  88% {
+    fill-opacity: 0.12;
+  }
+  100% {
+    fill-opacity: 0.6;
+  }
+}
+
+@keyframes cm-walk {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: 896px;
+  }
+}
+
+/* ---- pulse: Prophy ---- */
+
+.cmotif__rings circle {
+  fill: none;
+  stroke: var(--m-a);
+  stroke-opacity: 0.15;
+  stroke-width: 1.5;
+  transform-origin: 760px 280px;
+  transform-box: view-box;
+  animation: cm-ring 8s ease-out infinite;
+  animation-delay: calc(var(--i) * -1.3s);
+}
+
+.cmotif__trace {
+  fill: none;
+  stroke: var(--m-a2);
+  stroke-width: 3;
+  stroke-opacity: 0.8;
+  stroke-linejoin: round;
+  stroke-dasharray: 2400;
+  stroke-dashoffset: 2400;
+  filter: drop-shadow(0 0 8px var(--m-a2));
+  animation: cm-trace 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.cmotif__teeth rect {
+  fill: #ffffff;
+  fill-opacity: 0.08;
+  animation: cm-tooth 7s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.23s);
+}
+
+@keyframes cm-ring {
+  0% {
+    scale: 0.82;
+    stroke-opacity: 0.3;
+  }
+  100% {
+    scale: 1.12;
+    stroke-opacity: 0;
+  }
+}
+
+@keyframes cm-trace {
+  0% {
+    stroke-dashoffset: 2400;
+  }
+  55%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes cm-tooth {
+  0%,
+  100% {
+    fill-opacity: 0.08;
+  }
+  50% {
+    fill-opacity: 0.22;
+  }
+}
+
+/* ---- rays: Leadr ---- */
+
+.cmotif__rays rect {
+  fill: var(--m-a);
+  fill-opacity: 0.06;
+  animation: cm-ray 12s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -1.5s);
+}
+
+.cmotif__stage {
+  fill: #ffffff;
+  fill-opacity: 0.04;
+}
+
+.cmotif__deal {
+  fill: var(--m-a);
+  fill-opacity: 0.32;
+  animation: cm-deal 9s ease-in-out infinite;
+  animation-delay: calc((var(--i) * 3 + var(--d)) * -0.4s);
+}
+
+@keyframes cm-ray {
+  from {
+    fill-opacity: 0.03;
+  }
+  to {
+    fill-opacity: 0.13;
+  }
+}
+
+@keyframes cm-deal {
+  0%,
+  100% {
+    fill: var(--m-a);
+    fill-opacity: 0.32;
+    translate: 0 0;
+  }
+  50% {
+    fill: var(--m-a2);
+    fill-opacity: 0.68;
+    translate: 0 -10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmotif__svg,
+  .cmotif__sheen,
+  .cmotif__leg,
+  .cmotif__van,
+  .cmotif__card,
+  .cmotif__holes circle,
+  .cmotif__slot.is-booked,
+  .cmotif__cursor,
+  .cmotif__rings circle,
+  .cmotif__trace,
+  .cmotif__teeth rect,
+  .cmotif__rays rect,
+  .cmotif__deal {
+    animation: none;
+  }
+
+  /* the trace is drawn by its dash offset, so stopping the animation would
+     leave it invisible rather than still */
+  .cmotif__trace {
+    stroke-dashoffset: 0;
+  }
+}

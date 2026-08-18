@@ -6,7 +6,7 @@ import * as THREE from 'three'
  * A studio reflection environment, painted rather than loaded.
  *
  * The phone body is metal, and metal with no environment renders as a black
- * slab — but drei's <Environment> drags in the HDR/gainmap loaders, which is
+ * slab - but drei's <Environment> drags in the HDR/gainmap loaders, which is
  * most of a megabyte of client bundle for a map we would never fetch. A 64×32
  * canvas run through PMREM gives the same job: a bright overhead key, brand red
  * raking in from one side, a cool bounce from the other.

@@ -1,6 +1,6 @@
 import { Home, PieChart, LayoutGrid, User } from 'lucide-react'
 
-/** A neutral placeholder bar (grey) — used for faux copy/labels. */
+/** A neutral placeholder bar (grey) - used for faux copy/labels. */
 function Bar({ w, tall = false }: { w: string; tall?: boolean }) {
   return (
     <span
@@ -12,7 +12,7 @@ function Bar({ w, tall = false }: { w: string; tall?: boolean }) {
 }
 
 /**
- * DashboardScreen — the default content shown inside <PhoneMockup />.
+ * DashboardScreen - the default content shown inside <PhoneMockup />.
  *
  * Mirrors the analytics-app look from the hero. Every animatable element is
  * tagged with data-phone-reveal (stagger in) or data-phone-bar (chart grow)

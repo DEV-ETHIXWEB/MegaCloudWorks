@@ -4,11 +4,11 @@ import type { WorldRegionId } from './world-countries'
 
 /**
  * Natural Earth world map, drawn country by country, with the United States
- * and India carried in brand red — joined by a zig-zag corridor — and
+ * and India carried in brand red - joined by a zig-zag corridor - and
  * everywhere else in grey.
  *
  * The geometry is generated ahead of time (see scripts/generate-world.mjs) so
- * no map library ships to the browser — this is a plain SVG of <path>s.
+ * no map library ships to the browser - this is a plain SVG of <path>s.
  *
  * Hover styling lives entirely in CSS, so pointing at a country never causes
  * a React render; the only state a pointer touches is the label.
@@ -25,8 +25,8 @@ const REGIONS: Record<WorldRegionId, string> = {
   oceania: 'Australia & the Pacific',
 }
 
-// The callout hangs in the open North Pacific — the only large empty area
-// adjacent to the US — with a leader line dropping down the west coast onto
+// The callout hangs in the open North Pacific - the only large empty area
+// adjacent to the US - with a leader line dropping down the west coast onto
 // the mainland. Both are in map space (the 900x460 viewBox).
 const PIN = { x: 188, y: 150 }
 const LABEL = { x: 26, y: 40 }
@@ -35,7 +35,7 @@ const LEAD_ELBOW = { x: 124, y: 68 }
 // India's callout mirrors it, dropping into the open water below the
 // subcontinent (India's own geometry spans x 615-683, y 161-240). The label
 // block is kept left of Indonesia (starts at x 687) and Australia (x 720),
-// and above the thin Antarctic coastline that runs the full width at y 309 —
+// and above the thin Antarctic coastline that runs the full width at y 309 -
 // the type carries no halo of its own.
 const PIN_IN = { x: 648, y: 197 }
 const LEAD_ELBOW_IN = { x: 606, y: 260 }
@@ -44,7 +44,7 @@ const LABEL_IN = { x: 594, y: 282 }
 // The route: a single arc from the US pin to the India pin, bowing north over
 // the Atlantic and Europe the way a flight path does, rather than cutting
 // straight across. It is drawn as a run of dots rather than as a stroke, so
-// the connection can be shown travelling — each dot in turn flaring from red
+// the connection can be shown travelling - each dot in turn flaring from red
 // to white, west to east.
 const ARC = {
   c1: { x: PIN.x + (PIN_IN.x - PIN.x) * 0.28, y: PIN.y - 96 },
@@ -113,7 +113,7 @@ export function ReachMap({ className = '' }: { className?: string }) {
 
   // The label follows the pointer, which keeps it clear of the country under
   // the cursor without any collision maths. Its position is written straight
-  // to the node rather than held in state — a render per mousemove would mean
+  // to the node rather than held in state - a render per mousemove would mean
   // reconciling 176 paths sixty times a second for a label that moves 3px.
   const move = (event: React.PointerEvent<SVGPathElement>) => {
     const box = wrap.current?.getBoundingClientRect()
@@ -192,7 +192,7 @@ export function ReachMap({ className = '' }: { className?: string }) {
         </g>
 
         {/* the corridor between the two: a dotted arc that lays itself down
-            once the pins have landed, then keeps a charge running along it —
+            once the pins have landed, then keeps a charge running along it -
             one dot at a time flaring from red to white, US → India */}
         <g className="reach-route" aria-hidden="true">
           <path
@@ -224,7 +224,7 @@ export function ReachMap({ className = '' }: { className?: string }) {
           ))}
         </g>
 
-        {/* United States callout — the leader line draws itself in, then the
+        {/* United States callout - the leader line draws itself in, then the
             wordmark rises under it */}
         <g
           className={`reach-pin ${hover && hover.region !== 'us' ? 'is-dim' : ''}`}
@@ -271,7 +271,7 @@ export function ReachMap({ className = '' }: { className?: string }) {
           </text>
         </g>
 
-        {/* India callout — same construction, dropped into the Indian Ocean */}
+        {/* India callout - same construction, dropped into the Indian Ocean */}
         <g
           className={`reach-pin reach-pin--in ${
             hover && hover.region !== 'us' ? 'is-dim' : ''
@@ -320,7 +320,7 @@ export function ReachMap({ className = '' }: { className?: string }) {
         </g>
       </svg>
 
-      {/* country label — plain type, no card, so it reads as part of the map */}
+      {/* country label - plain type, no card, so it reads as part of the map */}
       <div ref={tip} className={`reach-tip ${hover ? 'is-on' : ''}`}>
         <div aria-hidden="true" className="reach-tip__inner">
           <span className="reach-tip__name">{hover?.name ?? ''}</span>

@@ -5,8 +5,8 @@ import { cn } from '#/lib/utils'
  * the four cloud shapes, so it reads as a single big, slowly-evolving cloud.
  *
  * The stage is tilted (rotated) to follow the rising diagonal behind the phone;
- * the inner ".cloud-slide" layer slides left↔right which — because its parent is
- * rotated — travels up and down that diagonal. A slow zoom keeps it alive.
+ * the inner ".cloud-slide" layer slides left↔right which - because its parent is
+ * rotated - travels up and down that diagonal. A slow zoom keeps it alive.
  * Decorative and SSR-safe; under prefers-reduced-motion a single cloud is shown
  * statically (see styles.css).
  */

@@ -22,10 +22,10 @@ export const STEPS = [
   {
     icon: PenTool,
     title: 'Design',
-    meta: 'Weeks 2—3',
+    meta: 'Weeks 2-3',
     blurb: 'Flows, then screens. Prototyped early so you can feel it working.',
     detail:
-      'Flows before pixels. You get a clickable prototype in week two — on a real device, in your hand — because opinions about a static mockup and opinions about something you can actually use are not the same opinions.',
+      'Flows before pixels. You get a clickable prototype in week two - on a real device, in your hand - because opinions about a static mockup and opinions about something you can actually use are not the same opinions.',
     points: [
       'Flows and states',
       'Clickable prototype',
@@ -35,10 +35,10 @@ export const STEPS = [
   {
     icon: Code2,
     title: 'Build',
-    meta: 'Weeks 4—8',
+    meta: 'Weeks 4-8',
     blurb: 'Typed, tested, reviewed. Shipped to a staging build every week.',
     detail:
-      'Typed end to end, reviewed on every pull request, and deployed to a staging build you can open every single week. No months of silence followed by a big reveal — you watch it become real.',
+      'Typed end to end, reviewed on every pull request, and deployed to a staging build you can open every single week. No months of silence followed by a big reveal - you watch it become real.',
     points: [
       'Weekly staging builds',
       'Automated tests',

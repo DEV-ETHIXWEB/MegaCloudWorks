@@ -6,7 +6,7 @@ import { CAMERA } from './story'
 /**
  * The WebGL half of the story, split into its own chunk. three and drei are the
  * heaviest thing on the home page by a wide margin, and none of it is needed to
- * paint the copy or the contact panel — so the story lazy-loads this after
+ * paint the copy or the contact panel - so the story lazy-loads this after
  * hydration rather than shipping it in the route bundle.
  */
 export function PhoneCanvas(props: RigProps) {

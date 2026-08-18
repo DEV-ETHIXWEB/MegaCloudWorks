@@ -58,7 +58,7 @@ export function PhoneRig({
     const dt = Math.min(rawDelta, 1 / 30)
     const pose = poseAt(s.progress, s.narrow)
 
-    // pointer parallax, but only while the phone is still being presented —
+    // pointer parallax, but only while the phone is still being presented -
     // once it is flying at the camera the tilt would fight the framing
     const parallax = s.reduced
       ? 0

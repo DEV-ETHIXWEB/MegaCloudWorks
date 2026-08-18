@@ -82,8 +82,8 @@ export function SiteHeader({
   ctaLabel?: string
   /**
    * Pin the header to the viewport instead of to the top of the document.
-   * Pages whose first section is taller than one screen — the home story runs
-   * to seven — need this, or the header scrolls away and never returns.
+   * Pages whose first section is taller than one screen - the home story runs
+   * to seven - need this, or the header scrolls away and never returns.
    */
   fixed?: boolean
 }) {
@@ -100,9 +100,9 @@ export function SiteHeader({
    * Mount first, animate second.
    *
    * A node that appears with its open state already set has no from-state to
-   * transition out of, so the panel would simply be there. Two frames of gap —
+   * transition out of, so the panel would simply be there. Two frames of gap -
    * one for the browser to lay the sheet out, one for it to have painted the
-   * closed state — and the entrance runs properly. Closing reverses it: the
+   * closed state - and the entrance runs properly. Closing reverses it: the
    * flag drops immediately and the node is pulled once the exit has played.
    */
   useEffect(() => {
@@ -124,7 +124,7 @@ export function SiteHeader({
   }, [open])
 
   // A fixed bar has the whole page passing underneath it, so once anything has
-  // scrolled it needs a ground of its own — over the phone story the nav would
+  // scrolled it needs a ground of its own - over the phone story the nav would
   // otherwise sit on top of the copy with nothing between them. Only the
   // desktop bar takes this: below lg there is no bar to give a ground to.
   useEffect(() => {

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 /**
  * The sky behind "How we work": three painted plates that cross-fade as the
- * reader walks the four steps, so the climb reads as one continuous ascent —
+ * reader walks the four steps, so the climb reads as one continuous ascent -
  * thin high air at the start, thickening, and finally the cloud bank the
  * rocket launches out of.
  *
@@ -48,7 +48,7 @@ export function StepSky() {
       frame = 0
 
       // the band is red from its very top, so the first plate is showing
-      // before any row has arrived — hence starting at 0 rather than at -1
+      // before any row has arrived - hence starting at 0 rather than at -1
       let step = 0
       // a row counts as the one being read once its top has climbed past the
       // upper-middle of the window, which is roughly where its mark sits

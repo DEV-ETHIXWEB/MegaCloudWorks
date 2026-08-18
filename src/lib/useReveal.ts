@@ -4,7 +4,7 @@ import type { RefObject } from 'react'
 /**
  * Blocks arriving into focus as they reach the screen.
  *
- * Mark anything with `data-reveal`. The value picks how it arrives — see
+ * Mark anything with `data-reveal`. The value picks how it arrives - see
  * styles.css for the four:
  *
  *   data-reveal          rise: up and out of a blur (the default)
@@ -17,12 +17,12 @@ import type { RefObject } from 'react'
  * `--i`, which the stylesheet turns into a delay.
  *
  * The hidden state is only ever applied here, in JavaScript. A block whose
- * observer never runs is therefore simply visible — the failure mode is "no
+ * observer never runs is therefore simply visible - the failure mode is "no
  * animation", never "no content". A dead-observer timer covers the rest.
  */
 export function useReveal(
   root: RefObject<HTMLElement | null>,
-  /** re-arm when this changes — e.g. the route's slug */
+  /** re-arm when this changes - e.g. the route's slug */
   key?: unknown,
 ) {
   useEffect(() => {

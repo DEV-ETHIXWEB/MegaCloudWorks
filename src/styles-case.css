@@ -1,0 +1,1399 @@
+/* ===========================================================================
+   THE CASE STUDY - alpine light
+   ---------------------------------------------------------------------------
+   The five concept pages used to open on a plate of saturated colour with
+   white type on it, one per product, which made them five different websites
+   that happened to share a footer. This is the replacement: every page is
+   snow, every page is the same snow, and the product's colour arrives the way
+   weather does - as a wash, a rule, a lit tab, a plume of the studio's red
+   drifting off the ridge behind the device.
+
+   Three colours do all the work and they are all published by the route:
+
+     --c-accent   the product's own, used as a graphic colour
+     --c-band     its darkened twin, the only one small type is ever set in
+     --c-wash     one or two per cent of it in snow, for whole surfaces
+
+   The studio's red is not one of them. It is a constant, and it is the thing
+   that makes five pages read as one studio.
+   =========================================================================== */
+
+.cs {
+  --smoke: #f5333b;
+  --snow: #ffffff;
+  --snow-2: #f4f6f9;
+  --granite: #0e1218;
+  --granite-soft: #5a6472;
+  --granite-faint: #8a939f;
+  --hair: rgba(14, 18, 24, 0.09);
+  --hair-strong: rgba(14, 18, 24, 0.16);
+
+  position: relative;
+  background: var(--snow);
+  color: var(--granite);
+}
+
+/* ---------------------------------------------------------------------------
+   1. THE HERO
+   ------------------------------------------------------------------------ */
+
+/*
+  The hero is monochrome.
+
+  Not for want of colour - because the studio's own picture is: white weather,
+  black rock, and exactly one red. Five case studies that each washed their
+  hero in their own hue were five brands standing next to each other. Here the
+  product's colour is on the glass of the device and nowhere else in the frame,
+  which is the only place a reader is actually looking at the product.
+*/
+.cs-hero {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(176deg, #ffffff 0%, #eceff3 58%, #e3e8ee 100%);
+}
+
+/* ---- the weather behind it ---- */
+
+/*
+  Four layers, and the order is the whole trick: haze, far ridge, smoke, near
+  ridge. The smoke has to be *between* the ridges or it reads as a filter over
+  the picture rather than something coming off the mountain.
+*/
+.cs-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ---- the plate ---- */
+
+.cs-sky__plate {
+  position: absolute;
+  /* overscanned, because a gaussian blur has nothing to sample past an edge
+     and would otherwise wash the frame out along all four sides */
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  /*
+    Preflight caps every image at `max-width: 100%`, which quietly clamped this
+    one back to the width of the hero - so the overscan only ever existed
+    vertically and the drift walked the right-hand eighth of the section off
+    the picture and onto bare paper.
+  */
+  max-width: none;
+  object-fit: cover;
+  object-position: 62% 46%;
+  /*
+    Sharp, and mostly opaque.
+
+    This started at a 26px blur and half strength, on the theory that a
+    photograph behind a case study has to get out of the way. It got so far out
+    of the way that it became a grey smear, and every step down from there was
+    an improvement - so it ends at none. The picture is the studio: a snow ridge
+    with red smoke coming off it, and it can be looked at. What holds type off
+    it is the veil below, which covers the part with words on it and nothing
+    else.
+  */
+  filter: saturate(108%) contrast(102%);
+  opacity: 0.86;
+  will-change: transform;
+  animation: cs-plate 34s ease-in-out infinite alternate;
+}
+
+/* a slow push in and across - the frame is never still, and never obviously
+   moving either */
+@keyframes cs-plate {
+  from {
+    transform: scale(1.02) translate3d(-0.6%, 0.4%, 0);
+  }
+  to {
+    transform: scale(1.09) translate3d(0.8%, -0.9%, 0);
+  }
+}
+
+/*
+  Just enough veil to set type on.
+
+  Not a scrim over the whole frame - that is what turned the picture grey. It
+  is a wedge: strongest at the top left where the eyebrow, the wordmark and the
+  paragraph sit, and gone by the right half, where the only thing over the
+  photograph is the device, which brings its own ground.
+*/
+.cs-sky__plate + .cs-sky__haze::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0.86) 0%,
+      rgba(255, 255, 255, 0.6) 30%,
+      rgba(255, 255, 255, 0.16) 58%,
+      transparent 78%
+    ),
+    linear-gradient(
+      178deg,
+      rgba(255, 255, 255, 0.62) 0%,
+      rgba(255, 255, 255, 0.12) 40%,
+      transparent 72%
+    );
+}
+
+/* the light in the air: bright where the sun is behind the summit, and a cold
+   wash down the left where the valley is still full of cloud */
+.cs-sky__haze {
+  position: absolute;
+  inset: -20% -10% 10%;
+  background:
+    radial-gradient(
+      58% 46% at 78% 8%,
+      rgba(255, 255, 255, 0.96) 0%,
+      transparent 66%
+    ),
+    radial-gradient(
+      70% 54% at 14% 46%,
+      rgba(211, 220, 230, 0.7) 0%,
+      transparent 72%
+    );
+  animation: cs-haze 18s ease-in-out infinite alternate;
+}
+
+/* the WebGL field - cloud and the studio's red, between the peak and the rock */
+.cs-sky__field {
+  position: absolute;
+  inset: 0;
+  /* the shader is the slowest thing in the hero and none of it is a control */
+  pointer-events: none;
+}
+
+.cs-sky__field canvas {
+  display: block;
+}
+
+@keyframes cs-haze {
+  from {
+    transform: translate3d(-1.5%, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(1.5%, -1.5%, 0) scale(1.06);
+  }
+}
+
+/*
+  The hem.
+
+  The photograph runs to the bottom edge of the section, and the section is
+  followed by a hairline ticker on paper - so without this the picture stops
+  dead on a ruled line and the join reads as a screenshot pasted onto the page.
+  This dissolves the last fifth of it into the paper it is about to become,
+  which is also what puts clean ground under the screen picker sitting there.
+*/
+.cs-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  height: 34svh;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.92) 24%,
+    rgba(255, 255, 255, 0.55) 52%,
+    rgba(255, 255, 255, 0.16) 78%,
+    transparent 100%
+  );
+}
+
+/* ---- snow ---- */
+
+.cs-snow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/*
+  White snow on a white page is not snow, it is nothing. These are the grey a
+  flake actually is when it is between you and the light - pale slate, lit
+  along one edge - which is the only way it reads against paper.
+*/
+.cs-snow__flake {
+  position: absolute;
+  top: -6%;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #ffffff 0%, #aebccd 100%);
+  box-shadow: 0 0 0 0.5px rgba(24, 38, 56, 0.1);
+  opacity: 0;
+  will-change: transform;
+  animation: cs-fall linear infinite;
+}
+
+@keyframes cs-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  8% {
+    opacity: 0.9;
+  }
+  92% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 3rem), 108svh, 0);
+  }
+}
+
+/* ---- hero copy ---- */
+
+.cs-folio {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.cs-folio__n {
+  font-family: var(--font-display, inherit);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--c-band);
+  font-variant-numeric: tabular-nums;
+}
+
+.cs-folio__rule {
+  display: block;
+  height: 1px;
+  width: 3.4rem;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: var(--c-accent);
+  transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-folio__rule.is-on {
+  transform: scaleX(1);
+}
+
+.cs-folio__label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--granite-soft);
+}
+
+.cs-tag {
+  border-radius: 999px;
+  border: 1px solid var(--hair);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.42rem 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--granite-soft);
+  backdrop-filter: blur(6px);
+}
+
+/* the label pinned to the device, the way a diagram labels a part */
+.cs-callout {
+  opacity: 0;
+  transform: translateX(0.75rem);
+  transition:
+    opacity 460ms ease,
+    transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-callout.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.cs-callout__wire {
+  transform-origin: right;
+  animation: cs-wire 4.5s ease-in-out infinite;
+}
+
+@keyframes cs-wire {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.cs-callout__pip::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1px solid var(--c-accent);
+  opacity: 0;
+  animation: cs-ping 2.6s ease-out infinite;
+}
+
+@keyframes cs-ping {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.55);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* ---- the screen picker ---- */
+
+/*
+  A caption on the device, set with the copy.
+
+  Two earlier versions of this were a bar across the foot of the hero - first
+  a black rock plinth, then a frosted one. Both did the same two things wrong:
+  they spent ninety pixels of the fold on four words, and they laid a hard
+  horizontal edge across the middle of the photograph behind them. It is a
+  list of what the device can show, so it belongs beside the writing about
+  what the device can show, at the size of writing.
+*/
+.cs-picker {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cs-picker__k {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--granite-faint);
+}
+
+.cs-picker__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem 1.15rem;
+  flex-wrap: wrap;
+}
+
+.cs-pick {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.2rem 0 0.38rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* the live one is underscored in its own colour - one mark, no chip, no fill */
+.cs-pick::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: var(--c-accent);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-pick:hover::after,
+.cs-pick[data-on]::after {
+  transform: scaleX(1);
+}
+
+.cs-pick__n {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--granite-faint);
+  font-variant-numeric: tabular-nums;
+  transition: color 300ms ease;
+}
+
+.cs-pick[data-on] .cs-pick__n {
+  color: var(--c-band);
+}
+
+.cs-pick__label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--granite-soft);
+  transition: color 300ms ease;
+}
+
+.cs-pick:hover .cs-pick__label,
+.cs-pick[data-on] .cs-pick__label {
+  color: var(--granite);
+}
+
+.cs-pick:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+/* ---------------------------------------------------------------------------
+   2. THE RIDGE TICKER
+   ------------------------------------------------------------------------ */
+
+/*
+  A hairline stretch of the product's palest wash carrying its own name. It is
+  the join between the hero's weather and the paper below it, and the only
+  place on the page the wordmark is set at this size.
+*/
+.cs-ticker {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid var(--hair);
+  background: var(--c-wash);
+  padding-block: 0.85rem;
+  user-select: none;
+}
+
+.cs-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: cs-marquee 34s linear infinite;
+}
+
+.cs-ticker:hover .cs-ticker__track {
+  animation-play-state: paused;
+}
+
+@keyframes cs-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-25%, 0, 0);
+  }
+}
+
+.cs-ticker__run {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 1.6rem;
+  padding-right: 1.6rem;
+}
+
+.cs-ticker__word {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(1.1rem, 2.1vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--c-band);
+  white-space: nowrap;
+}
+
+.cs-ticker__note {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--c-band) 62%, transparent);
+  white-space: nowrap;
+}
+
+/* the studio's red, once per repeat - the only red on the stretch */
+.cs-ticker__dot {
+  display: block;
+  height: 6px;
+  width: 6px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--smoke);
+}
+
+/* ---------------------------------------------------------------------------
+   3. THE BRIEF
+   ------------------------------------------------------------------------ */
+
+.cs-brief__k {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--granite-faint);
+}
+
+.cs-brief__v {
+  margin-top: 0.4rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--granite);
+}
+
+/* ---------------------------------------------------------------------------
+   4. THE PROBLEM - read along a route
+   ------------------------------------------------------------------------ */
+
+.cs-para {
+  position: relative;
+  padding-left: 3.4rem;
+  font-size: clamp(1.02rem, 1.35vw, 1.22rem);
+  line-height: 1.68;
+  color: var(--granite-soft);
+}
+
+.cs-para__n {
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--c-band);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+  The line and its markers share one origin.
+
+  `--route-x` is where the 1px rule lives; the marker is pulled back by half
+  its own width plus half the rule's, or it hangs off one side - which is what
+  happens the moment the two are positioned independently.
+*/
+.cs-para,
+.cs-route {
+  --route-x: 2.35rem;
+  --route-dot: 7px;
+}
+
+.cs-para::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--route-x) + 0.5px - var(--route-dot) / 2);
+  top: 0.62em;
+  height: var(--route-dot);
+  width: var(--route-dot);
+  border-radius: 999px;
+  background: var(--snow);
+  box-shadow: 0 0 0 1.5px var(--c-accent);
+}
+
+.cs-route {
+  position: absolute;
+  left: var(--route-x);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--hair);
+  overflow: hidden;
+}
+
+/* the fill is scrubbed by scroll - see the route trigger in the route file */
+.cs-route__fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: top;
+  transform: scaleY(0);
+  background: linear-gradient(
+    to bottom,
+    var(--c-accent),
+    color-mix(in srgb, var(--c-accent) 20%, transparent)
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   5. THE CAMPS - four screens as stations on a climb
+   ------------------------------------------------------------------------ */
+
+.cs-camps {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .cs-camps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.4rem;
+  }
+}
+
+/*
+  Four screens of one app, so they stand on one line.
+
+  These were staggered vertically at first - the section as a climb, each camp
+  a little higher than the last. On the page it read as four cards that had
+  failed to align rather than as a slope, and it pushed the four labels onto
+  four different baselines, which is the one thing a set of equals must not do.
+  The climb survives in the entrance instead: they still arrive one after
+  another, they simply arrive onto the same shelf.
+*/
+.cs-camp {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  width: 100%;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+}
+
+.cs-camp__plinth {
+  position: relative;
+  display: block;
+  border-radius: 20px;
+  border: 1px solid var(--hair);
+  background: linear-gradient(180deg, #ffffff 0%, var(--c-wash) 100%);
+  padding: 1.15rem 0.9rem 1.35rem;
+  overflow: hidden;
+  transition:
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms ease,
+    box-shadow 420ms ease;
+}
+
+.cs-camp:hover .cs-camp__plinth {
+  transform: translateY(-8px);
+  border-color: color-mix(in srgb, var(--c-accent) 40%, transparent);
+  box-shadow: 0 26px 46px -28px color-mix(in srgb, var(--c-band) 60%, transparent);
+}
+
+.cs-camp[data-on] .cs-camp__plinth {
+  border-color: var(--c-accent);
+  box-shadow: 0 20px 40px -26px color-mix(in srgb, var(--c-band) 70%, transparent);
+}
+
+/* a snow drift banked against the foot of every plinth */
+.cs-camp__plinth::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 46%;
+  background: radial-gradient(
+    120% 100% at 50% 100%,
+    color-mix(in srgb, var(--c-accent) 13%, transparent) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.cs-camp:hover .cs-camp__plinth::after,
+.cs-camp[data-on] .cs-camp__plinth::after {
+  opacity: 1;
+}
+
+.cs-camp__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-bottom: 0.9rem;
+}
+
+.cs-camp__n {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--granite-faint);
+  font-variant-numeric: tabular-nums;
+  transition: color 300ms ease;
+}
+
+.cs-camp[data-on] .cs-camp__n,
+.cs-camp:hover .cs-camp__n {
+  color: var(--c-band);
+}
+
+.cs-camp__tab {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--granite-faint);
+}
+
+.cs-camp__device {
+  position: relative;
+  z-index: 1;
+  margin-inline: auto;
+  display: block;
+  width: 100%;
+  max-width: 118px;
+}
+
+/*
+  The mini is a phone at a third scale, so the app inside it has to be at a
+  third scale too.
+
+  The iOS kit is authored in real pixels against a ~300px display. Dropped
+  into a 108px device unchanged, a nav bar title is a third of the screen wide
+  and wraps mid-word - which is exactly what these four used to look like.
+  `zoom` rather than `transform: scale`, because the slide already carries a
+  transform: every concept's screen-change signature is animated on it, and a
+  scale here would be overwritten the moment one played.
+*/
+.cs-camp__device .phone3d__slide {
+  zoom: 0.34;
+}
+
+.cs-camp__label {
+  display: block;
+  margin-top: 0.95rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--granite-soft);
+  transition: color 300ms ease;
+}
+
+.cs-camp[data-on] .cs-camp__label,
+.cs-camp:hover .cs-camp__label {
+  color: var(--granite);
+}
+
+.cs-camp:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 6px;
+  border-radius: 22px;
+}
+
+/* ---------------------------------------------------------------------------
+   6. WHAT IT DOES - an index, not a card grid
+   ------------------------------------------------------------------------ */
+
+/*
+  A bento, not a ledger.
+
+  This was a ruled list first - number, icon, title, body, one row per feature.
+  Six rows of identical height say "six identical things", the title column has
+  to be narrow enough to leave room for the body so every second title wraps,
+  and the whole block reads as a spreadsheet of the product rather than a look
+  at it. The grid below says what the list could not: the first feature is the
+  product's argument and gets the room to be it, and the other five are sized
+  by what they are, not by the order they happen to be in.
+*/
+.cs-bento {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 1024px) {
+  .cs-bento {
+    gap: 1.1rem;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  /* the lead feature takes a full column of its own, two rows deep */
+  .cs-tile:nth-child(1) {
+    grid-column: span 3;
+    grid-row: span 2;
+  }
+  .cs-tile:nth-child(2),
+  .cs-tile:nth-child(3) {
+    grid-column: span 3;
+  }
+  .cs-tile:nth-child(4),
+  .cs-tile:nth-child(5),
+  .cs-tile:nth-child(6) {
+    grid-column: span 2;
+  }
+}
+
+.cs-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--hair);
+  background: #ffffff;
+  padding: 1.35rem 1.25rem 1.45rem;
+  transition:
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms ease,
+    box-shadow 460ms ease;
+}
+
+.cs-tile:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--c-accent) 42%, transparent);
+  box-shadow: 0 30px 54px -34px color-mix(in srgb, var(--c-band) 70%, transparent);
+}
+
+/* the wash rises out of the foot of the tile rather than washing over it */
+.cs-tile::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 68%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--c-wash), transparent);
+  opacity: 0;
+  transition: opacity 460ms ease;
+}
+
+.cs-tile:hover::after {
+  opacity: 1;
+}
+
+.cs-tile__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cs-tile__icon {
+  display: inline-flex;
+  height: 2.7rem;
+  width: 2.7rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: var(--c-wash);
+  color: var(--c-band);
+  transition:
+    transform 460ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 320ms ease,
+    color 320ms ease;
+}
+
+.cs-tile:hover .cs-tile__icon {
+  transform: translateY(-2px) rotate(-6deg);
+  background: var(--c-accent);
+  color: #ffffff;
+}
+
+/* the folio, set large and hollow, sitting in the corner of its own tile */
+.cs-tile__n {
+  font-family: var(--font-display, inherit);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--granite) 22%, transparent);
+  transition: -webkit-text-stroke-color 380ms ease;
+}
+
+.cs-tile:hover .cs-tile__n {
+  -webkit-text-stroke-color: var(--c-accent);
+}
+
+.cs-tile__body {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+
+.cs-tile__t {
+  display: block;
+  font-size: 1.06rem;
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  color: var(--granite);
+  text-wrap: balance;
+}
+
+.cs-tile__b {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+  line-height: 1.58;
+  color: var(--granite-soft);
+}
+
+/* ---- the lead tile ---- */
+
+.cs-tile--lead {
+  background: linear-gradient(168deg, #ffffff 0%, var(--c-wash) 100%);
+  padding: 1.8rem 1.6rem 1.9rem;
+  min-height: 15rem;
+}
+
+.cs-tile--lead .cs-tile__n {
+  font-size: 3.4rem;
+  -webkit-text-stroke-width: 1.5px;
+}
+
+.cs-tile--lead .cs-tile__icon {
+  height: 3.2rem;
+  width: 3.2rem;
+  border-radius: 17px;
+  background: var(--c-accent);
+  color: #ffffff;
+}
+
+.cs-tile--lead .cs-tile__t {
+  font-size: clamp(1.4rem, 2.4vw, 1.95rem);
+  letter-spacing: -0.032em;
+}
+
+.cs-tile--lead .cs-tile__b {
+  font-size: 1rem;
+  max-width: 32ch;
+}
+
+/* a slow pass of light across the lead tile - the only one that gets it */
+.cs-tile--lead::before {
+  content: '';
+  position: absolute;
+  inset: -40% -60%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    104deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.85) 50%,
+    transparent 62%
+  );
+  animation: cs-tile-sheen 9s ease-in-out infinite;
+}
+
+@keyframes cs-tile-sheen {
+  0%,
+  100% {
+    transform: translate3d(-22%, 0, 0);
+  }
+  50% {
+    transform: translate3d(22%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-tile--lead::before {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   7. THE DESIGN SYSTEM
+   ------------------------------------------------------------------------ */
+
+/* ---- the palette, cut as strata ---- */
+
+/*
+  Four horizontal bands, read like a core sample: the colours meet edge to
+  edge where they can actually be judged against one another, and the one
+  under the pointer takes the room from the others.
+*/
+.cs-strata {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--hair);
+  min-height: 22rem;
+}
+
+.cs-strata__band {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  padding: 1.1rem 1.4rem;
+  transition: flex-grow 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-strata:hover .cs-strata__band {
+  flex-grow: 0.7;
+}
+
+.cs-strata:hover .cs-strata__band:hover {
+  flex-grow: 2.2;
+}
+
+.cs-strata__hex {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.72;
+  width: 5.5rem;
+  flex: none;
+}
+
+.cs-strata__name {
+  font-family: var(--font-display, inherit);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  width: 8rem;
+  flex: none;
+}
+
+.cs-strata__note {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0.78;
+}
+
+/* ---- the type plate ---- */
+
+.cs-plate {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--hair);
+  background: linear-gradient(165deg, #ffffff 0%, var(--c-wash) 100%);
+  padding: 1.9rem;
+}
+
+.cs-plate__eyebrow {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--granite-faint);
+}
+
+.cs-plate__mark {
+  font-family: var(--font-display, inherit);
+  margin-top: 1.4rem;
+  font-size: clamp(3rem, 7vw, 5rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--c-accent);
+}
+
+.cs-plate__tag {
+  margin-top: 0.7rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--granite);
+}
+
+.cs-weight {
+  border-radius: 14px;
+  border: 1px solid var(--hair);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.7rem 0;
+  text-align: center;
+}
+
+.cs-weight__aa {
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--granite);
+}
+
+.cs-weight__n {
+  margin-top: 0.4rem;
+  font-size: 0.6rem;
+  color: var(--granite-faint);
+}
+
+.cs-panel {
+  border-radius: 22px;
+  border: 1px solid var(--hair);
+  background: #ffffff;
+  padding: 1.6rem;
+}
+
+.cs-panel__eyebrow {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-band);
+}
+
+.cs-panel__body {
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--granite-soft);
+}
+
+.cs-navrow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--hair);
+  padding: 0.72rem 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  transition:
+    border-color 280ms ease,
+    background-color 280ms ease,
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-navrow:hover {
+  transform: translateX(4px);
+  border-color: color-mix(in srgb, var(--c-accent) 45%, transparent);
+}
+
+.cs-navrow[data-on] {
+  border-color: var(--c-accent);
+  background: var(--c-wash);
+}
+
+/* ---------------------------------------------------------------------------
+   8. THE NEXT CONCEPT
+   ------------------------------------------------------------------------ */
+
+.cs-next {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid var(--hair);
+  background: #ffffff;
+  padding: 2.2rem 1.6rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (min-width: 640px) {
+  .cs-next {
+    padding: 3rem 2.6rem;
+  }
+}
+
+/* the next product's own wash floods in from the left on approach */
+.cs-next__fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(100deg, var(--n-wash), #ffffff 92%);
+  transition: transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-next:hover .cs-next__fill,
+.cs-next:focus-visible .cs-next__fill {
+  transform: scaleX(1);
+}
+
+.cs-next__body {
+  position: relative;
+  min-width: 0;
+}
+
+.cs-next__eyebrow {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--granite-faint);
+}
+
+.cs-next__name {
+  display: block;
+  font-family: var(--font-display, inherit);
+  margin-top: 0.6rem;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+  color: var(--granite);
+  transition: color 520ms ease;
+}
+
+.cs-next:hover .cs-next__name {
+  color: var(--n-band);
+}
+
+.cs-next__tag {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
+  color: var(--granite-soft);
+}
+
+.cs-next__go {
+  position: relative;
+  display: inline-flex;
+  height: 3.4rem;
+  width: 3.4rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--hair);
+  color: var(--granite);
+  transition:
+    background-color 420ms ease,
+    color 420ms ease,
+    border-color 420ms ease,
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-next:hover .cs-next__go {
+  transform: translate(5px, -5px);
+  border-color: transparent;
+  background: var(--n-accent);
+  color: #ffffff;
+}
+
+/* ---------------------------------------------------------------------------
+   Small screens
+
+   The page is read on a phone more often than on the thing it was designed on,
+   and almost every rule above assumes room it does not have there. What
+   follows is not a shrink of the desktop layout: the pieces that only work
+   wide - the four-across bento, the strata read as a column of rows, the
+   oversized closing wordmark - are rebuilt into the shape that fits.
+   ------------------------------------------------------------------------ */
+
+@media (max-width: 767px) {
+  /* the hero stops insisting on a full screen: on a phone the device alone is
+     two thirds of one, and forcing the rest to fill under it leaves a band of
+     empty snow between the copy and the picker */
+  .cs-hero {
+    min-height: auto;
+  }
+
+  .cs-sky__plate {
+    /* held further back on a phone, where the headline has to cross most of
+       the frame rather than sitting in one corner of it */
+    opacity: 0.6;
+  }
+
+  .cs-hero::after {
+    height: 42svh;
+  }
+
+  /* the picker scrolls rather than wrapping to three lines */
+  .cs-stations {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-inline: -0.35rem;
+    padding-inline: 0.35rem;
+  }
+
+  .cs-stations::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cs-station {
+    flex: none;
+  }
+
+  /* the lead feature keeps its full measure; the rest pair up */
+  .cs-tile:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+
+  .cs-tile--lead {
+    min-height: 0;
+    padding: 1.4rem 1.25rem 1.5rem;
+  }
+
+  .cs-tile {
+    padding: 1.1rem 1rem 1.2rem;
+  }
+
+  .cs-tile__b {
+    font-size: 0.86rem;
+  }
+
+  /* a strip whose columns open under a pointer is meaningless on a touch
+     screen, so the palette becomes four plain rows */
+  .cs-strata {
+    min-height: 0;
+  }
+
+  .cs-strata__band {
+    flex-wrap: wrap;
+    gap: 0.15rem 0.8rem;
+    padding: 0.95rem 1.1rem;
+  }
+
+  .cs-strata__hex,
+  .cs-strata__name {
+    width: auto;
+  }
+
+  .cs-strata__note {
+    flex: 1 0 100%;
+  }
+
+  .cs-next {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.6rem;
+    padding: 1.8rem 1.4rem;
+  }
+
+  .cs-next__go {
+    height: 2.9rem;
+    width: 2.9rem;
+  }
+
+  .cs-para {
+    padding-left: 2.6rem;
+    --route-x: 1.7rem;
+  }
+
+  .cs-route {
+    --route-x: 1.7rem;
+  }
+
+  .cs-camp__plinth {
+    padding: 0.9rem 0.7rem 1.05rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-sky__plate,
+  .cs-sky__haze,
+  .cs-snow__flake,
+  .cs-ticker__track,
+  .cs-callout__wire,
+  .cs-callout__pip::after {
+    animation: none;
+  }
+
+  .cs-snow {
+    display: none;
+  }
+
+  .cs-callout {
+    opacity: 1;
+    transform: none;
+  }
+}

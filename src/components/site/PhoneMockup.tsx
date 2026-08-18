@@ -5,10 +5,10 @@ import { useGSAP } from '@gsap/react'
 import { Pause, Play, SkipForward } from 'lucide-react'
 import { cn } from '#/lib/utils'
 import { DashboardScreen } from './PhoneScreens'
-import type { ConceptTrack } from '#/lib/concepts'
+import type { ConceptMotion, ConceptTrack } from '#/lib/concepts'
 
 /**
- * PhoneMockup — the device, standing in 3D space.
+ * PhoneMockup - the device, standing in 3D space.
  *
  * The frame is DOM rather than an image, so the screen stays a live React tree
  * that can be animated and swapped. What makes it read as an object rather
@@ -19,8 +19,8 @@ import type { ConceptTrack } from '#/lib/concepts'
  * sells the whole thing.
  *
  * Two variants:
- *   full — answers the pointer, can be picked up and turned, island opens
- *   mini — answers the pointer too, but returns to the angle its card asks for
+ *   full - answers the pointer, can be picked up and turned, island opens
+ *   mini - answers the pointer too, but returns to the angle its card asks for
  *          and stays out of the way of the click that selects it
  *
  * Custom screen animations plug in through data-attributes, which GSAP queries
@@ -29,6 +29,29 @@ import type { ConceptTrack } from '#/lib/concepts'
  *   data-phone-reveal  → any element that should stagger-in on mount
  *   data-phone-bar     → chart bars (grow from the baseline)
  */
+/**
+ * How each product's device stirs when nobody is touching it.
+ *
+ * `a*` are amplitudes in degrees, `p*` the periods in seconds of the two sines
+ * the drift is built from. Deliberately coprime-ish per row so the loop never
+ * lands on an obvious beat.
+ */
+const IDLE: Record<
+  ConceptMotion,
+  { ay: number; ax: number; py: number; px: number }
+> = {
+  /* a tool bolted to a dashboard: almost inert */
+  console: { ay: 3.2, ax: 1.8, py: 4.6, px: 6.1 },
+  /* held loosely in one hand at a counter */
+  deck: { ay: 7.4, ax: 4.1, py: 2.9, px: 4.3 },
+  /* set down on a reception desk, barely rocking */
+  calendar: { ay: 4.6, ax: 2.4, py: 3.8, px: 5.4 },
+  /* on an arm at chairside - the stillest of the five */
+  chart: { ay: 2.2, ax: 1.3, py: 5.7, px: 7.3 },
+  /* in a hand, on a call, on the move */
+  board: { ay: 6.1, ax: 3.6, py: 3.3, px: 4.9 },
+}
+
 export function PhoneMockup({
   className,
   children,
@@ -38,6 +61,9 @@ export function PhoneMockup({
   variant = 'full',
   restY,
   onSwipe,
+  dir: dirProp,
+  mode: navMode,
+  motion,
 }: {
   className?: string
   children?: ReactNode
@@ -54,6 +80,24 @@ export function PhoneMockup({
    * screen, -1 for the previous one.
    */
   onSwipe?: (direction: 1 | -1) => void
+  /**
+   * Which way the last screen change went, and what kind it was. Supplied by
+   * the owner of the screen index, because only it knows whether a tab was
+   * tapped or a record was opened - the mockup would otherwise have to guess,
+   * and it guesses wrong every time a tab bar wraps from the last tab to the
+   * first.
+   */
+  dir?: 1 | -1
+  mode?: 'push' | 'tab'
+  /**
+   * The product's own transition signature - see ConceptMotion in
+   * lib/concepts.ts. Published to the slide as `data-motion`, where
+   * styles-concept.css picks up the matching keyframes.
+   *
+   * Left off, the device keeps the generic push/cross-fade pair, which is what
+   * the studio's own screens elsewhere on the site want.
+   */
+  motion?: ConceptMotion
 }) {
   const scope = useRef<HTMLDivElement>(null)
   const device = useRef<HTMLDivElement>(null)
@@ -61,7 +105,7 @@ export function PhoneMockup({
 
   // The island has three states. `idle` is the resting pill; `live` is the
   // brief announcement when the screen changes; `player` is the now-playing
-  // activity, and it is the only one the reader opens themselves — so it wins
+  // activity, and it is the only one the reader opens themselves - so it wins
   // over an announcement rather than being interrupted by one.
   const [mode, setMode] = useState<'idle' | 'live' | 'player'>('idle')
   const [playing, setPlaying] = useState(false)
@@ -164,9 +208,10 @@ export function PhoneMockup({
   // the full one breathes on two slow sines, and a mini returns to the angle
   // its card wants it at.
   //
-  // The full device can also be picked up — press and drag turns it further
+  // The full device can also be picked up - press and drag turns it further
   // than the pointer alone would, and letting go hands it back to the pointer.
   const rest = restY ?? (mini ? -15 : 0)
+  const idle = IDLE[motion ?? 'board']
   useEffect(() => {
     const stage = scope.current
     const el = device.current
@@ -177,7 +222,7 @@ export function PhoneMockup({
 
     // where the device is pointed, and where it is being asked to point. The
     // gap between the two is closed a fraction per frame, which is what gives
-    // the turn its weight — a direct assignment reads as a jitter.
+    // the turn its weight - a direct assignment reads as a jitter.
     let rx = mini ? 4 : 0
     let ry = rest
     let toX = rx
@@ -205,11 +250,14 @@ export function PhoneMockup({
           toY = rest
           toX = 4
         } else {
-          // left alone, it breathes: two slow sines at different periods so
-          // the drift never repeats on an obvious beat
+          // Left alone, it breathes: two slow sines at different periods so
+          // the drift never repeats on an obvious beat. The amplitude and the
+          // periods come from the product - a console barely stirs, a wallet
+          // rocks like something held loosely, a clinical device is close to
+          // still - so even an untouched page reads as a different object.
           const t = (now - start) / 1000
-          toY = Math.sin(t / 3.4) * 5.5
-          toX = Math.sin(t / 4.9) * 3.2
+          toY = Math.sin(t / idle.py) * idle.ay
+          toX = Math.sin(t / idle.px) * idle.ax
         }
       }
 
@@ -294,22 +342,63 @@ export function PhoneMockup({
       stage.removeEventListener('pointerup', onUp)
       stage.removeEventListener('pointercancel', onUp)
     }
-  }, [mini, rest])
+  }, [mini, rest, idle])
 
   // ---- the screen's own content animates itself in ------------------------
+  //
+  // The rows do not arrive the same way in all five apps. A dispatch board
+  // snaps its jobs in from the left in a hard, even rhythm; a wallet drops its
+  // cards from above with a little overshoot; a calendar wipes its week in
+  // sideways; a clinical chart simply resolves, because nothing chairside
+  // should move; a pipeline racks its cards up from the bottom. Same hook,
+  // same data-attributes - one table of intents keyed by the concept's motion.
   useGSAP(
     () => {
       if (mini) return
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
       if (reduce.matches) return
 
+      const ROWS: Record<
+        ConceptMotion,
+        { from: gsap.TweenVars; duration: number; stagger: number }
+      > = {
+        console: {
+          from: { x: -16, autoAlpha: 0 },
+          duration: 0.34,
+          stagger: 0.035,
+        },
+        deck: {
+          from: { y: -18, scale: 0.97, autoAlpha: 0, transformOrigin: '50% 0%' },
+          duration: 0.62,
+          stagger: 0.07,
+        },
+        calendar: {
+          from: { x: 22, autoAlpha: 0 },
+          duration: 0.5,
+          stagger: 0.045,
+        },
+        chart: {
+          from: { y: 5, autoAlpha: 0, filter: 'blur(5px)' },
+          duration: 0.7,
+          stagger: 0.055,
+        },
+        board: {
+          from: { y: 20, autoAlpha: 0 },
+          duration: 0.52,
+          stagger: 0.05,
+        },
+      }
+
+      const row = ROWS[motion ?? 'board']
+      // the deck lands; everything else settles
+      const ease = motion === 'deck' ? 'back.out(1.7)' : 'power3.out'
+
       gsap
-        .timeline({ defaults: { ease: 'power3.out' } })
+        .timeline({ defaults: { ease } })
         .from('[data-phone-reveal]', {
-          y: 14,
-          autoAlpha: 0,
-          duration: 0.6,
-          stagger: 0.06,
+          ...row.from,
+          duration: row.duration,
+          stagger: row.stagger,
         })
         .from(
           '[data-phone-bar]',
@@ -317,13 +406,14 @@ export function PhoneMockup({
             scaleY: 0,
             transformOrigin: 'center bottom',
             duration: 0.7,
-            ease: 'power2.out',
+            // a console's bars jump to height; every other app grows them
+            ease: motion === 'console' ? 'power4.out' : 'power2.out',
             stagger: 0.05,
           },
           '-=0.35',
         )
     },
-    { scope, dependencies: [live] },
+    { scope, dependencies: [live, motion] },
   )
 
   const progress = length ? Math.min(100, (elapsed / length) * 100) : 0
@@ -356,7 +446,7 @@ export function PhoneMockup({
         <span aria-hidden="true" className="phone3d__btn phone3d__btn--power" />
 
         <div className="phone3d__rail">
-          {/* the black bezel between rail and display — the gap that makes it
+          {/* the black bezel between rail and display - the gap that makes it
               read as a screen set into a body rather than a coloured panel */}
           <div className="phone3d__bezel">
             <div
@@ -371,7 +461,7 @@ export function PhoneMockup({
               role={onSwipe ? 'group' : undefined}
               aria-label={
                 onSwipe
-                  ? `${live ?? 'App'} — swipe or use the arrow keys to change screen`
+                  ? `${live ?? 'App'} - swipe or use the arrow keys to change screen`
                   : undefined
               }
             >
@@ -380,7 +470,9 @@ export function PhoneMockup({
               <div
                 key={live ?? 'screen'}
                 className="phone3d__slide"
-                data-dir={dir}
+                data-dir={dirProp ?? dir}
+                data-mode={navMode ?? 'push'}
+                data-motion={motion}
               >
                 {children ?? <DashboardScreen />}
               </div>

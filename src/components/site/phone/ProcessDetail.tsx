@@ -3,7 +3,7 @@ import { STEPS } from './process'
 
 /**
  * The full account of whichever step the phone is showing. The device carries
- * the summary; this carries the argument — icon, the weeks it takes, the long
+ * the summary; this carries the argument - icon, the weeks it takes, the long
  * form, and what you actually get out of it.
  *
  * Only the active step is mounted so the entrance animation replays on every

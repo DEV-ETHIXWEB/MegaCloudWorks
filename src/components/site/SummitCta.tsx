@@ -14,7 +14,7 @@ import { NotifyForm } from './NotifyForm'
  * The beats, in order:
  *
  *   1  the headline arrives alone, large and centred in the section
- *   2  its question mark writes itself — the dot rides up the hook, laying
+ *   2  its question mark writes itself - the dot rides up the hook, laying
  *      the stroke behind it, then drops back to sit under it as the point
  *   3  the whole block travels left and settles at reading size
  *   4  the field appears, and the button slides out from behind its right
@@ -36,7 +36,7 @@ const BEAT = {
 } as const
 
 // The question mark's hook, in its own 46x84 box, written from the foot of
-// the stem up over the top — the direction the dot travels. The rider's own
+// the stem up over the top - the direction the dot travels. The rider's own
 // path (in styles.css) is this same curve with a lead-in from the point, so
 // the dot climbs out of the point before the stroke starts following it.
 const HOOK = 'M 23 56 C 23 40, 39 38, 39 24 C 39 6, 7 6, 7 24'
@@ -181,7 +181,7 @@ export function SummitCta() {
             <br />
             <span className="text-[var(--brand)]">
               in mind
-              {/* the mark is drawn, not typed — the glyph is replaced by a
+              {/* the mark is drawn, not typed - the glyph is replaced by a
                   stroke the dot lays down on its way up */}
               <span className="summit__mark" role="img" aria-label="?">
                 <svg viewBox="0 0 46 84" fill="none">

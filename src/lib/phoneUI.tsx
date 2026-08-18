@@ -21,20 +21,32 @@ import type { ReactNode } from 'react'
  * throw.
  */
 
+/**
+ * How a screen change should be animated.
+ *
+ * A real phone does not animate every navigation the same way, and the two it
+ * uses are not interchangeable: drilling into a record pushes the new screen
+ * in from the right and pops back out to it, while switching tabs cross-fades
+ * because the two destinations are siblings with no depth between them. Using
+ * a push for a tab change is the single most common tell that a mockup is not
+ * a real app.
+ */
+export type PhoneNavMode = 'push' | 'tab'
+
 type PhoneNavValue = {
   /** index of the screen currently on the glass */
   index: number
   /** how many screens this concept has */
   count: number
   /** show screen `i`, clamped into range */
-  go: (i: number) => void
+  go: (i: number, mode?: PhoneNavMode) => void
   /** the next screen, wrapping at the end */
   next: () => void
   /** the previous screen, wrapping at the start */
   back: () => void
   /** false in the mini phones, where nothing is wired up */
   live: boolean
-  /** see useScreenState — the store that outlives a screen change */
+  /** see useScreenState - the store that outlives a screen change */
   store: Record<string, unknown>
   write: (key: string, value: unknown) => void
 }
@@ -56,23 +68,34 @@ export function PhoneNavProvider({
   index,
   count,
   onGo,
+  inert = false,
   children,
 }: {
   index: number
   count: number
-  onGo: (i: number) => void
+  onGo: (i: number, mode: PhoneNavMode) => void
+  /**
+   * Publish the index but keep the screen untouchable.
+   *
+   * The mini phones in the screen picker each show a different screen, so
+   * their chrome - the tab bar especially - has to know which one it is, or
+   * every mini highlights the first tab. But each of those phones already sits
+   * inside the picker's own <button>, so nothing inside them may become a
+   * button of its own. This gives them the index without the interactivity.
+   */
+  inert?: boolean
   children: ReactNode
 }) {
   const go = useCallback(
-    (i: number) => {
+    (i: number, mode: PhoneNavMode = 'push') => {
       if (count < 1) return
-      onGo(((i % count) + count) % count)
+      onGo(((i % count) + count) % count, mode)
     },
     [count, onGo],
   )
 
   // Only the screen you are looking at is mounted, so anything a screen
-  // remembers in its own useState is thrown away the moment you leave it — you
+  // remembers in its own useState is thrown away the moment you leave it - you
   // would tick a patient off, walk to their chart, come back, and find the tick
   // gone. The store lives up here instead, where it outlives the screens.
   const [store, setStore] = useState<Record<string, unknown>>({})
@@ -90,7 +113,7 @@ export function PhoneNavProvider({
         go,
         next: () => go(index + 1),
         back: () => go(index - 1),
-        live: true,
+        live: !inert,
         store,
         write,
       }}
@@ -105,11 +128,41 @@ export function usePhoneNav() {
 }
 
 /**
+ * Carry the router across a react-three-fiber canvas.
+ *
+ * r3f renders its scene into its own React root. Context does not cross that
+ * boundary, so a provider in the page tree is invisible to anything drawn
+ * inside `<Html>` - the screens on the device's glass were falling back to the
+ * inert default, which meant the tab bar always lit tab one, nothing inside
+ * the app could be tapped, and none of it looked broken enough to notice.
+ *
+ * The value is read on the page side with `usePhoneNav`, handed through as a
+ * plain prop, and put back on the other side by this. One object, re-provided
+ * - not a second router, so there is still exactly one source of truth for
+ * which screen is showing.
+ */
+export function PhoneNavRelay({
+  value,
+  children,
+}: {
+  value: PhoneNavValue
+  children: ReactNode
+}) {
+  return (
+    <PhoneNavContext.Provider value={value}>
+      {children}
+    </PhoneNavContext.Provider>
+  )
+}
+
+export type { PhoneNavValue }
+
+/**
  * Anything in a screen that can be touched.
  *
  * Renders a button, so Enter and Space work and the element is reachable by
  * tab. The press state is driven from pointer events rather than :active
- * because it has to survive the finger sliding a few pixels — on a real phone
+ * because it has to survive the finger sliding a few pixels - on a real phone
  * a tap that wobbles is still a tap.
  */
 export function Tap({
@@ -120,7 +173,7 @@ export function Tap({
   style,
   /** the ripple's colour; defaults to the concept accent passed by the screen */
   ripple = 'currentColor',
-  /** the whole row presses in — off for small controls that should only flash */
+  /** the whole row presses in - off for small controls that should only flash */
   press = true,
   disabled = false,
 }: {
@@ -155,7 +208,7 @@ export function Tap({
     )
   }
 
-  // Outside a provider — the mini phones in the screen picker — there is
+  // Outside a provider - the mini phones in the screen picker - there is
   // nothing to touch, and each of those phones already sits inside the
   // picker's own button. Rendering another button there would nest one inside
   // the other, which is invalid and makes the outer one unclickable in places.
@@ -231,7 +284,7 @@ export function useScreenState<T>(key: string, initial: T) {
 }
 
 /**
- * A row that is selected by touching it — the state most of these screens were
+ * A row that is selected by touching it - the state most of these screens were
  * faking with a hardcoded "the first one is highlighted".
  *
  * Seeded with whichever row the screen was drawn with, so it still looks right

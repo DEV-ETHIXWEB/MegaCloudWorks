@@ -1,22 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowUpRight } from 'lucide-react'
-import { CONCEPT_PREVIEWS } from '#/components/site/ConceptPreviews'
+import { PhoneMockup } from '#/components/site/PhoneMockup'
 import { CONCEPTS } from '#/lib/concepts'
 import type { Concept } from '#/lib/concepts'
+import { CONCEPT_SCREENS } from '#/lib/conceptScreens'
+import { PhoneNavProvider } from '#/lib/phoneUI'
+
+import '#/styles-index.css'
 
 /**
  * The Work index.
  *
  * The old page was five cards in a bento grid: every concept got the same
  * postage-stamp of attention and the grid did the talking. This reads as an
- * index instead — the five names are the page, set large, and whichever one
+ * index instead - the five names are the page, set large, and whichever one
  * the reader is on takes over a stage beside them. One thing is in focus at a
  * time; the other four sit back, dimmed and slightly out of focus, exactly the
  * way the About page treats copy that hasn't arrived yet.
  *
  * The active concept is driven by three things, in this order of precedence:
- * pointer (hover), keyboard (focus), and scroll position — so it works the
+ * pointer (hover), keyboard (focus), and scroll position - so it works the
  * same whether you are mousing, tabbing, or thumbing down a phone.
  */
 export function WorkIndex() {
@@ -25,8 +29,8 @@ export function WorkIndex() {
 
   // Scroll hands the stage over as each row crosses the middle of the screen.
   //
-  // The band is cut out of the viewport with negative margins — a row is
-  // "current" only while it straddles the centre line — so this reports on
+  // The band is cut out of the viewport with negative margins - a row is
+  // "current" only while it straddles the centre line - so this reports on
   // crossings rather than on every scroll frame, and a hover chosen in between
   // two crossings keeps the stage until the reader moves on.
   useEffect(() => {
@@ -140,9 +144,17 @@ export function WorkIndex() {
 
 /**
  * A concept, shown whole: its own colour, its screens, its palette, and the
- * low-fidelity product snapshot where one exists. Everything on it comes off
- * the concept record, so all five look like themselves rather than like five
- * repaints of one card.
+ * app itself.
+ *
+ * The last of those used to be a low-fidelity drawing of the product. There is
+ * no argument for a sketch of a thing when the thing is four kilobytes of
+ * components away, so the plate now runs the concept's real first screen in a
+ * device - the same screen the case study opens on, so arriving there is a
+ * continuation rather than a surprise.
+ *
+ * The device is inert: the whole plate sits inside the row's own link, and a
+ * button inside a link is both invalid and unclickable in places. See
+ * PhoneNavProvider's `inert`.
  */
 function ConceptPlate({
   concept: c,
@@ -153,7 +165,8 @@ function ConceptPlate({
   index: number
   active: boolean
 }) {
-  const Preview = CONCEPT_PREVIEWS[c.slug]
+  const screens = CONCEPT_SCREENS[c.slug] ?? []
+  const Screen = screens[0]
 
   return (
     <article
@@ -193,9 +206,15 @@ function ConceptPlate({
           ))}
         </div>
 
-        {Preview ? (
-          <div className="work-plate__preview">
-            <Preview />
+        {Screen ? (
+          <div className="work-plate__device">
+            <span>
+              <PhoneNavProvider index={0} count={screens.length} onGo={() => {}} inert>
+                <PhoneMockup variant="mini" accent={c.accent} motion={c.motion}>
+                  <Screen c={c} />
+                </PhoneMockup>
+              </PhoneNavProvider>
+            </span>
           </div>
         ) : null}
 

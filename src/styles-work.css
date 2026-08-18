@@ -1,0 +1,494 @@
+/* ===========================================================================
+   The Work page - its own palette
+
+   The rest of the site is pure white paper with brand red doing the accenting.
+   This page steps off that: a warm bone ground with near-black ink, and *no*
+   fixed accent at all. The only colour on the page belongs to whichever
+   concept the reader is pointing at, so the palette is carrying information
+   instead of decorating.
+
+   Warm greys throughout - nothing here is tinted cool - and the ground is
+   never pure #FFF or the ink pure #000.
+=========================================================================== */
+
+.work-page {
+  --w-paper: #f2efe9;
+  --w-paper-2: #e9e5dc;
+  --w-ink: #14130f;
+  --w-ink-soft: #56534a;
+  --w-ink-faint: #8a867b;
+  --w-line: rgba(20, 19, 15, 0.14);
+  --w-line-soft: rgba(20, 19, 15, 0.08);
+
+  background: var(--w-paper);
+  color: var(--w-ink);
+}
+
+/* the site's own tokens are re-pointed at the page palette, so shared
+   components (header, footer, buttons) come along without being rewritten */
+.work-page {
+  --ink: var(--w-ink);
+  --ink-soft: var(--w-ink-soft);
+  --ink-faint: var(--w-ink-faint);
+  --paper: var(--w-paper);
+  --paper-2: var(--w-paper-2);
+  --line: var(--w-line);
+  --line-strong: rgba(20, 19, 15, 0.22);
+}
+
+/* a fixed grain sheet over the whole page - flat vector ground reads sterile
+   at this scale, and the noise is what makes bone read as paper */
+.work-page::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(
+      rgba(20, 19, 15, 0.055) 0.5px,
+      transparent 0.5px
+    ),
+    radial-gradient(rgba(20, 19, 15, 0.035) 0.5px, transparent 0.5px);
+  background-size:
+    3px 3px,
+    5px 5px;
+  background-position:
+    0 0,
+    1px 2px;
+}
+
+.work-page > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------------------------------------------------------------------------
+   The statement - who we are, what we do
+
+   Set as a run of large text with the operative phrases in ink and everything
+   else stepped back, so the sentence can be read at a glance without being
+   broken into a row of feature cards.
+--------------------------------------------------------------------------- */
+
+.work-say {
+  font-size: clamp(1.35rem, 2.9vw, 2.35rem);
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  color: var(--w-ink-faint);
+  text-wrap: pretty;
+  max-width: 24ch;
+}
+
+.work-say strong {
+  font-weight: 800;
+  color: var(--w-ink);
+}
+
+.work-rule {
+  height: 1px;
+  background: var(--w-line);
+}
+
+/* ---------------------------------------------------------------------------
+   The catalogue
+--------------------------------------------------------------------------- */
+
+.catalogue {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+@media (min-width: 1100px) {
+  .catalogue {
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    gap: 4rem;
+    align-items: start;
+  }
+}
+
+.catalogue__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--w-line);
+}
+
+.catalogue__item {
+  border-bottom: 1px solid var(--w-line);
+}
+
+.catalogue__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0.5rem 1.25rem;
+  padding: 1.15rem 1rem 1.25rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  isolation: isolate;
+  transition: color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 900px) {
+  .catalogue__row {
+    grid-template-columns: 6.5rem minmax(0, 1fr) auto;
+    gap: 0 2rem;
+    padding: 1.5rem 1.25rem 1.6rem;
+  }
+}
+
+/* the wipe: the concept's colour arrives from the left rather than switching
+   on, so the row reads as being filled in */
+.catalogue__wash {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--row);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.catalogue__row[data-on] .catalogue__wash {
+  transform: scaleX(1);
+}
+
+.catalogue__row[data-on] {
+  color: #fff;
+}
+
+.catalogue__row:focus-visible {
+  outline: 2px solid var(--w-ink);
+  outline-offset: -3px;
+}
+
+.catalogue__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--w-ink-faint);
+  transition: color 320ms ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.catalogue__row[data-on] .catalogue__code {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.catalogue__name {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 6.4vw, 4.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* the name steps in from the rule as the colour arrives behind it */
+@media (min-width: 900px) {
+  .catalogue__row[data-on] .catalogue__name {
+    transform: translateX(10px);
+  }
+}
+
+.catalogue__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1.1rem;
+  grid-column: 2;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--w-ink-faint);
+  transition: color 320ms ease;
+}
+
+@media (min-width: 900px) {
+  .catalogue__meta {
+    grid-column: 3;
+    grid-row: 1;
+    justify-content: flex-end;
+    align-self: center;
+    text-align: right;
+    max-width: 20rem;
+  }
+}
+
+.catalogue__row[data-on] .catalogue__meta {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.catalogue__year {
+  font-variant-numeric: tabular-nums;
+}
+
+/* On a pointer device the list is names and codes at rest, and the tagline is
+   the reward for approaching a row.
+
+   On touch there is no approaching: hover never fires, so a tagline gated on
+   it would simply never be readable. Below the pointer breakpoint it is always
+   shown, in ink rather than in the white that only makes sense over the wash. */
+.catalogue__line {
+  grid-column: 2;
+  max-width: 42ch;
+  margin-top: 0.35rem;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
+  color: var(--w-ink-soft);
+}
+
+@media (min-width: 900px) {
+  .catalogue__line {
+    margin-top: 0;
+    color: rgba(255, 255, 255, 0.86);
+    opacity: 0;
+    transform: translate(10px, 6px);
+    transition:
+      opacity 380ms ease 60ms,
+      transform 460ms cubic-bezier(0.22, 1, 0.36, 1) 60ms;
+  }
+
+  .catalogue__row[data-on] .catalogue__line {
+    opacity: 1;
+    transform: translate(10px, 0);
+  }
+}
+
+/* when any row is lit, the others step back - the list stops competing with
+   the one being read */
+@media (min-width: 900px) {
+  .catalogue[data-lit] .catalogue__row:not([data-on]) {
+    color: var(--w-ink-faint);
+  }
+}
+
+/* ---- the device beside the list ---- */
+
+.catalogue__stage {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .catalogue__stage {
+    display: block;
+    position: sticky;
+    top: 8rem;
+    min-height: 24rem;
+  }
+}
+
+.catalogue__device {
+  animation: catalogue-in 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.catalogue__caption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--w-ink-faint);
+}
+
+.catalogue__hint {
+  padding-top: 5rem;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--w-ink-faint);
+  opacity: 0.65;
+}
+
+@keyframes catalogue-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue__wash,
+  .catalogue__name,
+  .catalogue__line,
+  .catalogue__device {
+    transition: none;
+    animation: none;
+  }
+
+  .catalogue__wash {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+
+  .catalogue__row[data-on] .catalogue__wash {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The ledger - what is actually in each concept, counted off the record
+--------------------------------------------------------------------------- */
+
+.work-ledger {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--w-line);
+}
+
+@media (min-width: 900px) {
+  .work-ledger {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.work-ledger__cell {
+  padding: 1.75rem 1.25rem 1.9rem 0;
+  border-bottom: 1px solid var(--w-line);
+}
+
+@media (min-width: 900px) {
+  .work-ledger__cell {
+    border-bottom: 0;
+  }
+
+  .work-ledger__cell + .work-ledger__cell {
+    padding-left: 1.75rem;
+    border-left: 1px solid var(--w-line);
+  }
+}
+
+.work-ledger__n {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5.5vw, 4rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--w-ink);
+}
+
+.work-ledger__label {
+  margin-top: 0.85rem;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--w-ink);
+}
+
+.work-ledger__note {
+  margin-top: 0.3rem;
+  max-width: 22ch;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--w-ink-faint);
+}
+
+/* ---------------------------------------------------------------------------
+   The closing plate - ink, not red, because this page has no fixed accent
+--------------------------------------------------------------------------- */
+
+.work-end {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  padding: clamp(2.25rem, 5vw, 4rem);
+  background: var(--w-ink);
+  color: var(--w-paper);
+}
+
+.work-end__grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: radial-gradient(
+      rgba(255, 255, 255, 0.06) 0.5px,
+      transparent 0.5px
+    ),
+    radial-gradient(rgba(255, 255, 255, 0.04) 0.5px, transparent 0.5px);
+  background-size:
+    3px 3px,
+    5px 5px;
+  background-position:
+    0 0,
+    1px 2px;
+}
+
+.work-end__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .work-end__inner {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+}
+
+.work-end__head {
+  max-width: 16ch;
+  font-size: clamp(1.9rem, 4.4vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.work-end__sub {
+  margin-top: 1rem;
+  max-width: 44ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(242, 239, 233, 0.62);
+}
+
+.work-end__cta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 1rem 1.75rem;
+  border-radius: 999px;
+  background: var(--w-paper);
+  color: var(--w-ink);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms ease;
+}
+
+.work-end__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px -16px rgba(0, 0, 0, 0.7);
+}
+
+.work-end__cta:active {
+  transform: translateY(0);
+}

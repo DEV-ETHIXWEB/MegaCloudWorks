@@ -45,7 +45,7 @@ const DETAILS: Array<Detail> = [
   },
 ]
 
-// What happens after the send button — the beat that used to be dead space
+// What happens after the send button - the beat that used to be dead space
 // under the form. It is not decoration: a form posted into silence is the
 // thing people hesitate over, and saying what follows is what settles it.
 const NEXT = [
@@ -67,7 +67,7 @@ const NEXT = [
 ] as const
 
 function Contact() {
-  // the entry runs on the same beat system the About hero uses — one clock,
+  // the entry runs on the same beat system the About hero uses - one clock,
   // one language for big type across the site
   const [beat, setBeat] = useState(0)
 
@@ -85,7 +85,7 @@ function Contact() {
     if (!el || typeof window === 'undefined') return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     // a coarse pointer has no hover position to track, and the listener would
-    // only fire on taps — leave the loop running there
+    // only fire on taps - leave the loop running there
     if (!window.matchMedia('(pointer: fine)').matches) return
 
     let frame = 0
@@ -157,7 +157,7 @@ function Contact() {
         {/* The page's own title, drawn as outline only and sitting behind
             everything. Two copies stacked exactly: the faint one is always
             there, and the lit one is masked to a band that follows the
-            pointer across the page — falling back to a slow loop until the
+            pointer across the page - falling back to a slow loop until the
             pointer has been anywhere near it. */}
         <p
           ref={word}
@@ -328,7 +328,7 @@ function Contact() {
  * Adapted from the BorderGlow pattern: proximity to the edge sets how bright
  * the ring is and the pointer's bearing from the centre sets which part of it
  * shows, through a conic mask. Both are written straight to the node as
- * custom properties — a render per pointermove would reconcile the whole card
+ * custom properties - a render per pointermove would reconcile the whole card
  * sixty times a second for a light that moves a few pixels.
  *
  * The listener is only attached on a device that actually has a pointer, so
@@ -354,7 +354,7 @@ function Glowable({
     const dy = e.clientY - box.top - cy
 
     // how far out towards the edge the pointer is, 0 at the centre and 1 on
-    // the border — measured per axis so it tracks the box's own proportions
+    // the border - measured per axis so it tracks the box's own proportions
     // rather than a circle inscribed in it
     const edge = Math.min(Math.max(Math.abs(dx) / cx, Math.abs(dy) / cy), 1)
 

@@ -101,6 +101,7 @@ export function PhoneModel({
   backlightRef,
   onReady,
 }: {
+  screenRef?: React.RefObject<THREE.Mesh | null>
   backlightRef?: React.RefObject<THREE.PointLight | null>
   /** the shell is in the scene — the DOM placeholder can go */
   onReady?: () => void

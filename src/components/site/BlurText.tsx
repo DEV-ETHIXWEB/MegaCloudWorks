@@ -21,7 +21,7 @@ const buildKeyframes = (from: Snapshot, steps: Array<Snapshot>) => {
  * Text that blurs into focus a word (or letter) at a time.
  *
  * By default it fires when it scrolls into view. Pass `start` to drive it from
- * outside instead — the scroll-choreographed bridge on the About page holds
+ * outside instead - the scroll-choreographed bridge on the About page holds
  * each block until its beat in the sequence arrives.
  */
 export function BlurText({

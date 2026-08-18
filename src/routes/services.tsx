@@ -143,7 +143,7 @@ function Services() {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
-      // hero — plays on load
+      // hero - plays on load
       gsap.from('[data-hero]', {
         y: 34,
         opacity: 0,
@@ -199,7 +199,7 @@ function Services() {
         })
       })
 
-      // overlapping circles — scale + fade, staggered on scroll
+      // overlapping circles - scale + fade, staggered on scroll
       gsap.from('[data-circle]', {
         scale: 0.82,
         opacity: 0,
@@ -209,7 +209,7 @@ function Services() {
         scrollTrigger: { trigger: '[data-circles]', start: 'top 78%' },
       })
 
-      // circles keep breathing — a soft, out-of-sync glow pulse
+      // circles keep breathing - a soft, out-of-sync glow pulse
       gsap.to('[data-cglow]', {
         opacity: 0.55,
         scale: 1.07,
@@ -242,7 +242,7 @@ function Services() {
               'radial-gradient(circle, rgba(245,51,59,0.14) 0%, rgba(255,106,61,0.09) 40%, rgba(255,255,255,0) 70%)',
           }}
         />
-        {/* the hero runs on the same beat clock as the About hero — one
+        {/* the hero runs on the same beat clock as the About hero - one
             language for big type across the site. These carry no `data-hero`,
             so the page's GSAP pass leaves them to BlurText. */}
         <div className="relative max-w-2xl">
@@ -263,7 +263,7 @@ function Services() {
           </p>
           {/* by words, not letters: BlurText wraps each unit in an
               inline-block, and per-letter units let a line break inside a
-              word — "engin / eering" */}
+              word - "engin / eering" */}
           <h1 className="mt-6 font-display text-[clamp(2.75rem,6.5vw,5rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]">
             <BlurText
               as="span"
@@ -322,10 +322,10 @@ function Services() {
         </div>
       </section>
 
-      {/* ================= HOW WE WORK — overlapping circles =================
+      {/* ================= HOW WE WORK - overlapping circles =================
           The About page's band, brought over whole: the same painted sky held
           under the section by a sticky frame, the same red, the same white
-          type. The circles are unchanged in structure — they just stand in
+          type. The circles are unchanged in structure - they just stand in
           weather now instead of on paper.
 
           No `overflow-hidden` on this section: a clipping ancestor would make
@@ -360,7 +360,7 @@ function Services() {
           data-circles
           className="relative z-10 mt-10 flex flex-col items-center justify-center gap-5 sm:mt-16 sm:gap-6 md:flex-row md:gap-0"
         >
-          {/* the dashed rings survive the move — white on red now */}
+          {/* the dashed rings survive the move - white on red now */}
           <div
             data-ring
             aria-hidden="true"

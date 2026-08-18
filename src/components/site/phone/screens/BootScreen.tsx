@@ -13,7 +13,7 @@ const TILES = [
  * a greeting. Every step is a CSS animation on mount, so the boot plays itself
  * without the story timeline having to drive it.
  *
- * The tiles are real links — the screen is a working surface, not a picture of
+ * The tiles are real links - the screen is a working surface, not a picture of
  * one, so anything that looks pressable is.
  */
 export function BootScreen({ onOpen }: { onOpen?: (hash: string) => void }) {

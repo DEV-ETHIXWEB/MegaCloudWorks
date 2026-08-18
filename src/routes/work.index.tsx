@@ -22,7 +22,7 @@ export const Route = createFileRoute('/work/')({
         'Five app concepts designed and prototyped by the MegaCloudWorks team, each one a complete product-thinking exercise.',
       path: '/work',
     })
-    // /work/$slug is a child match sharing this route's prefix — when a
+    // /work/$slug is a child match sharing this route's prefix - when a
     // concept page is active, let its own head() own the canonical link so
     // the document doesn't end up with two conflicting canonicals.
     const lastMatchId: string | undefined =
@@ -32,7 +32,7 @@ export const Route = createFileRoute('/work/')({
   },
 })
 
-/** What a concept actually contains — counted off the record, not asserted. */
+/** What a concept actually contains - counted off the record, not asserted. */
 const TALLY = [
   { n: CONCEPTS.length, label: 'Concepts', note: 'Each one taken end to end' },
   {
@@ -66,8 +66,8 @@ const MADE = [
   {
     k: 'Build',
     t: 'A feature set with edges',
-    d: 'What ships, what waits, and what we deliberately left out — written down, not implied.',
-    img: '/work/build.webp',
+    d: 'What ships, what waits, and what we deliberately left out - written down, not implied.',
+    img: '/work/build.png',
     w: 600,
     h: 596,
     alt: 'A code editor window with brackets and syntax marks, rising out of a bank of cloud.',
@@ -105,7 +105,7 @@ function Work() {
       const sound = (click.current ??= new Audio('/click.wav'))
       sound.volume = 0.4
       sound.currentTime = 0
-      // rejected when the browser hasn't granted playback yet — the pull
+      // rejected when the browser hasn't granted playback yet - the pull
       // still works, it just doesn't make a noise
       void sound.play().catch(() => {})
     } catch {
@@ -139,7 +139,7 @@ function Work() {
     >
       {/* the page's colour lives here, not on the sections: it cross-fades
           between paper and brand as the bands come up. The cord overrules the
-          bands entirely — pulled, the sheet is red from top to bottom. */}
+          bands entirely - pulled, the sheet is red from top to bottom. */}
       {pulled ? (
         <div aria-hidden="true" className="page-wash" data-tone="brand" />
       ) : (
@@ -181,7 +181,7 @@ function Work() {
           </p>
 
           <h1 className="mt-6 max-w-[16ch] font-display text-[clamp(2.9rem,7vw,5.5rem)] font-extrabold leading-[0.94] tracking-[-0.035em] text-[var(--ink)]">
-            {/* one BlurText per line, letter by letter — the words are short
+            {/* one BlurText per line, letter by letter - the words are short
                 enough that per-word staggering would land them all at once
                 and lose the cascade */}
             <BlurText
@@ -267,7 +267,7 @@ function Work() {
         </div>
       </section>
 
-      {/* ================= 3. HOW A CONCEPT IS MADE — the red stretch ====== */}
+      {/* ================= 3. HOW A CONCEPT IS MADE - the red stretch ====== */}
       <section
         data-band="brand"
         className="on-brand relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
@@ -305,7 +305,7 @@ function Work() {
         </div>
       </section>
 
-      {/* ================= 4. WHAT EACH ONE IS MADE OF — back on paper ====== */}
+      {/* ================= 4. WHAT EACH ONE IS MADE OF - back on paper ====== */}
       {/* the renders are white cloud and red objects: on the red band they'd
           disappear into it, so they get their own paper stretch */}
       <section
@@ -375,7 +375,7 @@ function Work() {
         className="relative px-6 pb-24 pt-8 sm:px-10 sm:pb-28 lg:px-20 lg:pb-32"
       >
         {/* the page closes on the same plate the index is built from: same
-            ink, same grain, same folio — and the folio reads 06, which is the
+            ink, same grain, same folio - and the folio reads 06, which is the
             whole argument of the section */}
         <div
           data-reveal="scale"

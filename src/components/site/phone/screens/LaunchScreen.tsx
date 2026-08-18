@@ -5,7 +5,7 @@ export const LAUNCH_MEDIA = '/sky/contact.webp'
 /**
  * The last act, on the device. The display drops its UI and goes full-bleed on
  * the same artwork the expanding panel uses, so when the DOM panel takes over
- * from the 3D screen there is nothing to see change — only the frame growing.
+ * from the 3D screen there is nothing to see change - only the frame growing.
  *
  * The mark sits lit in the middle of the glass and burns off as the story turns
  * toward the brief: `--mark` is written straight onto the screen host by the

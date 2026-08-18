@@ -7,7 +7,7 @@ import { BlurText } from './BlurText'
 const THEN = ['Web design', 'Marketing sites', 'Brand & content'] as const
 const NOW = ['App design', 'App development', 'UI / UX systems'] as const
 
-// Ethixweb's own positioning, from ethixweb.com — "We run the tech. You run
+// Ethixweb's own positioning, from ethixweb.com - "We run the tech. You run
 // the business." Kept close to their wording so the two studios read as one
 // team with a new focus rather than a rebrand.
 const ETHIXWEB_COPY =
@@ -27,7 +27,7 @@ const MEGACLOUD_COPY =
  *   stage 2  the line finishes its crossing and the cloud flickers awake
  *   stage 3  the MegaCloudWorks description and services blur in
  *
- * The sequence plays itself once, on entry — it is a story with its own pace,
+ * The sequence plays itself once, on entry - it is a story with its own pace,
  * not something the scrollbar should be able to rush, stall or reverse. The
  * connector is measured from the live positions of the two anchors, so it
  * re-aims on resize and follows the blocks when they stack on narrow screens.
@@ -66,8 +66,8 @@ export function StudioBridge() {
 
         /**
          * Re-aims the connector. It leaves the last letter of the ETHIXWEB
-         * wordmark, dives straight down into the gutter between the two rows —
-         * clearing the Ethixweb paragraph that sits to its right — then runs
+         * wordmark, dives straight down into the gutter between the two rows -
+         * clearing the Ethixweb paragraph that sits to its right - then runs
          * the full width of the card into the cloud on the far side.
          */
         // Layout-space box of a node relative to the card. Deliberately not
@@ -156,8 +156,8 @@ export function StudioBridge() {
         const tl = gsap.timeline({ paused: true })
 
         // Content must never be hostage to an animation. If the sequence
-        // hasn't finished well after it should have — a throttled ticker in a
-        // background tab, a browser in low-power mode — snap it to the end so
+        // hasn't finished well after it should have - a throttled ticker in a
+        // background tab, a browser in low-power mode - snap it to the end so
         // the copy is simply there.
         let guard: ReturnType<typeof setTimeout> | undefined
 
@@ -253,7 +253,7 @@ export function StudioBridge() {
       {/* The connector, measured from the marks themselves. Below the
           two-column breakpoint the blocks stack and the diagonal has nowhere
           to go without crossing the copy, so it is faded out rather than
-          removed — the path still has to be measurable for the draw. */}
+          removed - the path still has to be measurable for the draw. */}
       <svg
         ref={svg}
         aria-hidden="true"
@@ -363,8 +363,8 @@ export function StudioBridge() {
 
       {/* ---- row two: MegaCloudWorks' story left, the studio right ---- */}
       {/* the gap between the rows was tuned for a long diagonal; pulled in so
-          the two marks sit closer together and the whole card — escape hatch
-          included — lands inside one screen */}
+          the two marks sit closer together and the whole card - escape hatch
+          included - lands inside one screen */}
       <div className="relative z-10 mt-12 grid gap-8 sm:mt-16 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] sm:gap-14">
         <p
           className={`order-2 max-w-[46ch] border-l border-[var(--line)] pl-5 text-sm leading-[1.75] text-[var(--ink-soft)] transition-opacity duration-500 sm:order-1 sm:ml-auto sm:border-l-0 sm:border-r sm:pl-0 sm:pr-8 sm:text-right sm:text-[15px] ${veil(

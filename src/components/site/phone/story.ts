@@ -187,7 +187,13 @@ export function poseAt(p: number, narrow: boolean): PhonePose {
   const toCentre = easeInOut(range(p, ACT.zoom[0], ACT.zoom[1]))
 
   const restRight = narrow ? 0 : 0.52
-  const restLeft = narrow ? 0 : -0.62
+  /**
+   * The process act. On a wide stage the phone goes hard left and the argument
+   * stands beside it. Narrow, it only steps off centre: far enough that the
+   * device and the card below it read as two things laid on the stage rather
+   * than one stack, and not so far that the display leaves the viewport.
+   */
+  const restLeft = narrow ? -0.07 : -0.62
 
   // act two is the phone's act: it takes the middle of the stage, on its side
   const x = mix(mix(mix(restRight, 0, toRail), restLeft, toLeft), 0, toCentre)
@@ -210,7 +216,10 @@ export function poseAt(p: number, narrow: boolean): PhonePose {
   // the copy vertically instead — low under the welcome, high above the process
   const y = mix(
     narrow
-      ? mix(mix(-0.44, -0.22, toRail), 0.5, toLeft)
+      ? // the process pose used to run the phone off the top of the stage,
+        // straight through the floating mark. It now hangs from just under
+        // that line and stops clear of the card
+        mix(mix(-0.45, -0.24, toRail), 0.38, toLeft)
       : // held a touch low in the welcome so the bigger phone clears the
         // fixed header rather than tucking under it
         mix(
@@ -226,10 +235,25 @@ export function poseAt(p: number, narrow: boolean): PhonePose {
   // there — on its side it is 1.36 wide, and at this scale that covers half the
   // stage. The process act is the next largest; everything eases back to 1 for
   // the hand-off.
-  const rail = narrow ? 0.84 : 1.42
+  /**
+   * Act two is read off the display, so the device is held at its largest here.
+   * Narrow, it stays upright and takes the whole band between the rail title
+   * and the foot of the stage — at 0.84 it was a small object in a lot of empty
+   * paper, and the screen it is being read off was the thing paying for it. The
+   * ceiling is the short viewport: 1.08 still clears the title on a 667.
+   */
+  const rail = narrow ? 1.08 : 1.42
+  // narrow: the display is only ~230px across here, and everything written on
+  // it is authored at 340. Every point of scale is a point of legibility, so
+  // the device is held as large as fits between the welcome copy and the foot
+  // of the viewport — the boot screen's own scroll cue is the last thing on it
+  // and has to stay on screen.
+  // The process act is the exception: there the card carries the argument and
+  // the device is only the illustration of it, so it gives up the height the
+  // card needs rather than fighting it for the stage.
   const presentation = mix(
-    mix(narrow ? 0.9 : 1.28, rail, toRail),
-    narrow ? 0.9 : 1.26,
+    mix(narrow ? 0.95 : 1.28, rail, toRail),
+    narrow ? 0.8 : 1.26,
     toLeft,
   )
 

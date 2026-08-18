@@ -474,9 +474,15 @@ export function PhoneStory() {
             <br />
             describing.
           </h1>
+          {/* the second half is a wide-screen invitation — there is no cursor
+              to follow on a phone, and no room under the headline for four more
+              lines, so at that width the lede stops after the first */}
           <p className="phone-story__lede">
-            Design and development under one roof. Pick it up — the phone is the
-            real thing, it follows your cursor, and everything on it works.
+            Design and development under one roof.{' '}
+            <span className="phone-story__lede-more">
+              Pick it up — the phone is the real thing, it follows your cursor,
+              and everything on it works.
+            </span>
           </p>
         </div>
 
@@ -553,10 +559,15 @@ export function PhoneStory() {
                   <br />
                   you&rsquo;re building.
                 </h2>
+                {/* the qualifier is a wide-screen luxury: on a phone every
+                    line here is a line the form itself is pushed down by */}
                 <p className="phone-panel__lede">
-                  We take on a handful of projects at a time so each one gets
-                  the whole studio. If the fit is wrong we will say so, and
-                  point you somewhere better.
+                  We take on a few projects at a time, so each one gets the
+                  whole studio.{' '}
+                  <span className="phone-panel__lede-more">
+                    If the fit is wrong we will say so, and point you somewhere
+                    better.
+                  </span>
                 </p>
 
                 <dl className="phone-panel__facts">

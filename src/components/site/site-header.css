@@ -1,0 +1,271 @@
+/* ------------------------------------------------------------------ *
+ * The mobile navigation sheet.
+ *
+ * Below lg the site has no header bar — only a floating mark and a burger —
+ * so opening the nav is the one moment the chrome takes over the screen. It
+ * is written here rather than in utility classes because it needs an exit as
+ * well as an entrance: the panel stays mounted for the length of its own
+ * close, driven by `data-open` on the root.
+ *
+ * Palette is the site's three: white ground, grey rules and secondary type,
+ * brand red reserved for the things that answer you back — the hairline that
+ * draws in, the arrow under your thumb, the page you are already on.
+ * ------------------------------------------------------------------ */
+
+.nav-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+/* The scrim carries its blur at full strength the whole time and fades as one
+   layer. Transitioning backdrop-filter itself re-rasterises the page behind it
+   every frame, which is the one thing that would make this feel cheap. */
+.nav-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 16, 20, 0.42);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.nav-sheet[data-open='true'] .nav-sheet__scrim {
+  opacity: 1;
+  transition-duration: 420ms;
+}
+
+/* The panel grows out of the top right corner — where the burger is — so the
+   sheet reads as the button opening rather than a card appearing over it. */
+.nav-sheet__panel {
+  position: absolute;
+  inset: 0.75rem 0.75rem auto;
+  padding: 0.75rem;
+  border-radius: 1.75rem;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow:
+    0 32px 64px -32px rgba(16, 16, 20, 0.38),
+    0 2px 10px rgba(16, 16, 20, 0.06);
+  overflow: hidden;
+  transform-origin: 92% 0;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  transition:
+    opacity 220ms ease,
+    transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-sheet[data-open='true'] .nav-sheet__panel {
+  opacity: 1;
+  transform: none;
+}
+
+/* the lit hairline the rest of the site uses, drawn from the burger side in */
+.nav-sheet__panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(245, 51, 59, 0) 0%,
+    var(--brand) 58%,
+    var(--brand-2) 100%
+  );
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-sheet[data-open='true'] .nav-sheet__panel::before {
+  transform: none;
+  transition-delay: 70ms;
+}
+
+.nav-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0.25rem 0.5rem;
+}
+
+.nav-sheet__logo {
+  height: 26px;
+  width: auto;
+}
+
+/* ---------------- the rows ----------------
+   Each waits its turn on the way in — a stagger short enough to read as one
+   movement rather than a list being typed out. On the way out the delay is
+   dropped entirely: a menu that takes as long to dismiss as it did to open is
+   a menu that is in your way. */
+
+.nav-sheet__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 240ms ease,
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.nav-sheet[data-open='true'] .nav-sheet__link {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(90ms + var(--i) * 55ms);
+}
+
+/* a grey rule between rows, inset to the type rather than the panel edge */
+.nav-sheet__link:not(:last-of-type)::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+.nav-sheet__index {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+  transition: color 200ms ease;
+}
+
+.nav-sheet__chev {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  color: var(--ink-faint);
+  transition:
+    color 200ms ease,
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-sheet__link:active {
+  background: var(--paper-2);
+}
+
+.nav-sheet__link:active .nav-sheet__chev {
+  color: var(--brand);
+  transform: translateX(3px);
+}
+
+@media (hover: hover) {
+  .nav-sheet__link:hover {
+    background: var(--paper-2);
+  }
+
+  .nav-sheet__link:hover .nav-sheet__chev {
+    color: var(--brand);
+    transform: translateX(3px);
+  }
+}
+
+/* the page you are already on is the one row that carries the red */
+.nav-sheet__link[data-active='true'],
+.nav-sheet__link[data-active='true'] .nav-sheet__index,
+.nav-sheet__link[data-active='true'] .nav-sheet__chev {
+  color: var(--brand);
+}
+
+.nav-sheet__cta {
+  padding: 0.5rem 0.25rem 0.25rem;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 240ms ease,
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-sheet[data-open='true'] .nav-sheet__cta {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(90ms + var(--i) * 55ms);
+}
+
+/* ---------------- dark pages ---------------- */
+
+.nav-sheet[data-tone='dark'] .nav-sheet__panel {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #141416;
+  box-shadow: 0 32px 64px -30px rgba(0, 0, 0, 0.65);
+}
+
+.nav-sheet[data-tone='dark'] .nav-sheet__link {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.nav-sheet[data-tone='dark'] .nav-sheet__link:not(:last-of-type)::after {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-sheet[data-tone='dark'] .nav-sheet__index,
+.nav-sheet[data-tone='dark'] .nav-sheet__chev {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.nav-sheet[data-tone='dark'] .nav-sheet__link:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (hover: hover) {
+  .nav-sheet[data-tone='dark'] .nav-sheet__link:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ---------------- the burger itself ----------------
+   Three lines that become a cross without the icon ever being swapped: the
+   outer two travel to the middle and cross, the centre one goes. Swapping the
+   glyph is what makes a menu button feel like a checkbox. */
+
+.nav-burger__line {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 160ms ease;
+}
+
+.nav-burger[data-open='true'] .nav-burger__line--top {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.nav-burger[data-open='true'] .nav-burger__line--mid {
+  opacity: 0;
+  transform: scaleX(0.4);
+}
+
+.nav-burger[data-open='true'] .nav-burger__line--bottom {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-sheet__scrim,
+  .nav-sheet__panel,
+  .nav-sheet__panel::before,
+  .nav-sheet__link,
+  .nav-sheet__cta,
+  .nav-burger__line {
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+}

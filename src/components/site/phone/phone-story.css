@@ -2038,35 +2038,63 @@
     text-align: center;
   }
 
+  /* There is no header bar at this width — only the floating burger and the
+     mark, which together own the top 3.5rem of the viewport. Everything on the
+     stage is hung below that line rather than under a bar's worth of chrome. */
   .phone-story__copy--left {
-    /* clear of the fixed header, which the stage scrolls underneath */
-    top: 9%;
+    top: clamp(4.75rem, 10vh, 6.75rem);
+  }
+
+  /* the mark floats at the top right of every screen now, so the welcome
+     repeating the name underneath it is one wordmark too many */
+  .phone-story__copy--left .phone-story__eyebrow {
+    display: none;
   }
 
   .phone-story__rail-head {
-    top: clamp(4.5rem, 10vh, 6.5rem);
+    top: clamp(6rem, 12vh, 8rem);
     width: 88vw;
   }
 
+  /* The process card used to run the full width of the stage along the foot,
+     which left the phone nothing but the strip above it and pushed the device
+     up through the top of the viewport. Pulled to the lower right and cut to
+     three quarters of the width, the two share the stage on a diagonal: the
+     device high and a little left, the argument under its shoulder. */
   .phone-story__copy--right {
     top: auto;
     bottom: 3%;
-    translate: -50% 0;
+    left: auto;
+    right: 1rem;
+    translate: none;
     text-align: left;
-    width: min(34rem, 92vw);
+    width: min(22rem, 84vw);
   }
 
+  /* the eyebrow is gone and the bar with it, so the headline can be set at
+     something like hero size; the vh term keeps it off the phone on the short
+     viewports where the copy band is only a couple of hundred pixels deep */
   .phone-story__headline {
-    font-size: clamp(1.75rem, 6vw, 2.5rem);
+    font-size: clamp(1.75rem, min(8.4vw, 4.6vh), 2.375rem);
+    letter-spacing: -0.04em;
   }
 
   .phone-story__headline--sm {
     font-size: clamp(1.375rem, 5vw, 2rem);
   }
 
-  /* there is no room for a standfirst once the phone owns the lower half —
-     the headline and the screen carry the message between them */
+  /* the phone owns the lower half — a standfirst only fits if it is one line
+     of it, and only on a viewport tall enough to spare the room (below) */
   .phone-story__lede {
+    display: none;
+    margin-top: 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    max-width: 30ch;
+    margin-inline: auto;
+  }
+
+  .phone-story__lede-more {
     display: none;
   }
 
@@ -2076,17 +2104,19 @@
   }
 
   .detail {
+    flex-direction: column;
+    gap: 0.625rem;
     margin-top: 0;
   }
 
+  /* the card sits under the device's shoulder now, so the step readout is
+     pulled to its right edge — anywhere left of that and it lands on the dark
+     phone body, which is the one place these white discs cannot be read */
   .detail__ticks {
     flex-direction: row;
-    justify-content: flex-start;
-  }
-
-  .detail {
-    flex-direction: column;
-    gap: 0.75rem;
+    justify-content: flex-end;
+    align-self: flex-end;
+    gap: 0.5rem;
   }
 
   /* the card sits over the foot of the phone at this width, so it is solid
@@ -2097,36 +2127,160 @@
     backdrop-filter: none;
   }
 
+  /* three quarters of the width to work in, so the head of the card gives up
+     what it can spare — the icon and the display size — to keep the argument
+     itself at a readable size */
+  .detail__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 0.75rem;
+  }
+
+  .detail__icon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .detail__title {
+    margin-top: 0.75rem;
+    font-size: 1.375rem;
+  }
+
   .detail__body {
     font-size: 0.875rem;
+    line-height: 1.6;
   }
 
   .detail__points {
     grid-template-columns: 1fr 1fr;
-    margin-top: 1rem;
+    gap: 0.4rem 0.75rem;
+    margin-top: 0.875rem;
   }
 
-  .phone-story__ready-top {
-    top: 8%;
+  .detail__points li {
+    align-items: flex-start;
+    font-size: 0.8125rem;
+    line-height: 1.35;
   }
 
-  .phone-story__ghost--name {
-    font-size: clamp(1.75rem, 11vw, 4rem);
+  .detail__points svg {
+    margin-top: 1px;
   }
 
-  .phone-story__ready-foot {
-    bottom: 5%;
-    max-width: 82vw;
+  /* The ready mark is a wide-screen move: the name across the top and the
+     offer answering it from the bottom right, with the phone flying up through
+     the gap between them. There is no gap at this width — the device covers
+     the middle of the stage on its way in, so both lines end up as fragments
+     poking out from behind it. The act plays on the phone alone here. */
+  .phone-story__ready {
+    display: none;
   }
 
-  .phone-story__ghost--honour {
-    font-size: clamp(1rem, 5.4vw, 2rem);
-  }
-
-  /* the load line clears the header at this width too, but there is less of
-     it, so it rides closer to the top */
+  /* the load line hangs below the floating controls rather than through them */
   .phone-story__wire {
-    top: clamp(3.5rem, 7vh, 4.75rem);
+    top: clamp(4.75rem, 9vh, 6rem);
+  }
+
+  /* The scrim is cut for the two-column desktop stage: heavy at the edges,
+     clear through the middle where the ridge is and no type ever lands. At
+     this width the copy IS the middle, and the headline was sitting on the
+     busiest part of the plate. So the wash turns through ninety degrees —
+     strong across the top, gone by the time it reaches the phone, and back a
+     little at the foot where the process copy sits. */
+  .phone-story__sky-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.86) 0%,
+      rgba(255, 255, 255, 0.7) 24%,
+      rgba(255, 255, 255, 0.2) 44%,
+      rgba(255, 255, 255, 0.04) 60%,
+      rgba(255, 255, 255, 0.04) 80%,
+      rgba(255, 255, 255, 0.32) 100%
+    );
+  }
+
+  /* the stand-in follows the pose the rig actually holds at this width */
+  .phone-story__placeholder {
+    height: 58%;
+    transform: translate(-50%, -50%) translateY(19vh) rotate(2deg);
+  }
+
+  /* ---------------- the brief, act five ----------------
+     The panel is taller than the viewport here and scrolls inside itself, and
+     `align-items: center` on an overflowing grid centres each row on the track
+     rather than stacking them — which is why the card was being laid straight
+     over the copy above it. Start-aligned, the column stacks and scrolls. */
+  /* A grid whose content is taller than its own max-height sizes its rows off
+     the track rather than off the content, which is what laid the card over
+     the copy above it — and left the scroll extent short of the last row, so
+     the submit could not be scrolled clear of the hem at the foot. There is
+     one column at this width and nothing to align across it, so the panel is
+     simply a block: children stack, and the end padding is reachable. */
+  .phone-panel {
+    display: block;
+    padding-bottom: 13vh;
+  }
+
+  .phone-panel__card {
+    margin-top: 1.25rem;
+    max-width: none;
+  }
+
+  .phone-panel__title {
+    font-size: 1.875rem;
+  }
+
+  .phone-panel__lede {
+    margin-top: 0.875rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .phone-panel__lede-more {
+    display: none;
+  }
+
+  /* the three facts are a desktop aside; on a phone they are another screen
+     of reading between the headline and the form, and the form is the act */
+  .phone-panel__facts {
+    display: none;
+  }
+
+  /* the hem blends the foot of the stage into the section below, but over a
+     full-bleed form it just fogs the bottom of it */
+  .phone-story__hem {
+    height: 8vh;
+  }
+}
+
+/* One line of standfirst, but only where there is a band of viewport to put it
+   in: below this the headline and the screen carry the message between them. */
+@media (max-width: 1023px) and (min-height: 720px) {
+  .phone-story__lede {
+    display: block;
+  }
+}
+
+/* Below that same line the process card and the device are inside four hundred
+   pixels of each other, and the card was covering half the display. The bullets
+   are a recap of what the paragraph directly above them already says, so they
+   are what goes — the argument itself stays whole. */
+@media (max-width: 1023px) and (max-height: 719px) {
+  .detail__points {
+    display: none;
+  }
+
+  .detail__card {
+    padding: 1rem;
+  }
+
+  .detail__title {
+    margin-top: 0.625rem;
+    font-size: 1.25rem;
+  }
+
+  .detail__body {
+    font-size: 0.8125rem;
   }
 }
 

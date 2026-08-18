@@ -5,6 +5,7 @@ import { PhoneMockup } from '#/components/site/PhoneMockup'
 import { CONCEPTS } from '#/lib/concepts'
 import type { Concept } from '#/lib/concepts'
 import { CONCEPT_SCREENS } from '#/lib/conceptScreens'
+import { Booting } from '#/lib/iosKit'
 import { PhoneNavProvider } from '#/lib/phoneUI'
 
 import '#/styles-index.css'
@@ -209,9 +210,16 @@ function ConceptPlate({
         {Screen ? (
           <div className="work-plate__device">
             <span>
-              <PhoneNavProvider index={0} count={screens.length} onGo={() => {}} inert>
+              <PhoneNavProvider
+                index={0}
+                count={screens.length}
+                onGo={() => {}}
+                inert
+              >
                 <PhoneMockup variant="mini" accent={c.accent} motion={c.motion}>
-                  <Screen c={c} />
+                  <Booting c={c} delay={index * 220}>
+                    <Screen c={c} />
+                  </Booting>
                 </PhoneMockup>
               </PhoneNavProvider>
             </span>

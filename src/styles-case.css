@@ -670,12 +670,14 @@
 .cs-camp:hover .cs-camp__plinth {
   transform: translateY(-8px);
   border-color: color-mix(in srgb, var(--c-accent) 40%, transparent);
-  box-shadow: 0 26px 46px -28px color-mix(in srgb, var(--c-band) 60%, transparent);
+  box-shadow: 0 26px 46px -28px
+    color-mix(in srgb, var(--c-band) 60%, transparent);
 }
 
 .cs-camp[data-on] .cs-camp__plinth {
   border-color: var(--c-accent);
-  box-shadow: 0 20px 40px -26px color-mix(in srgb, var(--c-band) 70%, transparent);
+  box-shadow: 0 20px 40px -26px
+    color-mix(in srgb, var(--c-band) 70%, transparent);
 }
 
 /* a snow drift banked against the foot of every plinth */
@@ -730,13 +732,53 @@
   color: var(--granite-faint);
 }
 
+/* the line under the hero device, pointing at the bar inside it */
+.cs-device__hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0.85rem auto 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--granite-soft);
+}
+
+.cs-device__hintDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--c-accent);
+  animation: cs-hint 1.9s ease-in-out infinite;
+}
+
+@keyframes cs-hint {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-device__hintDot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 .cs-camp__device {
   position: relative;
   z-index: 1;
   margin-inline: auto;
   display: block;
   width: 100%;
-  max-width: 118px;
+  max-width: 142px;
 }
 
 /*
@@ -751,7 +793,7 @@
   scale here would be overwritten the moment one played.
 */
 .cs-camp__device .phone3d__slide {
-  zoom: 0.34;
+  zoom: 0.41;
 }
 
 .cs-camp__label {
@@ -837,7 +879,8 @@
 .cs-tile:hover {
   transform: translateY(-6px);
   border-color: color-mix(in srgb, var(--c-accent) 42%, transparent);
-  box-shadow: 0 30px 54px -34px color-mix(in srgb, var(--c-band) 70%, transparent);
+  box-shadow: 0 30px 54px -34px
+    color-mix(in srgb, var(--c-band) 70%, transparent);
 }
 
 /* the wash rises out of the foot of the tile rather than washing over it */

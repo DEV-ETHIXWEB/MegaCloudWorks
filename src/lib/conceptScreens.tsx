@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import {
   ArrowUpRight,
+  Bell,
   Camera,
   Check,
   ChevronRight,
@@ -14,8 +15,10 @@ import {
   QrCode,
   Signature,
   Sparkles,
+  UserPlus,
   Zap,
 } from 'lucide-react'
+import { appOf } from '#/lib/concepts'
 import type { Concept, ConceptIconName } from '#/lib/concepts'
 import { Tap, useChoice, usePhoneNav, useScreenState } from '#/lib/phoneUI'
 import {
@@ -67,10 +70,7 @@ type ScreenProps = { c: Concept }
  * its own circle beside it. Which verb that is says a lot about the product,
  * so each concept picks its own.
  */
-const TAB_ACTION: Record<
-  string,
-  { icon: ConceptIconName; label: string }
-> = {
+const TAB_ACTION: Record<string, { icon: ConceptIconName; label: string }> = {
   fieldly: { icon: 'Plus', label: 'Add a job' },
   stamp: { icon: 'QrCode', label: 'Scan at the till' },
   slate: { icon: 'Plus', label: 'New booking' },
@@ -105,7 +105,11 @@ function MapPlate({ c, height = 78 }: { c: Concept; height?: number }) {
       }}
     >
       {/* roads, abstracted to the two or three lines a glance actually reads */}
-      <svg viewBox="0 0 120 60" className="absolute inset-0 size-full" aria-hidden="true">
+      <svg
+        viewBox="0 0 120 60"
+        className="absolute inset-0 size-full"
+        aria-hidden="true"
+      >
         <path
           d="M-4 44 Q 30 38 52 24 T 124 14"
           fill="none"
@@ -132,8 +136,9 @@ function MapPlate({ c, height = 78 }: { c: Concept; height?: number }) {
         />
       </svg>
       <span
-        className="absolute left-[46%] top-[38%] flex size-4 items-center justify-center rounded-full text-white shadow-lg"
-        style={{ background: c.accent }}
+        className="absolute left-[46%] top-[38%] flex size-4 items-center justify-center rounded-full shadow-lg"
+        /* on the accent, so the app's ink rather than white */
+        style={{ background: c.accent, color: 'var(--on-a)' }}
       >
         <Navigation className="size-2" strokeWidth={3} fill="currentColor" />
       </span>
@@ -177,21 +182,432 @@ const FIELDLY_JOBS = [
     tone: '#8C8F9B',
     time: '14:00',
   },
-  {
-    name: '55 Pine Close',
-    trade: 'HVAC · Marcus D.',
-    status: 'Queued',
-    tone: '#8C8F9B',
-    time: '16:15',
-  },
 ]
 
 /** Who is out, what they can sign off, and when they are free again. */
 const FIELDLY_CREWS = [
-  { name: 'Marcus D.', trade: 'HVAC · Gas Safe', until: 'Free 12:30', free: true },
+  {
+    name: 'Marcus D.',
+    trade: 'HVAC · Gas Safe',
+    until: 'Free 12:30',
+    free: true,
+  },
   { name: 'Ellie R.', trade: 'Plumbing · L2', until: 'On site', free: false },
-  { name: 'Sam O.', trade: 'Electrical · 18th', until: 'Free 15:00', free: true },
+  {
+    name: 'Sam O.',
+    trade: 'Electrical · 18th',
+    until: 'Free 15:00',
+    free: true,
+  },
 ]
+
+/**
+ * The one number the screen is about, set the way money is set.
+ *
+ * Whole pounds at display size, the pence dropped a step and greyed - which is
+ * the trick that lets a figure be enormous without being shouted - and the
+ * movement since yesterday in a tinted chip beside it.
+ */
+function HeroValue({
+  label,
+  whole,
+  frac,
+  delta,
+  up = true,
+}: {
+  label: string
+  whole: string
+  frac: string
+  delta: string
+  up?: boolean
+}) {
+  return (
+    <div className="mb-3 px-[1.05rem]" data-phone-reveal>
+      <p className="fl-hero__label">{label}</p>
+      <p className="fl-hero">
+        <span className="fl-hero__n">{whole}</span>
+        <span className="fl-hero__f">{frac}</span>
+        <span className="fl-hero__delta" data-up={up ? '' : undefined}>
+          {up ? '\u2191' : '\u2193'} {delta}
+        </span>
+      </p>
+    </div>
+  )
+}
+
+/**
+ * Two actions, and the knob that says they are two ends of one thing.
+ *
+ * The reference does this with Transfer and Receive: a pill each way, and a
+ * disc sitting over the seam between them. It is worth stealing because the
+ * disc turns two buttons into one control - and a dispatcher's two buttons
+ * always *are* one control, because doing either one ends the same job.
+ */
+function TwinPills({
+  c,
+  left,
+  right,
+  leftIcon,
+  rightIcon,
+  onLeft,
+  onRight,
+}: {
+  c: Concept
+  left: string
+  right: string
+  leftIcon: ReactNode
+  rightIcon: ReactNode
+  onLeft?: () => void
+  onRight?: () => void
+}) {
+  return (
+    <div className="fl-twin px-[1.05rem]" data-phone-reveal>
+      <Tap ripple={c.accent} label={left} onTap={onLeft} className="fl-twin__t">
+        <span className="fl-twin__pill">
+          <span className="fl-twin__ring">{leftIcon}</span>
+          {left}
+        </span>
+      </Tap>
+
+      <span aria-hidden="true" className="fl-twin__knob">
+        <ArrowUpRight className="size-3" strokeWidth={2.8} />
+      </span>
+
+      <Tap
+        ripple={c.accent}
+        label={right}
+        onTap={onRight}
+        className="fl-twin__t"
+      >
+        <span className="fl-twin__pill" data-alt>
+          {right}
+          <span className="fl-twin__ring">{rightIcon}</span>
+        </span>
+      </Tap>
+    </div>
+  )
+}
+
+/**
+ * The black card the day's work lives on.
+ *
+ * Everything quiet on this app is paper; the things actually happening are cut
+ * out of it in black. One slab, a row per job, a disc of colour for the state
+ * and the figure hard right.
+ */
+function Slab({ header, children }: { header?: string; children: ReactNode }) {
+  return (
+    <section className="mb-3 px-[1.05rem]" data-phone-reveal>
+      {header ? <p className="fl-slab__h">{header}</p> : null}
+      <div className="fl-slab">{children}</div>
+    </section>
+  )
+}
+
+function SlabRow({
+  c,
+  tone,
+  title,
+  value,
+  glyph,
+  onTap,
+  label,
+}: {
+  c: Concept
+  tone?: string
+  title: string
+  value: string
+  glyph: ReactNode
+  onTap?: () => void
+  label?: string
+}) {
+  return (
+    <Tap ripple={tone ?? c.accent} label={label} onTap={onTap}>
+      <span className="fl-slab__row">
+        <span className="fl-slab__glyph" style={{ background: tone }}>
+          {glyph}
+        </span>
+        <span className="fl-slab__title">{title}</span>
+        <span className="fl-slab__v">{value}</span>
+      </span>
+    </Tap>
+  )
+}
+
+/**
+ * A proportion drawn as two tinted lengths rather than a bar and a number.
+ *
+ * The reference uses it for how far a savings goal has got. It is the right
+ * shape for utilisation too: the share that is sold and the share that is
+ * still going spare, each carrying its own figure, so the gap is a thing you
+ * see rather than a sum you do.
+ */
+function SplitBar({ pct, tone }: { pct: number; tone: string }) {
+  return (
+    <span className="fl-split" data-phone-reveal>
+      <span
+        className="fl-split__a"
+        style={{ width: `${pct}%`, background: tone }}
+      >
+        {pct}%
+      </span>
+      <span aria-hidden="true" className="fl-split__chev">
+        &rsaquo;&rsaquo;
+      </span>
+      <span className="fl-split__b">{100 - pct}%</span>
+    </span>
+  )
+}
+
+/**
+ * The greeting header: who you are, and the two controls that are always there.
+ *
+ * Taken off the reference almost literally, because the shape is the point - a
+ * two-line stack hard left, a ringed circle and a rounded-square portrait hard
+ * right, all sitting on the same baseline. It is what makes the screen read as
+ * *aligned to a grid* rather than as a stack of cards that happen to be the
+ * same width.
+ */
+function FieldHeader({
+  eyebrow,
+  title,
+  initials,
+}: {
+  eyebrow: string
+  title: string
+  initials: string
+}) {
+  return (
+    <header className="fl-head" data-phone-reveal>
+      <div className="min-w-0">
+        <p className="fl-head__e">{eyebrow}</p>
+        <p className="fl-head__t">{title}</p>
+      </div>
+      <span aria-hidden="true" className="fl-head__ring">
+        <Bell className="size-3" strokeWidth={2.4} />
+      </span>
+      <span aria-hidden="true" className="fl-head__av">
+        {initials}
+      </span>
+    </header>
+  )
+}
+
+/**
+ * The chart, as the reference draws it.
+ *
+ * A pastel card, a range switcher along its top edge, the scale printed down
+ * the left, a dashed line at the number that matters, and bars that carry
+ * their own figure above them. The ghost behind each bar is last week, so the
+ * comparison is a thing you see rather than a second chart to look at.
+ */
+function WeekChart({
+  c,
+  bars,
+  ranges,
+  range,
+  onRange,
+}: {
+  c: Concept
+  bars: Array<{
+    d: string
+    now: number
+    then: number
+    up: boolean
+    pct: string
+  }>
+  ranges: Array<string>
+  range: number
+  onRange: (i: number) => void
+}) {
+  return (
+    <section className="mb-3 px-[1.05rem]" data-phone-reveal>
+      <div className="fl-chart">
+        <div className="fl-chart__bar">
+          <span className="fl-chart__sym">
+            <Zap className="size-2.5" strokeWidth={3} />
+            Hours
+          </span>
+          {ranges.map((r, i) => (
+            <Tap
+              key={r}
+              press={false}
+              ripple={c.accent}
+              label={`Show ${r}`}
+              onTap={() => onRange(i)}
+              className="fl-chart__rt"
+            >
+              <span
+                className="fl-chart__r"
+                data-on={range === i ? '' : undefined}
+              >
+                {r}
+              </span>
+            </Tap>
+          ))}
+        </div>
+
+        <div className="fl-chart__plot">
+          {/* the number the week is being judged against */}
+          <span aria-hidden="true" className="fl-chart__rule" />
+
+          {bars.map((b) => (
+            <span key={b.d} className="fl-chart__col">
+              <span className="fl-chart__pct" data-up={b.up ? '' : undefined}>
+                {b.up ? '\u2191' : '\u2193'} {b.pct}
+              </span>
+              <span className="fl-chart__stack">
+                <span
+                  className="fl-chart__ghost"
+                  style={{ height: `${b.then}%` }}
+                />
+                <span
+                  className="fl-chart__now"
+                  data-phone-bar
+                  style={{ height: `${b.now}%` }}
+                />
+              </span>
+              <span className="fl-chart__d">{b.d}</span>
+            </span>
+          ))}
+        </div>
+
+        <div className="fl-chart__key">
+          <span className="fl-chart__k">
+            <i className="fl-chart__ks" />
+            this week
+          </span>
+          <span className="fl-chart__k">
+            <i className="fl-chart__ks" data-ghost />
+            last week
+          </span>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/**
+ * Two panels and the knob between them.
+ *
+ * The reference stacks a pastel panel on a black one and drops a ringed disc
+ * over the seam, so the pair reads as one exchange rather than two boxes. Here
+ * it is what a job costs and what it is worth - the same relationship, and the
+ * same reason to draw it as one object.
+ */
+function SwapPanels({
+  topLabel,
+  topValue,
+  topUnit,
+  topFoot,
+  botLabel,
+  botValue,
+  botUnit,
+  botFoot,
+  chips,
+}: {
+  topLabel: string
+  topValue: string
+  topUnit: string
+  topFoot: string
+  botLabel: string
+  botValue: string
+  botUnit: string
+  botFoot: string
+  chips?: Array<string>
+}) {
+  return (
+    <div className="fl-swap px-[1.05rem]" data-phone-reveal>
+      <div className="fl-swap__p" data-tint>
+        <span className="fl-swap__h">
+          <span className="fl-swap__l">{topLabel}</span>
+          {chips?.map((ch) => (
+            <span key={ch} className="fl-swap__chip">
+              {ch}
+            </span>
+          ))}
+        </span>
+        <span className="fl-swap__v">
+          {topValue}
+          <span className="fl-swap__u">{topUnit}</span>
+        </span>
+        <span className="fl-swap__f">{topFoot}</span>
+      </div>
+
+      <span aria-hidden="true" className="fl-swap__knob">
+        <ArrowUpRight className="size-3.5" strokeWidth={2.8} />
+      </span>
+
+      <div className="fl-swap__p" data-slab>
+        <span className="fl-swap__h">
+          <span className="fl-swap__l">{botLabel}</span>
+        </span>
+        <span className="fl-swap__v">
+          {botValue}
+          <span className="fl-swap__u">{botUnit}</span>
+        </span>
+        <span className="fl-swap__f">{botFoot}</span>
+      </div>
+    </div>
+  )
+}
+
+/** A label on the left, a figure on the right - the reference's quiet rows. */
+function KeyRow({
+  k,
+  v,
+  strong = false,
+}: {
+  k: string
+  v: string
+  strong?: boolean
+}) {
+  return (
+    <div className="fl-kv" data-strong={strong ? '' : undefined}>
+      <span className="fl-kv__k">{k}</span>
+      <span className="fl-kv__v">{v}</span>
+    </div>
+  )
+}
+
+/**
+ * The bar with a disc at each end.
+ *
+ * The reference's Swap control: a circle, a word with chevrons, a circle. It
+ * is a button that says which way the thing it does runs.
+ */
+function EndBar({
+  c,
+  label,
+  left,
+  right,
+  onTap,
+}: {
+  c: Concept
+  label: string
+  left: ReactNode
+  right: ReactNode
+  onTap?: () => void
+}) {
+  return (
+    <div className="px-[1.05rem]" data-phone-reveal>
+      <Tap ripple={c.accent} label={label} onTap={onTap}>
+        <span className="fl-end">
+          <span className="fl-end__c">{left}</span>
+          <span className="fl-end__l">
+            {label}
+            <span aria-hidden="true" className="fl-end__ch">
+              &rsaquo;&rsaquo;
+            </span>
+          </span>
+          <span className="fl-end__c" data-alt>
+            {right}
+          </span>
+        </span>
+      </Tap>
+    </div>
+  )
+}
 
 function FieldlyBoard({ c }: ScreenProps) {
   const { go } = usePhoneNav()
@@ -200,57 +616,66 @@ function FieldlyBoard({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle
-        eyebrow="Tuesday 18 Nov"
-        title="Dispatch"
-        sub="4 jobs · 3 crews out · £2,410 booked"
+      <FieldHeader eyebrow="Tuesday 18 Nov" title="Dispatch" initials="MD" />
+
+      <HeroValue
+        label="Booked today"
+        whole="£2,410"
+        frac=".00"
+        delta="2 rolling"
       />
 
-      <div className="mb-3 px-[1.05rem]">
-        <Card className="flex items-center justify-around p-2.5">
-          <Stat n="4" label="Jobs" />
-          <span className="h-6 w-px" style={{ background: 'var(--hair)' }} />
-          <Stat n="2" label="Rolling" tone={c.accent} />
-          <span className="h-6 w-px" style={{ background: 'var(--hair)' }} />
-          <Stat n="1" label="Done" />
-        </Card>
-      </div>
+      <TwinPills
+        c={c}
+        left="Assign"
+        right="Route"
+        leftIcon={<UserPlus className="size-3" strokeWidth={2.6} />}
+        rightIcon={<Navigation className="size-3" strokeWidth={2.6} />}
+        onLeft={() => go(1)}
+        onRight={() => go(3)}
+      />
 
-      <ListGroup header="The board">
+      <Slab header="The board">
         {FIELDLY_JOBS.map((j, i) => (
-          <Row
+          <SlabRow
             key={j.name}
-            active={open === i}
+            c={c}
+            tone={j.tone}
+            title={j.name}
+            value={j.time}
+            label={`Open ${j.name}`}
             onTap={() => {
               setOpen(i)
               go(1)
             }}
-            label={`Open ${j.name}`}
-            chevron
-            leading={
-              <span className="flex items-center gap-2">
-                <span
-                  className="h-7 w-[3px] rounded-full"
-                  style={{ background: j.tone }}
-                />
-                <span
-                  className="text-[9px] font-extrabold tabular-nums"
-                  style={{ color: 'var(--ink2)' }}
-                >
-                  {j.time}
-                </span>
-              </span>
-            }
-            title={j.name}
-            sub={j.trade}
-            trailing={
-              <Pill tone={j.tone} solid={j.status === 'En route'}>
-                {j.status}
-              </Pill>
+            glyph={
+              open === i ? (
+                <Navigation className="size-3" strokeWidth={2.8} />
+              ) : (
+                <Clock className="size-3" strokeWidth={2.8} />
+              )
             }
           />
         ))}
-      </ListGroup>
+        <div className="fl-slab__foot">
+          <span aria-hidden="true" className="fl-slab__dots">
+            <i data-on="" />
+            <i />
+          </span>
+          <Tap
+            press={false}
+            ripple={c.accent}
+            label="See the whole board"
+            onTap={() => go(3)}
+            className="fl-slab__all"
+          >
+            <span>
+              View all
+              <ChevronRight className="size-2.5" strokeWidth={3} />
+            </span>
+          </Tap>
+        </div>
+      </Slab>
 
       {/* The half of the board that is actually the dispatcher's job.
           A day with nothing unassigned on it is a day that does not need a
@@ -266,25 +691,11 @@ function FieldlyBoard({ c }: ScreenProps) {
             </Glyph>
           }
           title="9 Quarry Lane"
-          sub="No heating · called 07:41"
           trailing={
             <Pill tone="#F0463C" solid>
               Urgent
             </Pill>
           }
-        />
-        <Row
-          onTap={() => go(1)}
-          label="Assign Unit 4, Mill Yard"
-          chevron
-          leading={
-            <Glyph tone={c.accent} soft>
-              <Clock className="size-3" strokeWidth={2.6} />
-            </Glyph>
-          }
-          title="Unit 4, Mill Yard"
-          sub="Annual service · any day this week"
-          trailing={<Pill tone="#8C8F9B">Flexible</Pill>}
         />
       </ListGroup>
 
@@ -306,7 +717,11 @@ function FieldlyBoard({ c }: ScreenProps) {
             }}
           >
             <span className="flex items-center gap-1.5">
-              <Avatar name={crew.name} size={18} tone={crew.free ? c.accent : undefined} />
+              <Avatar
+                name={crew.name}
+                size={18}
+                tone={crew.free ? c.accent : undefined}
+              />
               <span
                 className="truncate text-[9.5px] font-extrabold"
                 style={{ color: 'var(--ink)' }}
@@ -355,62 +770,29 @@ function FieldlyJob({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <NavBar back="Board" title="Job 1047" onBack={() => go(0)} right="Edit" />
+      <NavBar back="Board" title="Job 1047" onBack={() => go(1)} right="Edit" />
 
       <div className="mb-3 px-[1.05rem]">
         <MapPlate c={c} />
       </div>
 
+      <SwapPanels
+        topLabel="Quoted"
+        topValue="535.00"
+        topUnit="GBP"
+        topFoot="14 Oak Street"
+        botLabel="Invoiced"
+        botValue="642.00"
+        botUnit="GBP"
+        botFoot="Inc. VAT"
+        chips={['Fixed', 'Day rate']}
+      />
+
       <div className="mb-3 px-[1.05rem]">
-        <Card className="p-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <p
-                className="truncate text-[13px] font-extrabold"
-                style={{ color: 'var(--ink)' }}
-              >
-                14 Oak Street
-              </p>
-              <p className="mt-0.5 text-[9.5px]" style={{ color: 'var(--ink2)' }}>
-                Sarah Johnson · boiler service
-              </p>
-            </div>
-            <Pill tone={c.accent} solid>
-              En route
-            </Pill>
-          </div>
-
-          <div className="mt-3 space-y-1.5">
-            {lines.map((row) => (
-              <div key={row.l} className="flex items-baseline justify-between gap-2">
-                <span className="text-[10px]" style={{ color: 'var(--ink2)' }}>
-                  {row.l}
-                </span>
-                <span
-                  className="text-[10.5px] font-bold tabular-nums"
-                  style={{ color: 'var(--ink)' }}
-                >
-                  {row.v}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="mt-2.5 flex items-baseline justify-between border-t pt-2"
-            style={{ borderColor: 'var(--hair)' }}
-          >
-            <span className="text-[10px] font-extrabold" style={{ color: 'var(--ink)' }}>
-              Total inc. VAT
-            </span>
-            <span
-              className="text-[16.5px] font-extrabold tabular-nums"
-              style={{ color: c.accent }}
-            >
-              £642.00
-            </span>
-          </div>
-        </Card>
+        {lines.map((row) => (
+          <KeyRow key={row.l} k={row.l} v={row.v} />
+        ))}
+        <KeyRow k="Total inc. VAT" v="£642.00" strong />
       </div>
 
       {/* The part of a job card that keeps an engineer out of a phone call:
@@ -424,7 +806,6 @@ function FieldlyJob({ c }: ScreenProps) {
             </Glyph>
           }
           title="Parts on the van"
-          sub="28mm valve · flue seal kit"
           trailing={<Pill tone="#1F9D55">In stock</Pill>}
         />
         <Row
@@ -434,18 +815,7 @@ function FieldlyJob({ c }: ScreenProps) {
             </Glyph>
           }
           title="Gas safety check"
-          sub="Required · certificate auto-issued"
           trailing={<Pill tone={c.accent2}>Due</Pill>}
-        />
-        <Row
-          leading={
-            <Glyph tone={c.accent} soft>
-              <Clock className="size-3" strokeWidth={2.4} />
-            </Glyph>
-          }
-          title="Next stop"
-          sub="82 Birch Avenue · 14 min away"
-          trailing={<span className="tabular-nums">10:30</span>}
         />
       </ListGroup>
 
@@ -506,14 +876,18 @@ function FieldlyProof({ c }: ScreenProps) {
           >
             Before
           </p>
-          <Tap ripple={c.accent} label="Take the before photo" onTap={() => setShot(true)}>
+          <Tap
+            ripple={c.accent}
+            label="Take the before photo"
+            onTap={() => setShot(true)}
+          >
             <span
               className="flex aspect-[3/4] flex-col items-center justify-center gap-1 rounded-xl transition-all"
               style={
                 shot
                   ? {
                       background: `linear-gradient(150deg, ${c.accent}, ${c.accent2})`,
-                      color: '#fff',
+                      color: 'var(--on-a)',
                     }
                   : {
                       background: 'var(--fill)',
@@ -542,9 +916,10 @@ function FieldlyProof({ c }: ScreenProps) {
             After
           </p>
           <span
-            className="flex aspect-[3/4] flex-col items-center justify-center gap-1 rounded-xl text-white"
+            className="flex aspect-[3/4] flex-col items-center justify-center gap-1 rounded-xl"
             style={{
               background: `linear-gradient(150deg, ${c.accent2}, ${c.accent})`,
+              color: 'var(--on-a)',
             }}
           >
             <Check className="size-5" strokeWidth={3} />
@@ -555,22 +930,34 @@ function FieldlyProof({ c }: ScreenProps) {
 
       <ListGroup header="Attached to job 1047">
         <Row
-          leading={<Glyph tone={c.accent} soft><Flame className="size-3" strokeWidth={2.4} /></Glyph>}
+          leading={
+            <Glyph tone={c.accent} soft>
+              <Flame className="size-3" strokeWidth={2.4} />
+            </Glyph>
+          }
           title="Flue gas reading logged"
-          sub="CO 0.002% · pass"
-          trailing={<Check className="size-3" style={{ color: '#1F9D55' }} strokeWidth={3} />}
+          trailing={
+            <Check
+              className="size-3"
+              style={{ color: '#1F9D55' }}
+              strokeWidth={3}
+            />
+          }
         />
         <Row
-          leading={<Glyph tone={c.accent} soft><Clock className="size-3" strokeWidth={2.4} /></Glyph>}
-          title="On site 2h 36m"
-          sub="Auto-tracked from arrival"
-          trailing={<span className="tabular-nums">09:12</span>}
-        />
-        <Row
-          leading={<Glyph tone={c.accent} soft><Signature className="size-3" strokeWidth={2.4} /></Glyph>}
+          leading={
+            <Glyph tone={c.accent} soft>
+              <Signature className="size-3" strokeWidth={2.4} />
+            </Glyph>
+          }
           title="Signed by S. Johnson"
-          sub="On the doorstep, 11:52"
-          trailing={<Check className="size-3" style={{ color: '#1F9D55' }} strokeWidth={3} />}
+          trailing={
+            <Check
+              className="size-3"
+              style={{ color: '#1F9D55' }}
+              strokeWidth={3}
+            />
+          }
         />
       </ListGroup>
 
@@ -587,113 +974,54 @@ function FieldlyProof({ c }: ScreenProps) {
             className="mt-1.5 text-[10px] leading-[1.5]"
             style={{ color: 'var(--ink)' }}
           >
-            Old expansion vessel had failed - replaced under warranty. Pressure
-            reset to 1.2 bar and left running. Customer shown the isolation
-            valve.
-          </p>
-          <p className="mt-2 text-[8px]" style={{ color: 'var(--ink2)' }}>
-            Marcus D. · saved offline, synced 12:04
+            Expansion vessel failed - replaced under warranty, reset to 1.2 bar.
           </p>
         </Card>
       </div>
 
-      <div className="px-[1.05rem]">
-        <PrimaryButton
-          label="Mark the job complete"
-          tone={done ? '#1F9D55' : undefined}
-          onTap={() => {
-            setDone(true)
-            window.setTimeout(() => go(3), 700)
-          }}
-        >
-          {done ? (
-            <>
-              <Check className="size-3" strokeWidth={3} /> Completed
-            </>
-          ) : (
-            'Mark complete'
-          )}
-        </PrimaryButton>
-      </div>
+      <EndBar
+        c={c}
+        label={done ? 'Job closed' : 'Mark complete'}
+        left={<Check className="size-3.5" strokeWidth={3} />}
+        right={<ArrowUpRight className="size-3.5" strokeWidth={3} />}
+        onTap={() => {
+          setDone(true)
+          window.setTimeout(() => go(3), 700)
+        }}
+      />
     </AppCanvas>
   )
 }
 
 function FieldlyWeek({ c }: ScreenProps) {
   const { go } = usePhoneNav()
-  const [day, setDay] = useChoice('fieldly.day', 1)
-  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-  const rows = [
-    { t: '08:00', label: 'HVAC · Oak St', span: 46, tone: c.accent },
-    { t: '10:30', label: 'Plumbing · Birch Ave', span: 62, tone: c.accent2 },
-    { t: '13:00', label: 'Lunch', span: 26, tone: 'var(--fill)' },
-    { t: '14:00', label: 'Electrical · Elm Rd', span: 54, tone: '#4B5563' },
-    { t: '16:15', label: 'HVAC · Pine Close', span: 38, tone: '#4B5563' },
+  const [range, setRange] = useChoice('fieldly.range', 1)
+
+  /* hours sold per day, against the same day last week. The pair is the whole
+     point of the card: a week that looks busy and a week that *is* busier are
+     different weeks. */
+  const bars = [
+    { d: 'M', now: 58, then: 44, up: true, pct: '23%' },
+    { d: 'T', now: 72, then: 61, up: true, pct: '35%' },
+    { d: 'W', now: 46, then: 63, up: false, pct: '42%' },
+    { d: 'T', now: 84, then: 70, up: true, pct: '20%' },
+    { d: 'F', now: 66, then: 66, up: true, pct: '15%' },
+    { d: 'S', now: 38, then: 52, up: false, pct: '60%' },
+    { d: 'S', now: 22, then: 18, up: true, pct: '82%' },
   ]
 
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle eyebrow="Week 47" title="The Week" sub="18 jobs · 62% utilised" />
+      <FieldHeader eyebrow="Week 47" title="The Week" initials="MD" />
 
-      <div className="mb-3 grid grid-cols-7 gap-1 px-[1.05rem]">
-        {days.map((d, i) => (
-          <Tap
-            key={i}
-            press={false}
-            ripple={c.accent}
-            label={`Show ${17 + i} November`}
-            onTap={() => setDay(i)}
-          >
-            <span className="flex flex-col items-center gap-1">
-              <span className="text-[8px] font-bold" style={{ color: 'var(--ink2)' }}>
-                {d}
-              </span>
-              <span
-                className="flex size-6 items-center justify-center rounded-lg text-[10px] font-extrabold tabular-nums transition-all"
-                style={
-                  day === i
-                    ? {
-                        background: `linear-gradient(140deg, ${c.accent}, ${c.accent2})`,
-                        color: '#fff',
-                      }
-                    : { background: 'var(--fill)', color: 'var(--ink2)' }
-                }
-              >
-                {17 + i}
-              </span>
-            </span>
-          </Tap>
-        ))}
-      </div>
-
-      <div className="space-y-1.5 px-[1.05rem]">
-        {rows.map((r) => (
-          <Tap key={r.t} ripple={c.accent} label={`Open ${r.label}`} onTap={() => go(1)}>
-            <span className="flex items-center gap-2">
-              <span
-                className="w-7 shrink-0 text-[8px] font-bold tabular-nums"
-                style={{ color: 'var(--ink2)' }}
-              >
-                {r.t}
-              </span>
-              <span className="flex-1">
-                <span
-                  className="flex h-6 items-center rounded-md px-2 text-[9px] font-bold"
-                  style={{
-                    width: `${r.span}%`,
-                    minWidth: '42%',
-                    background: r.tone,
-                    color: r.tone === 'var(--fill)' ? 'var(--ink2)' : '#fff',
-                  }}
-                >
-                  {r.label}
-                </span>
-              </span>
-            </span>
-          </Tap>
-        ))}
-      </div>
+      <WeekChart
+        c={c}
+        bars={bars}
+        ranges={['1d', '7 days', '1m', '6m']}
+        range={range}
+        onRange={setRange}
+      />
 
       {/* What a week view is actually for. A row of coloured bars says how the
           day is arranged; only the numbers say whether the week is any good,
@@ -702,10 +1030,13 @@ function FieldlyWeek({ c }: ScreenProps) {
         <Card className="flex items-center justify-around p-2.5">
           <Stat n="18" label="Jobs" />
           <span className="h-6 w-px" style={{ background: 'var(--hair)' }} />
-          <Stat n="62%" label="Utilised" tone={c.accent} />
-          <span className="h-6 w-px" style={{ background: 'var(--hair)' }} />
           <Stat n="£9.4k" label="Booked" />
         </Card>
+      </div>
+
+      {/* sold against spare, drawn rather than summed */}
+      <div className="mb-3 px-[1.05rem]">
+        <SplitBar pct={62} tone={c.accent2} />
       </div>
 
       <ListGroup header="Gaps worth filling">
@@ -719,7 +1050,6 @@ function FieldlyWeek({ c }: ScreenProps) {
             </Glyph>
           }
           title="Wed 09:00 – 12:00"
-          sub="Ellie R. free · 3 hours"
           trailing={<Pill tone={c.accent2}>3h</Pill>}
         />
         <Row
@@ -732,7 +1062,6 @@ function FieldlyWeek({ c }: ScreenProps) {
             </Glyph>
           }
           title="Fri 13:00 – 17:00"
-          sub="Sam O. free · 4 hours"
           trailing={<Pill tone={c.accent2}>4h</Pill>}
         />
       </ListGroup>
@@ -746,9 +1075,19 @@ function FieldlyWeek({ c }: ScreenProps) {
  * =================================================================== */
 
 const STAMP_SHOPS = [
-  { name: 'Brew & Co', kind: 'Coffee', tone: '#F5333B', note: '9 of 10 stamps' },
+  {
+    name: 'Brew & Co',
+    kind: 'Coffee',
+    tone: '#F5333B',
+    note: '9 of 10 stamps',
+  },
   { name: 'Corner Mart', kind: 'Grocery', tone: '#FF9563', note: '340 points' },
-  { name: 'Sunny Bakes', kind: 'Bakery', tone: '#C2410C', note: '5 of 8 stamps' },
+  {
+    name: 'Sunny Bakes',
+    kind: 'Bakery',
+    tone: '#C2410C',
+    note: '5 of 8 stamps',
+  },
 ]
 
 function StampWallet({ c }: ScreenProps) {
@@ -758,14 +1097,15 @@ function StampWallet({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle eyebrow="Good morning" title="Jamie" sub="3 cards · 2 rewards ready" />
+      <LargeTitle eyebrow="Good morning" title="Jamie" />
 
       {/* the balance card is the one big object in the app */}
       <div className="mb-4 px-[1.05rem]" data-phone-reveal>
         <Tap ripple="#ffffff" label="See rewards" onTap={() => go(2)}>
           <span
-            className="relative block overflow-hidden rounded-2xl p-3.5 text-left text-white"
+            className="relative block overflow-hidden rounded-2xl p-3.5 text-left"
             style={{
+              color: 'var(--on-a)',
               background: `linear-gradient(135deg, ${c.accent} 0%, ${c.accent2} 100%)`,
               boxShadow: `0 14px 30px -14px ${c.accent}`,
             }}
@@ -773,16 +1113,17 @@ function StampWallet({ c }: ScreenProps) {
             <span
               aria-hidden="true"
               className="absolute -right-6 -top-8 size-24 rounded-full"
-              style={{ background: 'rgba(255,255,255,0.16)' }}
+              style={{ background: 'rgba(255,255,255,0.14)' }}
             />
-            <span className="relative block text-[9px] font-bold uppercase tracking-[0.16em] text-white/75">
+            <span className="relative block text-[9px] font-bold uppercase tracking-[0.16em] opacity-70">
               Points balance
             </span>
             <span className="relative mt-1 block text-[28.5px] font-extrabold leading-none tracking-[-0.03em] tabular-nums">
               1,240
             </span>
-            <span className="relative mt-2 flex items-center gap-1 text-[9.5px] font-semibold text-white/80">
-              <Sparkles className="size-2.5" strokeWidth={2.6} />2 rewards ready to claim
+            <span className="relative mt-2 flex items-center gap-1 text-[9.5px] font-semibold opacity-80">
+              <Sparkles className="size-2.5" strokeWidth={2.6} />2 rewards ready
+              to claim
             </span>
           </span>
         </Tap>
@@ -810,7 +1151,7 @@ function StampWallet({ c }: ScreenProps) {
             <span
               className="relative block rounded-xl p-2.5 text-left transition-all duration-300"
               style={{
-                background: `linear-gradient(120deg, ${s.tone} 0%, color-mix(in srgb, ${s.tone} 62%, #2A1E1A) 100%)`,
+                background: `linear-gradient(120deg, ${s.tone} 0%, color-mix(in srgb, ${s.tone} 62%, #120E0C) 100%)`,
                 color: '#fff',
                 marginTop: i === 0 ? 0 : -10,
                 zIndex: i,
@@ -826,7 +1167,6 @@ function StampWallet({ c }: ScreenProps) {
                   <span className="block truncate text-[12.5px] font-extrabold">
                     {s.name}
                   </span>
-                  <span className="block text-[9px] text-white/70">{s.kind}</span>
                 </span>
                 <span className="shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[8px] font-bold">
                   {s.note}
@@ -848,8 +1188,11 @@ function StampWallet({ c }: ScreenProps) {
             </Glyph>
           }
           title="Double stamps at Brew & Co"
-          sub="Until 4pm today"
-          trailing={<Pill tone={c.accent} solid>2×</Pill>}
+          trailing={
+            <Pill tone={c.accent} solid>
+              2×
+            </Pill>
+          }
           onTap={() => go(1)}
           label="Open the Brew & Co card"
           chevron
@@ -861,18 +1204,7 @@ function StampWallet({ c }: ScreenProps) {
             </Glyph>
           }
           title="One stamp from a free coffee"
-          sub="Brew & Co · 9 of 10"
           trailing={<span className="tabular-nums">9/10</span>}
-        />
-        <Row
-          leading={
-            <Glyph tone={c.accent} soft>
-              <QrCode className="size-3" strokeWidth={2.4} />
-            </Glyph>
-          }
-          title="Stamped at Corner Mart"
-          sub="Saturday, 11:20"
-          trailing={<span className="tabular-nums">+1</span>}
         />
       </ListGroup>
     </AppCanvas>
@@ -900,16 +1232,19 @@ function StampCard({ c }: ScreenProps) {
                   i < stamps
                     ? {
                         background: `linear-gradient(140deg, ${c.accent}, ${c.accent2})`,
-                        color: '#fff',
+                        color: 'var(--on-a)',
                         transform: i === stamps - 1 ? 'scale(1.08)' : undefined,
                       }
                     : {
-                        border: '1.5px dashed color-mix(in srgb, var(--ink2) 45%, transparent)',
+                        border:
+                          '1.5px dashed color-mix(in srgb, var(--ink2) 45%, transparent)',
                         color: 'transparent',
                       }
                 }
               >
-                {i < stamps ? <Check className="size-3" strokeWidth={3.4} /> : null}
+                {i < stamps ? (
+                  <Check className="size-3" strokeWidth={3.4} />
+                ) : null}
               </span>
             ))}
           </div>
@@ -929,7 +1264,6 @@ function StampCard({ c }: ScreenProps) {
         <Row title="Earned since March" trailing="47 stamps" />
         <Row title="Free coffees claimed" trailing="4" />
         <Row title="Last visit" trailing="Yesterday" />
-        <Row title="Usual order" trailing="Flat white" />
       </ListGroup>
 
       {/* the shop side of the card - the half a rubber stamp never had */}
@@ -941,8 +1275,11 @@ function StampCard({ c }: ScreenProps) {
             </Glyph>
           }
           title="Double stamps until 4pm"
-          sub="Tuesdays are quiet - help us out"
-          trailing={<Pill tone={c.accent} solid>Live</Pill>}
+          trailing={
+            <Pill tone={c.accent} solid>
+              Live
+            </Pill>
+          }
         />
         <Row
           leading={
@@ -951,7 +1288,6 @@ function StampCard({ c }: ScreenProps) {
             </Glyph>
           }
           title="17 Grove Street"
-          sub="Open until 17:00 · 4 min walk"
           trailing={<Pill tone="#1F9D55">Open</Pill>}
         />
       </ListGroup>
@@ -999,18 +1335,24 @@ function StampRewards({ c }: ScreenProps) {
       <StatusBar />
       <LargeTitle
         title="Rewards"
-        sub={`${points.toLocaleString()} points to spend`}
         right={
           <span
-            className="rounded-full px-2.5 py-1 text-[10px] font-extrabold tabular-nums text-white"
-            style={{ background: `linear-gradient(130deg, ${c.accent}, ${c.accent2})` }}
+            className="rounded-full px-2.5 py-1 text-[10px] font-extrabold tabular-nums"
+            style={{
+              background: `linear-gradient(130deg, ${c.accent}, ${c.accent2})`,
+              color: 'var(--on-a)',
+            }}
           >
             {points.toLocaleString()}
           </span>
         }
       />
 
-      <Segmented items={['Available', 'Claimed']} value={tab} onChange={setTab} />
+      <Segmented
+        items={['Available', 'Claimed']}
+        value={tab}
+        onChange={setTab}
+      />
 
       <ListGroup>
         {shown.map((r) => {
@@ -1034,7 +1376,6 @@ function StampRewards({ c }: ScreenProps) {
                 </Glyph>
               }
               title={r.name}
-              sub={`${r.shop} · ${r.price} pts`}
               trailing={
                 <Pill
                   tone={claimed ? '#1F9D55' : afford ? c.accent : undefined}
@@ -1047,8 +1388,13 @@ function StampRewards({ c }: ScreenProps) {
           )
         })}
         {shown.length === 0 ? (
-          <div className="px-3 py-6 text-center text-[10px]" style={{ color: 'var(--ink2)' }}>
-            {tab === 0 ? 'Everything claimed. Go get a coffee.' : 'Nothing claimed yet.'}
+          <div
+            className="px-3 py-6 text-center text-[10px]"
+            style={{ color: 'var(--ink2)' }}
+          >
+            {tab === 0
+              ? 'Everything claimed. Go get a coffee.'
+              : 'Nothing claimed yet.'}
           </div>
         ) : null}
       </ListGroup>
@@ -1058,7 +1404,10 @@ function StampRewards({ c }: ScreenProps) {
       <div className="mb-3 px-[1.05rem]">
         <Card className="p-3">
           <div className="flex items-baseline justify-between">
-            <p className="text-[10.5px] font-extrabold" style={{ color: 'var(--ink)' }}>
+            <p
+              className="text-[10.5px] font-extrabold"
+              style={{ color: 'var(--ink)' }}
+            >
               Bag of house beans
             </p>
             <p
@@ -1072,7 +1421,7 @@ function StampRewards({ c }: ScreenProps) {
             <Track pct={Math.min(100, (points / 1200) * 100)} tone={c.accent} />
           </div>
           <p className="mt-2 text-[9px]" style={{ color: 'var(--ink2)' }}>
-            About four more visits at Brew &amp; Co.
+            ~4 more visits
           </p>
         </Card>
       </div>
@@ -1085,7 +1434,6 @@ function StampRewards({ c }: ScreenProps) {
             </Glyph>
           }
           title="Sunny Bakes · free cookie"
-          sub="Expires Sunday"
           trailing={<Pill tone={c.accent2}>3 days</Pill>}
         />
         <Row
@@ -1095,8 +1443,11 @@ function StampRewards({ c }: ScreenProps) {
             </Glyph>
           }
           title="Corner Mart · bonus points"
-          sub="Expires tonight"
-          trailing={<Pill tone="#F0463C" solid>Today</Pill>}
+          trailing={
+            <Pill tone="#F0463C" solid>
+              Today
+            </Pill>
+          }
         />
       </ListGroup>
     </AppCanvas>
@@ -1109,7 +1460,7 @@ function StampNearby({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle title="Nearby" sub="3 live offers within a 10 minute walk" />
+      <LargeTitle title="Nearby" />
 
       <div className="mb-3 px-[1.05rem]">
         <MapPlate c={c} height={94} />
@@ -1117,18 +1468,31 @@ function StampNearby({ c }: ScreenProps) {
 
       <ListGroup header="On your way home">
         {[
-          { name: 'Brew & Co', offer: 'Double stamps until 4pm', dist: '0.2 km' },
-          { name: 'Corner Mart', offer: 'Bonus 200 points today', dist: '0.4 km' },
-          { name: 'Sunny Bakes', offer: 'Free cookie with any drink', dist: '0.6 km' },
+          {
+            name: 'Brew & Co',
+            offer: 'Double stamps until 4pm',
+            dist: '0.2 km',
+          },
+          {
+            name: 'Corner Mart',
+            offer: 'Bonus 200 points today',
+            dist: '0.4 km',
+          },
+          {
+            name: 'Sunny Bakes',
+            offer: 'Free cookie with any drink',
+            dist: '0.6 km',
+          },
         ].map((o, i) => (
           <Row
             key={o.name}
             onTap={() => go(1)}
             label={`Open ${o.name}`}
             chevron
-            leading={<Avatar name={o.name} tone={STAMP_SHOPS[i]?.tone} size={24} />}
+            leading={
+              <Avatar name={o.name} tone={STAMP_SHOPS[i]?.tone} size={24} />
+            }
             title={o.name}
-            sub={o.offer}
             trailing={<span className="tabular-nums">{o.dist}</span>}
           />
         ))}
@@ -1141,17 +1505,11 @@ function StampNearby({ c }: ScreenProps) {
           chevron
           leading={<Avatar name="Alder Rye" tone={c.accent2} size={24} />}
           title="Alder & Rye"
-          sub="Bakery · joined last week"
-          trailing={<Pill tone={c.accent} solid>New</Pill>}
-        />
-        <Row
-          onTap={() => go(1)}
-          label="Open The Print Room"
-          chevron
-          leading={<Avatar name="Print Room" tone={c.accent} size={24} />}
-          title="The Print Room"
-          sub="Coffee & stationery · 0.9 km"
-          trailing={<span className="tabular-nums">0.9 km</span>}
+          trailing={
+            <Pill tone={c.accent} solid>
+              New
+            </Pill>
+          }
         />
       </ListGroup>
 
@@ -1173,6 +1531,117 @@ function StampNearby({ c }: ScreenProps) {
 const SLATE_SLOTS = ['9:00', '9:30', '10:00', '11:00', '14:00', '15:30']
 const SLATE_TAKEN = [2, 4]
 
+/**
+ * The week, as a row you thumb along.
+ *
+ * A calendar app's first question is always "which day", so the answer lives
+ * above everything else and is answered by one tap. The live day is lifted
+ * into a filled pill with a mark under it - the same grammar as the tab bar,
+ * one level up.
+ */
+function DateStrip({
+  c,
+  days,
+  labels,
+  value,
+  onPick,
+}: {
+  c: Concept
+  days: Array<number>
+  labels: Array<string>
+  value: number
+  onPick: (i: number) => void
+}) {
+  return (
+    <div className="mb-4 flex justify-between px-[1.05rem]" data-phone-reveal>
+      {days.map((d, i) => {
+        const on = value === i
+        return (
+          <Tap
+            key={d}
+            press={false}
+            ripple={c.accent}
+            label={`Choose ${d} November`}
+            onTap={() => onPick(i)}
+            className="slate-day"
+          >
+            <span className="slate-day__inner" data-on={on ? '' : undefined}>
+              <span className="slate-day__n">{d}</span>
+              <span className="slate-day__d">{labels[i]}</span>
+              <span aria-hidden="true" className="slate-day__dot" />
+            </span>
+          </Tap>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
+ * The day itself: a rail, a dot per entry, and one entry raised into a card.
+ *
+ * Only the live entry is a card - everything else is a title and a time
+ * against the rail, because a list where every row is a filled box is a list
+ * with no shape to it. The card is where the faces and the tick live, and it
+ * is the only place on the screen carrying more than two lines.
+ */
+function Timeline({
+  c,
+  items,
+  live,
+  onPick,
+}: {
+  c: Concept
+  items: Array<{ t: string; title: string; who?: Array<string> }>
+  live: number
+  onPick: (i: number) => void
+}) {
+  return (
+    <div className="slate-time px-[1.05rem]" data-phone-reveal>
+      {items.map((it, i) => {
+        const on = live === i
+        return (
+          <Tap
+            key={it.title}
+            ripple={c.accent}
+            label={`Open ${it.title}`}
+            onTap={() => onPick(i)}
+            className="slate-time__row"
+          >
+            <span className="slate-time__line">
+              <span
+                aria-hidden="true"
+                className="slate-time__dot"
+                data-on={on ? '' : undefined}
+              />
+
+              <span className="slate-time__body" data-on={on ? '' : undefined}>
+                <span className="slate-time__head">
+                  <span className="slate-time__title">{it.title}</span>
+                  <span className="slate-time__t">{it.t}</span>
+                </span>
+
+                {on && it.who ? (
+                  <span className="slate-time__foot">
+                    <span className="slate-time__faces">
+                      {it.who.map((w) => (
+                        <Avatar key={w} name={w} size={22} tone={c.accent} />
+                      ))}
+                    </span>
+                    <span aria-hidden="true" className="slate-time__tick">
+                      <Check className="size-3" strokeWidth={3.2} />
+                    </span>
+                  </span>
+                ) : null}
+              </span>
+            </span>
+          </Tap>
+        )
+      })}
+    </div>
+  )
+}
+
 function SlateBook({ c }: ScreenProps) {
   const { go } = usePhoneNav()
   const [day, setDay] = useChoice('slate.day', 1)
@@ -1188,51 +1657,57 @@ function SlateBook({ c }: ScreenProps) {
       sheetOpen={sheet}
       sheet={
         <Sheet open={sheet} onDismiss={() => setSheet(false)}>
-            <p className="text-[13px] font-extrabold" style={{ color: 'var(--ink)' }}>
-              Confirm this booking
-            </p>
-            <p className="mt-0.5 text-[10px]" style={{ color: 'var(--ink2)' }}>
-              Cut &amp; style with Ana · 45 min
-            </p>
-            <div className="my-2.5 flex items-center gap-2">
-              <span
-                className="flex-1 rounded-lg px-2.5 py-2 text-center"
-                style={{ background: 'var(--fill)' }}
-              >
-                <span className="block text-[9px]" style={{ color: 'var(--ink2)' }}>
-                  Date
-                </span>
-                <span
-                  className="mt-0.5 block text-[11px] font-extrabold"
-                  style={{ color: 'var(--ink)' }}
-                >
-                  {days[day]} Nov
-                </span>
-              </span>
-              <span
-                className="flex-1 rounded-lg px-2.5 py-2 text-center"
-                style={{ background: 'var(--fill)' }}
-              >
-                <span className="block text-[9px]" style={{ color: 'var(--ink2)' }}>
-                  Time
-                </span>
-                <span
-                  className="mt-0.5 block text-[11px] font-extrabold"
-                  style={{ color: 'var(--ink)' }}
-                >
-                  {SLATE_SLOTS[slot]}
-                </span>
-              </span>
-            </div>
-            <PrimaryButton
-              label="Confirm the booking"
-              onTap={() => {
-                setSheet(false)
-                window.setTimeout(() => go(1), 260)
-              }}
+          <p
+            className="text-[13px] font-extrabold"
+            style={{ color: 'var(--ink)' }}
+          >
+            Confirm this booking
+          </p>
+          <div className="my-2.5 flex items-center gap-2">
+            <span
+              className="flex-1 rounded-lg px-2.5 py-2 text-center"
+              style={{ background: 'var(--fill)' }}
             >
-              Confirm booking
-            </PrimaryButton>
+              <span
+                className="block text-[9px]"
+                style={{ color: 'var(--ink2)' }}
+              >
+                Date
+              </span>
+              <span
+                className="mt-0.5 block text-[11px] font-extrabold"
+                style={{ color: 'var(--ink)' }}
+              >
+                {days[day]} Nov
+              </span>
+            </span>
+            <span
+              className="flex-1 rounded-lg px-2.5 py-2 text-center"
+              style={{ background: 'var(--fill)' }}
+            >
+              <span
+                className="block text-[9px]"
+                style={{ color: 'var(--ink2)' }}
+              >
+                Time
+              </span>
+              <span
+                className="mt-0.5 block text-[11px] font-extrabold"
+                style={{ color: 'var(--ink)' }}
+              >
+                {SLATE_SLOTS[slot]}
+              </span>
+            </span>
+          </div>
+          <PrimaryButton
+            label="Confirm the booking"
+            onTap={() => {
+              setSheet(false)
+              window.setTimeout(() => go(1), 260)
+            }}
+          >
+            Confirm booking
+          </PrimaryButton>
         </Sheet>
       }
     >
@@ -1242,43 +1717,31 @@ function SlateBook({ c }: ScreenProps) {
       <div className="mb-3 px-[1.05rem]">
         <span
           className="flex items-center gap-2 rounded-xl px-2.5 py-2"
-          style={{ background: `color-mix(in srgb, ${c.accent} 12%, transparent)` }}
+          style={{
+            background: `color-mix(in srgb, ${c.accent} 12%, transparent)`,
+          }}
         >
-          <Check className="size-3" style={{ color: c.accent }} strokeWidth={3} />
-          <span className="text-[10.5px] font-bold" style={{ color: 'var(--ink)' }}>
+          <Check
+            className="size-3"
+            style={{ color: c.accent }}
+            strokeWidth={3}
+          />
+          <span
+            className="text-[10.5px] font-bold"
+            style={{ color: 'var(--ink)' }}
+          >
             Cut &amp; style · 45 min · £38
           </span>
         </span>
       </div>
 
-      {/* the week strip is the spine of the whole app and never scrolls away */}
-      <div className="mb-3 grid grid-cols-7 gap-1 px-[1.05rem]">
-        {days.map((d, i) => (
-          <Tap
-            key={d}
-            press={false}
-            ripple={c.accent}
-            label={`Choose ${d} November`}
-            onTap={() => setDay(i)}
-          >
-            <span className="flex flex-col items-center gap-1">
-              <span className="text-[8px] font-bold" style={{ color: 'var(--ink2)' }}>
-                {labels[i]}
-              </span>
-              <span
-                className="flex size-6 items-center justify-center rounded-full text-[10px] font-extrabold tabular-nums transition-all"
-                style={
-                  day === i
-                    ? { background: c.accent, color: '#fff' }
-                    : { color: 'var(--ink2)' }
-                }
-              >
-                {d}
-              </span>
-            </span>
-          </Tap>
-        ))}
-      </div>
+      <DateStrip
+        c={c}
+        days={days}
+        labels={labels}
+        value={day}
+        onPick={setDay}
+      />
 
       <div className="mb-3 grid grid-cols-3 gap-1.5 px-[1.05rem]">
         {SLATE_SLOTS.map((s, i) => {
@@ -1303,7 +1766,7 @@ function SlateBook({ c }: ScreenProps) {
                         textDecoration: 'line-through',
                       }
                     : slot === i
-                      ? { background: c.accent, color: '#fff' }
+                      ? { background: c.accent, color: 'var(--on-a)' }
                       : {
                           background: `color-mix(in srgb, ${c.accent2} 26%, transparent)`,
                           color: 'var(--ink)',
@@ -1334,13 +1797,15 @@ function SlateBook({ c }: ScreenProps) {
             </Glyph>
           }
           title="Cut & finish"
-          sub="45 minutes · £38"
-          trailing={<Pill tone={c.accent} solid>Chosen</Pill>}
+          trailing={
+            <Pill tone={c.accent} solid>
+              Chosen
+            </Pill>
+          }
         />
         <Row
           leading={<Avatar name="Nadia K" size={22} tone={c.accent} />}
           title="Nadia K."
-          sub="Your usual stylist"
           trailing={<Pill tone={c.accent2}>Same as last</Pill>}
         />
         <Row
@@ -1350,19 +1815,20 @@ function SlateBook({ c }: ScreenProps) {
             </Glyph>
           }
           title="8 Fellgate Row"
-          sub="Ring the top bell · 6 min walk"
           trailing={<ChevronRight className="size-3" strokeWidth={2.6} />}
         />
       </ListGroup>
 
       <div className="mb-1 px-[1.05rem]">
         <Card className="p-2.5">
-          <p className="text-[9.5px] leading-[1.5]" style={{ color: 'var(--ink2)' }}>
+          <p
+            className="text-[9.5px] leading-[1.5]"
+            style={{ color: 'var(--ink2)' }}
+          >
             <span className="font-extrabold" style={{ color: 'var(--ink)' }}>
               No deposit.
             </span>{' '}
-            Free to move or cancel up to two hours before. A reminder lands the
-            morning of, when you can still do something about it.
+            Free to move up to two hours before.
           </p>
         </Card>
       </div>
@@ -1378,10 +1844,14 @@ function SlateConfirmed({ c }: ScreenProps) {
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
 
-      <div className="flex flex-col items-center px-[1.05rem] pt-2" data-phone-reveal>
+      <div
+        className="flex flex-col items-center px-[1.05rem] pt-2"
+        data-phone-reveal
+      >
         <span
-          className="flex size-14 items-center justify-center rounded-full text-white"
+          className="flex size-14 items-center justify-center rounded-full"
           style={{
+            color: 'var(--on-a)',
             background: `linear-gradient(140deg, ${c.accent}, ${c.accent2})`,
             boxShadow: `0 12px 26px -12px ${c.accent}`,
           }}
@@ -1394,9 +1864,6 @@ function SlateConfirmed({ c }: ScreenProps) {
         >
           You&rsquo;re booked
         </p>
-        <p className="mt-1 text-[10px]" style={{ color: 'var(--ink2)' }}>
-          A reminder lands the morning before
-        </p>
       </div>
 
       {/* a ticket stub rather than a table - the notch is what makes it read
@@ -1404,13 +1871,18 @@ function SlateConfirmed({ c }: ScreenProps) {
       <div className="mt-4 px-[1.05rem]">
         <Card className="overflow-hidden p-0">
           <div
-            className="px-3 py-2.5 text-white"
-            style={{ background: `linear-gradient(120deg, ${c.accentInk}, ${c.accent})` }}
+            className="px-3 py-2.5"
+            style={{
+              color: 'var(--on-a)',
+              background: `linear-gradient(120deg, ${c.accent2}, ${c.accent})`,
+            }}
           >
-            <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/70">
+            <p className="text-[9px] font-bold uppercase tracking-[0.16em] opacity-70">
               Ana&rsquo;s Studio
             </p>
-            <p className="mt-0.5 text-[14.5px] font-extrabold">Cut &amp; style</p>
+            <p className="mt-0.5 text-[14.5px] font-extrabold">
+              Cut &amp; style
+            </p>
           </div>
 
           <div className="relative">
@@ -1466,21 +1938,10 @@ function SlateConfirmed({ c }: ScreenProps) {
         <Row
           leading={
             <Glyph tone={c.accent} soft>
-              <Check className="size-3" strokeWidth={2.8} />
-            </Glyph>
-          }
-          title="Confirmation sent"
-          sub="To your phone, just now"
-          trailing={<span className="tabular-nums">now</span>}
-        />
-        <Row
-          leading={
-            <Glyph tone={c.accent} soft>
               <Clock className="size-3" strokeWidth={2.4} />
             </Glyph>
           }
           title="Reminder, morning of"
-          sub="07:30 - while you can still move it"
           trailing={<Pill tone={c.accent2}>Tue</Pill>}
         />
         <Row
@@ -1493,7 +1954,6 @@ function SlateConfirmed({ c }: ScreenProps) {
             </Glyph>
           }
           title="Move or cancel"
-          sub="Free until 07:00 on the day"
         />
       </ListGroup>
     </AppCanvas>
@@ -1503,96 +1963,37 @@ function SlateConfirmed({ c }: ScreenProps) {
 function SlateVisits({ c }: ScreenProps) {
   const { go } = usePhoneNav()
   const [tab, setTab] = useChoice('slate.tab', 0)
-  const [cancelled, setCancelled] = useScreenState<Array<string>>('slate.cancelled', [])
+  const [live, setLive] = useChoice('slate.live', 0)
 
+  /* A visit is a time and a service. Everything else about it - who, where,
+     how long - belongs on the one entry the reader is actually looking at,
+     which is what the card is for. */
   const upcoming = [
-    { s: 'Cut & style', t: 'Mon 18 Nov · 9:00', who: 'Ana' },
-    { s: 'Deep conditioning', t: 'Thu 21 Nov · 14:30', who: 'Ana' },
+    { t: '9:00', title: 'Cut & style', who: ['Ana R', 'Nadia K'] },
+    { t: '14:30', title: 'Deep conditioning' },
+    { t: '17:15', title: 'Fringe trim' },
   ]
   const past = [
-    { s: 'Cut & style', t: 'Mon 21 Oct · 9:00', who: 'Ana' },
-    { s: 'Fringe trim', t: 'Fri 4 Oct · 17:15', who: 'Jo' },
+    { t: '9:00', title: 'Cut & style', who: ['Ana R'] },
+    { t: '17:15', title: 'Fringe trim' },
+    { t: '11:00', title: 'Colour top-up' },
   ]
-  const shown = (tab === 0 ? upcoming : past).filter((v) => !cancelled.includes(v.s))
+  const shown = tab === 0 ? upcoming : past
 
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle title="My visits" />
+      <LargeTitle eyebrow="November 2025" title="My visits" />
       <Segmented items={['Upcoming', 'Past']} value={tab} onChange={setTab} />
 
-      <div className="space-y-2 px-[1.05rem]">
-        {shown.map((v) => (
-          <Card key={v.s} className="p-2.5">
-            <div className="flex items-center gap-2">
-              <Avatar name={v.who} size={24} />
-              <div className="min-w-0 flex-1">
-                <p
-                  className="truncate text-[11px] font-extrabold"
-                  style={{ color: 'var(--ink)' }}
-                >
-                  {v.s}
-                </p>
-                <p className="text-[9px]" style={{ color: 'var(--ink2)' }}>
-                  {v.t}
-                </p>
-              </div>
-              <Pill tone={tab === 0 ? c.accent : undefined} solid={tab === 0}>
-                {tab === 0 ? 'Booked' : 'Done'}
-              </Pill>
-            </div>
+      <Timeline
+        c={c}
+        items={shown}
+        live={Math.min(live, shown.length - 1)}
+        onPick={setLive}
+      />
 
-            <div className="mt-2 flex gap-1.5">
-              <Tap
-                ripple={c.accent}
-                className="flex-1"
-                label={tab === 0 ? `Move ${v.s}` : `Book ${v.s} again`}
-                onTap={() => go(0)}
-              >
-                <span
-                  className="block rounded-lg py-1.5 text-center text-[9px] font-bold"
-                  style={{ background: 'var(--fill)', color: 'var(--ink)' }}
-                >
-                  {tab === 0 ? 'Move it' : 'Book again'}
-                </span>
-              </Tap>
-              {tab === 0 ? (
-                <Tap
-                  ripple="#DC2626"
-                  className="flex-1"
-                  label={`Cancel ${v.s}`}
-                  onTap={() => setCancelled((cur) => [...cur, v.s])}
-                >
-                  <span
-                    className="block rounded-lg py-1.5 text-center text-[9px] font-bold"
-                    style={{ background: 'rgba(220,38,38,0.1)', color: '#DC2626' }}
-                  >
-                    Cancel
-                  </span>
-                </Tap>
-              ) : null}
-            </div>
-          </Card>
-        ))}
-
-        {shown.length === 0 ? (
-          <p className="py-8 text-center text-[10px]" style={{ color: 'var(--ink2)' }}>
-            Nothing here. Pick a time to add one.
-          </p>
-        ) : null}
-      </div>
-
-      {/* What the salon knows about you, sitting on the booking rather than in
-          someone's head - which is the only reason a regular tolerates
-          booking through an app instead of texting. */}
-      <ListGroup header="On your record">
-        <Row title="Usual service" trailing="Cut & finish" />
-        <Row title="Usual stylist" trailing="Nadia K." />
-        <Row title="Colour last used" trailing="6.1 ash" />
-        <Row title="Visits this year" trailing="7" />
-      </ListGroup>
-
-      <div className="px-[1.05rem]">
+      <div className="mt-3 px-[1.05rem]">
         <PrimaryButton label="Book the same again" onTap={() => go(0)}>
           Book the same again
         </PrimaryButton>
@@ -1603,88 +2004,24 @@ function SlateVisits({ c }: ScreenProps) {
 
 function SlateDesk({ c }: ScreenProps) {
   const { go } = usePhoneNav()
-  const [picked, setPicked] = useChoice('slate.picked', -1)
-  const rows = [
-    { t: '9:00', name: 'Sarah M.', kind: 'Cut & style', taken: true },
-    { t: '10:15', name: 'Priya K.', kind: 'Colour', taken: true },
-    { t: '11:30', name: 'Open', kind: 'Tap to fill', taken: false },
-    { t: '13:00', name: 'Tom R.', kind: 'Beard trim', taken: true },
-    { t: '15:30', name: 'Open', kind: 'Tap to fill', taken: false },
+  const [picked, setPicked] = useChoice('slate.picked', 0)
+  const day = [
+    { t: '9:00', title: 'Sarah M.', who: ['Sarah M', 'Ana R'] },
+    { t: '10:15', title: 'Priya K.' },
+    { t: '11:30', title: 'Open chair' },
+    { t: '13:00', title: 'Tom R.' },
   ]
 
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle
-        eyebrow="Mon 18 Nov"
-        title="Front desk"
-        sub="3 booked · 2 gaps · £114 on the day"
-      />
+      <LargeTitle eyebrow="Mon 18 Nov" title="Front desk" />
 
-      {/* a real time rail: the column of hours, the blocks, and where now is */}
-      <div className="relative px-[1.05rem]">
-        <span
-          aria-hidden="true"
-          className="absolute bottom-0 left-[2.6rem] top-1 w-px"
-          style={{ background: 'var(--hair)' }}
-        />
+      <Timeline c={c} items={day} live={picked} onPick={setPicked} />
 
-        <div className="space-y-1.5">
-          {rows.map((r, i) => (
-            <Tap
-              key={r.t}
-              ripple={c.accent}
-              label={r.taken ? `Open ${r.name}` : `Fill the ${r.t} gap`}
-              onTap={() => {
-                setPicked(i)
-                if (!r.taken) go(0)
-              }}
-            >
-              <span className="flex items-center gap-2">
-                <span
-                  className="w-7 shrink-0 text-right text-[8px] font-bold tabular-nums"
-                  style={{ color: 'var(--ink2)' }}
-                >
-                  {r.t}
-                </span>
-                <span
-                  className="relative z-10 size-1.5 shrink-0 rounded-full"
-                  style={{ background: r.taken ? c.accent : 'var(--hair)' }}
-                />
-                <span
-                  className="flex flex-1 items-center justify-between rounded-lg px-2 py-1.5 transition-shadow"
-                  style={{
-                    background: r.taken
-                      ? `color-mix(in srgb, ${c.accent} 12%, transparent)`
-                      : 'var(--fill)',
-                    boxShadow: picked === i ? `inset 0 0 0 1px ${c.accent}` : undefined,
-                    borderLeft: r.taken ? 'none' : `2px dashed var(--hair)`,
-                  }}
-                >
-                  <span className="min-w-0">
-                    <span
-                      className="block truncate text-[10px] font-bold"
-                      style={{ color: r.taken ? 'var(--ink)' : 'var(--ink2)' }}
-                    >
-                      {r.name}
-                    </span>
-                    <span className="block text-[8px]" style={{ color: 'var(--ink2)' }}>
-                      {r.kind}
-                    </span>
-                  </span>
-                  {!r.taken ? (
-                    <Plus className="size-3 shrink-0" style={{ color: c.accent }} strokeWidth={3} />
-                  ) : null}
-                </span>
-              </span>
-            </Tap>
-          ))}
-        </div>
-      </div>
-
-      {/* The counter's own view: the day in numbers, and the two things
-          somebody standing at the desk actually does with a gap. */}
-      <div className="mt-3 mb-3 px-[1.05rem]">
+      {/* the day in numbers, which is the only thing on this screen the
+          person at the counter reads without being asked a question */}
+      <div className="mb-3 mt-4 px-[1.05rem]">
         <Card className="flex items-center justify-around p-2.5">
           <Stat n="3" label="Booked" />
           <span className="h-6 w-px" style={{ background: 'var(--hair)' }} />
@@ -1701,8 +2038,11 @@ function SlateDesk({ c }: ScreenProps) {
           chevron
           leading={<Avatar name="Dee W" size={22} tone={c.accent} />}
           title="Dee W."
-          sub="Wants any morning this week"
-          trailing={<Pill tone={c.accent} solid>Offer 11:30</Pill>}
+          trailing={
+            <Pill tone={c.accent} solid>
+              Offer 11:30
+            </Pill>
+          }
         />
         <Row
           onTap={() => go(0)}
@@ -1710,7 +2050,6 @@ function SlateDesk({ c }: ScreenProps) {
           chevron
           leading={<Avatar name="Marcus L" size={22} tone={c.accent2} />}
           title="Marcus L."
-          sub="Beard trim · after 3pm only"
           trailing={<Pill tone={c.accent2}>Offer 15:30</Pill>}
         />
       </ListGroup>
@@ -1724,7 +2063,12 @@ function SlateDesk({ c }: ScreenProps) {
  * =================================================================== */
 
 const PROPHY_PATIENTS = [
-  { name: 'Sarah Malik', due: 'Overdue 12 days', overdue: true, last: 'Mar 24' },
+  {
+    name: 'Sarah Malik',
+    due: 'Overdue 12 days',
+    overdue: true,
+    last: 'Mar 24',
+  },
   { name: 'Tom Reilly', due: 'Due in 3 days', overdue: false, last: 'May 12' },
   { name: 'Priya Kaur', due: 'Due in 9 days', overdue: false, last: 'May 18' },
   { name: 'Alex Nunez', due: 'Due in 3 weeks', overdue: false, last: 'Jun 02' },
@@ -1734,18 +2078,20 @@ function ProphyRecall({ c }: ScreenProps) {
   const { go } = usePhoneNav()
   const [tab, setTab] = useChoice('prophy.tab', 0)
   const [booked, setBooked] = useScreenState<Array<string>>('prophy.booked', [])
-  const shown = PROPHY_PATIENTS.filter((p) => (tab === 0 ? p.overdue : !p.overdue))
+  const shown = PROPHY_PATIENTS.filter((p) =>
+    tab === 0 ? p.overdue : !p.overdue,
+  )
 
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle
-        eyebrow="November"
-        title="Recall"
-        sub="14 patients due · 3 already booked"
-      />
+      <LargeTitle eyebrow="November" title="Recall" />
       <SearchField placeholder="Search patients" />
-      <Segmented items={['Overdue', 'Due soon']} value={tab} onChange={setTab} />
+      <Segmented
+        items={['Overdue', 'Due soon']}
+        value={tab}
+        onChange={setTab}
+      />
 
       <ListGroup>
         {shown.map((p) => {
@@ -1754,15 +2100,20 @@ function ProphyRecall({ c }: ScreenProps) {
             <Row
               key={p.name}
               onTap={() => {
-                setBooked((cur) => (cur.includes(p.name) ? cur : [...cur, p.name]))
+                setBooked((cur) =>
+                  cur.includes(p.name) ? cur : [...cur, p.name],
+                )
                 window.setTimeout(() => go(1), 500)
               }}
               label={`Open ${p.name}`}
               leading={
-                <Avatar name={p.name} tone={p.overdue ? '#F5333B' : c.accent} size={26} />
+                <Avatar
+                  name={p.name}
+                  tone={p.overdue ? '#F5333B' : c.accent}
+                  size={26}
+                />
               }
               title={p.name}
-              sub={`Last seen ${p.last}`}
               trailing={
                 <Pill
                   tone={done ? c.accent : p.overdue ? '#F5333B' : undefined}
@@ -1824,7 +2175,6 @@ function ProphyRecall({ c }: ScreenProps) {
             </Glyph>
           }
           title="14 reminders sent"
-          sub="Text, then email at day three"
           trailing={<Pill tone="#1F9D55">Done</Pill>}
         />
         <Row
@@ -1834,8 +2184,11 @@ function ProphyRecall({ c }: ScreenProps) {
             </Glyph>
           }
           title="3 need a call"
-          sub="No answer after two reminders"
-          trailing={<Pill tone={c.accent} solid>Today</Pill>}
+          trailing={
+            <Pill tone={c.accent} solid>
+              Today
+            </Pill>
+          }
           onTap={() => go(2)}
           label="See who needs a call"
           chevron
@@ -1847,7 +2200,6 @@ function ProphyRecall({ c }: ScreenProps) {
             </Glyph>
           }
           title="9 rebooked"
-          sub="Straight from the reminder"
           trailing={<span className="tabular-nums">64%</span>}
         />
       </ListGroup>
@@ -1882,7 +2234,9 @@ function ProphyChart({ c }: ScreenProps) {
             onTap={() => {
               setTooth(idx)
               setFlagged((cur) =>
-                cur.includes(idx) ? cur.filter((n) => n !== idx) : [...cur, idx],
+                cur.includes(idx)
+                  ? cur.filter((n) => n !== idx)
+                  : [...cur, idx],
               )
             }}
           >
@@ -1909,7 +2263,12 @@ function ProphyChart({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <NavBar back="Recall" title="Sarah Malik" onBack={() => go(0)} right="Save" />
+      <NavBar
+        back="Recall"
+        title="Sarah Malik"
+        onBack={() => go(0)}
+        right="Save"
+      />
 
       <div className="mb-3 px-[1.05rem]">
         <Card className="space-y-1.5 p-3">
@@ -1921,7 +2280,10 @@ function ProphyChart({ c }: ScreenProps) {
           </p>
           <ToothRow teeth={upper} offset={0} />
           <div className="py-0.5">
-            <span className="block h-px" style={{ background: 'var(--hair)' }} />
+            <span
+              className="block h-px"
+              style={{ background: 'var(--hair)' }}
+            />
           </div>
           <ToothRow teeth={lower} offset={8} />
           <p className="pt-1 text-[8px]" style={{ color: 'var(--ink2)' }}>
@@ -1932,23 +2294,21 @@ function ProphyChart({ c }: ScreenProps) {
 
       <ListGroup header="Notes on this visit">
         <Row
-          leading={<Glyph tone="#F5333B" soft>!</Glyph>}
+          leading={
+            <Glyph tone="#F5333B" soft>
+              !
+            </Glyph>
+          }
           title="Distal caries suspected"
-          sub="Radiograph requested"
           trailing={<Pill tone="#F5333B">Flag</Pill>}
         />
         <Row
-          leading={<Glyph tone={c.accent} soft><Check className="size-3" strokeWidth={3} /></Glyph>}
+          leading={
+            <Glyph tone={c.accent} soft>
+              <Check className="size-3" strokeWidth={3} />
+            </Glyph>
+          }
           title="Scale & polish completed"
-          sub="Light calculus, lower anteriors"
-        />
-        <Row
-          leading={<Glyph tone={c.accent} soft><Clock className="size-3" strokeWidth={2.4} /></Glyph>}
-          title="Recall set to 6 months"
-          sub="Next due 18 May"
-          onTap={() => go(2)}
-          label="See the day"
-          chevron
         />
       </ListGroup>
     </AppCanvas>
@@ -1983,7 +2343,7 @@ function ProphyDay({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle eyebrow="Tue 18 Nov" title="Chair day" sub="6 booked · 2 gaps" />
+      <LargeTitle eyebrow="Tue 18 Nov" title="Chair day" />
       <Segmented
         items={chairs.map((ch) => ch.name)}
         value={chair}
@@ -1993,7 +2353,10 @@ function ProphyDay({ c }: ScreenProps) {
       <div className="mb-2 px-[1.05rem]">
         <span className="flex items-center gap-2">
           <Avatar name={active.who} size={22} />
-          <span className="text-[10px] font-bold" style={{ color: 'var(--ink)' }}>
+          <span
+            className="text-[10px] font-bold"
+            style={{ color: 'var(--ink)' }}
+          >
             {active.who}
           </span>
         </span>
@@ -2030,14 +2393,13 @@ function ProphyDay({ c }: ScreenProps) {
                   >
                     {free ? 'Gap - 45 min' : s.p}
                   </span>
-                  {s.kind ? (
-                    <span className="block text-[9px]" style={{ color: 'var(--ink2)' }}>
-                      {s.kind}
-                    </span>
-                  ) : null}
                 </span>
                 {free ? (
-                  <Plus className="size-3.5 shrink-0" style={{ color: c.accent }} strokeWidth={2.8} />
+                  <Plus
+                    className="size-3.5 shrink-0"
+                    style={{ color: c.accent }}
+                    strokeWidth={2.8}
+                  />
                 ) : (
                   <ChevronRight
                     className="size-3 shrink-0 opacity-50"
@@ -2068,7 +2430,10 @@ function ProphyDay({ c }: ScreenProps) {
             ].map((r) => (
               <div key={r.room}>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-[9.5px] font-bold" style={{ color: 'var(--ink)' }}>
+                  <span
+                    className="text-[9.5px] font-bold"
+                    style={{ color: 'var(--ink)' }}
+                  >
                     {r.room}
                   </span>
                   <span
@@ -2091,13 +2456,15 @@ function ProphyDay({ c }: ScreenProps) {
         <Row
           leading={<Avatar name="Sarah Malik" size={22} tone="#F0463C" />}
           title="Sarah Malik"
-          sub="Overdue 12 days · asked for afternoons"
-          trailing={<Pill tone="#F0463C" solid>Overdue</Pill>}
+          trailing={
+            <Pill tone="#F0463C" solid>
+              Overdue
+            </Pill>
+          }
         />
         <Row
           leading={<Avatar name="Alex Nunez" size={22} tone={c.accent} />}
           title="Alex Nunez"
-          sub="Due in 3 weeks · happy to come early"
           trailing={<Pill tone={c.accent}>Offer</Pill>}
         />
       </ListGroup>
@@ -2128,7 +2495,10 @@ function ProphyPlan({ c }: ScreenProps) {
       <div className="mb-3 px-[1.05rem]">
         <Card className="p-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-[10px] font-bold" style={{ color: 'var(--ink2)' }}>
+            <span
+              className="text-[10px] font-bold"
+              style={{ color: 'var(--ink2)' }}
+            >
               Accepted
             </span>
             <span
@@ -2164,7 +2534,7 @@ function ProphyPlan({ c }: ScreenProps) {
                   className="flex size-4 items-center justify-center rounded-full transition-all"
                   style={
                     on
-                      ? { background: c.accent, color: '#fff' }
+                      ? { background: c.accent, color: 'var(--on-a)' }
                       : { boxShadow: 'inset 0 0 0 1.5px var(--hair)' }
                   }
                 >
@@ -2172,7 +2542,6 @@ function ProphyPlan({ c }: ScreenProps) {
                 </span>
               }
               title={i.name}
-              sub={i.tooth}
               trailing={<span className="tabular-nums">£{i.price}</span>}
             />
           )
@@ -2184,23 +2553,24 @@ function ProphyPlan({ c }: ScreenProps) {
       <div className="mb-3 px-[1.05rem]">
         <Card className="p-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-[9.5px] font-extrabold" style={{ color: 'var(--ink)' }}>
+            <span
+              className="text-[9.5px] font-extrabold"
+              style={{ color: 'var(--ink)' }}
+            >
               Accepted so far
             </span>
             <span
               className="text-[16.5px] font-extrabold tabular-nums"
               style={{ color: c.accent }}
             >
-              £{accepted.reduce(
-                (t, name) => t + (items.find((i) => i.name === name)?.price ?? 0),
+              £
+              {accepted.reduce(
+                (t, name) =>
+                  t + (items.find((i) => i.name === name)?.price ?? 0),
                 0,
               )}
             </span>
           </div>
-          <p className="mt-1 text-[9px]" style={{ color: 'var(--ink2)' }}>
-            Of £{items.reduce((t, i) => t + i.price, 0)} proposed · payable over
-            three months at no extra cost.
-          </p>
         </Card>
       </div>
 
@@ -2212,7 +2582,6 @@ function ProphyPlan({ c }: ScreenProps) {
             </Glyph>
           }
           title="Discussed chairside"
-          sub="18 Nov · Dr Amin"
           trailing={<Pill tone="#1F9D55">Done</Pill>}
         />
         <Row
@@ -2222,18 +2591,11 @@ function ProphyPlan({ c }: ScreenProps) {
             </Glyph>
           }
           title="Awaiting the filling slot"
-          sub="Next free chair: 26 Nov"
-          trailing={<Pill tone={c.accent} solid>Book</Pill>}
-        />
-        <Row
-          leading={
-            <Glyph tone={c.accent} soft>
-              <Clock className="size-3" strokeWidth={2.4} />
-            </Glyph>
+          trailing={
+            <Pill tone={c.accent} solid>
+              Book
+            </Pill>
           }
-          title="Recall after treatment"
-          sub="Set to six months automatically"
-          trailing={<span className="tabular-nums">May</span>}
         />
       </ListGroup>
     </AppCanvas>
@@ -2283,11 +2645,7 @@ function LeadrPipeline({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle
-        eyebrow="Q4 · 5 people"
-        title="Pipeline"
-        sub="£91.5k open · 5 deals · 1 gone quiet"
-      />
+      <LargeTitle eyebrow="Q4 · 5 people" title="Pipeline" />
 
       {/*
         The board scrolls sideways; the header above it does not.
@@ -2426,7 +2784,6 @@ function LeadrPipeline({ c }: ScreenProps) {
             </Glyph>
           }
           title="Corley & Sons"
-          sub="No contact for 9 days"
           trailing={
             <Pill tone="#F5333B" solid>
               £26k
@@ -2443,7 +2800,6 @@ function LeadrPipeline({ c }: ScreenProps) {
             </Glyph>
           }
           title="Northwind Ltd"
-          sub="6 days · nudge fires Thursday"
           trailing={<span className="tabular-nums">£12k</span>}
         />
       </ListGroup>
@@ -2479,7 +2835,11 @@ function LeadrDeal({ c }: ScreenProps) {
   */
   const timeline = [
     { t: 'Today · 09:14', what: 'Proposal opened 3 times', kind: 'hot' },
-    { t: 'Today · 08:02', what: 'Forwarded to their finance lead', kind: 'mail' },
+    {
+      t: 'Today · 08:02',
+      what: 'Forwarded to their finance lead',
+      kind: 'mail',
+    },
     { t: '2d ago', what: 'Sent pricing PDF', kind: 'mail' },
     { t: '4d ago', what: 'Left a voicemail', kind: 'call' },
     { t: '6d ago', what: 'Nudge fired - no reply', kind: 'call' },
@@ -2489,18 +2849,26 @@ function LeadrDeal({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <NavBar back="Pipeline" title="Corley & Sons" onBack={() => go(0)} right="Edit" />
+      <NavBar
+        back="Pipeline"
+        title="Corley & Sons"
+        onBack={() => go(0)}
+        right="Edit"
+      />
 
       <div className="mb-3 px-[1.05rem]">
         <Card className="p-3">
           <div className="flex items-center gap-2.5">
             <Avatar name="Corley Sons" size={32} />
             <div className="min-w-0 flex-1">
-              <p className="text-[12.5px] font-extrabold" style={{ color: 'var(--ink)' }}>
+              <p
+                className="text-[12.5px] font-extrabold"
+                style={{ color: 'var(--ink)' }}
+              >
                 Corley &amp; Sons
               </p>
               <p className="text-[9px]" style={{ color: 'var(--ink2)' }}>
-                Owner: Dana P. · inbound
+                Dana P.
               </p>
             </div>
             <span
@@ -2567,7 +2935,10 @@ function LeadrDeal({ c }: ScreenProps) {
                 className="relative z-10 mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full"
                 style={{
                   background: e.kind === 'hot' ? c.accent : 'var(--card)',
-                  boxShadow: e.kind === 'hot' ? undefined : 'inset 0 0 0 1px var(--hair)',
+                  boxShadow:
+                    e.kind === 'hot'
+                      ? undefined
+                      : 'inset 0 0 0 1px var(--hair)',
                   color: e.kind === 'hot' ? '#fff' : 'var(--ink2)',
                 }}
               >
@@ -2586,7 +2957,10 @@ function LeadrDeal({ c }: ScreenProps) {
                 >
                   {e.what}
                 </span>
-                <span className="block text-[8px]" style={{ color: 'var(--ink2)' }}>
+                <span
+                  className="block text-[8px]"
+                  style={{ color: 'var(--ink2)' }}
+                >
                   {e.t}
                 </span>
               </span>
@@ -2608,13 +2982,15 @@ function LeadrDeal({ c }: ScreenProps) {
         <Row
           leading={<Avatar name="Helen Corley" size={26} tone={c.accent} />}
           title="Helen Corley"
-          sub="Ops director · decision maker"
-          trailing={<Pill tone={c.accent} solid>Champion</Pill>}
+          trailing={
+            <Pill tone={c.accent} solid>
+              Champion
+            </Pill>
+          }
         />
         <Row
           leading={<Avatar name="Raj Menon" size={26} tone={c.accent2} />}
           title="Raj Menon"
-          sub="Finance · signs it off"
           trailing={<Pill tone={c.accent2}>New</Pill>}
         />
       </ListGroup>
@@ -2631,12 +3007,35 @@ function LeadrDeal({ c }: ScreenProps) {
 
 function LeadrNudges({ c }: ScreenProps) {
   const { go } = usePhoneNav()
-  const [cleared, setCleared] = useScreenState<Array<string>>('leadr.cleared', [])
+  const [cleared, setCleared] = useScreenState<Array<string>>(
+    'leadr.cleared',
+    [],
+  )
   const nudges = [
-    { co: 'Corley & Sons', why: 'No contact for 9 days', due: 'Now', hot: true },
-    { co: 'Halcyon Foods', why: 'Proposal expires Friday', due: 'Today', hot: true },
-    { co: 'Bright Metals', why: 'Follow up after the demo', due: 'Tomorrow', hot: false },
-    { co: 'Northwind Ltd', why: 'Check the budget cycle', due: 'Thu', hot: false },
+    {
+      co: 'Corley & Sons',
+      why: 'No contact for 9 days',
+      due: 'Now',
+      hot: true,
+    },
+    {
+      co: 'Halcyon Foods',
+      why: 'Proposal expires Friday',
+      due: 'Today',
+      hot: true,
+    },
+    {
+      co: 'Bright Metals',
+      why: 'Follow up after the demo',
+      due: 'Tomorrow',
+      hot: false,
+    },
+    {
+      co: 'Northwind Ltd',
+      why: 'Check the budget cycle',
+      due: 'Thu',
+      hot: false,
+    },
   ]
   const shown = nudges.filter((n) => !cleared.includes(n.co))
 
@@ -2645,7 +3044,6 @@ function LeadrNudges({ c }: ScreenProps) {
       <StatusBar />
       <LargeTitle
         title="Nudges"
-        sub={`${shown.length} waiting · 2 overdue`}
         right={
           shown.length ? (
             <Pill tone="#F5333B" solid>
@@ -2667,7 +3065,6 @@ function LeadrNudges({ c }: ScreenProps) {
               </Glyph>
             }
             title={n.co}
-            sub={n.why}
             trailing={
               <Tap
                 press={false}
@@ -2691,9 +3088,6 @@ function LeadrNudges({ c }: ScreenProps) {
             <p className="text-[11px] font-bold" style={{ color: c.accent }}>
               Nothing is going cold.
             </p>
-            <p className="mt-1 text-[9.5px]" style={{ color: 'var(--ink2)' }}>
-              That is the whole job.
-            </p>
           </div>
         ) : null}
       </ListGroup>
@@ -2710,9 +3104,9 @@ function LeadrNudges({ c }: ScreenProps) {
           </p>
           <div className="mt-2.5 space-y-2">
             {[
-              { n: 'Day 3', what: 'A quiet badge on the deal', on: true },
-              { n: 'Day 5', what: 'Push to whoever owns it', on: true },
-              { n: 'Day 7', what: 'Top of the list, in red', on: true },
+              { n: 'Day 3', what: 'A quiet badge', on: true },
+              { n: 'Day 5', what: 'Push to the owner', on: true },
+              { n: 'Day 7', what: 'Top of the list, red', on: true },
               { n: 'Day 10', what: 'Escalates to the team', on: false },
             ].map((s) => (
               <div key={s.n} className="flex items-center gap-2.5">
@@ -2743,7 +3137,6 @@ function LeadrNudges({ c }: ScreenProps) {
             </Glyph>
           }
           title="Pearcefield"
-          sub="Called back the same afternoon"
           trailing={<Pill tone="#1F9D55">Done</Pill>}
         />
         <Row
@@ -2753,7 +3146,6 @@ function LeadrNudges({ c }: ScreenProps) {
             </Glyph>
           }
           title="Halcyon Foods"
-          sub="Proposal re-sent Tuesday"
           trailing={<Pill tone="#1F9D55">Done</Pill>}
         />
       </ListGroup>
@@ -2770,7 +3162,7 @@ function LeadrWeek({ c }: ScreenProps) {
   return (
     <AppCanvas c={c} chrome={<TabBar c={c} action={TAB_ACTION[c.slug]} />}>
       <StatusBar />
-      <LargeTitle eyebrow="Week 47" title="The week" sub="No report to run" />
+      <LargeTitle eyebrow="Week 47" title="The week" />
 
       <div className="mb-3 px-[1.05rem]">
         <Card className="flex items-center justify-around p-3">
@@ -2844,7 +3236,6 @@ function LeadrWeek({ c }: ScreenProps) {
               </Glyph>
             }
             title={w.co}
-            sub="Closed won"
             trailing={
               <span className="tabular-nums" style={{ color: c.accent2 }}>
                 {w.v}
@@ -2867,7 +3258,6 @@ function LeadrWeek({ c }: ScreenProps) {
             </Glyph>
           }
           title="Corley & Sons"
-          sub="9 days since the last touch"
           trailing={
             <Pill tone="#F5333B" solid>
               £26k
@@ -2884,7 +3274,6 @@ function LeadrWeek({ c }: ScreenProps) {
             </Glyph>
           }
           title="Northwind Ltd"
-          sub="6 days · nudge fires Thursday"
           trailing={<span className="tabular-nums">£12k</span>}
         />
       </ListGroup>
@@ -2903,10 +3292,28 @@ function LeadrWeek({ c }: ScreenProps) {
 
 export type ConceptScreen = (props: ScreenProps) => ReactNode
 
-export const CONCEPT_SCREENS: Record<string, ConceptScreen[]> = {
-  fieldly: [FieldlyBoard, FieldlyJob, FieldlyProof, FieldlyWeek],
-  stamp: [StampWallet, StampCard, StampRewards, StampNearby],
-  slate: [SlateBook, SlateConfirmed, SlateVisits, SlateDesk],
-  prophy: [ProphyRecall, ProphyChart, ProphyDay, ProphyPlan],
-  leadr: [LeadrPipeline, LeadrDeal, LeadrNudges, LeadrWeek],
-}
+/**
+ * Hand the screen the concept as the *app* sees it.
+ *
+ * The screens reach for `c.accent` two hundred times over - for gradients,
+ * filled glyphs, chart bars, ripples. Inside the glass every one of those has
+ * to be the app's bright accent on its own ink, while the case-study page
+ * around the device keeps the deep accent it needs to set type in on white.
+ * One swap here, at the door, rather than a second field threaded through
+ * every screen in the file.
+ */
+const inApp = (S: ConceptScreen): ConceptScreen =>
+  function AppScreen({ c }: ScreenProps) {
+    return S({ c: appOf(c) })
+  }
+
+export const CONCEPT_SCREENS: Record<string, ConceptScreen[]> =
+  Object.fromEntries(
+    Object.entries({
+      fieldly: [FieldlyJob, FieldlyBoard, FieldlyProof, FieldlyWeek],
+      stamp: [StampWallet, StampCard, StampRewards, StampNearby],
+      slate: [SlateBook, SlateConfirmed, SlateVisits, SlateDesk],
+      prophy: [ProphyRecall, ProphyChart, ProphyDay, ProphyPlan],
+      leadr: [LeadrPipeline, LeadrDeal, LeadrNudges, LeadrWeek],
+    }).map(([slug, screens]) => [slug, screens.map(inApp)]),
+  )

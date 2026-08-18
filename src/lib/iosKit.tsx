@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import type { Concept, ConceptIconName } from '#/lib/concepts'
@@ -46,33 +46,39 @@ import { Tap, usePhoneNav } from '#/lib/phoneUI'
 type SkinVars = Record<string, string>
 
 function skinVars(c: Concept): SkinVars {
-  const dark = c.surface === 'dark'
-  const face = dark ? 'rgba(255,255,255,0.055)' : 'rgba(255,255,255,0.92)'
-  const faceUp = dark ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.7)'
+  /* A face is an opaque slab of the concept's surface colour rather than a
+     wash over the canvas. The hairline is the only non-colour in here: a
+     single per-cent edge, the way the gallery draws it - lit from above on a
+     dark app, drawn as a hairline on a paper one. */
+  const face = c.appSurface
+  const faceUp = c.appSurface2
+  const hair =
+    c.surface === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(11,11,12,0.10)'
 
   switch (c.skin) {
     /* Fieldly - a tool. Square-ish, matte, welded to the canvas. */
     case 'industrial':
       return {
-        '--r-card': '8px',
-        '--r-group': '8px',
-        '--r-btn': '8px',
-        '--r-glyph': '5px',
-        '--r-field': '6px',
-        '--r-tab': '14px',
-        '--r-pebble': '9px',
-        '--r-sheet': '12px',
-        '--card': dark ? 'rgba(255,255,255,0.062)' : '#FFFFFF',
-        '--card-2': dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.62)',
-        '--hair': dark ? 'rgba(255,255,255,0.14)' : 'rgba(20,24,31,0.16)',
-        '--fill': dark ? 'rgba(255,255,255,0.085)' : 'rgba(20,24,31,0.06)',
+        '--r-card': '10px',
+        '--r-group': '10px',
+        '--r-btn': '10px',
+        '--r-glyph': '6px',
+        '--r-field': '8px',
+        '--r-tab': '16px',
+        '--r-pebble': '10px',
+        '--r-sheet': '14px',
+        '--card': face,
+        '--card-2': faceUp,
+        '--hair': hair,
+        '--fill': faceUp,
         /* `0 0 #0000` rather than `none`: these two vars are composed into one
            comma-separated box-shadow, and `none` inside a shadow list voids the
            whole declaration */
-        '--shadow': '0 0 #0000',
-        '--edge': dark
-          ? 'inset 0 0.5px 0 rgba(255,255,255,0.16)'
-          : 'inset 0 0 0 1px rgba(20,24,31,0.09)',
+        '--shadow':
+          c.surface === 'dark'
+            ? '0 0 #0000'
+            : '0 10px 26px -18px rgba(11,11,12,0.5)',
+        '--edge': '0 0 #0000',
       }
 
     /* Stamp - printed stock. Round, warm, with a real drop under it. */
@@ -86,56 +92,58 @@ function skinVars(c: Concept): SkinVars {
         '--r-tab': '999px',
         '--r-pebble': '999px',
         '--r-sheet': '26px',
-        '--card': '#FFFCF6',
-        '--card-2': 'rgba(255,252,246,0.72)',
-        '--hair': 'rgba(42,26,18,0.12)',
-        '--fill': 'rgba(42,26,18,0.055)',
-        '--shadow': '0 8px 20px -10px rgba(64,34,20,0.34)',
-        '--edge': 'inset 0 0 0 0.5px rgba(42,26,18,0.06)',
+        '--card': face,
+        '--card-2': faceUp,
+        '--hair': hair,
+        '--fill': faceUp,
+        '--shadow': '0 10px 24px -16px rgba(0,0,0,0.8)',
+        '--edge': '0 0 #0000',
       }
 
     /* Slate - glass over a calendar. Translucent, crisp-edged, lifted. */
     case 'glass':
       return {
-        '--r-card': '15px',
-        '--r-group': '15px',
+        '--r-card': '16px',
+        '--r-group': '16px',
         '--r-btn': '12px',
         '--r-glyph': '8px',
         '--r-field': '10px',
         '--r-tab': '999px',
         '--r-pebble': '999px',
         '--r-sheet': '22px',
-        '--card': 'rgba(255,255,255,0.78)',
-        '--card-2': 'rgba(255,255,255,0.56)',
-        '--hair': 'rgba(15,26,43,0.13)',
-        '--fill': 'rgba(15,26,43,0.055)',
-        '--shadow': '0 10px 26px -14px rgba(15,26,43,0.4)',
-        '--edge': 'inset 0 0.5px 0 rgba(255,255,255,0.9)',
+        '--card': `color-mix(in srgb, ${face} 78%, transparent)`,
+        '--card-2': `color-mix(in srgb, ${faceUp} 82%, transparent)`,
+        '--hair':
+          c.surface === 'dark'
+            ? 'rgba(255,255,255,0.11)'
+            : 'rgba(11,11,12,0.12)',
+        '--fill': faceUp,
+        '--shadow': '0 12px 28px -20px rgba(0,0,0,0.9)',
+        '--edge': 'inset 0 0.5px 0 rgba(255,255,255,0.1)',
       }
 
     /* Prophy - clinical. Flat, outlined, sitting *on* the canvas, not above it. */
     case 'clinical':
       return {
-        '--r-card': '11px',
-        '--r-group': '11px',
-        '--r-btn': '9px',
+        '--r-card': '12px',
+        '--r-group': '12px',
+        '--r-btn': '10px',
         '--r-glyph': '7px',
         '--r-field': '8px',
         '--r-tab': '17px',
         '--r-pebble': '11px',
         '--r-sheet': '16px',
-        '--card': '#FFFFFF',
-        '--card-2': 'rgba(255,255,255,0.66)',
-        '--hair': 'rgba(5,39,34,0.14)',
-        '--fill': 'rgba(5,39,34,0.05)',
+        '--card': face,
+        '--card-2': faceUp,
+        '--hair': hair,
+        '--fill': faceUp,
         /* no drop by design: nothing in a surgery is floating */
         '--shadow': '0 0 #0000',
-        '--edge': 'inset 0 0 0 1px rgba(5,39,34,0.1)',
+        '--edge': '0 0 #0000',
       }
 
-    /* Leadr - the roundest, and the only one that glows. On a light canvas the
-       bloom becomes a coloured lift rather than an emission, but it is still
-       the only skin here that throws its accent onto the surface below it. */
+    /* Leadr - the roundest, and the only one that glows. Its accent lands on
+       the ink underneath every card rather than staying inside it. */
     case 'neon':
       return {
         '--r-card': '20px',
@@ -146,21 +154,19 @@ function skinVars(c: Concept): SkinVars {
         '--r-tab': '999px',
         '--r-pebble': '999px',
         '--r-sheet': '28px',
-        '--card': dark ? 'rgba(255,255,255,0.062)' : '#FFFFFF',
-        '--card-2': dark ? 'rgba(255,255,255,0.105)' : `${c.accent}0d`,
-        '--hair': dark ? 'rgba(255,255,255,0.1)' : `${c.accent}24`,
-        '--fill': dark ? 'rgba(255,255,255,0.075)' : `${c.accent}12`,
-        '--shadow': dark
-          ? `0 14px 34px -20px ${c.accent}`
-          : `0 16px 34px -22px ${c.accent}b3`,
-        '--edge': `inset 0 0 0 0.5px ${c.accent}${dark ? '2e' : '1f'}`,
+        '--card': face,
+        '--card-2': faceUp,
+        '--hair': `color-mix(in srgb, ${c.appAccent} 20%, rgba(255,255,255,0.07))`,
+        '--fill': faceUp,
+        '--shadow': `0 16px 34px -24px ${c.appAccent}`,
+        '--edge': `inset 0 0 0 0.5px ${c.appAccent}26`,
       }
 
     default:
       return {
-        '--r-card': '14px',
-        '--r-group': '13px',
-        '--r-btn': '11px',
+        '--r-card': '16px',
+        '--r-group': '16px',
+        '--r-btn': '12px',
         '--r-glyph': '6px',
         '--r-field': '8px',
         '--r-tab': '999px',
@@ -168,9 +174,9 @@ function skinVars(c: Concept): SkinVars {
         '--r-sheet': '22px',
         '--card': face,
         '--card-2': faceUp,
-        '--hair': dark ? 'rgba(255,255,255,0.11)' : 'rgba(19,36,48,0.1)',
-        '--fill': dark ? 'rgba(255,255,255,0.08)' : 'rgba(19,36,48,0.06)',
-        '--shadow': dark ? '0 0 #0000' : '0 6px 18px -8px rgba(19,36,48,0.28)',
+        '--hair': hair,
+        '--fill': faceUp,
+        '--shadow': '0 0 #0000',
         '--edge': '0 0 #0000',
       }
   }
@@ -179,10 +185,29 @@ function skinVars(c: Concept): SkinVars {
 /** All the vars the kit reads. Set once, on the canvas. */
 function themeVars(c: Concept): CSSProperties {
   return {
-    '--a': c.accent,
-    '--a2': c.accent2,
+    '--a': c.appAccent,
+    /* the accent lightened again - what accent-coloured *type* is set in, so a
+       13px label never has to be legible in the graphic version of the colour */
+    '--a-soft': c.appAccentSoft,
+    '--a2': c.appAccent2,
+    /* what goes on top of a filled accent. Bright mint and lavender take the
+       app's own ink, never white. */
+    '--on-a': c.appOnAccent,
     '--ink': c.appInk,
     '--ink2': c.appInkSoft,
+    '--surf': c.appSurface,
+    '--surf-2': c.appSurface2,
+    /*
+      The slab: the object that carries the day, and the thing legible on it.
+      On paper it is the ink itself - a black card cut out of a white ground.
+      On ink there is no blacker black to cut with, so it becomes the most
+      lifted face the app has, and the relationship survives the inversion
+      even though the hex does not.
+    */
+    '--slab': c.surface === 'dark' ? c.appSurface2 : c.appInk,
+    '--on-slab': c.surface === 'dark' ? c.appInk : c.appSurface,
+    '--slab-hair':
+      c.surface === 'dark' ? 'rgba(255,255,255,0.12)' : 'transparent',
     '--glass': c.glass,
     ...skinVars(c),
     background: `linear-gradient(178deg, ${c.appBg[0]} 0%, ${c.appBg[1]} 100%)`,
@@ -231,6 +256,7 @@ export function AppCanvas({
       className="ios"
       data-surface={c.surface}
       data-skin={c.skin}
+      data-nav={c.nav}
       data-sheet={sheetOpen ? '' : undefined}
       style={themeVars(c)}
     >
@@ -262,7 +288,7 @@ export function LaunchScreen({ c }: { c: Concept }) {
       data-skin={c.skin}
       style={{
         ...themeVars(c),
-        background: `linear-gradient(155deg, ${c.accent} 0%, ${c.accentInk} 118%)`,
+        background: `linear-gradient(155deg, ${c.appAccent} 0%, ${c.appSurface} 118%)`,
       }}
     >
       <div className="ios-launch__body">
@@ -276,6 +302,42 @@ export function LaunchScreen({ c }: { c: Concept }) {
       <HomeIndicator />
     </div>
   )
+}
+
+/**
+ * The app launching, wherever the app appears.
+ *
+ * Every real app has this moment and no mockup ever does, which is exactly why
+ * it is worth the second it costs. The case-study hero has always played it;
+ * this is the same beat for every other device on the site, so a phone in a
+ * grid boots like a phone rather than arriving fully dressed.
+ *
+ * Staggered by `delay` so a page of five does not flash them all at once, and
+ * skipped outright when the reader has asked for less motion.
+ */
+export function Booting({
+  c,
+  delay = 0,
+  children,
+}: {
+  c: Concept
+  /** how long after mount this one starts, in ms */
+  delay?: number
+  children: ReactNode
+}) {
+  const [booted, setBooted] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setBooted(true)
+      return
+    }
+    const t = window.setTimeout(() => setBooted(true), 620 + delay)
+    return () => window.clearTimeout(t)
+  }, [delay])
+
+  return booted ? <>{children}</> : <LaunchScreen c={c} />
 }
 
 /* ------------------------------------------------------------------ *
@@ -366,7 +428,14 @@ export function StatusBar() {
             strokeOpacity="0.45"
             strokeWidth="1.1"
           />
-          <rect x="2.4" y="2.4" width="14" height="7.2" rx="2" fill="currentColor" />
+          <rect
+            x="2.4"
+            y="2.4"
+            width="14"
+            height="7.2"
+            rx="2"
+            fill="currentColor"
+          />
           <path
             d="M23.4 4.1c1.4.5 1.4 3.3 0 3.8Z"
             fill="currentColor"
@@ -511,11 +580,7 @@ export function PrimaryButton({
     <Tap ripple="#ffffff" label={label} onTap={onTap}>
       <span
         className="ios-btn"
-        style={
-          tone
-            ? { background: tone, backgroundImage: 'none' }
-            : undefined
-        }
+        style={tone ? { background: tone, backgroundImage: 'none' } : undefined}
       >
         {children}
       </span>
@@ -645,7 +710,7 @@ export function Glyph({
             }
           : {
               background: tone ?? 'var(--a)',
-              color: '#fff',
+              color: 'var(--on-a)',
             }
       }
     >
@@ -670,7 +735,7 @@ export function Pill({
       className="ios-pill"
       style={
         solid
-          ? { background: t, color: '#fff' }
+          ? { background: t, color: 'var(--on-a)' }
           : {
               background: `color-mix(in srgb, ${t} 16%, transparent)`,
               color: t,
@@ -717,23 +782,28 @@ export function Sheet({
 }
 
 /* ------------------------------------------------------------------ *
- * The glass tab bar
+ * Navigation - five shapes cut from one stock
  * ------------------------------------------------------------------ */
 
 /**
- * The concept's tab bar - the one piece of chrome every concept shares.
+ * The concept's navigation - and the one piece of chrome the five deliberately
+ * do *not* share.
  *
- * It is real glass: a translucent tint with a backdrop blur and saturation
- * boost, a bright hairline along its top edge, and a soft lift underneath.
+ * The material is common to all of them, the way it is in the gallery: a
+ * translucent tint of the app's own surface, blurred and saturated, a hairline
+ * along the edge, an icon per destination and a mark under the live one.
  * Content scrolls *through* it, which is the entire reason to frost something
  * rather than fill it.
  *
- * Two shapes. `floating` is the detached pill - used by the concepts whose
- * content runs edge to edge underneath it. `docked` is the full-width bar
- * pinned to the bottom, for the flows where the content wants the extra width.
+ * The shape is not. A console gets a squared bar welded to the bottom edge
+ * with its labels showing; a wallet gets no bar at all and deals its
+ * destinations out of a hamburger; a booking flow gets the floating capsule
+ * with a thumb that slides; a clinical app gets a bar whose mark fades in
+ * place because nothing chairside should travel; a pipeline gets the capsule
+ * with the accent blooming out of whatever was tapped. See ConceptNav.
  *
- * Each tab is a screen: the bar drives the same router the arrows and the
- * swipe do, so the case study can be navigated entirely from inside the phone.
+ * Every shape drives the same router the arrows and the swipe do, so the case
+ * study can be navigated entirely from inside the phone.
  */
 export function TabBar({
   c,
@@ -750,16 +820,163 @@ export function TabBar({
    */
   action?: { icon: ConceptIconName; label: string; onTap?: () => void }
 }) {
+  if (c.nav === 'drawer') return <DrawerNav c={c} action={action} />
+  return <BarNav c={c} action={action} />
+}
+
+/** The circular action that rides beside - or inside - every shape of bar. */
+function TabAction({
+  action,
+  inline = false,
+}: {
+  action?: { icon: ConceptIconName; label: string; onTap?: () => void }
+  /** true when the action sits in the bar rather than detached from it */
+  inline?: boolean
+}) {
+  if (!action) return null
+  const Icon = CONCEPT_ICONS[action.icon]
+  return (
+    <Tap
+      press={false}
+      ripple="var(--a)"
+      label={action.label}
+      onTap={action.onTap}
+      className={inline ? 'ios-tabaction ios-tabaction--in' : 'ios-tabaction'}
+    >
+      <span className="ios-tabaction__inner">
+        <Icon className="size-[16px]" strokeWidth={2.3} />
+      </span>
+    </Tap>
+  )
+}
+
+/**
+ * Four of the five shapes, which differ by what the indicator does rather than
+ * by what they are made of.
+ *
+ * `--tab-i` is the live index, published on the bar so CSS can put the mark
+ * where it belongs without a second element per tab. `key={bump}` remounts the
+ * mark on every change, which is how the shapes that answer a tap with a
+ * one-shot animation - the console's cut, the pipeline's bloom - replay it:
+ * an animation cannot restart itself while it is still the same element.
+ */
+function BarNav({
+  c,
+  action,
+}: {
+  c: Concept
+  action?: { icon: ConceptIconName; label: string; onTap?: () => void }
+}) {
   const { index, go } = usePhoneNav()
-  const ActionIcon = action ? CONCEPT_ICONS[action.icon] : null
+  const [bump, setBump] = useState(0)
 
   return (
-    <div className="ios-tabbar">
+    <div className="ios-tabbar" data-nav={c.nav}>
       <nav
         className="ios-tabs"
         aria-label={`${c.name} tabs`}
-        style={{ '--tab-count': c.tabs.length } as CSSProperties}
+        style={
+          {
+            '--tab-count': c.tabs.length,
+            '--tab-i': index,
+          } as CSSProperties
+        }
       >
+        {/* the mark, drawn once and moved - a rail on the console, a capsule
+            under the booking flow, a lit lozenge on the pipeline. The clinical
+            bar has none: its mark fades in under the icon instead. */}
+        {c.nav === 'still' ? null : (
+          <span key={bump} aria-hidden="true" className="ios-tabs__thumb" />
+        )}
+
+        {c.tabs.map((t, i) => {
+          const Icon = CONCEPT_ICONS[t.icon]
+          const on = index === i
+          return (
+            <Fragment key={t.label}>
+              {/* the dock's action is not at one end of the bar - it is raised
+                  out of the middle of it, so the destinations are dealt around
+                  it rather than beside it */}
+              {c.nav === 'dock' && i === c.tabs.length / 2 ? (
+                <TabAction action={action} inline />
+              ) : null}
+
+              <Tap
+                press={false}
+                ripple="var(--a)"
+                label={`Open ${t.label}`}
+                /* siblings, not depth - a tab change cross-fades */
+                onTap={() => {
+                  setBump((b) => b + 1)
+                  go(i, 'tab')
+                }}
+                className="ios-tab"
+              >
+                <span className="ios-tab__inner" data-on={on ? '' : undefined}>
+                  <Icon
+                    className="ios-tab__icon"
+                    strokeWidth={on ? 2.3 : 1.8}
+                  />
+                  {/*
+                    A dot, not a label and not a filled pebble - except on the
+                    console, where the bar is squared, the labels stay on and a
+                    dispatcher reads words rather than pictures, and on the
+                    booking flow, where the live one opens to say its name.
+                  */}
+                  <span aria-hidden="true" className="ios-tab__dot" />
+                  <span className="ios-tab__label">{t.label}</span>
+                </span>
+              </Tap>
+            </Fragment>
+          )
+        })}
+
+        {c.nav === 'capsule' ? <TabAction action={action} inline /> : null}
+      </nav>
+
+      {/* the short capsule has no room beside it for a detached circle, and
+          nothing either side of it to detach *from*; the dock raises its own
+          out of the middle - so both carry the action inside the bar */}
+      {c.nav === 'capsule' || c.nav === 'dock' || c.nav === 'slab' ? null : (
+        <TabAction action={action} />
+      )}
+    </div>
+  )
+}
+
+/**
+ * The wallet's navigation: a hamburger, and destinations that deal upwards.
+ *
+ * A wallet's whole screen is one big object - a balance card, a stack of shop
+ * cards - and a permanent bar across the foot of it spends a fifth of the
+ * glass saying something the reader needs twice a session. So there is no bar.
+ * There is a thumb-height button, the name of where you are, and four cards
+ * that come off the stack when it is pressed, each a beat behind the last.
+ */
+function DrawerNav({
+  c,
+  action,
+}: {
+  c: Concept
+  action?: { icon: ConceptIconName; label: string; onTap?: () => void }
+}) {
+  const { index, go } = usePhoneNav()
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="ios-drawer" data-open={open ? '' : undefined}>
+      {/* tapping anywhere else puts the cards back */}
+      <Tap
+        press={false}
+        ripple="transparent"
+        label="Close the menu"
+        onTap={() => setOpen(false)}
+        className="ios-drawer__scrim"
+      >
+        <span />
+      </Tap>
+
+      <nav className="ios-drawer__menu" aria-label={`${c.name} menu`}>
         {c.tabs.map((t, i) => {
           const Icon = CONCEPT_ICONS[t.icon]
           const on = index === i
@@ -769,41 +986,50 @@ export function TabBar({
               press={false}
               ripple="var(--a)"
               label={`Open ${t.label}`}
-              /* siblings, not depth - a tab change cross-fades */
-              onTap={() => go(i, 'tab')}
-              className="ios-tab"
+              onTap={() => {
+                setOpen(false)
+                go(i, 'tab')
+              }}
+              className="ios-drawer__item"
+              /* the deal: one beat per card, counted from the bottom, so the
+                 card nearest the thumb is the one that arrives first */
+              style={
+                {
+                  '--d': `${(c.tabs.length - 1 - i) * 45}ms`,
+                } as CSSProperties
+              }
             >
-              <span className="ios-tab__inner" data-on={on ? '' : undefined}>
-                <Icon className="ios-tab__icon" strokeWidth={on ? 2.3 : 1.8} />
-                {/*
-                  A dot, not a label and not a filled pebble.
-
-                  The bar used to carry an icon, a word and a tinted lozenge per
-                  destination - three ways of saying the same thing, at a size
-                  where the word was four pixels tall and unreadable anyway. One
-                  dot under the live icon says it once, and gives the icons room
-                  to be big enough to recognise.
-                */}
-                <span aria-hidden="true" className="ios-tab__dot" />
+              <span className="ios-drawer__card" data-on={on ? '' : undefined}>
+                <Icon className="size-[15px]" strokeWidth={on ? 2.4 : 1.9} />
+                {t.label}
               </span>
             </Tap>
           )
         })}
       </nav>
 
-      {ActionIcon ? (
+      <div className="ios-drawer__row">
         <Tap
           press={false}
           ripple="var(--a)"
-          label={action!.label}
-          onTap={action!.onTap}
-          className="ios-tabaction"
+          label={open ? 'Close the menu' : 'Open the menu'}
+          onTap={() => setOpen((o) => !o)}
+          className="ios-drawer__toggle"
         >
-          <span className="ios-tabaction__inner">
-            <ActionIcon className="size-[16px]" strokeWidth={2.3} />
+          <span className="ios-drawer__toggleInner">
+            {/* three rules that fold into a cross */}
+            <span aria-hidden="true" className="ios-drawer__bars">
+              <i />
+              <i />
+              <i />
+            </span>
           </span>
         </Tap>
-      ) : null}
+
+        <span className="ios-drawer__now">{c.tabs[index]?.label}</span>
+
+        <TabAction action={action} />
+      </div>
     </div>
   )
 }

@@ -14,7 +14,7 @@ import { ConceptDevice } from '#/components/site/phone/ConceptDevice'
 import { CONCEPTS, getConcept } from '#/lib/concepts'
 import { CONCEPT_ICONS } from '#/lib/conceptIcons'
 import { CONCEPT_SCREENS } from '#/lib/conceptScreens'
-import { LaunchScreen } from '#/lib/iosKit'
+import { Booting, LaunchScreen } from '#/lib/iosKit'
 import { PhoneNavProvider } from '#/lib/phoneUI'
 import type { PhoneNavMode } from '#/lib/phoneUI'
 import { useReveal } from '#/lib/useReveal'
@@ -255,11 +255,7 @@ function ConceptDetail() {
       <PageWash />
 
       {/* ================= 1. THE HERO ================= */}
-      <section
-        data-hero
-        data-band="paper"
-        className="cs-hero"
-      >
+      <section data-hero data-band="paper" className="cs-hero">
         <AlpineBackdrop c={concept} />
 
         <SiteHeader />
@@ -376,7 +372,7 @@ function ConceptDetail() {
               {/* ---- the device, standing in the weather ---- */}
               <div
                 data-hero-device
-                className="relative mx-auto w-full max-w-[clamp(255px,31vw,420px)] lg:mx-0"
+                className="relative mx-auto w-full max-w-[clamp(306px,37vw,504px)] lg:mx-0"
               >
                 {/* the leader-line callout the About hero labels basecamp
                     with, pointing at the thing it names */}
@@ -436,6 +432,14 @@ function ConceptDetail() {
                     </div>
                   </ConceptDevice>
                 </PhoneNavProvider>
+
+                {/* The bar inside the glass is a real router, and nobody
+                    tries tapping a picture of a phone unless they are told
+                    the picture is not one. */}
+                <p className="cs-device__hint">
+                  <span aria-hidden="true" className="cs-device__hintDot" />
+                  Tap the nav bar to see the other screens
+                </p>
               </div>
             </div>
           </div>
@@ -592,7 +596,11 @@ function ConceptDetail() {
                              turned away until the pointer picks them up */
                           restY={isActive ? 0 : -15}
                         >
-                          <Screen c={concept} />
+                          {/* each one boots a beat after the last, so the row
+                              comes up like four phones rather than one */}
+                          <Booting c={concept} delay={i * 170}>
+                            <Screen c={concept} />
+                          </Booting>
                         </PhoneMockup>
                       </PhoneNavProvider>
                     </span>
@@ -768,9 +776,7 @@ function ConceptDetail() {
               </div>
 
               <div data-reveal className="cs-panel flex-1">
-                <p className="cs-panel__eyebrow">
-                  Navigation · {concept.flow}
-                </p>
+                <p className="cs-panel__eyebrow">Navigation · {concept.flow}</p>
                 <p className="cs-panel__body">{concept.flowNote}</p>
 
                 <div className="mt-6 space-y-2">
@@ -813,7 +819,10 @@ function ConceptDetail() {
       </section>
 
       {/* ================= 8. NEXT CONCEPT ================= */}
-      <section data-band="paper" className="relative px-6 pb-20 sm:px-10 lg:px-20">
+      <section
+        data-band="paper"
+        className="relative px-6 pb-20 sm:px-10 lg:px-20"
+      >
         <div className="mx-auto max-w-[1600px]">
           <Link
             data-reveal
@@ -886,7 +895,10 @@ function isLight(hex: string) {
           .map((ch) => ch + ch)
           .join('')
       : h
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255)
-  const lin = (v: number) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+  const [r, g, b] = [0, 2, 4].map(
+    (i) => parseInt(full.slice(i, i + 2), 16) / 255,
+  )
+  const lin = (v: number) =>
+    v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
   return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b) > 0.42
 }

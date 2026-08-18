@@ -65,6 +65,39 @@ export type ConceptFeature = {
 export type ConceptMotion = 'console' | 'deck' | 'calendar' | 'chart' | 'board'
 
 /**
+ * How the app is navigated - the one piece of furniture a reader touches most,
+ * and the last thing that should be identical across five products.
+ *
+ * All five are cut from the same frosted stock as the gallery's bar: a
+ * translucent tint of the app's own surface, a hairline along its edge, an
+ * icon and a mark for the live destination. What differs is the shape that
+ * stock is cut into, and what the mark does when a destination is chosen:
+ *
+ *   rail    a squared bar welded to the bottom edge, labels showing, and an
+ *           indicator that *cuts* to the new tab in two steps rather than
+ *           sliding - a console's control, operated at speed
+ *   drawer  no bar at all. A hamburger by the thumb, and the destinations
+ *           deal upwards out of it like cards off a stack
+ *   pill    the floating capsule, with a thumb that slides along the week and
+ *           opens to show the live destination's name
+ *   still   a docked bar that never moves: the mark fades in under the new
+ *           icon and the old one fades out, because nothing chairside should
+ *           travel across a screen
+ *   bloom   the capsule again, but the accent blooms out of whatever was
+ *           tapped and settles into a lit lozenge behind it
+ *   capsule a short dark bar that does not span the screen at all - it sits
+ *           in the middle of it, holding nothing but glyphs, and lifts the
+ *           live one into a white disc that slides between them
+ *   dock    the full width of the glass, with the one action raised out of
+ *           its middle on a disc of its own - the shape a calendar app wants,
+ *           because the thing it is opened to do is add another appointment
+ *   slab    a black bar cut out of a paper canvas, with the live destination
+ *           lifted clear of it on a white disc riding above the top edge
+ */
+export type ConceptNav =
+  'rail' | 'drawer' | 'pill' | 'still' | 'bloom' | 'capsule' | 'dock' | 'slab'
+
+/**
  * What the app's surfaces are made of.
  *
  * Colour alone is not an identity: recoloured, all five would still be the same
@@ -72,12 +105,7 @@ export type ConceptMotion = 'console' | 'deck' | 'calendar' | 'chart' | 'board'
  * card is a filled tile or a hairline outline, how hard its shadow is, and how
  * the tab bar is cut. See `skinVars` in lib/iosKit.tsx.
  */
-export type ConceptSkin =
-  | 'industrial'
-  | 'paper'
-  | 'glass'
-  | 'clinical'
-  | 'neon'
+export type ConceptSkin = 'industrial' | 'paper' | 'glass' | 'clinical' | 'neon'
 
 /**
  * The figure drawn behind the case study's hero and band.
@@ -170,6 +198,32 @@ export type Concept = {
   /** the tint the glass tab bar is frosted with */
   glass: string
   /**
+   * The app's own two opaque faces.
+   *
+   * A dark product is not "the page, inverted": its cards are a lifted slab of
+   * the same ink rather than a wash of white over it, and the row that is
+   * selected is a second slab above that. Both are opaque, which is what keeps
+   * a stack of cards from turning into fog.
+   */
+  appSurface: string
+  appSurface2: string
+  /**
+   * The accent as the *app* uses it, which is not the accent the case-study
+   * page uses.
+   *
+   * On snow, the accent has to carry type, so it is deep. On the app's ink it
+   * has to carry light, so it is bright - the same colour family two stops
+   * apart. Keeping them as separate fields is what lets the page stay a white
+   * page while the glass on it is unmistakably a dark app.
+   */
+  appAccent: string
+  /** the accent lightened again, for accent-coloured type on the app's ink */
+  appAccentSoft: string
+  /** the app's second accent - the far stop of its gradients */
+  appAccent2: string
+  /** what is legible *on* a filled accent: the app's own ink, never white */
+  appOnAccent: string
+  /**
    * The deep, saturated version of the accent.
    *
    * On a snow-light page the accent itself is a graphic colour, not a text
@@ -196,6 +250,8 @@ export type Concept = {
   flowNote: string
   /** four tabs, one per screen, in screen order */
   tabs: ConceptTab[]
+  /** the shape that bar is cut into, and how it answers a tap */
+  nav: ConceptNav
 
   /* ---------------- what makes it feel like its own app ---------------- */
 
@@ -228,7 +284,7 @@ export const CONCEPTS: Concept[] = [
       'Nothing in that chain is wrong on its own. Together they lose things - the callout that never got assigned, the quote that was verbally agreed, the before-photo that would have ended a dispute in one message.',
       'Fieldly collapses the chain into one board. Open the app in a van at 7am and the whole day is already there, in an interface built to survive winter glare on a cracked screen protector, read with one hand.',
     ],
-    screens: ['Dispatch', 'Job Card', 'Proof', 'The Week'],
+    screens: ['Job Card', 'Dispatch', 'Proof', 'The Week'],
     screensSubtitle: 'Four screens, and the day runs itself.',
     featuresSubtitle: 'Built for the van, not the office chair.',
     features: [
@@ -266,27 +322,27 @@ export const CONCEPTS: Concept[] = [
     palette: [
       {
         name: 'Ember',
-        swatch: '#E0511C',
-        hex: '#E0511C',
-        note: 'Primary action, live state, wordmark',
+        swatch: '#FF6B35',
+        hex: '#FF6B35',
+        note: 'Spent only where something is happening',
       },
       {
-        name: 'Beacon',
-        swatch: '#F2A93B',
-        hex: '#F2A93B',
-        note: 'The vest colour - second stop, and only ever a signal',
+        name: 'Slab',
+        swatch: '#201A15',
+        hex: '#201A15',
+        note: 'Every object that carries the day',
       },
       {
-        name: 'Snowfield',
-        swatch: '#EDF1F6',
-        hex: '#EDF1F6',
-        note: 'App canvas - daylight, because the windscreen is',
+        name: 'Soot',
+        swatch: '#0B0A09',
+        hex: '#0B0A09',
+        note: 'App canvas - the ground the slabs sit on',
       },
       {
-        name: 'Gravel',
-        swatch: '#6B7480',
-        hex: '#6B7480',
-        note: 'Secondary text & inactive tabs',
+        name: 'Sage',
+        swatch: '#BFE3DA',
+        hex: '#BFE3DA',
+        note: 'The quiet panels, and the week behind the bars',
       },
     ],
     accent: '#E0511C',
@@ -301,22 +357,36 @@ export const CONCEPTS: Concept[] = [
       length: 214,
     },
     accent2: '#F2A93B',
-    surface: 'light',
-    appBg: ['#FFFFFF', '#EDF1F6'],
-    appInk: '#14181F',
-    appInkSoft: '#6B7480',
-    glass: 'rgba(255,255,255,0.72)',
+    /*
+      Paper, with the weight put back as black.
+      A console does not have to be a dark app to survive a windscreen - it has
+      to be *contrasty*. So the canvas is near-white, the objects that carry
+      the day are near-black slabs cut out of it, and ember is spent only where
+      something is actually happening. Everything quiet is a pastel.
+    */
+    surface: 'dark',
+    appBg: ['#0B0A09', '#0B0A09'],
+    appInk: '#F6F1EC',
+    appInkSoft: '#8E8279',
+    glass: 'color-mix(in srgb, #16120F 76%, transparent)',
+    appSurface: '#16120F',
+    appSurface2: '#201A15',
+    appAccent: '#FF6B35',
+    appAccentSoft: '#FF9B72',
+    appAccent2: '#BFE3DA',
+    appOnAccent: '#0B0A09',
     band: '#9C3208',
     wash: '#FBEEE7',
     flow: 'Ops console',
     flowNote:
-      'A bright board that survives glare on a windscreen at eight in the morning. The tab bar floats clear of the list so a thumb never covers the job it is reaching for.',
+      'A board cut from soot so it survives both a dark cab at six and a windscreen at noon. The tab bar floats clear of the list so a thumb never covers the job it is reaching for.',
     tabs: [
-      { icon: 'Radio', label: 'Board' },
       { icon: 'FileText', label: 'Job' },
+      { icon: 'Radio', label: 'Board' },
       { icon: 'Images', label: 'Proof' },
       { icon: 'CalendarDays', label: 'Week' },
     ],
+    nav: 'slab',
     motion: 'console',
     motionNote:
       'Screens cut in hard and square, one frame of overshoot and done. Nothing eases gently on a machine you are meant to operate at speed with one hand.',
@@ -378,27 +448,27 @@ export const CONCEPTS: Concept[] = [
     palette: [
       {
         name: 'Rowan',
-        swatch: '#C4682A',
-        hex: '#C4682A',
+        swatch: '#F2A65A',
+        hex: '#F2A65A',
         note: 'Primary action & the ink the stamp is cut in',
       },
       {
         name: 'Butter',
-        swatch: '#F0B860',
-        hex: '#F0B860',
+        swatch: '#F7C48A',
+        hex: '#F7C48A',
         note: 'Filled holes, reward states & card gradients',
       },
       {
-        name: 'Oat',
-        swatch: '#FBF5EA',
-        hex: '#FBF5EA',
-        note: 'App canvas - stock, never white',
+        name: 'Cellar',
+        swatch: '#0D1210',
+        hex: '#0D1210',
+        note: 'App canvas - the wallet, shut',
       },
       {
-        name: 'Espresso',
-        swatch: '#2A1A12',
-        hex: '#2A1A12',
-        note: 'Text & the deep face of a filled card',
+        name: 'Stock',
+        swatch: '#151F1A',
+        hex: '#151F1A',
+        note: 'The face every card is printed on',
       },
     ],
     accent: '#C4682A',
@@ -413,22 +483,30 @@ export const CONCEPTS: Concept[] = [
       length: 187,
     },
     accent2: '#F0B860',
-    surface: 'light',
-    appBg: ['#FFFDF8', '#F3E9D9'],
-    appInk: '#2A1A12',
-    appInkSoft: '#8A7462',
-    glass: 'rgba(255,253,248,0.74)',
+    /* amber on a dark room - the card lit from inside the wallet */
+    surface: 'dark',
+    appBg: ['#0D1210', '#0D1210'],
+    appInk: '#F3F4EC',
+    appInkSoft: '#8B9A90',
+    glass: 'color-mix(in srgb, #151F1A 72%, transparent)',
+    appSurface: '#151F1A',
+    appSurface2: '#1C2A23',
+    appAccent: '#F2A65A',
+    appAccentSoft: '#F7C48A',
+    appAccent2: '#6EC1E4',
+    appOnAccent: '#0D1210',
     band: '#8A4212',
     wash: '#F8EEE0',
     flow: 'Wallet-first',
     flowNote:
-      'Cards stack like a real wallet and lift when picked. The tab bar is warm frosted stock so the deck reads through it instead of stopping at a bar.',
+      'Cards stack like a real wallet and lift when picked. The tab bar is frosted dark stock so the deck reads through it instead of stopping at a bar.',
     tabs: [
       { icon: 'Wallet', label: 'Wallet' },
       { icon: 'Stamp', label: 'Card' },
       { icon: 'Gift', label: 'Rewards' },
       { icon: 'Compass', label: 'Nearby' },
     ],
+    nav: 'drawer',
     motion: 'deck',
     motionNote:
       'A screen is a card off the top of the deck: it lifts, rotates a degree and drops into place. The one it replaced sinks rather than slides, because a wallet has depth and no sideways.',
@@ -490,27 +568,27 @@ export const CONCEPTS: Concept[] = [
     palette: [
       {
         name: 'Glacier',
-        swatch: '#2F6FD0',
-        hex: '#2F6FD0',
+        swatch: '#2DD4BF',
+        hex: '#2DD4BF',
         note: 'Primary action & the slot you picked',
       },
       {
         name: 'Mist',
-        swatch: '#A9D2F5',
-        hex: '#A9D2F5',
+        swatch: '#7EEAE0',
+        hex: '#7EEAE0',
         note: 'Free slots & soft fills',
       },
       {
-        name: 'Porcelain',
-        swatch: '#F3F7FC',
-        hex: '#F3F7FC',
+        name: 'Deep',
+        swatch: '#0A1614',
+        hex: '#0A1614',
         note: 'App canvas - cool and quiet',
       },
       {
-        name: 'Slate Ink',
-        swatch: '#0F1A2B',
-        hex: '#0F1A2B',
-        note: 'Text, headings & the confirm sheet',
+        name: 'Coral',
+        swatch: '#FF8577',
+        hex: '#FF8577',
+        note: 'Taken slots - the only warm thing in the app',
       },
     ],
     accent: '#2F6FD0',
@@ -525,11 +603,18 @@ export const CONCEPTS: Concept[] = [
       length: 231,
     },
     accent2: '#A9D2F5',
-    surface: 'light',
-    appBg: ['#FFFFFF', '#E8EFF9'],
-    appInk: '#0F1A2B',
-    appInkSoft: '#66748A',
-    glass: 'rgba(255,255,255,0.72)',
+    /* teal on deep water - a booking flow that reads at arm's length */
+    surface: 'dark',
+    appBg: ['#0A1614', '#0A1614'],
+    appInk: '#EAFBF8',
+    appInkSoft: '#7BA69D',
+    glass: 'color-mix(in srgb, #0F211E 72%, transparent)',
+    appSurface: '#0F211E',
+    appSurface2: '#153029',
+    appAccent: '#2DD4BF',
+    appAccentSoft: '#7EEAE0',
+    appAccent2: '#FF8577',
+    appOnAccent: '#0A1614',
     band: '#17458F',
     wash: '#E9F1FB',
     flow: 'Calendar-first',
@@ -541,6 +626,7 @@ export const CONCEPTS: Concept[] = [
       { icon: 'CalendarHeart', label: 'Visits' },
       { icon: 'Store', label: 'Desk' },
     ],
+    nav: 'dock',
     motion: 'calendar',
     motionNote:
       'Everything travels along the axis the week runs on - horizontally, at the speed of a thumb pushing days. Nothing in a booking app should ever appear to come toward you.',
@@ -558,7 +644,8 @@ export const CONCEPTS: Concept[] = [
     timeline: '5 weeks',
     blurb:
       'Recall, charting and the chair day for small dental practices - the four things a hygienist touches hourly, and nothing they never will.',
-    problemTitle: 'The recall list is a spreadsheet nobody has opened since May.',
+    problemTitle:
+      'The recall list is a spreadsheet nobody has opened since May.',
     problemBody: [
       'A two-surgery practice gets offered enterprise software with claims modules, marketing automation and a per-seat licence, or it gets a shared drive full of spreadsheets. Most take the spreadsheets and quietly accept that recall is now a memory exercise.',
       'The cost is invisible until it is counted: patients who drift off the six-month cycle and never come back, chairs sitting empty on a Wednesday, and a front desk exporting CSVs to answer a question that should take one tap.',
@@ -601,27 +688,27 @@ export const CONCEPTS: Concept[] = [
     ],
     palette: [
       {
-        name: 'Pine',
-        swatch: '#17897A',
-        hex: '#17897A',
+        name: 'Spearmint',
+        swatch: '#5EEAD4',
+        hex: '#5EEAD4',
         note: 'Primary action & healthy state',
       },
       {
-        name: 'Spearmint',
-        swatch: '#9AE0CD',
-        hex: '#9AE0CD',
+        name: 'Vapour',
+        swatch: '#A7F3E8',
+        hex: '#A7F3E8',
         note: 'Charts, fills & completed work',
       },
       {
-        name: 'Bone',
-        swatch: '#F3F9F7',
-        hex: '#F3F9F7',
-        note: 'App canvas - clean, not cold',
+        name: 'Surgery',
+        swatch: '#0B1512',
+        hex: '#0B1512',
+        note: 'App canvas - dark, for a room with the lights down',
       },
       {
         name: 'Overdue',
-        swatch: '#F0463C',
-        hex: '#F0463C',
+        swatch: '#FB7185',
+        hex: '#FB7185',
         note: 'The one alarm colour, used exactly once',
       },
     ],
@@ -637,11 +724,18 @@ export const CONCEPTS: Concept[] = [
       length: 168,
     },
     accent2: '#9AE0CD',
-    surface: 'light',
-    appBg: ['#FFFFFF', '#E6F1EE'],
-    appInk: '#0B221E',
-    appInkSoft: '#64837C',
-    glass: 'rgba(255,255,255,0.72)',
+    /* clinical mint on deep ink - chairside, in a room with the lights down */
+    surface: 'dark',
+    appBg: ['#0B1512', '#0B1512'],
+    appInk: '#EAF7F3',
+    appInkSoft: '#7FA69B',
+    glass: 'color-mix(in srgb, #12201B 72%, transparent)',
+    appSurface: '#12201B',
+    appSurface2: '#182A23',
+    appAccent: '#5EEAD4',
+    appAccentSoft: '#A7F3E8',
+    appAccent2: '#7DD3FC',
+    appOnAccent: '#0B1512',
     band: '#0B5A4E',
     wash: '#E7F3EF',
     flow: 'Chart-first',
@@ -653,6 +747,7 @@ export const CONCEPTS: Concept[] = [
       { icon: 'CalendarClock', label: 'Day' },
       { icon: 'Activity', label: 'Plan' },
     ],
+    nav: 'still',
     motion: 'chart',
     motionNote:
       'Screens dissolve and settle a hair, never travel. Chairside the device is held at arm’s length in someone else’s mouth-light; movement across the glass reads as a slip of the hand.',
@@ -670,7 +765,8 @@ export const CONCEPTS: Concept[] = [
     timeline: '4 weeks',
     blurb:
       'A first-light pipeline for five-person sales teams - capture, stage, nudge, close, and not one field a nobody will ever fill in.',
-    problemTitle: 'Deals are not lost to competitors. They are lost to Thursday.',
+    problemTitle:
+      'Deals are not lost to competitors. They are lost to Thursday.',
     problemBody: [
       'A small team rarely loses on price. It loses in the eight days between a good call and the follow-up nobody sent, because the lead was sitting in an inbox behind forty other things.',
       'Full CRM platforms answer this with configuration - custom objects, workflow builders, required fields - and a five-person team will not finish setting that up, so the pipeline slowly becomes a fiction that gets updated the night before a board meeting.',
@@ -714,26 +810,26 @@ export const CONCEPTS: Concept[] = [
     palette: [
       {
         name: 'Dusk',
-        swatch: '#5B57C4',
-        hex: '#5B57C4',
+        swatch: '#A855F7',
+        hex: '#A855F7',
         note: 'Primary action & active stage',
       },
       {
         name: 'Blush',
-        swatch: '#E5749C',
-        hex: '#E5749C',
+        swatch: '#F472B6',
+        hex: '#F472B6',
         note: 'Second gradient stop - and only ever *won*',
       },
       {
-        name: 'First Light',
-        swatch: '#F1F1FA',
-        hex: '#F1F1FA',
-        note: 'App canvas - light by default',
+        name: 'Midnight',
+        swatch: '#0C0A14',
+        hex: '#0C0A14',
+        note: 'App canvas - the hour the pipeline is worked in',
       },
       {
         name: 'Haze',
-        swatch: '#6F6C88',
-        hex: '#6F6C88',
+        swatch: '#8B84A3',
+        hex: '#8B84A3',
         note: 'Secondary text & inactive tabs',
       },
     ],
@@ -749,11 +845,18 @@ export const CONCEPTS: Concept[] = [
       length: 202,
     },
     accent2: '#E5749C',
-    surface: 'light',
-    appBg: ['#FFFFFF', '#ECECF8'],
-    appInk: '#14132A',
-    appInkSoft: '#6F6C88',
-    glass: 'rgba(255,255,255,0.72)',
+    /* violet on midnight - a pipeline worked from a phone after hours */
+    surface: 'dark',
+    appBg: ['#0C0A14', '#0C0A14'],
+    appInk: '#F3EEFA',
+    appInkSoft: '#8B84A3',
+    glass: 'color-mix(in srgb, #16121F 72%, transparent)',
+    appSurface: '#16121F',
+    appSurface2: '#1E1929',
+    appAccent: '#A855F7',
+    appAccentSoft: '#D8B4FE',
+    appAccent2: '#F472B6',
+    appOnAccent: '#0C0A14',
     band: '#383497',
     wash: '#EEEEF9',
     flow: 'Pipeline board',
@@ -765,6 +868,7 @@ export const CONCEPTS: Concept[] = [
       { icon: 'BellRing', label: 'Nudges' },
       { icon: 'TrendingUp', label: 'Week' },
     ],
+    nav: 'capsule',
     motion: 'board',
     motionNote:
       'Screens rack across like a shelf being pushed - the whole board moves as one piece, with a little weight behind it and none of the bounce that would make a pipeline feel playful.',
@@ -776,4 +880,26 @@ export const CONCEPTS: Concept[] = [
 
 export function getConcept(slug: string): Concept | undefined {
   return CONCEPTS.find((c) => c.slug === slug)
+}
+
+/**
+ * The concept as the *app* sees itself.
+ *
+ * Every screen reaches for `c.accent` when it paints a gradient, a filled
+ * glyph or a chart bar - and inside the glass that has to be the app's bright
+ * accent, not the deep one the white case-study page is set in. Rather than
+ * teach two hundred call sites the difference, the palette is swapped once,
+ * here, and the screens carry on reading the same three fields they always
+ * did.
+ *
+ * `accentInk` becomes what is legible on top of a filled accent, which on a
+ * dark app is the app's own ink rather than white.
+ */
+export function appOf(c: Concept): Concept {
+  return {
+    ...c,
+    accent: c.appAccent,
+    accent2: c.appAccent2,
+    accentInk: c.appOnAccent,
+  }
 }

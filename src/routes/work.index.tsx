@@ -67,7 +67,7 @@ const MADE = [
     k: 'Build',
     t: 'A feature set with edges',
     d: 'What ships, what waits, and what we deliberately left out - written down, not implied.',
-    img: '/work/build.png',
+    img: '/work/build.webp',
     w: 600,
     h: 596,
     alt: 'A code editor window with brackets and syntax marks, rising out of a bank of cloud.',

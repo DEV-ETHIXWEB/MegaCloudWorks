@@ -43,6 +43,23 @@
   padding-bottom: 5.1rem;
 }
 
+/* the wallet's menu is a button, not a bar, so its last row needs far less
+   clearance; the console's bar is welded to the very bottom edge and needs a
+   little more */
+.ios[data-nav='drawer'] .ios__scroll--inset {
+  padding-bottom: 4.2rem;
+}
+
+.ios[data-nav='rail'] .ios__scroll--inset {
+  padding-bottom: 5.4rem;
+}
+
+/* the slab's disc rides above the bar's top edge, so the last row has to
+   clear the bar *and* the disc standing on it */
+.ios[data-nav='slab'] .ios__scroll--inset {
+  padding-bottom: 6rem;
+}
+
 /* ---- status bar ---- */
 
 .ios-status {
@@ -92,7 +109,7 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--a);
+  color: var(--a-soft, var(--a));
 }
 
 .ios-large__title {
@@ -188,10 +205,10 @@
   left: 2px;
   bottom: 2px;
   border-radius: calc(var(--r-field, 8px) - 2px);
-  background: var(--card);
+  background: color-mix(in srgb, #ffffff 11%, var(--surf-2, var(--card)));
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.14),
-    0 0 0 0.5px rgba(0, 0, 0, 0.04);
+    inset 0 0 0 0.5px var(--hair),
+    0 2px 6px -3px rgba(0, 0, 0, 0.6);
   transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -221,7 +238,7 @@
   padding: 9px 12px;
   border-radius: var(--r-btn, 11px);
   background-image: linear-gradient(120deg, var(--a) 0%, var(--a2) 140%);
-  color: #fff;
+  color: var(--on-a, #fff);
   font-size: 12.5px;
   font-weight: 800;
   letter-spacing: -0.005em;
@@ -248,7 +265,11 @@
 }
 
 .ios[data-surface='dark'] .ios-card {
-  box-shadow: var(--edge, none), inset 0 0 0 0.5px var(--hair);
+  background: var(--card);
+  box-shadow:
+    var(--edge, none),
+    inset 0 0 0 1px var(--hair),
+    var(--shadow);
 }
 
 .ios-card--glass {
@@ -281,7 +302,10 @@
 }
 
 .ios[data-surface='dark'] .ios-group__body {
-  box-shadow: var(--edge, 0 0 #0000), inset 0 0 0 0.5px var(--hair);
+  box-shadow:
+    var(--edge, 0 0 #0000),
+    inset 0 0 0 1px var(--hair),
+    var(--shadow);
 }
 
 /* the hairline stops short of the left edge, the way iOS insets its
@@ -426,7 +450,7 @@
   justify-content: center;
   flex-shrink: 0;
   border-radius: 999px;
-  color: #fff;
+  color: var(--on-a, #fff);
   font-weight: 800;
   letter-spacing: 0.01em;
 }
@@ -490,8 +514,8 @@
   backdrop-filter: blur(30px) saturate(190%);
   -webkit-backdrop-filter: blur(30px) saturate(190%);
   box-shadow:
-    inset 0 0.5px 0 rgba(255, 255, 255, 0.4),
-    0 -14px 40px -16px rgba(0, 0, 0, 0.55);
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.12),
+    0 -14px 40px -16px rgba(0, 0, 0, 0.6);
   transform: translateY(102%);
   transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -575,6 +599,7 @@
 
 .ios-tab__inner {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -585,7 +610,7 @@
 }
 
 .ios-tab__inner[data-on] {
-  color: var(--a);
+  color: var(--a-soft, var(--a));
 }
 
 .ios-tab__icon {
@@ -614,6 +639,31 @@
 .ios-tab__inner[data-on] .ios-tab__dot {
   opacity: 1;
   transform: scale(1);
+}
+
+/* off by default: only the shapes that ask for words show them */
+.ios-tab__label {
+  display: none;
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* the travelling mark. One element per bar, moved by the live index rather
+   than one per tab shown and hidden - which is what lets it *travel* at all. */
+.ios-tabs__thumb {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  left: 6px;
+  top: 6px;
+  bottom: 6px;
+  width: calc((100% - 12px) / var(--tab-count));
+  transform: translateX(calc(var(--tab-i) * 100%));
+  border-radius: calc(var(--r-tab, 18px) - 7px);
 }
 
 /* ---- the detached action ---- */
@@ -645,7 +695,7 @@
   backdrop-filter: blur(20px) saturate(170%);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
   box-shadow:
-    inset 0 0.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.12),
     inset 0 0 0 0.5px var(--hair),
     0 12px 28px -12px rgba(0, 0, 0, 0.6);
   transition: transform 240ms cubic-bezier(0.32, 0.72, 0, 1);
@@ -653,6 +703,1521 @@
 
 .ios-tabaction:active .ios-tabaction__inner {
   transform: scale(0.92);
+}
+
+/* ================= rail - Fieldly ================= *
+   A console's control: squared, welded to the bottom edge, labels on, and an
+   indicator that does not glide. It cuts in two steps, because a machine
+   operated at speed should answer instantly and then be still.            */
+
+.ios-tabbar[data-nav='rail'] {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  gap: 0;
+  padding: 0 8px 8px 0;
+  align-items: flex-end;
+}
+
+.ios-tabbar[data-nav='rail'] .ios-tabs {
+  border-radius: 0;
+  padding: 9px 2px 15px;
+  background: color-mix(in srgb, var(--surf) 88%, transparent);
+  box-shadow:
+    inset 0 0.5px 0 var(--hair),
+    0 -8px 24px -18px rgba(0, 0, 0, 0.9);
+}
+
+.ios-tabbar[data-nav='rail'] .ios-tab__label {
+  display: block;
+}
+
+.ios-tabbar[data-nav='rail'] .ios-tab__dot {
+  display: none;
+}
+
+.ios-tabbar[data-nav='rail'] .ios-tab__inner {
+  gap: 3px;
+}
+
+/* the rail itself: a hard bar along the top edge of the live cell */
+.ios-tabbar[data-nav='rail'] .ios-tabs__thumb {
+  left: 2px;
+  top: 0;
+  bottom: auto;
+  height: 2px;
+  width: calc((100% - 4px) / var(--tab-count));
+  border-radius: 0;
+  background: var(--a);
+  /* two steps and done - the cut a console makes, not a slide */
+  transition: transform 120ms steps(2, end);
+  animation: railCut 200ms steps(2, end);
+}
+
+@keyframes railCut {
+  from {
+    opacity: 0.35;
+    box-shadow: 0 0 0 0 var(--a);
+  }
+  to {
+    opacity: 1;
+    box-shadow: 0 4px 14px -4px var(--a);
+  }
+}
+
+/* the console's action is not a floating circle: it is a key on the same
+   panel as the destinations, squared off and filled */
+.ios-tabbar[data-nav='rail'] {
+  padding: 0;
+}
+
+.ios-tabbar[data-nav='rail'] .ios-tabaction {
+  align-self: stretch;
+  flex: 0 0 40px;
+  width: 40px !important;
+}
+
+.ios-tabbar[data-nav='rail'] .ios-tabaction__inner {
+  border-radius: 0;
+  background: var(--a);
+  color: var(--on-a);
+  box-shadow: inset 0 0.5px 0 var(--hair);
+  padding-bottom: 6px;
+}
+
+/* ================= pill - Slate ================= *
+   The floating capsule. The thumb slides along the row the way the week does,
+   and the live destination opens to say its name.                          */
+
+.ios-tabbar[data-nav='pill'] .ios-tabs {
+  padding: 9px 6px;
+}
+
+.ios-tabbar[data-nav='pill'] .ios-tabs__thumb {
+  background: color-mix(in srgb, var(--a) 20%, transparent);
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--a) 34%, transparent);
+  border-radius: 999px;
+  transition: transform 460ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-tabbar[data-nav='pill'] .ios-tab__dot {
+  display: none;
+}
+
+/* the name arrives with the thumb: height, not opacity, so the capsule grows
+   into it rather than printing it on top of itself */
+.ios-tabbar[data-nav='pill'] .ios-tab__label {
+  display: block;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 340ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 220ms ease;
+}
+
+.ios-tabbar[data-nav='pill'] .ios-tab__inner[data-on] .ios-tab__label {
+  max-height: 12px;
+  opacity: 1;
+}
+
+/* ================= still - Prophy ================= *
+   Nothing chairside travels. The bar is docked, the icons are bare, and the
+   mark simply resolves under the one you chose.                            */
+
+.ios-tabbar[data-nav='still'] {
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+}
+
+.ios-tabbar[data-nav='still'] .ios-tabs {
+  padding: 11px 4px 10px;
+  background: color-mix(in srgb, var(--surf) 90%, transparent);
+}
+
+.ios-tabbar[data-nav='still'] .ios-tab__dot {
+  width: 16px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--a);
+  /* it does not scale in, and it does not slide: it resolves */
+  transform: none;
+  transition: opacity 420ms ease;
+}
+
+.ios-tabbar[data-nav='still'] .ios-tab__inner[data-on] .ios-tab__icon {
+  transform: none;
+}
+
+/* ================= bloom - Leadr ================= *
+   The capsule again, but the accent comes out of whatever was tapped: a ring
+   that swells and fades, leaving a lit lozenge behind the live icon.        */
+
+.ios-tabbar[data-nav='bloom'] .ios-tabs__thumb {
+  background: radial-gradient(
+    120% 120% at 50% 120%,
+    color-mix(in srgb, var(--a) 42%, transparent),
+    transparent 72%
+  );
+  border-radius: 999px;
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: bloomOut 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes bloomOut {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--a) 55%, transparent);
+    filter: brightness(1.7);
+  }
+  70% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    filter: none;
+  }
+}
+
+.ios-tabbar[data-nav='bloom'] .ios-tab__inner[data-on] {
+  text-shadow: 0 0 14px color-mix(in srgb, var(--a) 60%, transparent);
+}
+
+/* ================= slab - Fieldly ================= *
+   A black bar cut out of a paper canvas, and the live destination lifted
+   clear of it on a white disc that rides above the top edge. The disc is the
+   only white object on the bar, so where you are is readable at a glance from
+   the far side of a van.                                                    */
+
+.ios-tabbar[data-nav='slab'] {
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  align-items: flex-end;
+  /* the bar is an object sitting in the middle of the glass, not a shelf
+     bolted across it - so it is only as wide as the destinations it holds */
+  justify-content: center;
+  gap: 0;
+}
+
+.ios-tabbar[data-nav='slab'] .ios-tabs {
+  flex: 0 0 auto;
+  overflow: visible;
+  padding: 13px 8px;
+  border-radius: 22px;
+  background: var(--slab);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 1px var(--slab-hair),
+    0 14px 30px -16px rgba(11, 11, 12, 0.75);
+}
+
+/* fixed cells rather than a share of the bar, so the bar sizes to its
+   contents and the disc still lands exactly on one of them */
+.ios-tabbar[data-nav='slab'] .ios-tab {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 46px;
+  width: 46px !important;
+}
+
+.ios-tabbar[data-nav='slab'] .ios-tab__inner {
+  gap: 0;
+  color: color-mix(in srgb, var(--on-slab) 50%, transparent);
+}
+
+.ios-tabbar[data-nav='slab'] .ios-tab__dot,
+.ios-tabbar[data-nav='slab'] .ios-tab__label {
+  display: none;
+}
+
+.ios-tabbar[data-nav='slab'] .ios-tab__icon {
+  width: 19px;
+  height: 19px;
+  transition:
+    transform 420ms cubic-bezier(0.32, 0.72, 0, 1),
+    color 240ms ease;
+}
+
+/* the live glyph inverts, because it is now standing on the disc */
+.ios-tabbar[data-nav='slab'] .ios-tab__inner[data-on] {
+  color: var(--slab);
+}
+
+.ios-tabbar[data-nav='slab'] .ios-tab__inner[data-on] .ios-tab__icon {
+  transform: translateY(-9px);
+}
+
+/* the disc: one cell wide, raised so it breaks the bar's top edge */
+.ios-tabbar[data-nav='slab'] .ios-tabs__thumb {
+  z-index: 0;
+  left: 8px;
+  top: -12px;
+  bottom: auto;
+  width: calc((100% - 16px) / var(--tab-count));
+  aspect-ratio: 1;
+  height: auto;
+  border-radius: 999px;
+  background: var(--on-slab);
+  box-shadow:
+    0 0 0 5px var(--slab),
+    0 10px 20px -8px rgba(11, 11, 12, 0.6);
+  transform: translateX(calc(var(--tab-i) * 100%));
+  transition: transform 460ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: slabRise 460ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* it comes up through the bar rather than sliding along in front of it */
+@keyframes slabRise {
+  0% {
+    transform: translateX(calc(var(--tab-i) * 100%)) translateY(10px)
+      scale(0.72);
+  }
+  100% {
+    transform: translateX(calc(var(--tab-i) * 100%)) translateY(0) scale(1);
+  }
+}
+
+/* ================= dock - Slate ================= *
+   The full width of the glass, and the one thing this app is opened to do -
+   add another appointment - raised out of the middle of it on a disc of its
+   own. The live destination goes solid and grows a dot beneath it; there is
+   no travelling mark, because the raised disc already owns the centre and two
+   moving objects in one bar is one too many.                                */
+
+.ios-tabbar[data-nav='dock'] {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  gap: 0;
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tabs {
+  align-items: center;
+  padding: 10px 8px 16px;
+  border-radius: 22px 22px 0 0;
+  background: color-mix(in srgb, var(--surf) 92%, transparent);
+  box-shadow:
+    inset 0 0.5px 0 var(--hair),
+    0 -10px 30px -20px rgba(0, 0, 0, 0.9);
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tabs__thumb {
+  display: none;
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tab__inner {
+  gap: 5px;
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tab__label {
+  display: none;
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tab__icon {
+  width: 19px;
+  height: 19px;
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tab__inner[data-on] {
+  color: var(--ink);
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tab__inner[data-on] .ios-tab__icon {
+  transform: none;
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tab__dot {
+  width: 4px;
+  height: 4px;
+  background: var(--a);
+}
+
+/* the raised disc: it sits above the bar line rather than in it, which is the
+   whole point - it is an action, not a place */
+.ios-tabbar[data-nav='dock'] .ios-tabaction--in {
+  flex: 0 0 46px;
+  width: 46px !important;
+  height: 46px;
+  margin: -22px 6px 0;
+}
+
+.ios-tabbar[data-nav='dock'] .ios-tabaction--in .ios-tabaction__inner {
+  border-radius: 999px;
+  background: var(--surf);
+  color: var(--a);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 4px color-mix(in srgb, var(--surf) 92%, transparent),
+    inset 0 0 0 5px color-mix(in srgb, var(--a) 55%, transparent),
+    0 10px 22px -8px rgba(0, 0, 0, 0.8);
+}
+
+/* ================= capsule - Leadr ================= *
+   Not a bar across the foot of the screen: a short dark object floating in
+   the middle of it, holding glyphs and nothing else. The live one is lifted
+   out of the dark onto a white disc, and the disc is what travels - which is
+   why the cells are a fixed width rather than a share of the bar.          */
+
+.ios-tabbar[data-nav='capsule'] {
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  justify-content: center;
+  gap: 0;
+}
+
+.ios-tabbar[data-nav='capsule'] .ios-tabs {
+  flex: 0 0 auto;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 999px;
+  /*
+    The reference sets a near-black bar on a white page. Repeating that hex on
+    an app whose canvas is already midnight would hand back a bar you cannot
+    see - the *contrast* is the thing being copied, not the colour. So the
+    object is a few per cent above its own canvas, with a rim light along the
+    top edge, and the white disc does the rest.
+  */
+  background: color-mix(in srgb, #ffffff 9%, #0a0812);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 18px 34px -14px rgba(0, 0, 0, 0.9);
+}
+
+.ios-tabbar[data-nav='capsule'] .ios-tab {
+  flex: 0 0 40px;
+  width: 40px !important;
+  height: 40px;
+}
+
+.ios-tabbar[data-nav='capsule'] .ios-tab__inner {
+  justify-content: center;
+  height: 100%;
+  gap: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* on the disc, the glyph goes dark - it is the only place in this app where
+   ink sits on white */
+.ios-tabbar[data-nav='capsule'] .ios-tab__inner[data-on] {
+  color: #0c0a14;
+  text-shadow: none;
+}
+
+.ios-tabbar[data-nav='capsule'] .ios-tab__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.ios-tabbar[data-nav='capsule'] .ios-tab__inner[data-on] .ios-tab__icon {
+  transform: none;
+}
+
+.ios-tabbar[data-nav='capsule'] .ios-tab__dot,
+.ios-tabbar[data-nav='capsule'] .ios-tab__label {
+  display: none;
+}
+
+/* the disc itself: one cell wide, moved a whole cell at a time */
+.ios-tabbar[data-nav='capsule'] .ios-tabs__thumb {
+  left: 6px;
+  top: 6px;
+  bottom: 6px;
+  width: 40px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.7);
+  /* 40px cell + 2px gap */
+  transform: translateX(calc(var(--tab-i) * 42px));
+  transition: transform 480ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: discSettle 480ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* it lands rather than arrives: a squeeze along the direction of travel, let
+   go over the last third */
+@keyframes discSettle {
+  0% {
+    transform: translateX(calc(var(--tab-i) * 42px)) scaleX(1.22) scaleY(0.88);
+  }
+  100% {
+    transform: translateX(calc(var(--tab-i) * 42px)) scale(1);
+  }
+}
+
+/* the action rides in the bar, told apart by its accent rather than by
+   sitting in its own circle outside */
+.ios-tabbar[data-nav='capsule'] .ios-tabaction--in {
+  flex: 0 0 40px;
+  width: 40px !important;
+  height: 40px;
+  margin-left: 2px;
+}
+
+.ios-tabbar[data-nav='capsule'] .ios-tabaction--in .ios-tabaction__inner {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--a) 26%, transparent);
+  color: var(--a-soft, var(--a));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--a) 42%, transparent);
+}
+
+/* ================= drawer - Stamp ================= *
+   No bar. A button by the thumb, the name of where you are, and four cards
+   dealt off the stack when it is pressed.                                   */
+
+.ios-drawer {
+  position: absolute;
+  z-index: 5;
+  left: 10px;
+  right: 10px;
+  bottom: 14px;
+  pointer-events: none;
+}
+
+.ios-drawer__scrim {
+  position: absolute !important;
+  left: -10px;
+  right: -10px;
+  bottom: -14px;
+  top: -520px;
+  opacity: 0;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--surf) 55%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition: opacity 320ms ease;
+}
+
+.ios-drawer[data-open] .ios-drawer__scrim {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ios-drawer__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 7px;
+  pointer-events: none;
+}
+
+.ios-drawer__item {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(14px) scale(0.96);
+  transition:
+    opacity 260ms ease var(--d, 0ms),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
+}
+
+.ios-drawer[data-open] .ios-drawer__item {
+  pointer-events: auto;
+  opacity: 1;
+  transform: none;
+}
+
+.ios-drawer__card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--r-card, 18px);
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 0 0 0.5px var(--hair),
+    var(--shadow);
+  color: var(--ink2);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.ios-drawer__card[data-on] {
+  color: var(--on-a);
+  background: var(--a);
+  box-shadow: 0 12px 26px -14px var(--a);
+}
+
+.ios-drawer__row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.ios-drawer__row > * {
+  pointer-events: auto;
+}
+
+.ios-drawer__toggle {
+  flex: 0 0 46px;
+  width: 46px !important;
+}
+
+.ios-drawer__toggleInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 0.5px var(--hair),
+    0 12px 28px -12px rgba(0, 0, 0, 0.6);
+  color: var(--a);
+  transition: background 240ms ease;
+}
+
+.ios-drawer[data-open] .ios-drawer__toggleInner {
+  background: var(--a);
+  color: var(--on-a);
+}
+
+.ios-drawer__bars {
+  position: relative;
+  display: block;
+  width: 15px;
+  height: 11px;
+}
+
+.ios-drawer__bars i {
+  position: absolute;
+  left: 0;
+  height: 1.8px;
+  width: 100%;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 380ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 200ms ease;
+}
+
+.ios-drawer__bars i:nth-child(1) {
+  top: 0;
+}
+.ios-drawer__bars i:nth-child(2) {
+  top: 4.6px;
+  width: 70%;
+}
+.ios-drawer__bars i:nth-child(3) {
+  top: 9.2px;
+}
+
+.ios-drawer[data-open] .ios-drawer__bars i:nth-child(1) {
+  transform: translateY(4.6px) rotate(45deg);
+}
+.ios-drawer[data-open] .ios-drawer__bars i:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-6px);
+}
+.ios-drawer[data-open] .ios-drawer__bars i:nth-child(3) {
+  transform: translateY(-4.6px) rotate(-45deg);
+}
+
+/* where you are, said once, in the space a whole bar used to take */
+.ios-drawer__now {
+  flex: 1;
+  min-width: 0;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===========================================================================
+   Fieldly's own four pieces
+
+   A console on paper. Everything quiet is white or a pastel; the objects that
+   carry the day are cut out of the canvas in black, and ember is spent only
+   where something is happening.
+=========================================================================== */
+
+/* ---- the one number ---- */
+
+.fl-hero__label {
+  margin: 0 0 1px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.fl-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
+}
+
+/* whole pounds at display size - the pence dropped a step, which is what lets
+   the figure be big without being loud */
+.fl-hero__n {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.fl-hero__f {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink2);
+  font-variant-numeric: tabular-nums;
+}
+
+.fl-hero__delta {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--a2) 55%, transparent);
+  color: var(--ink);
+}
+
+/* ---- two actions, one control ---- */
+
+.fl-twin {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  margin-bottom: 0.85rem;
+}
+
+.fl-twin__t {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.fl-twin__pill {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  height: 100%;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow:
+    inset 0 0 0 1px var(--hair),
+    var(--shadow);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* the right-hand pill is the mirror of the left, so the pair reads as one
+   object with a hinge rather than two buttons that happen to be adjacent */
+.fl-twin__pill[data-alt] {
+  justify-content: flex-end;
+  padding: 6px 6px 6px 14px;
+}
+
+.fl-twin__ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+  color: var(--ink);
+}
+
+/* the disc over the seam */
+.fl-twin__knob {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--slab);
+  color: var(--on-slab);
+  box-shadow: 0 0 0 4px var(--card);
+  pointer-events: none;
+}
+
+/* ---- the black slab ---- */
+
+.fl-slab__h {
+  margin: 0 0 6px 2px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.fl-slab {
+  overflow: hidden;
+  border-radius: var(--r-card, 14px);
+  background: var(--slab);
+  box-shadow:
+    inset 0 0 0 1px var(--slab-hair),
+    0 14px 30px -18px rgba(11, 11, 12, 0.7);
+}
+
+.fl-slab__row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+}
+
+.fl-slab__row + .fl-slab__row {
+  box-shadow: inset 0 0.5px 0
+    color-mix(in srgb, var(--on-slab) 14%, transparent);
+}
+
+.fl-slab__glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--a);
+  color: var(--on-a);
+}
+
+.fl-slab__title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--on-slab);
+}
+
+.fl-slab__v {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--on-slab) 72%, transparent);
+}
+
+/* On ink, a pastel at 58% is a light box in a dark room. The tint drops to a
+   wash so the panel stays a panel and the mint stays a hint of one. */
+.ios[data-surface='dark'] {
+  --tint: 16%;
+}
+
+/* ---- the greeting header ---- */
+
+.fl-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.35rem 1.05rem 0.7rem;
+}
+
+.fl-head__e {
+  margin: 0 0 1px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink2);
+}
+
+.fl-head__t {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+/* a ring, not a filled button - the reference keeps every secondary control
+   as an outline so the filled ones read as the only things you can press */
+.fl-head__ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  margin-left: auto;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1.5px var(--hair);
+  color: var(--ink);
+}
+
+.fl-head__av {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: var(--slab);
+  color: var(--on-slab);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* ---- the chart card ---- */
+
+.fl-chart {
+  padding: 9px 10px 8px;
+  border-radius: var(--r-card, 14px);
+  background: color-mix(in srgb, var(--a2) var(--tint, 58%), var(--card));
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+
+.fl-chart__bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.fl-chart__sym {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-right: auto;
+  padding: 3px 8px 3px 6px;
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 8.5px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.fl-chart__rt {
+  width: auto !important;
+}
+
+.fl-chart__r {
+  display: block;
+  padding: 3px 6px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+  transition:
+    background 240ms ease,
+    color 240ms ease;
+}
+
+.fl-chart__r[data-on] {
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.fl-chart__plot {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 3px;
+  height: 96px;
+  padding-top: 12px;
+}
+
+/* the line the week is measured against */
+.fl-chart__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 34%;
+  border-top: 1px dashed color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+.fl-chart__col {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 3px;
+}
+
+.fl-chart__pct {
+  font-size: 6.5px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+}
+
+.fl-chart__pct[data-up] {
+  color: var(--ink);
+}
+
+.fl-chart__stack {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+}
+
+/* last week, drawn as a hatched ghost standing behind this week */
+.fl-chart__ghost {
+  position: absolute;
+  bottom: 0;
+  width: 78%;
+  border-radius: 5px 5px 0 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--ink) 26%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+.fl-chart__now {
+  position: relative;
+  width: 46%;
+  border-radius: 999px 999px 3px 3px;
+  background: var(--ink);
+}
+
+.fl-chart__d {
+  font-size: 7.5px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+.fl-chart__key {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.fl-chart__k {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 7.5px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+}
+
+.fl-chart__ks {
+  width: 12px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.fl-chart__ks[data-ghost] {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--ink) 40%, transparent) 0 1px,
+    transparent 1px 3px
+  );
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent);
+}
+
+/* ---- two panels, one knob ---- */
+
+.fl-swap {
+  position: relative;
+  margin-bottom: 0.85rem;
+}
+
+.fl-swap__p {
+  display: flex;
+  flex-direction: column;
+  padding: 11px 13px;
+  border-radius: var(--r-card, 14px);
+}
+
+.fl-swap__p[data-tint] {
+  background: color-mix(in srgb, var(--a2) var(--tint, 58%), var(--card));
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.fl-swap__p[data-slab] {
+  background: var(--slab);
+  color: var(--on-slab);
+  box-shadow: inset 0 0 0 1px var(--slab-hair);
+}
+
+.fl-swap__h {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 7px;
+}
+
+.fl-swap__l {
+  margin-right: auto;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.fl-swap__chip {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surf) 70%, transparent);
+  font-size: 7.5px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.fl-swap__v {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.fl-swap__u {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
+.fl-swap__f {
+  margin-top: 4px;
+  font-size: 8.5px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+/* the disc over the seam, ringed in the canvas colour so it cuts a hole
+   through both panels rather than sitting on top of them */
+.fl-swap__knob {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--a);
+  color: var(--on-a);
+  box-shadow: 0 0 0 5px var(--bg-ring, #0b0a09);
+}
+
+/* ---- quiet rows ---- */
+
+.fl-kv {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 2px;
+}
+
+.fl-kv__k {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink2);
+}
+
+.fl-kv__v {
+  font-size: 10.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.fl-kv[data-strong] {
+  margin-top: 3px;
+  padding-top: 9px;
+  border-top: 1px solid var(--hair);
+}
+
+.fl-kv[data-strong] .fl-kv__k {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.fl-kv[data-strong] .fl-kv__v {
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--a);
+}
+
+/* ---- the end-capped bar ---- */
+
+.fl-end {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow:
+    inset 0 0 0 1px var(--hair),
+    var(--shadow);
+}
+
+.fl-end__c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--slab);
+  color: var(--on-slab);
+  box-shadow: inset 0 0 0 1px var(--slab-hair);
+}
+
+.fl-end__c[data-alt] {
+  background: var(--a);
+  color: var(--on-a);
+}
+
+.fl-end__l {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 1;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.fl-end__ch {
+  letter-spacing: -0.08em;
+  color: var(--ink2);
+}
+
+/* ---- the slab's footer ---- */
+
+.fl-slab__foot {
+  display: flex;
+  align-items: center;
+  padding: 7px 11px 9px;
+  box-shadow: inset 0 0.5px 0
+    color-mix(in srgb, var(--on-slab) 14%, transparent);
+}
+
+.fl-slab__dots {
+  display: flex;
+  gap: 3px;
+  margin-right: auto;
+}
+
+.fl-slab__dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--on-slab) 30%, transparent);
+}
+
+.fl-slab__dots i[data-on] {
+  width: 11px;
+  background: var(--on-slab);
+}
+
+.fl-slab__all {
+  width: auto !important;
+}
+
+.fl-slab__all > span {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 9px;
+  font-weight: 800;
+  color: color-mix(in srgb, var(--on-slab) 72%, transparent);
+}
+
+/* ---- sold against spare ---- */
+
+.fl-split {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.fl-split__a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+  border-radius: 999px;
+  transition: width 620ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.fl-split__chev {
+  flex-shrink: 0;
+  letter-spacing: -0.06em;
+  color: var(--ink2);
+}
+
+.fl-split__b {
+  flex: 1;
+  text-align: center;
+  color: var(--ink2);
+}
+
+/* ===========================================================================
+   Slate's own two pieces
+
+   Every other concept builds its screens out of the shared list and card. The
+   booking app needs two things the kit does not have - a week you thumb along,
+   and a day drawn as a rail - so it gets them, and only it uses them.
+=========================================================================== */
+
+/* ---- the week strip ---- */
+
+.slate-day {
+  width: auto !important;
+}
+
+.slate-day__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 30px;
+  padding: 7px 0 9px;
+  border-radius: 999px;
+  color: var(--ink2);
+  transition:
+    background 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    color 240ms ease;
+}
+
+/* the live day is a filled pill, the way the tab bar's live destination is a
+   filled disc - one grammar, two levels */
+.slate-day__inner[data-on] {
+  background: var(--ink);
+  color: var(--surf);
+}
+
+.slate-day__n {
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.slate-day__d {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+
+.slate-day__dot {
+  width: 3px;
+  height: 3px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.slate-day__inner[data-on] .slate-day__dot {
+  opacity: 1;
+}
+
+/* ---- the day, as a rail ---- */
+
+.slate-time {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.slate-time__row {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.slate-time__line {
+  position: relative;
+  display: block;
+  padding-left: 22px;
+}
+
+/* the rail is drawn by the rows themselves, so it stops with the last one
+   rather than running into whatever follows */
+.slate-time__row:not(:last-child) .slate-time__line::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 14px;
+  bottom: -14px;
+  width: 1px;
+  background: var(--hair);
+}
+
+.slate-time__dot {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1.5px var(--hair);
+  transition:
+    box-shadow 300ms ease,
+    background 300ms ease;
+}
+
+.slate-time__dot[data-on] {
+  background: var(--ink);
+  box-shadow:
+    inset 0 0 0 2px var(--surf),
+    0 0 0 1.5px var(--ink);
+}
+
+.slate-time__body {
+  display: block;
+  padding: 3px 2px 0;
+  transition:
+    background 380ms cubic-bezier(0.32, 0.72, 0, 1),
+    padding 380ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* only the live entry is a card - a list where every row is a filled box has
+   no shape left to give the one that matters */
+.slate-time__body[data-on] {
+  padding: 11px 12px 11px;
+  border-radius: var(--r-card, 16px);
+  background: var(--surf-2);
+  box-shadow:
+    inset 0 0 0 1px var(--hair),
+    var(--shadow);
+}
+
+.slate-time__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.slate-time__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink2);
+  transition:
+    font-size 380ms cubic-bezier(0.32, 0.72, 0, 1),
+    color 300ms ease;
+}
+
+.slate-time__body[data-on] .slate-time__title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.slate-time__t {
+  flex-shrink: 0;
+  font-size: 9.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink2);
+}
+
+.slate-time__body[data-on] .slate-time__t {
+  color: var(--a-soft, var(--a));
+}
+
+.slate-time__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.slate-time__faces {
+  display: flex;
+}
+
+.slate-time__faces > * + * {
+  margin-left: -7px;
+  box-shadow: 0 0 0 1.5px var(--surf-2);
+}
+
+.slate-time__tick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--a);
+  color: var(--on-a);
 }
 
 /* ---- the gesture bar ---- */
@@ -850,7 +2415,6 @@
   height: 2px;
   bottom: 2.5px;
 }
-
 
 /* ===========================================================================
    Screen transitions
@@ -1141,7 +2705,6 @@
     animation: none;
   }
 }
-
 
 /* ===========================================================================
    Concept case study - page furniture
@@ -1485,13 +3048,17 @@
 
 .concept-pick:hover .concept-pick__plinth {
   background: rgba(255, 255, 255, 0.11);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 10px 20px -6px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 10px 20px -6px rgba(0, 0, 0, 0.3);
   transform: translateY(-3px);
 }
 
 .concept-pick[data-active] .concept-pick__plinth {
   background: rgba(255, 255, 255, 0.18);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45), 0 16px 32px -8px rgba(0, 0, 0, 0.45);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.45),
+    0 16px 32px -8px rgba(0, 0, 0, 0.45);
   transform: translateY(-5px);
 }
 

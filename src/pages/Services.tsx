@@ -24,8 +24,12 @@ export function Services() {
       />
       <SiteHeader />
 
-      {/* 01 — Hero */}
-      <section className="relative overflow-hidden px-[var(--edge)] pb-20 pt-36 sm:pt-44">
+      {/* 01 — Hero. `isolate` so the dot-grid/glow's negative z-index stays
+          scoped to this section instead of escaping to the document root
+          and painting behind <main>'s own background (neither this section
+          nor <main> otherwise sets a z-index, so nothing else contains
+          them). */}
+      <section className="relative isolate overflow-hidden px-[var(--edge)] pb-20 pt-36 sm:pt-44">
         <div
           className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
           style={{

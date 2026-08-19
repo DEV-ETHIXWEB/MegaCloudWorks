@@ -43,22 +43,27 @@ export function Home() {
           on top so the shader reads as texture rather than a flat gradient.
           min-h + flex centering keeps the headline in the middle of the
           screen on short mobile viewports instead of pinned low with a
-          slab of empty space above it. */}
-      <section className="relative flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-[var(--edge)] pb-16 pt-24 sm:min-h-0 sm:pb-20 sm:pt-32">
+          slab of empty space above it. `isolate` matters here, not just for
+          tidiness: neither this section nor <main> set a z-index, so
+          without it they never form their own stacking context and the
+          shader/gradient/grain's negative z-index layers escape all the way
+          up to the document root — painting behind <main>'s own opaque
+          background instead of behind this section's text. */}
+      <section className="relative isolate flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-[var(--edge)] pb-16 pt-24 sm:min-h-0 sm:pb-20 sm:pt-32">
         {/* CloudShader owns its own position: 'relative' — a dedicated
             absolutely-positioned wrapper avoids fighting that with a
             conflicting utility class on the same element */}
         <div className="absolute inset-0 -z-20">
           <CloudShader
             className="h-full w-full"
-            speed={0.5}
+            speed={0.45}
             count={5}
             cloudColor="#ffffff"
-            skyTopColor="#ffe9e7"
-            skyBottomColor="#ffffff"
+            skyTopColor="#ffc9bd"
+            skyBottomColor="#fff2ee"
           />
         </div>
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-[var(--paper)]/10 to-[var(--paper)]" />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-[var(--paper)]" />
         <div className="grain-overlay" aria-hidden="true" />
 
         <div className="relative mx-auto max-w-3xl text-center">
@@ -75,7 +80,7 @@ export function Home() {
             initial={{ opacity: 0, y: 20, filter: 'blur(14px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.75, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 font-sans text-[clamp(2rem,9vw,5.4rem)] font-black leading-[0.98] tracking-[-0.03em] sm:leading-[0.92]"
+            className="mt-4 font-sans text-[length:var(--fs-display)] font-black leading-[0.98] tracking-[var(--tracking-tight)] sm:leading-[0.92]"
           >
             {HOME_HERO.headlineLines[0]} {HOME_HERO.headlineLines[1]}{' '}
             <span className="relative inline-block text-[var(--brand)]">
@@ -188,7 +193,7 @@ export function Home() {
                     className="pointer-events-none absolute -bottom-16 -right-16 size-64 rounded-full opacity-30 blur-3xl transition-transform duration-700 group-hover:scale-125"
                     style={{ background: CONCEPTS[0].accent }}
                   />
-                  <h3 className="relative font-sans text-4xl font-black tracking-tight text-white sm:text-5xl">
+                  <h3 className="relative font-sans text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
                     {CONCEPTS[0].name}
                   </h3>
                 </div>
@@ -248,7 +253,7 @@ export function Home() {
             </p>
           </div>
           <Reveal className="lg:col-span-7 lg:col-start-6">
-            <p className="text-[clamp(1.3rem,2.4vw,1.8rem)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">
+            <p className="text-[length:var(--fs-lead)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">
               {STUDIOS.body}
             </p>
             <p className="mt-6 text-lg text-[var(--ink-soft)]">{COVERAGE.body}</p>

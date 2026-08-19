@@ -27,7 +27,7 @@ export function CTASection({
           <p className="kicker justify-center" data-n="→" style={{ color: 'rgba(255,255,255,0.75)' }}>
             {eyebrow}
           </p>
-          <h2 className="mx-auto mt-5 max-w-3xl font-sans text-[clamp(2.2rem,5.5vw,4.2rem)] font-black leading-[0.98] tracking-[-0.03em] text-white">
+          <h2 className="mx-auto mt-5 max-w-3xl font-sans text-[length:var(--fs-h1)] font-black leading-[0.98] tracking-[var(--tracking-tight)] text-white">
             {title}
           </h2>
           {sub && <p className="mx-auto mt-5 max-w-lg text-lg text-white/85">{sub}</p>}

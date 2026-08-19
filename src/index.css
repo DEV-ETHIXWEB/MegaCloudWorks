@@ -70,6 +70,17 @@
   --container: 1360px;
   --container-wide: 1600px;
   --edge: clamp(1.5rem, 4vw, 5rem);
+
+  /* type scale — a small, deliberate set of sizes instead of a bespoke
+     clamp() written per heading. Only two moments on the homepage get the
+     heaviest weight (900): the hero H1 and the final-CTA headline; every
+     other heading sits at 800, so the two flagships read as heavier by
+     contrast rather than competing with headings at the same weight. */
+  --fs-display: clamp(2rem, 9vw, 5.4rem); /* hero H1 */
+  --fs-h1: clamp(2.2rem, 5.5vw, 4.2rem); /* CTASection headline */
+  --fs-h2: clamp(2rem, 4.6vw, 3.4rem); /* section headings */
+  --fs-lead: clamp(1.3rem, 2.4vw, 1.8rem); /* large standalone paragraph */
+  --tracking-tight: -0.03em;
 }
 
 @theme inline {
@@ -213,7 +224,10 @@ body {
 .grain-overlay {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  /* negative so it stays a background texture — sits above whatever
+     shader/gradient it's layered over (those use -z-10/-z-20) but below
+     any ordinary (z-index: auto) content stacked on top of it */
+  z-index: -5;
   pointer-events: none;
   opacity: 0.05;
   mix-blend-mode: overlay;

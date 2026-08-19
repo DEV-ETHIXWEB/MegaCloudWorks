@@ -209,6 +209,8 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
   gl.shaderSource(shader, source)
   gl.compileShader(shader)
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    // eslint-disable-next-line no-console
+    console.error('[CloudShader] shader compile error:', gl.getShaderInfoLog(shader))
     gl.deleteShader(shader)
     return null
   }
@@ -252,7 +254,11 @@ export function CloudShader({
     gl.attachShader(program, frag)
     gl.bindAttribLocation(program, 0, 'a_pos')
     gl.linkProgram(program)
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      // eslint-disable-next-line no-console
+      console.error('[CloudShader] program link error:', gl.getProgramInfoLog(program))
+      return
+    }
     gl.useProgram(program)
 
     const buffer = gl.createBuffer()

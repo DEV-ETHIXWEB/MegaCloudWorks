@@ -269,3 +269,20 @@
     transition-delay: 0ms !important;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * The current page
+ *
+ * A rule alone is easy to miss on a bar this shallow, so the active link
+ * also takes a soft brand ground. `exact` matching is set on Home only -
+ * every route starts with "/", so without it Home would light up on
+ * every page.
+ * ------------------------------------------------------------------ */
+
+.nav-link--on {
+  background: var(--brand-soft);
+}
+
+.nav-sheet__link[data-active] {
+  color: var(--brand);
+}

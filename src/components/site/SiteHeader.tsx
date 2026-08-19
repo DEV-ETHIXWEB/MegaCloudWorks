@@ -5,6 +5,7 @@ import { Button } from '#/components/ui/button'
 import './site-header.css'
 
 const NAV = [
+  { label: 'Home', to: '/' },
   { label: 'What we do', to: '/services' },
   { label: 'Work', to: '/work' },
   { label: 'About', to: '/about' },
@@ -198,10 +199,12 @@ export function SiteHeader({
               <Link
                 key={item.to}
                 to={item.to}
-                className={`relative py-1 text-sm font-semibold no-underline transition-colors after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:scale-x-0 after:bg-[var(--brand)] after:transition-transform after:content-[''] ${navLink}`}
+                className={`nav-link relative rounded-full px-3 py-1.5 text-sm font-semibold no-underline transition-colors after:absolute after:inset-x-3 after:-bottom-0.5 after:h-[2px] after:scale-x-0 after:rounded-full after:bg-[var(--brand)] after:transition-transform after:content-[''] ${navLink}`}
                 activeProps={{
-                  className: 'text-[var(--brand)] after:scale-x-100',
+                  className:
+                    'nav-link--on text-[var(--brand)] after:scale-x-100',
                 }}
+                activeOptions={{ exact: item.to === '/' }}
               >
                 {item.label}
               </Link>

@@ -1,0 +1,147 @@
+/* ------------------------------------------------------------------ *
+ * The foot of the page.
+ *
+ * Dark, so the paper above it ends on something rather than trailing
+ * off, and warmed at one corner by the same red the climb is lit with.
+ * ------------------------------------------------------------------ */
+
+.home-footer {
+  position: relative;
+  overflow: hidden;
+  background: #0b0b0e;
+  color: #fff;
+}
+
+/* the glow under the left corner, where the cloud mark sits */
+.home-footer::before {
+  content: '';
+  position: absolute;
+  left: -10%;
+  bottom: -60%;
+  width: 60%;
+  height: 120%;
+  background: radial-gradient(
+    ellipse at 40% 60%,
+    rgba(245, 51, 59, 0.28) 0%,
+    rgba(245, 51, 59, 0.08) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.home-footer > * {
+  position: relative;
+  z-index: 1;
+}
+
+.footer-link {
+  display: inline-block;
+  padding: 0.28rem 0;
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #fff;
+}
+
+/* the one link that carries a glyph beside it - inline-block would stack
+   the icon over the address */
+.footer-link--row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.footer-head {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+  margin-bottom: 0.75rem;
+}
+
+.footer-social {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.75);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.footer-social:hover {
+  color: #fff;
+  border-color: var(--brand);
+  background: rgba(245, 51, 59, 0.16);
+}
+
+.footer-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.9rem;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.footer-cta:hover {
+  background: var(--brand-strong);
+}
+
+.footer-rule {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Phones
+ *
+ * The four columns become one, and every link becomes a full-width row
+ * with a chevron - a target a thumb can actually hit, and the shape a
+ * phone reads as a menu rather than a paragraph of links.
+ * ------------------------------------------------------------------ */
+
+@media (max-width: 767px) {
+  .home-footer .footer-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 1rem;
+  }
+
+  .home-footer .footer-link::after {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 1.5px solid rgba(255, 255, 255, 0.35);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.35);
+    rotate: -45deg;
+  }
+
+  /* the address keeps its glyph, so it is the one row without a chevron */
+  .home-footer .footer-link--row {
+    justify-content: flex-start;
+    gap: 0.6rem;
+  }
+
+  .home-footer .footer-link--row::after {
+    content: none;
+  }
+}

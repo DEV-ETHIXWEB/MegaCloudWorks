@@ -1,0 +1,336 @@
+/* ------------------------------------------------------------------ *
+ * "Nine weeks. Start to store." - how the studio builds.
+ *
+ * Four steps across, each with the artefact it produces beside it: the
+ * brief, the screen, the build, the listing. Every artefact is DOM, laid
+ * out at the size it was drawn for and scaled into its slot, so nothing
+ * inside re-wraps as the column narrows. The section sits on plain paper:
+ * the artefacts are the picture here, and a ridge behind them was noise.
+ * ------------------------------------------------------------------ */
+
+.home-process {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* ---------------- the link ---------------- */
+
+.process-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+}
+
+.process-link__disc {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--brand);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.process-link:hover .process-link__disc {
+  transform: translateX(3px);
+  border-color: rgba(245, 51, 59, 0.4);
+}
+
+.process-link__label {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------------- the four steps ---------------- */
+
+/* the wave the numbers are strung along, drawn behind them */
+.process-track {
+  position: absolute;
+  left: 0;
+  top: 1.15rem;
+  width: 100%;
+  height: 2.4rem;
+  overflow: visible;
+}
+
+.process-track path {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.2;
+  opacity: 0.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.process-track polygon {
+  fill: var(--brand);
+  opacity: 0.75;
+}
+
+.process-step__index {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 1.5px solid rgba(245, 51, 59, 0.35);
+  background: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.process-step__icon {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 0.95rem;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+}
+
+.process-step__check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.process-step__check svg {
+  flex: none;
+  color: var(--brand);
+}
+
+/* a step's artefact: drawn at 300px and scaled into the column */
+.process-art {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.process-art__stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300px;
+  transform: scale(var(--art-scale, 0.6));
+  transform-origin: top left;
+}
+
+/* ---------------- the artefacts ---------------- */
+
+.pa-card {
+  border-radius: 0.9rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 45px -30px rgba(16, 16, 20, 0.45);
+  padding: 0.9rem 1rem 1.1rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.pa-bar {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(16, 16, 20, 0.07);
+}
+
+.pa-avatar {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background:
+    radial-gradient(
+      circle at 50% 34%,
+      rgba(255, 255, 255, 0.6) 0 16%,
+      transparent 17%
+    ),
+    radial-gradient(
+      ellipse 44% 32% at 50% 100%,
+      rgba(255, 255, 255, 0.5) 0 70%,
+      transparent 72%
+    ),
+    linear-gradient(180deg, #cfd6dd 0%, #a9b3be 60%, #8d98a4 100%);
+}
+
+.pa-phone {
+  width: 100%;
+  aspect-ratio: 300 / 600;
+  border-radius: 2.4rem;
+  padding: 4px;
+  background: linear-gradient(
+    142deg,
+    #5c5c66 0%,
+    #17171c 30%,
+    #3d3d46 62%,
+    #101014 100%
+  );
+  box-shadow: 0 34px 60px -32px rgba(16, 16, 20, 0.55);
+}
+
+.pa-screen {
+  position: relative;
+  height: 100%;
+  border-radius: 2.15rem;
+  background: #fff;
+  overflow: hidden;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.6rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.pa-screen__notch {
+  position: absolute;
+  left: 50%;
+  top: 0.4rem;
+  translate: -50% 0;
+  width: 34%;
+  height: 1rem;
+  border-radius: 999px;
+  background: #0d0d10;
+}
+
+.pa-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.52rem;
+  font-weight: 600;
+  padding: 0.1rem 0.3rem 0.5rem;
+}
+
+.pa-spark {
+  display: block;
+  width: 100%;
+}
+
+.pa-spark path {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* the build window */
+.pa-code {
+  border-radius: 0.9rem;
+  background: #101014;
+  overflow: hidden;
+  box-shadow: 0 30px 55px -28px rgba(16, 16, 20, 0.6);
+  font-size: 0.6rem;
+  line-height: 1.7;
+}
+
+.pa-code__tabs {
+  display: flex;
+  gap: 0.9rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pa-code__tabs span[data-on] {
+  color: #fff;
+}
+
+.pa-code pre {
+  margin: 0;
+  padding: 0.75rem 0.85rem 0.9rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: #c9cbd4;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.pa-code__panel {
+  margin: 0 0.6rem 0.6rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.55rem 0.65rem;
+  color: #e6e7ea;
+}
+
+.pa-code__meter {
+  height: 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.pa-code__meter span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(to right, #22c55e, #16a34a);
+}
+
+.tok-key {
+  color: #ff6b6b;
+}
+
+.tok-str {
+  color: #7fd88f;
+}
+
+.tok-fn {
+  color: #6cb6ff;
+}
+
+.tok-prop {
+  color: #d2a8ff;
+}
+
+/* the listing */
+.pa-live {
+  display: grid;
+  place-items: center;
+  width: 5.2rem;
+  height: 5.2rem;
+  border-radius: 50%;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+}
+
+/* ---------------- the facts ---------------- */
+
+.process-fact__tile {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.9rem;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+  flex: none;
+}
+
+.process-fact__rule {
+  display: block;
+  width: 1.6rem;
+  height: 2px;
+  margin-top: 0.45rem;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+/* ---------------- narrow ---------------- */
+
+@media (max-width: 1023px) {
+  .process-track {
+    display: none;
+  }
+}

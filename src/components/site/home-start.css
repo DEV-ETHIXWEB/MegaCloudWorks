@@ -1,0 +1,305 @@
+/* ------------------------------------------------------------------ *
+ * "Start a project" - the enquiry.
+ *
+ * A heading with its answer set across from it, then one wide panel: the
+ * brief on the left, the climb on the right. Underneath, the three ways
+ * to reach the studio. The form is the only part of the page that has to
+ * work rather than read, so it is plain markup with real labels - no
+ * float-label tricks that leave a filled form with unnamed boxes.
+ * ------------------------------------------------------------------ */
+
+.home-start {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+}
+
+.start-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.start-kicker::before {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+/* ---------------- the panel ---------------- */
+
+.start-panel {
+  border-radius: 1.5rem;
+  background: #faf8f7;
+  border: 1px solid rgba(16, 16, 20, 0.05);
+  padding: 1.4rem;
+}
+
+/* ---------------- the fields ---------------- */
+
+.start-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* every control shares one box: flat and borderless on its own white,
+   with the panel behind it doing the separating */
+.start-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid transparent;
+  background: #fff;
+  padding: 0 0.85rem;
+  height: 2.6rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.start-control:focus-within {
+  border-color: rgba(245, 51, 59, 0.45);
+  box-shadow: 0 0 0 3px rgba(245, 51, 59, 0.1);
+}
+
+.start-control--area {
+  height: auto;
+  align-items: flex-start;
+  padding: 0.75rem 0.9rem;
+}
+
+.start-control input,
+.start-control select,
+.start-control textarea {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+
+.start-control textarea {
+  resize: vertical;
+  min-height: 4.5rem;
+  line-height: 1.5;
+}
+
+.start-control select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.start-control input::placeholder,
+.start-control textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+.start-control__icon {
+  color: var(--ink-faint);
+  flex: none;
+}
+
+/* ---------------- the send ---------------- */
+
+.start-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.8rem;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.start-send:hover:not(:disabled) {
+  background: #000;
+}
+
+.start-send:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.start-send:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* the disc beside it, as in the design */
+.start-send-disc {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  flex: none;
+  transition:
+    transform 0.25s ease,
+    background-color 0.2s ease;
+}
+
+.start-send-disc:hover {
+  background: var(--brand-strong);
+  transform: translate(2px, -2px);
+}
+
+/* ---------------- the climb beside the form ---------------- */
+
+.start-climb {
+  position: relative;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  min-height: 19rem;
+  height: 100%;
+  background-image: url('/new%20pg.png');
+  background-size: cover;
+  background-position: 62% 60%;
+}
+
+/* the welcome, sitting on the foot of the plate */
+.start-climb__note {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  display: block;
+  /* The plate is bright cloud in places, so the words carry their own
+     ground rather than relying on the picture behind them - and the
+     brand glow underneath is what ties the white lettering back to the
+     rest of the page. */
+  filter: drop-shadow(0 2px 8px rgba(16, 16, 20, 0.5))
+    drop-shadow(0 4px 18px rgba(245, 51, 59, 0.75))
+    drop-shadow(0 0 34px rgba(245, 51, 59, 0.45));
+}
+
+/* the tag riding its top corner */
+.start-climb__tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.start-climb__tag::before {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+/* ---------------- the three ways in ---------------- */
+
+.start-reach {
+  display: grid;
+  gap: 2rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .start-reach {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .start-reach > div + div {
+    border-left: 1px solid var(--line);
+  }
+}
+
+.start-reach__disc {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+}
+
+/* ---------------- narrow ---------------- */
+
+@media (max-width: 1023px) {
+  .start-climb {
+    min-height: 16rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .start-panel {
+    padding: 1.1rem;
+    border-radius: 1.25rem;
+  }
+
+  .start-climb {
+    min-height: 13rem;
+  }
+
+  /* the three ways in stack, so the rules between them become rules
+     under them */
+  .start-reach {
+    gap: 1.5rem;
+    text-align: left;
+  }
+
+  .start-reach > div {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .start-reach > div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .start-reach__disc {
+    margin: 0 0 0.75rem;
+  }
+
+  /* one full-width call, in brand red - a phone should not have to aim
+     at a pill and a separate disc */
+  .start-send {
+    flex: 1;
+    justify-content: center;
+    background: var(--brand);
+    height: 3rem;
+  }
+
+  .start-send:hover:not(:disabled) {
+    background: var(--brand-strong);
+  }
+
+  .start-send-disc {
+    display: none;
+  }
+}

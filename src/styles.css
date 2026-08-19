@@ -138,6 +138,20 @@ body,
   min-height: 100%;
 }
 
+/*
+ * Nothing may scroll the page sideways.
+ *
+ * Several sections hang plates past their own edges on purpose - the
+ * cloud seam, the hero's ridge, the marquees. `clip` stops those from
+ * creating a scrollbar without making the element a scroll container,
+ * which `hidden` would, and which would break every `position: sticky`
+ * inside it.
+ */
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   color: var(--ink);
@@ -4922,4 +4936,48 @@ a.contact-card:hover .contact-go {
 /* the same box, with nothing behind it - see phoneUI.tsx */
 .phone-tap--inert {
   cursor: inherit;
+}
+
+/* ------------------------------------------------------------------ *
+ * The scrollbar
+ *
+ * Slim, on the site's own paper, with a brand thumb that warms when it
+ * is being dragged. Firefox gets the two-value form; WebKit the parts.
+ * ------------------------------------------------------------------ */
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 51, 59, 0.55) rgba(16, 16, 20, 0.05);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(16, 16, 20, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 51, 59, 0.75),
+    rgba(225, 29, 38, 0.9)
+  );
+  /* the inset keeps the thumb off the track's edges without a second
+     element to draw the gap */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(to bottom, var(--brand), var(--brand-strong));
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }

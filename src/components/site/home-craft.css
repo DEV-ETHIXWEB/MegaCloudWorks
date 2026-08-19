@@ -1,0 +1,536 @@
+/* ------------------------------------------------------------------ *
+ * "Thoughtful process. Solid engineering." - behind the build.
+ *
+ * The right half is a table of the artefacts a build actually leaves
+ * behind - a flow, a wireframe, a screen, the code, the test run, the
+ * release - pinned over the ridge and threaded by the same red route the
+ * page has been climbing since the hero. All of it is DOM.
+ * ------------------------------------------------------------------ */
+
+.home-craft {
+  position: relative;
+  overflow: hidden;
+  /* flat ground: the ridge belongs to the section above, and this one
+     carries the artefacts instead */
+  background: #fdf9f8;
+}
+
+/* ---------------- the ridge ---------------- */
+
+/* ---------------- the opening ---------------- */
+
+.craft-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.4rem 1.4rem 0.4rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  text-decoration: none;
+  box-shadow: 0 18px 40px -32px rgba(16, 16, 20, 0.5);
+  transition: border-color 0.25s ease;
+}
+
+.craft-link:hover {
+  border-color: rgba(245, 51, 59, 0.35);
+}
+
+.craft-link__disc {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  color: var(--brand);
+  transition: transform 0.25s ease;
+}
+
+.craft-link:hover .craft-link__disc {
+  transform: translate(2px, -2px);
+}
+
+.craft-link__label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------------- the table of artefacts ---------------- */
+
+.craft-collage {
+  position: relative;
+  aspect-ratio: 916 / 500;
+}
+
+/* the route weaving between the panels */
+.craft-collage__route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.craft-collage__route path,
+.craft-collage__route circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.craft-collage__route path {
+  fill: none;
+}
+
+.craft-route-glow {
+  stroke: var(--brand);
+  stroke-width: 10;
+  opacity: 0.3;
+  filter: blur(6px);
+}
+
+.craft-route-body {
+  stroke: var(--brand);
+  stroke-width: 2.2;
+  opacity: 0.9;
+}
+
+.craft-route-core {
+  stroke: #fff;
+  stroke-width: 0.9;
+  opacity: 0.9;
+}
+
+.craft-route-stop {
+  fill: #fff;
+  stroke: var(--brand);
+  stroke-width: 1.4;
+}
+
+/* A pinned artefact.
+ *
+ * They stand square to the page and drift, each on its own offset, so
+ * the group breathes without ever reading as scattered. */
+.craft-panel {
+  position: absolute;
+  animation: craft-float var(--float-dur, 7s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+  border-radius: 0.85rem;
+  background: #fff;
+  box-shadow: 0 26px 55px -30px rgba(16, 16, 20, 0.45);
+  padding: 0.6rem 0.65rem 0.7rem;
+  font-size: 0.55rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.craft-panel--dark {
+  background: #101014;
+  color: #e7e8ec;
+  box-shadow: 0 30px 60px -28px rgba(16, 16, 20, 0.7);
+}
+
+.craft-panel__label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.45rem;
+}
+
+.craft-panel__label::before {
+  content: '';
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--brand);
+  flex: none;
+}
+
+/* ---- the flow ---- */
+
+.craft-node {
+  display: block;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(124, 58, 237, 0.28);
+  background: rgba(124, 58, 237, 0.06);
+  padding: 0.22rem 0.5rem;
+  text-align: center;
+  font-size: 0.5rem;
+  font-weight: 600;
+}
+
+.craft-node--leaf {
+  border-color: var(--line-strong);
+  background: var(--paper-2);
+}
+
+.craft-arrow {
+  display: block;
+  width: 1px;
+  height: 0.55rem;
+  margin: 0.15rem auto;
+  background: rgba(16, 16, 20, 0.35);
+  position: relative;
+}
+
+.craft-arrow::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  translate: -50% 0;
+  border-left: 2.5px solid transparent;
+  border-right: 2.5px solid transparent;
+  border-top: 3.5px solid rgba(16, 16, 20, 0.5);
+}
+
+/* ---- the wireframe ---- */
+
+.craft-wire {
+  border-radius: 0.7rem;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  padding: 0.45rem;
+}
+
+.craft-wire__block {
+  border-radius: 0.2rem;
+  background: rgba(16, 16, 20, 0.09);
+}
+
+/* ---- the screen ---- */
+
+.craft-screen {
+  border-radius: 1.1rem;
+  background: #0d0d10;
+  color: #fff;
+  padding: 0.55rem 0.6rem 0.7rem;
+  overflow: hidden;
+}
+
+.craft-screen__card {
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.45rem 0.5rem 0.4rem;
+}
+
+.craft-screen__spark path {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.craft-screen__tile {
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.craft-screen__row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.3rem 0.35rem;
+}
+
+/* ---- the code ---- */
+
+.craft-code {
+  display: flex;
+  gap: 0.55rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.5rem;
+  line-height: 1.75;
+}
+
+.craft-code__gutter {
+  color: rgba(255, 255, 255, 0.28);
+  text-align: right;
+  flex: none;
+}
+
+.craft-code pre {
+  margin: 0;
+  white-space: pre;
+  overflow: hidden;
+  color: #c9cbd4;
+}
+
+.craft-tok-key {
+  color: #ff6b6b;
+}
+
+.craft-tok-str {
+  color: #7fd88f;
+}
+
+.craft-tok-fn {
+  color: #6cb6ff;
+}
+
+.craft-tok-num {
+  color: #e3b341;
+}
+
+/* ---- the test run ---- */
+
+.craft-test {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(16, 16, 20, 0.07);
+}
+
+.craft-test__tick {
+  display: grid;
+  place-items: center;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  flex: none;
+}
+
+/* ---- the release ---- */
+
+.craft-dial {
+  position: relative;
+  width: 3.6rem;
+  height: 3.6rem;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.craft-dial__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(245, 51, 59, 0.45);
+}
+
+.craft-dial__core {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: rgba(245, 51, 59, 0.1);
+  color: var(--brand);
+}
+
+/* ---------------- the six disciplines ---------------- */
+
+.craft-strip {
+  border-radius: 1.4rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 26px 60px -45px rgba(16, 16, 20, 0.35);
+}
+
+.craft-strip__tile {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.85rem;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+}
+
+.craft-strip__rule {
+  display: block;
+  width: 1.6rem;
+  height: 2px;
+  margin-top: 0.7rem;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+/* ---------------- narrow ---------------- */
+
+@media (max-width: 1023px) {
+  .home-craft__sky {
+    width: 110%;
+    right: -6%;
+    top: -2%;
+    height: 34%;
+  }
+
+  .craft-collage {
+    aspect-ratio: 916 / 720;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * The opening tick, and the toolkit belt
+ * ------------------------------------------------------------------ */
+
+.craft-tick {
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+/*
+ * The row is the chip list twice over, sliding from -50% to 0 - so the
+ * moment the first copy has travelled its own width the second is exactly
+ * where the first started, and the loop has no seam.
+ */
+.craft-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+}
+
+.craft-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: craft-marquee 34s linear infinite;
+}
+
+.craft-marquee:hover .craft-marquee__track {
+  animation-play-state: paused;
+}
+
+.craft-marquee__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+@keyframes craft-marquee {
+  from {
+    translate: -50% 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+.craft-tech {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.craft-tech:hover {
+  border-color: rgba(245, 51, 59, 0.3);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .craft-marquee__track {
+    animation: none;
+    translate: 0 0;
+  }
+}
+
+@media (max-width: 767px) {
+  /*
+   * The artefact table is six panels pinned by percentage across a wide
+   * box. At phone width they overlap into noise and their type falls
+   * under half a millimetre, so the table comes out and the six
+   * disciplines carry the section instead.
+   */
+  .craft-collage {
+    display: none;
+  }
+
+  /* and the section takes the dark plate the design gives it, which also
+     breaks up a long run of pale sections on a phone */
+  .home-craft {
+    background: #101014;
+    color: #fff;
+  }
+
+  .home-craft h2,
+  .home-craft h3 {
+    color: #fff;
+  }
+
+  .home-craft p {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .craft-link {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .craft-link__label {
+    color: #fff;
+  }
+
+  .craft-link__disc {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .craft-strip {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .craft-strip > li + li {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .craft-tech {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .craft-strip {
+    border-radius: 1.1rem;
+  }
+
+  .craft-tech {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.8125rem;
+  }
+
+  /* the belt keeps running on a phone - it is quicker there, since the
+     row is narrower and a full turn takes less of it */
+  .craft-marquee__track {
+    animation-duration: 22s;
+  }
+}

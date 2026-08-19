@@ -1,0 +1,401 @@
+/* ------------------------------------------------------------------ *
+ * "Why teams choose MegaCloud" - the case for the studio.
+ *
+ * Six reasons in two columns with the summit standing between them, and
+ * the numbers on a dark plate underneath. The mountain is the section's
+ * own background plate, so the cards sit in the sky either side of it.
+ * ------------------------------------------------------------------ */
+
+.home-why {
+  position: relative;
+  overflow: hidden;
+  background-color: #fdf9f8;
+  background-image: url('/ridge-bg.webp');
+  background-size: cover;
+  /* the summit sits 22.7% down the plate; at cover the plate is far
+     taller than this section, so this figure is what lands the tip just
+     under the mark */
+  background-position: center 9%;
+  background-repeat: no-repeat;
+}
+
+/* the foot of the section dissolves into the flat ground of the one
+   below it, so the picture ends on a fade rather than a cut */
+.home-why::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 26%;
+  background: linear-gradient(
+    to bottom,
+    rgba(253, 249, 248, 0) 0%,
+    #fdf9f8 88%
+  );
+  pointer-events: none;
+}
+
+/* the head of the section is paper, so the type never lands on smoke */
+.home-why__wash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    #fdf9f8 0%,
+    rgba(253, 249, 248, 0.9) 14%,
+    rgba(253, 249, 248, 0.25) 30%,
+    rgba(253, 249, 248, 0) 46%
+  );
+}
+
+/* ---------------- the header ---------------- */
+
+.why-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.why-eyebrow::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+/* ---------------- the mark between the columns ---------------- */
+
+.why-summit {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 17rem;
+}
+
+/* the orbit the studio sits inside, with a stop on each quarter */
+.why-orbit {
+  position: absolute;
+  top: 2rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 51, 59, 0.22);
+}
+
+.why-orbit span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin: -0.275rem 0 0 -0.275rem;
+  border-radius: 50%;
+  background: var(--brand);
+  /* each stop is pushed out to the rim along its own bearing */
+  transform: rotate(var(--a)) translateY(-6rem);
+
+  /* The ring does not turn - it lights. The stops fire in rings from the
+     ground up: the pair at the sides, then the pair above them, then the
+     one at the summit, and the whole run repeats. `--step` is which of
+     the three beats a stop belongs to. */
+  opacity: 0.35;
+  box-shadow: 0 0 0 0 rgba(245, 51, 59, 0);
+  animation: why-stop 3.6s ease-in-out infinite;
+  animation-delay: calc(var(--step) * 0.55s);
+}
+
+@keyframes why-stop {
+  0%,
+  22%,
+  100% {
+    opacity: 0.35;
+    box-shadow: 0 0 0 0 rgba(245, 51, 59, 0);
+  }
+  8% {
+    opacity: 1;
+    box-shadow:
+      0 0 14px 3px rgba(245, 51, 59, 0.75),
+      0 0 30px 8px rgba(245, 51, 59, 0.35);
+  }
+}
+
+.why-mark {
+  position: absolute;
+  top: 4.6rem;
+  width: 5.5rem;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(245, 51, 59, 0.45))
+    drop-shadow(0 10px 20px rgba(16, 16, 20, 0.15));
+  animation: why-mark 6s ease-in-out infinite;
+}
+
+@keyframes why-mark {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+/* ---------------- a reason ---------------- */
+
+.why-card {
+  position: relative;
+  display: flex;
+  gap: 0.9rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(16, 16, 20, 0.05);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(6px);
+  padding: 1.05rem 1.25rem;
+  box-shadow: 0 26px 60px -50px rgba(16, 16, 20, 0.5);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* the red tab down the inner edge, pointing at the summit */
+.why-card::before {
+  content: '';
+  position: absolute;
+  top: 1.4rem;
+  bottom: 1.4rem;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.why-card--left::before {
+  left: -1px;
+}
+
+.why-card--right::before {
+  right: -1px;
+}
+
+.why-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 30px 60px -45px rgba(16, 16, 20, 0.5);
+}
+
+.why-card__disc {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+  flex: none;
+}
+
+/* ---------------- the numbers ---------------- */
+
+.why-figures {
+  position: relative;
+  display: grid;
+  border-radius: 1.5rem;
+  background: #131316;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 40px 90px -55px rgba(16, 16, 20, 0.8);
+}
+
+.why-figure {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  padding: 1.6rem 1.75rem;
+}
+
+.why-figure__disc {
+  display: grid;
+  place-items: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--brand);
+  flex: none;
+}
+
+.why-figure__value {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.why-figure__unit {
+  color: var(--brand);
+}
+
+/* ---------------- narrow ---------------- */
+
+@media (min-width: 640px) {
+  .why-figures {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .why-figure:nth-child(even) {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .why-figure:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+@media (min-width: 1024px) {
+  .why-figures {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .why-figure + .why-figure {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .why-figure:nth-child(-n + 2) {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  .why-summit {
+    min-height: 16rem;
+  }
+
+  .why-orbit {
+    width: 11rem;
+    height: 11rem;
+  }
+
+  .why-orbit span {
+    transform: rotate(var(--a)) translateY(-5.5rem);
+  }
+
+  .why-mark {
+    top: 5.5rem;
+    width: 5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-orbit,
+  .why-mark {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Phones: six tiles, not six paragraphs
+ *
+ * Read on a phone, six cards of icon-plus-title-plus-three-lines is a
+ * screen and a half of prose. The same six as square tiles - mark and
+ * name only - fit one screen and read at a glance, and the reasons
+ * themselves are already spelled out by the sections around them.
+ * ------------------------------------------------------------------ */
+
+@media (max-width: 767px) {
+  .home-why ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+    margin: 0;
+  }
+
+  .why-card {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    aspect-ratio: 1;
+    padding: 0.6rem 0.4rem;
+    text-align: center;
+    border-radius: 0.9rem;
+  }
+
+  /* the tab down the edge is a wide-screen device - on a tile it reads
+     as damage */
+  .why-card::before {
+    content: none;
+  }
+
+  .why-card__disc {
+    width: 2.3rem;
+    height: 2.3rem;
+  }
+
+  .why-card__disc svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .why-card h3 {
+    font-size: 0.75rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  /* the body copy goes: the tile is a label, not a paragraph */
+  .why-card p {
+    display: none;
+  }
+
+  /* each tile lights in turn, the way the orbit above them does */
+  .why-card {
+    animation: why-tile 6s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.5s);
+  }
+
+  @keyframes why-tile {
+    0%,
+    16%,
+    100% {
+      border-color: rgba(16, 16, 20, 0.05);
+      box-shadow: 0 26px 60px -50px rgba(16, 16, 20, 0.5);
+    }
+    6% {
+      border-color: rgba(245, 51, 59, 0.5);
+      box-shadow:
+        0 0 0 3px rgba(245, 51, 59, 0.1),
+        0 14px 30px -18px rgba(245, 51, 59, 0.6);
+    }
+  }
+
+  /* On a phone the plate is cropped by width, so at plain `cover` there
+     is no vertical slack to slide it with and the summit lands well
+     above the mark. Over-scaling the height buys that slack back, and
+     the mark then sits on the tip here exactly as it does on a desk. */
+  .home-why {
+    background-size: auto 150%;
+    /* a length, not a percentage: percentages here are a share of the
+       slack between plate and section, which changes with the phone -
+       40px is 40px, and it drops the summit onto the mark's base */
+    background-position: center 40px;
+  }
+
+  .why-summit {
+    min-height: 13rem;
+  }
+
+  .why-mark {
+    top: 0.5rem;
+    width: 4rem;
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .why-card {
+    animation: none;
+  }
+}

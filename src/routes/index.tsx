@@ -1,8 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SiteHeader } from '#/components/site/SiteHeader'
-import { PhoneStory } from '#/components/site/phone/PhoneStory'
-import { WhatWeDo } from '#/components/site/WhatWeDo'
-import { SiteFooter } from '#/components/site/SiteFooter'
+import { HomeHero } from '#/components/site/HomeHero'
+import { HomeSeam } from '#/components/site/HomeSeam'
+import { HomeApproach } from '#/components/site/HomeApproach'
+import { HomeGlobal } from '#/components/site/HomeGlobal'
+import { HomeWork } from '#/components/site/HomeWork'
+import { HomeWhy } from '#/components/site/HomeWhy'
+import { HomeCraft } from '#/components/site/HomeCraft'
+import { HomeStart } from '#/components/site/HomeStart'
+import { HomeFooter } from '#/components/site/HomeFooter'
 import { seo } from '#/lib/seo'
 
 export const Route = createFileRoute('/')({
@@ -36,12 +42,16 @@ export const Route = createFileRoute('/')({
 function App() {
   return (
     <main className="relative min-h-screen bg-[var(--paper)] text-[var(--ink)]">
-      {/* the story pins for seven screens, so an absolutely-positioned header
-          would scroll off after the first one and never come back */}
       <SiteHeader fixed />
-      <PhoneStory />
-      <WhatWeDo />
-      <SiteFooter />
+      <HomeHero />
+      <HomeSeam />
+      <HomeApproach />
+      <HomeGlobal />
+      <HomeWork />
+      <HomeWhy />
+      <HomeCraft />
+      <HomeStart />
+      <HomeFooter />
     </main>
   )
 }

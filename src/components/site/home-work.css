@@ -1,0 +1,438 @@
+/* ------------------------------------------------------------------ *
+ * "Real products. Real impact." - the shelf, two projects deep.
+ *
+ * Each project is one wide card: the case on one side, its screens on
+ * the other, alternating sides down the page.
+ * ------------------------------------------------------------------ */
+
+.home-work {
+  position: relative;
+  overflow: hidden;
+  background: #fdf9f8;
+}
+
+/* ---------------- the ridge behind the opening ---------------- */
+
+.home-work__peak {
+  position: absolute;
+  right: -2%;
+  top: -4%;
+  width: 42%;
+  height: 46%;
+  background-image: url('/sky/welcome.webp');
+  background-size: cover;
+  background-position: 84% 40%;
+  -webkit-mask-image: radial-gradient(
+    ellipse at 68% 45%,
+    #000 34%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(ellipse at 68% 45%, #000 34%, transparent 72%);
+}
+
+/* the flag on the summit */
+.home-work__flag {
+  position: absolute;
+  right: 9.5%;
+  top: 8%;
+  color: var(--brand);
+}
+
+/* ---------------- the opening ---------------- */
+
+.work-tick {
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  margin: 0 auto 1rem;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.work-eyebrow {
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.work-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 3.1rem;
+  padding: 0 1.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 18px 40px -32px rgba(16, 16, 20, 0.5);
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.work-all:hover {
+  border-color: rgba(245, 51, 59, 0.45);
+  transform: translateY(-1px);
+}
+
+.work-all svg {
+  color: var(--brand);
+  transition: transform 0.25s ease;
+}
+
+.work-all:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* ---------------- a project ---------------- */
+
+.work-card {
+  position: relative;
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  border-radius: 1.75rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(16, 16, 20, 0.05);
+  box-shadow: 0 40px 90px -60px rgba(16, 16, 20, 0.5);
+  padding: 2rem;
+  backdrop-filter: blur(6px);
+}
+
+@media (min-width: 1024px) {
+  .work-card {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    padding: 2.25rem;
+  }
+
+  /* flipped: the stage takes the first column and the case the second,
+     with the track widths swapped so the screens keep the wider half */
+  .work-card--flip {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
+  .work-card--flip .work-card__case {
+    order: 2;
+  }
+}
+
+.work-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(245, 51, 59, 0.09);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.work-name {
+  margin-top: 1.1rem;
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.work-name span {
+  color: var(--brand);
+}
+
+.work-point {
+  display: flex;
+  gap: 0.9rem;
+  padding: 0.65rem 0;
+}
+
+.work-point__icon {
+  color: var(--brand);
+  flex: none;
+  margin-top: 0.15rem;
+}
+
+.work-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.work-meta__cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.work-meta__cell + .work-meta__cell {
+  border-left: 1px solid var(--line);
+  padding-left: 1.25rem;
+}
+
+.work-meta svg {
+  color: var(--ink-faint);
+  flex: none;
+}
+
+.work-case-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.work-case-link svg {
+  color: var(--brand);
+  transition: transform 0.25s ease;
+}
+
+.work-case-link:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* ---------------- the screens ---------------- */
+
+.work-stage {
+  position: relative;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  aspect-ratio: 16 / 12;
+  /* the stage is a lit box, not a swatch: the corner nearest the copy is
+     brightest and it falls away from there */
+  isolation: isolate;
+}
+
+.work-stage--dark {
+  background: radial-gradient(
+    ellipse at 60% 40%,
+    #1d1d22 0%,
+    #101014 55%,
+    #0a0a0c 100%
+  );
+}
+
+.work-stage--light {
+  background:
+    radial-gradient(
+      ellipse at 22% 18%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0) 55%
+    ),
+    linear-gradient(160deg, #fdfdfd 0%, #f4efef 55%, #f6d9d9 100%);
+}
+
+/* every device on the stage is built at the size its screens were drawn
+   for and scaled in, so nothing inside re-wraps at card width */
+.work-device {
+  position: absolute;
+  width: 300px;
+  transform-origin: top left;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.55s ease;
+}
+
+/* the near device leans out of the card and carries the weight */
+.work-device--front .wk-device__frame {
+  box-shadow:
+    0 60px 90px -40px rgba(16, 16, 20, 0.55),
+    0 20px 40px -25px rgba(16, 16, 20, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+/* the far one sits back: smaller shadow, a touch of haze, so the eye
+   reads distance rather than two screens on the same plane */
+.work-device--back {
+  filter: saturate(0.94) brightness(0.98);
+}
+
+.work-device--back .wk-device__frame {
+  box-shadow:
+    0 40px 70px -35px rgba(16, 16, 20, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* pointing at the card opens the pair a little - the near one steps
+   forward, the far one drifts back */
+.work-card:hover .work-device--front {
+  transform: rotate(-5.5deg) scale(0.575) translateY(-6px) !important;
+}
+
+.work-card:hover .work-device--back {
+  transform: rotate(8.5deg) scale(0.45) translateY(4px) !important;
+}
+
+/* the light they stand in */
+.work-stage__glow {
+  position: absolute;
+  left: 50%;
+  bottom: -12%;
+  width: 78%;
+  height: 55%;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(245, 51, 59, 0.22) 0%,
+    rgba(245, 51, 59, 0.08) 45%,
+    rgba(245, 51, 59, 0) 72%
+  );
+  pointer-events: none;
+}
+
+.wk-device__frame {
+  width: 100%;
+  aspect-ratio: 300 / 620;
+  border-radius: 2.75rem;
+  padding: 4px;
+  background: linear-gradient(
+    142deg,
+    #5c5c66 0%,
+    #17171c 30%,
+    #3d3d46 62%,
+    #101014 100%
+  );
+  box-shadow:
+    0 40px 70px -30px rgba(16, 16, 20, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.wk-device__glass {
+  height: 100%;
+  width: 100%;
+  border-radius: 2.5rem;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 3px #07070a;
+}
+
+/* ---------------- the tally ---------------- */
+
+.work-tally {
+  display: grid;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(16, 16, 20, 0.05);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 30px 70px -55px rgba(16, 16, 20, 0.5);
+  backdrop-filter: blur(6px);
+}
+
+.work-tally__cell {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.4rem 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .work-tally__cell:nth-child(even) {
+    border-left: 1px solid var(--line);
+  }
+}
+
+@media (min-width: 1024px) {
+  .work-tally__cell + .work-tally__cell {
+    border-left: 1px solid var(--line);
+  }
+}
+
+.work-tally__icon {
+  color: var(--brand);
+  flex: none;
+}
+
+/* ---------------- narrow ---------------- */
+
+@media (max-width: 1023px) {
+  .home-work__flag {
+    display: none;
+  }
+
+  .work-meta {
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+  }
+
+  .work-meta__cell + .work-meta__cell {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .work-case-link {
+    margin-left: 0;
+  }
+}
+
+/* the lean is the composition; only the hover travel stops */
+@media (prefers-reduced-motion: reduce) {
+  .work-device {
+    transition: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* the two projects become a swipe rather than a stack: each card takes
+     the width of the screen and snaps, which is how a phone expects to
+     move through a set */
+  .home-work ul {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* the cards run to both edges of the screen */
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
+  }
+
+  .home-work ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-work ul > li {
+    flex: 0 0 86%;
+    scroll-snap-align: center;
+  }
+
+  .work-card {
+    height: 100%;
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+  }
+
+  /* the three devices are sized for a half-card on a desk; on a phone the
+     stage is the full column, so they come down to match */
+  .work-stage {
+    aspect-ratio: 16 / 13;
+  }
+
+  .work-device--front {
+    transform: rotate(-7deg) scale(0.42) !important;
+  }
+
+  .work-device--back {
+    transform: rotate(6deg) scale(0.34) !important;
+  }
+
+  .work-tally__cell {
+    padding: 1.1rem 1.25rem;
+  }
+}

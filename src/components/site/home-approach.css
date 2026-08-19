@@ -1,0 +1,435 @@
+/* ------------------------------------------------------------------ *
+ * "From idea to impact." - the process, five steps across.
+ *
+ * The row is a set of tiles joined by dashed arcs, drawn as one SVG
+ * behind them so the hops always land between tile centres however the
+ * columns resize. Under it sits the band of four working promises.
+ * ------------------------------------------------------------------ */
+
+.home-approach {
+  position: relative;
+  overflow: hidden;
+  background: #fdf9f8;
+}
+
+/* the ridge on the left and the red smoke on the right, both well back */
+.home-approach__wisp {
+  position: absolute;
+  top: 0;
+  height: 62%;
+  background-image: url('/sky/welcome.webp');
+  background-size: cover;
+  opacity: 0.32;
+}
+
+.home-approach__wisp--left {
+  left: -8%;
+  width: 26%;
+  background-position: 24% 62%;
+  filter: grayscale(0.65);
+  -webkit-mask-image: radial-gradient(
+    ellipse at 40% 55%,
+    #000 30%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(ellipse at 40% 55%, #000 30%, transparent 70%);
+}
+
+.home-approach__wisp--right {
+  right: -6%;
+  width: 26%;
+  background-position: 86% 40%;
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(
+    ellipse at 62% 45%,
+    #000 32%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(ellipse at 62% 45%, #000 32%, transparent 72%);
+}
+
+/* ---------------- the header ---------------- */
+
+.approach-tick {
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  margin: 0 auto 1rem;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.approach-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.approach-eyebrow::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+/* ---------------- the five steps ---------------- */
+
+/* the dashed hops, drawn behind the tiles */
+.approach-hops {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 4.25rem;
+  overflow: visible;
+
+  /* the route connects 01 to 05: the dashes are wiped in from the left
+     rather than faded, so it reads as the line being walked */
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 2.2s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+[data-shown='true'] .approach-hops {
+  clip-path: inset(0 -4% 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .approach-hops {
+    transition: none;
+    clip-path: inset(0 -4% 0 0);
+  }
+
+  .approach-step__disc,
+  .approach-step__art {
+    transition: none;
+    opacity: 1;
+    scale: 1;
+    animation: none;
+  }
+}
+
+.approach-hops path {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 5;
+  opacity: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.approach-hops polygon {
+  fill: var(--brand);
+  opacity: 0.8;
+}
+
+.approach-step__disc {
+  display: grid;
+  place-items: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  /* the stand-in occupies the same 6.5rem block as an illustration, so
+     the numbers under every step still line up */
+  margin: 2.75rem auto 0;
+  border-radius: 50%;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+
+  /* each mark arrives as the line reaches it */
+  opacity: 0;
+  scale: 0.72;
+  transition:
+    opacity 0.45s ease,
+    scale 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition-delay: calc(var(--i) * 0.42s);
+}
+
+[data-shown='true'] .approach-step__disc {
+  opacity: 1;
+  scale: 1;
+}
+
+.approach-step__index {
+  margin-top: 1.1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.approach-step__title {
+  margin-top: 0.45rem;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.approach-step__note {
+  margin: 0.7rem auto 0;
+  max-width: 13rem;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* the illustrated mark: it arrives with the line, then drifts. The lift
+   lives in `translate` so the entrance's `scale` never has to fight it. */
+/* flex, not grid: against an auto-sized grid ROW a child's height:100%
+   is cyclic and falls back to the image's intrinsic size, which is how
+   the artwork ended up twice its box and over its own caption */
+.approach-step__art {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 6.5rem;
+  opacity: 0;
+  scale: 0.72;
+  transition:
+    opacity 0.5s ease,
+    scale 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition-delay: calc(var(--i) * 0.42s);
+}
+
+/* both dimensions are fixed and object-fit does the letterboxing: with
+   `width: auto` the max-width constraint re-solved the height from the
+   aspect ratio and the artwork spilled over its own caption */
+.approach-step__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgba(16, 16, 20, 0.14));
+}
+
+[data-shown='true'] .approach-step__art {
+  opacity: 1;
+  scale: 1;
+  animation: approach-drift 6s ease-in-out infinite;
+  /* only once it has landed, and offset per step so the row never bobs
+     in unison */
+  animation-delay: calc(1s + var(--i) * 0.7s);
+}
+
+@keyframes approach-drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+/* ---------------- the promises ---------------- */
+
+/* ---------------- the phone timeline's track ---------------- */
+
+/*
+ * Hidden on a desk, where the wave above the row does this job. It runs
+ * from the centre of the first stop to the centre of the last - measured,
+ * so it never overshoots past 05 - and the solid fill inside it grows
+ * with the scroll.
+ */
+.approach-track {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .approach-track {
+    display: block;
+    position: absolute;
+    left: 1.15rem;
+    top: var(--track-top, 0);
+    height: var(--track-height, 0);
+    width: 2px;
+    translate: -1px 0;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(245, 51, 59, 0.32) 0 6px,
+      transparent 6px 12px
+    );
+    background-size: 2px 12px;
+  }
+
+  .approach-track__fill {
+    display: block;
+    width: 100%;
+    height: calc(var(--fill, 0) * 100%);
+    border-radius: 999px;
+    background: linear-gradient(to bottom, var(--brand-strong), var(--brand));
+    box-shadow: 0 0 10px 1px rgba(245, 51, 59, 0.45);
+  }
+}
+
+.approach-band {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(16, 16, 20, 0.06);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 26px 60px -50px rgba(16, 16, 20, 0.5);
+}
+
+@media (max-width: 767px) {
+  /* stacked and see-through, the four promises read as text floating on
+     the sky; each one takes its own card and a shadow to sit on */
+  .approach-band {
+    border: 0;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    gap: 0.75rem;
+  }
+
+  .approach-promise {
+    border-radius: 1rem;
+    border: 1px solid rgba(16, 16, 20, 0.05);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 18px 40px -28px rgba(16, 16, 20, 0.45);
+  }
+
+  .approach-promise + .approach-promise {
+    border-top: 1px solid rgba(16, 16, 20, 0.05);
+  }
+}
+
+.approach-promise {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.35rem 1.6rem;
+}
+
+.approach-promise + .approach-promise {
+  border-left: 1px solid rgba(16, 16, 20, 0.07);
+}
+
+.approach-promise__disc {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: rgba(245, 51, 59, 0.09);
+  color: var(--brand);
+  flex: none;
+}
+
+/* ---------------- narrow ---------------- */
+
+@media (max-width: 1023px) {
+  .approach-hops {
+    display: none;
+  }
+
+  .approach-promise + .approach-promise {
+    border-left: 0;
+    border-top: 1px solid rgba(16, 16, 20, 0.07);
+  }
+
+  .home-approach__wisp {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Phones: the run becomes a timeline
+ *
+ * Five illustrated steps stacked centre-aligned is five screens of
+ * scrolling with no sense of sequence. On a phone the same five become a
+ * vertical track: a numbered stop on the left, its card on the right,
+ * joined by a dotted line - the shape the eye already reads as "in this
+ * order".
+ * ------------------------------------------------------------------ */
+
+@media (max-width: 767px) {
+  .approach-step__art {
+    display: none;
+  }
+
+  .home-approach ol {
+    position: relative;
+    gap: 0.9rem;
+  }
+
+  .home-approach ol li {
+    display: grid;
+    grid-template-columns: 2.3rem minmax(0, 1fr);
+    align-items: start;
+    /* no row gap: the title and its note are two halves of one card, and
+       a gap between them would show as a seam through it */
+    gap: 0 0.9rem;
+  }
+
+  .approach-step__index {
+    grid-row: 1 / span 3;
+    display: grid;
+    place-items: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    margin: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(245, 51, 59, 0.35);
+    background: #fff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--brand);
+  }
+
+  /* the card the stop points at */
+  .approach-step__title {
+    margin: 0;
+    padding: 0.85rem 1rem 0;
+    border-radius: 0.9rem 0.9rem 0 0;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(16, 16, 20, 0.05);
+    border-bottom: 0;
+    text-align: left;
+    font-size: 1.05rem;
+  }
+
+  .approach-step__note {
+    margin: 0;
+    max-width: none;
+    padding: 0.25rem 1rem 0.9rem;
+    border-radius: 0 0 0.9rem 0.9rem;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(16, 16, 20, 0.05);
+    border-top: 0;
+    text-align: left;
+  }
+
+  .approach-promise {
+    padding: 1rem 1.1rem;
+  }
+
+  /* the stops arrive in order as the track comes into view */
+  .home-approach ol li {
+    opacity: 0;
+    translate: 0 14px;
+    transition:
+      opacity 0.5s ease,
+      translate 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--i) * 0.12s);
+  }
+
+  [data-shown='true'] ol li {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .home-approach ol li {
+    transition: none;
+    opacity: 1;
+    translate: 0 0;
+  }
+}

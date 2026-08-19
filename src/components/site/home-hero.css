@@ -1,0 +1,446 @@
+/* ------------------------------------------------------------------ *
+ * The opener: the claim on the left, the climb on the right.
+ *
+ * The ridge is one plate (`/new pg.png`) whose own left half is already
+ * paper, so the copy sits straight on it with no scrim. Everything drawn
+ * over it - the route, its stops, their captions and the flag at the top
+ * - is placed in percentages of the section, so one set of coordinates
+ * serves every width.
+ * ------------------------------------------------------------------ */
+
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  background: #f7f5f2;
+}
+
+.home-hero__plate {
+  position: absolute;
+  inset: 0;
+  background-image: url('/new%20pg.png');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+
+/* the paper the copy sits on, so the type never lands on smoke */
+.home-hero__wash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    #f7f5f2 0%,
+    rgba(247, 245, 242, 0.92) 26%,
+    rgba(247, 245, 242, 0.45) 40%,
+    rgba(247, 245, 242, 0) 52%
+  );
+}
+
+/* ---------------- the route ---------------- */
+
+.home-hero__route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-hero__route path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke: var(--brand);
+}
+
+.home-hero__route-glow {
+  stroke-width: 16;
+  opacity: 0.32;
+  filter: blur(8px);
+}
+
+.home-hero__route-body {
+  stroke-width: 3.4;
+}
+
+/* a white filament down the middle: the route crosses dark rock halfway
+   up, where red alone loses its edge */
+.home-hero__route-core {
+  stroke: #fff;
+  stroke-width: 1.2;
+  opacity: 0.85;
+}
+
+/* the light walking the route ahead of the drawn line */
+.home-hero__spark {
+  fill: #fff;
+  stroke: none;
+  filter: drop-shadow(0 0 6px rgba(245, 51, 59, 1))
+    drop-shadow(0 0 14px rgba(245, 51, 59, 0.85));
+  /* it belongs to the drawing, so it leaves when the drawing is done */
+  animation: hero-spark 2.65s ease-out 0.25s forwards;
+}
+
+@keyframes hero-spark {
+  0% {
+    opacity: 0;
+    r: 0.6;
+  }
+  8% {
+    opacity: 1;
+    r: 1.2;
+  }
+  88% {
+    opacity: 1;
+    r: 1.2;
+  }
+  100% {
+    opacity: 0;
+    r: 2.4;
+  }
+}
+
+/* The climb draws itself on load: the line runs from the first stop to
+   the flag, then the stops light in turn behind it and the flag lands
+   last. `pathLength` is 1, so one dash rule covers both strokes. */
+.home-hero__route path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hero-climb 2.4s cubic-bezier(0.65, 0, 0.35, 1) 0.25s forwards;
+}
+
+@keyframes hero-climb {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------- the stops ---------------- */
+
+.home-hero__stop {
+  position: absolute;
+  /* over the cloud seam that overhangs the foot of the hero */
+  z-index: 2;
+  width: 0.85rem;
+  height: 0.85rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.9),
+    0 6px 16px rgba(245, 51, 59, 0.45);
+}
+
+.home-hero__step {
+  position: absolute;
+  z-index: 2;
+  width: 10.5rem;
+  opacity: 0;
+  animation: hero-caption 0.6s ease forwards;
+  animation-delay: calc(0.6s + var(--i) * 0.55s);
+}
+
+@keyframes hero-caption {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.home-hero__step-index {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--brand);
+  line-height: 1;
+}
+
+.home-hero__step-title {
+  margin-top: 0.45rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1.05;
+}
+
+.home-hero__step-note {
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* ---------------- the summit ---------------- */
+
+.home-hero__flag {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  /* it lands as the light arrives, then turns over: white disc with a red
+     flag becomes a red disc with a white one - the summit is taken */
+  animation:
+    hero-flag 0.6s cubic-bezier(0.34, 1.5, 0.64, 1) 2.35s forwards,
+    hero-flag-taken 0.45s ease 2.75s forwards;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--brand);
+  box-shadow: 0 12px 30px -8px rgba(16, 16, 20, 0.35);
+}
+
+@keyframes hero-flag {
+  from {
+    opacity: 0;
+    scale: 0.5;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes hero-flag-taken {
+  to {
+    background: var(--brand);
+    color: #fff;
+    box-shadow:
+      0 0 0 6px rgba(245, 51, 59, 0.16),
+      0 12px 30px -6px rgba(245, 51, 59, 0.6);
+  }
+}
+
+/* the climb is the composition, so reduced motion gets it already made */
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__route path,
+  .home-hero__stop,
+  .home-hero__step,
+  .home-hero__flag {
+    animation: none;
+    opacity: 1;
+    scale: 1;
+    stroke-dashoffset: 0;
+  }
+
+  /* the summit still reads as taken, it just is not played */
+  .home-hero__flag {
+    background: var(--brand);
+    color: #fff;
+  }
+
+  .home-hero__spark {
+    display: none;
+  }
+}
+
+/* ---------------- the calls ---------------- */
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 3.5rem;
+  padding: 0 2rem;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 18px 40px -18px rgba(245, 51, 59, 0.65);
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.hero-cta:hover {
+  background: var(--brand-strong);
+  transform: translateY(-1px);
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--brand);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.hero-link svg {
+  color: var(--brand);
+  transition: transform 0.2s ease;
+}
+
+.hero-link:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* ---------------- the proof, on phones ---------------- */
+
+.hero-proof {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+}
+
+.hero-proof__value {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.hero-proof__label {
+  display: block;
+  font-size: 0.8125rem;
+  /* it sits over cloud and rock, where the muted ink disappears */
+  color: var(--ink);
+  opacity: 0.75;
+}
+
+/* ---------------- the tally ---------------- */
+
+.hero-tally {
+  display: flex;
+  align-items: center;
+  border-left: 1px solid var(--line-strong);
+}
+
+.hero-tally__cell {
+  padding: 0.1rem 1.5rem;
+}
+
+.hero-tally__cell + .hero-tally__cell {
+  border-left: 1px solid var(--line);
+}
+
+/* ---------------- the stacked layout ---------------- */
+
+@media (max-width: 1023px) {
+  .home-hero__plate {
+    inset: auto 0 0 0;
+    height: 58%;
+    background-position: 70% bottom;
+  }
+
+  .home-hero__wash {
+    background: linear-gradient(
+      to bottom,
+      #f7f5f2 0%,
+      rgba(247, 245, 242, 0.9) 34%,
+      rgba(247, 245, 242, 0) 56%
+    );
+  }
+
+  .home-hero__step {
+    width: 8rem;
+  }
+
+  .home-hero__step-title {
+    font-size: 1rem;
+  }
+
+  .home-hero__step-note {
+    display: none;
+  }
+
+  .hero-tally {
+    border-left: 0;
+    flex-wrap: wrap;
+    gap: 0.75rem 0;
+  }
+
+  .hero-tally__cell {
+    padding-left: 0;
+    padding-right: 1.25rem;
+  }
+
+  .hero-tally__cell + .hero-tally__cell {
+    border-left: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Phones
+ *
+ * The climb is a wide-screen device: four captions hung off a diagonal
+ * need width the phone has not got, and squeezed into 375px they land on
+ * the headline. So the drawing comes out and the plate carries the idea
+ * on its own, with the copy given the whole column.
+ * ------------------------------------------------------------------ */
+
+@media (max-width: 767px) {
+  .home-hero__route,
+  .home-hero__stop,
+  .home-hero__step,
+  .home-hero__flag,
+  .home-hero__spark {
+    display: none;
+  }
+
+  .home-hero__plate {
+    height: 46%;
+    background-position: 62% bottom;
+  }
+
+  .home-hero__wash {
+    background: linear-gradient(
+      to bottom,
+      #f7f5f2 0%,
+      rgba(247, 245, 242, 0.92) 42%,
+      rgba(247, 245, 242, 0) 66%
+    );
+  }
+
+  .hero-cta,
+  .hero-link {
+    height: 3rem;
+    font-size: 1rem;
+  }
+
+  .hero-tally {
+    display: none;
+  }
+
+  .hero-proof {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* the column is centred on a phone: one measure, everything on its
+     axis, which is what the design does */
+  .home-hero .max-w-xl {
+    text-align: center;
+  }
+
+  .home-hero .max-w-xl > p,
+  .home-hero .max-w-xl > div {
+    margin-inline: auto;
+  }
+
+  .home-hero .max-w-xl > div {
+    justify-content: center;
+  }
+
+  .hero-link {
+    border-bottom-width: 2px;
+  }
+
+  /* the drawn headline needs no extra leading - the glyphs carry it */
+  .stroke-text__svg {
+    margin-block: -0.35rem;
+  }
+}

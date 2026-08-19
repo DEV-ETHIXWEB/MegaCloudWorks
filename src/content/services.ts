@@ -12,9 +12,9 @@ export const COLUMNS = [
 ] as const
 
 export const CIRCLES = [
-  { n: '01', title: 'App Design', hash: '#app-design' },
-  { n: '02', title: 'Development', hash: '#app-development' },
-  { n: '03', title: 'Brand & UI', hash: '#brand-ui' },
+  { n: '01', title: 'App Design', hash: '#app-design', tags: ['Discovery', 'Prototyping', 'Design systems'] },
+  { n: '02', title: 'Development', hash: '#app-development', tags: ['Cross-platform', 'API design', 'CI/CD'] },
+  { n: '03', title: 'Brand & UI', hash: '#brand-ui', tags: ['Brand systems', 'UI kits', 'Guidelines'] },
 ] as const
 
 export const SERVICE_DETAILS = [

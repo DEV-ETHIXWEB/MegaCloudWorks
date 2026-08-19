@@ -3,15 +3,19 @@ import { motion } from 'motion/react'
 import { Reveal } from './Reveal'
 import { STEPS } from '../content/home'
 
-const TOTAL_WEEKS = STEPS.reduce((sum, s) => sum + s.weeks, 0)
+const MAX_WEEKS = Math.max(...STEPS.map((s) => s.weeks))
+// a light staircase offset per column — a quiet rhythm across the row
+// rather than four cards sitting dead level with each other
+const STAIRCASE = ['lg:mt-0', 'lg:mt-5', 'lg:mt-10', 'lg:mt-5']
 
 /**
  * "How we work" as a phase timeline instead of the old click-to-expand
- * accordion — a connecting line draws itself in as it scrolls into view,
- * each phase gets a small proportional bar showing its share of the nine
- * weeks (the actual "graph"), and clicking a phase quietly highlights it.
- * All of it stays understated: a hairline that lights up, a bar that
- * grows, a border that tints — nothing that competes with the copy.
+ * accordion. Each phase carries its own small bar-chart — all four weeks
+ * values, its own bar picked out in brand red — so "Build" reading far
+ * taller than "Launch" is the real nine-week shape, not decoration.
+ * Columns step down the row like a staircase for rhythm, and clicking a
+ * phase quietly highlights it. Nothing else added underneath — no closing
+ * graphic, just the timeline itself.
  */
 export function ProcessTimeline() {
   const [active, setActive] = useState(0)
@@ -46,7 +50,7 @@ export function ProcessTimeline() {
         {STEPS.map((s, i) => {
           const isActive = active === i
           return (
-            <Reveal key={s.n} delay={i * 0.08} className="lg:px-8 lg:first:pl-0 lg:last:pr-0">
+            <Reveal key={s.n} delay={i * 0.08} className={`lg:px-8 lg:first:pl-0 lg:last:pr-0 ${STAIRCASE[i]}`}>
               <button
                 type="button"
                 onClick={() => setActive(i)}
@@ -54,7 +58,24 @@ export function ProcessTimeline() {
                 className="-mx-3 -mt-3 block w-[calc(100%+1.5rem)] rounded-2xl p-3 text-left transition-colors duration-300"
                 style={{ background: isActive ? 'var(--brand-soft)' : 'transparent' }}
               >
-                <div className="flex items-baseline gap-3">
+                {/* the graph: every phase's share of the nine weeks, this
+                    column's own bar picked out — reads as one small chart
+                    repeated four times, each copy pointing at itself */}
+                <div className="flex h-10 items-end gap-1" aria-hidden="true">
+                  {STEPS.map((bar, j) => (
+                    <motion.div
+                      key={bar.n}
+                      className="w-2 rounded-full"
+                      style={{ background: j === i ? 'var(--brand)' : 'var(--line-strong)' }}
+                      initial={{ height: 0 }}
+                      whileInView={{ height: `${(bar.weeks / MAX_WEEKS) * 100}%` }}
+                      viewport={{ once: true, margin: '-80px' }}
+                      transition={{ duration: 0.6, delay: 0.1 + j * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-baseline gap-3">
                   <h3 className="font-sans text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-[1.75rem]">
                     {s.title}
                   </h3>
@@ -68,21 +89,6 @@ export function ProcessTimeline() {
                     {s.meta}
                   </span>
                 </div>
-
-                {/* the graph: a hairline bar sized to this phase's share of
-                    the nine weeks, so "Build" reading much wider than
-                    "Launch" is the timeline's real proportions, not decoration */}
-                <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-[var(--paper-3)]">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{ background: isActive ? 'var(--brand)' : 'var(--line-strong)' }}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${(s.weeks / TOTAL_WEEKS) * 100}%` }}
-                    viewport={{ once: true, margin: '-80px' }}
-                    transition={{ duration: 0.7, delay: 0.15 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                </div>
-
                 <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">{s.blurb}</p>
               </button>
               <ul className="mt-5 space-y-2 border-t border-[var(--line)] pt-5">
@@ -95,25 +101,6 @@ export function ProcessTimeline() {
             </Reveal>
           )
         })}
-      </div>
-
-      {/* the wave — a quiet closing flourish, not a set piece: a handful of
-          overlapping semicircles fading in from the edges, all at low
-          opacity so it reads as texture under the timeline rather than
-          competing with it */}
-      <div className="mt-14 h-8 w-full overflow-hidden opacity-[0.35] sm:mt-16 sm:h-10" aria-hidden="true">
-        <svg viewBox="0 0 1400 40" preserveAspectRatio="none" className="h-full w-full">
-          <defs>
-            <linearGradient id="process-wave-fade" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="var(--brand)" stopOpacity="0" />
-              <stop offset="50%" stopColor="var(--brand)" stopOpacity="1" />
-              <stop offset="100%" stopColor="var(--brand)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          {Array.from({ length: 40 }).map((_, i) => (
-            <circle key={i} cx={i * 36 + 18} cy="0" r="19" fill="url(#process-wave-fade)" />
-          ))}
-        </svg>
       </div>
     </div>
   )

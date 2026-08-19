@@ -7,11 +7,12 @@ import { SectionHeading } from '../components/SectionHeading'
 import { Reveal } from '../components/Reveal'
 import { MagneticButton } from '../components/MagneticButton'
 import { ServiceNavigator } from '../components/ServiceNavigator'
+import { ServiceCircles } from '../components/ServiceCircles'
 import { ProcessTimeline } from '../components/ProcessTimeline'
 import { WorkCard } from '../components/WorkCard'
 import { StatsSection } from '../components/StatsSection'
 import { CTASection } from '../components/CTASection'
-import { SERVICES_HERO, COLUMNS, CIRCLES, FACTS } from '../content/services'
+import { SERVICES_HERO, COLUMNS, FACTS } from '../content/services'
 import { CONCEPTS } from '../content/concepts'
 
 export function Services() {
@@ -70,26 +71,10 @@ export function Services() {
         </div>
       </section>
 
-      {/* Quick nav — three circles, jumps straight into the capability picker below */}
+      {/* Quick nav — three glass circles over a bed of concentric rings,
+          jumps straight into the capability picker below */}
       <section className="px-[var(--edge)] py-10 sm:py-12">
-        <div className="mx-auto flex max-w-[46rem] flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-8">
-          {CIRCLES.map((c, i) => (
-            <Reveal key={c.n} delay={i * 0.08}>
-              <Link
-                to={c.hash}
-                className="group flex size-[13rem] shrink-0 flex-col items-center justify-center rounded-full bg-white p-4 text-center no-underline shadow-[0_24px_60px_-24px_rgba(16,16,20,0.35)] ring-1 ring-[var(--line)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_32px_70px_-24px_rgba(245,51,59,0.35)] hover:ring-[var(--brand)]/40 sm:size-[15.5rem]"
-              >
-                <span className="text-sm font-black text-[var(--brand-text)]">{c.n}</span>
-                <span className="mt-2 font-sans text-xl font-extrabold leading-tight tracking-tight text-[var(--ink)] sm:text-2xl">
-                  {c.title}
-                </span>
-                <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--ink-faint)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  Find out more <ArrowRight size={12} />
-                </span>
-              </Link>
-            </Reveal>
-          ))}
-        </div>
+        <ServiceCircles />
       </section>
 
       {/* 02 — Capabilities: one interactive picker, not three duplicated blocks */}

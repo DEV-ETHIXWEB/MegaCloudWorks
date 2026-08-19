@@ -18,8 +18,8 @@ const AppLaunchPhoneLive = lazy(() =>
  * The product moment: a phone that actually starts up. A loading splash
  * plays first, then crossfades into the concept's real first screen — live
  * and tappable, not a picture of one. Laid out left (phone, held) / right
- * (copy) on a dark band of its own, rather than centered on the page's
- * usual paper background, so it reads as its own distinct moment.
+ * (copy), on the same paper background as the hero rather than a separate
+ * dark band, so it reads as a continuation of the page instead of a jump.
  */
 export function AppLaunchPhone({ concept }: { concept: Concept }) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -35,20 +35,15 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
   }, [])
 
   return (
-    <section
-      ref={sectionRef}
-      data-header-tone="dark"
-      className="relative isolate overflow-hidden bg-[var(--near-black)] px-[var(--edge)] py-24 text-white sm:py-32"
-    >
+    <section ref={sectionRef} className="relative isolate overflow-hidden bg-[var(--paper)] px-[var(--edge)] py-16 sm:py-20">
       <div
-        className="pointer-events-none absolute left-[8%] top-1/2 -z-10 size-[30rem] -translate-y-1/2 rounded-full opacity-25 blur-[120px]"
+        className="pointer-events-none absolute left-[10%] top-1/2 -z-10 size-[24rem] -translate-y-1/2 rounded-full opacity-20 blur-[110px]"
         style={{ background: `radial-gradient(circle, ${concept.accent}, transparent 70%)` }}
       />
-      <div className="grain-overlay" aria-hidden="true" />
 
-      <div className="mx-auto grid max-w-[var(--container-wide)] items-center gap-14 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
+      <div className="mx-auto grid max-w-[var(--container-wide)] items-center gap-10 lg:grid-cols-[minmax(0,17rem)_1fr] lg:gap-16">
         {/* phone, held — left on desktop, first on mobile */}
-        <Reveal className="mx-auto w-full max-w-[220px] lg:mx-0">
+        <Reveal className="mx-auto w-full max-w-[190px] lg:mx-0">
           <motion.div className="relative" style={{ rotateX: rotate, scale, transformPerspective: 1000 }}>
             <IPhoneMockup size="lg" label={`${concept.name} — ${live ? 'live' : 'launching'}`}>
               <AnimatePresence mode="wait">
@@ -83,15 +78,15 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
 
         {/* copy — right on desktop, centered under the phone on mobile */}
         <Reveal delay={0.15} className="text-center lg:text-left">
-          <p className="kicker justify-center lg:justify-start" data-n="02" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <p className="kicker justify-center lg:justify-start" data-n="02">
             Product experience
           </p>
-          <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)] text-white">
-            Every app starts <span style={{ color: concept.accent }}>here.</span>
+          <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)] text-[var(--ink)]">
+            Every app starts <span className="text-[var(--brand)]">here.</span>
           </h2>
           <TextGenerateEffect
             words="A real MegaCloudWorks build, launching — not a screenshot."
-            className="mx-auto mt-4 max-w-md text-base leading-relaxed text-white/60 sm:text-lg lg:mx-0"
+            className="mx-auto mt-4 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg lg:mx-0"
           />
         </Reveal>
       </div>

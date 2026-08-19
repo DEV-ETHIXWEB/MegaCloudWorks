@@ -1,0 +1,386 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Geologica';
+  src: url('/fonts/Geologica-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ *
+ * MegaCloudWorks design tokens
+ *
+ * One design language, assembled from five references:
+ *   Swiss    -> the grid, the type scale, the spacing rhythm (skeleton)
+ *   Brutalism -> numbered markers, hard 2px edges, the CTA weight
+ *   Clay/Neu -> one merged "lift" surface for interactive cards
+ *   Glass    -> reserved for nav chrome + one hero atmosphere layer
+ * Never combined per-element — each surface role picks exactly one.
+ * ------------------------------------------------------------------ */
+:root {
+  /* brand */
+  --brand: #f5333b;
+  --brand-strong: #e11d26;
+  --brand-2: #ff6a3d;
+  --brand-soft: rgba(245, 51, 59, 0.12);
+  --brand-text: #c11420;
+
+  /* ink / paper */
+  --ink: #101014;
+  --ink-soft: #56575f;
+  --ink-faint: #63646a;
+  --paper: #ffffff;
+  --paper-2: #f7f7f8;
+  --paper-3: #f0f0ef;
+  --line: rgba(16, 16, 20, 0.1);
+  --line-strong: rgba(16, 16, 20, 0.18);
+
+  /* dark surfaces (footer, inverted bands) */
+  --near-black: #0d0d0f;
+  --near-black-2: #16161a;
+
+  /* the one "lift" card treatment — clay+neu merged */
+  --lift-shadow:
+    0 1px 1px rgba(16, 16, 20, 0.03),
+    0 10px 24px -12px rgba(16, 16, 20, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --lift-shadow-hover:
+    0 1px 1px rgba(16, 16, 20, 0.04),
+    0 24px 40px -16px rgba(16, 16, 20, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --lift-shadow-pressed: inset 0 2px 6px rgba(16, 16, 20, 0.12);
+  --lift-radius: 1.25rem;
+
+  /* glass — nav chrome + hero atmosphere only */
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: 20px;
+  --glass-bg-dark: rgba(16, 16, 20, 0.78);
+  --glass-border-dark: rgba(255, 255, 255, 0.12);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 620ms;
+
+  /* layout */
+  --container: 1360px;
+  --container-wide: 1600px;
+  --edge: clamp(1.5rem, 4vw, 5rem);
+}
+
+@theme inline {
+  --font-sans: 'Geologica', ui-sans-serif, system-ui, sans-serif;
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-2: var(--brand-2);
+  --color-brand-text: var(--brand-text);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-line: var(--line);
+  --color-near-black: var(--near-black);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background-color: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+@supports (overflow-x: clip) {
+  body {
+    overflow-x: clip;
+  }
+}
+
+::selection {
+  background: var(--brand-soft);
+}
+
+/* ------------------------------------------------------------------ *
+ * Surface primitives
+ * ------------------------------------------------------------------ */
+
+/* the one lift card — every interactive card in the system uses this */
+.surface-lift {
+  background: var(--paper);
+  border-radius: var(--lift-radius);
+  box-shadow: var(--lift-shadow);
+  border: 1px solid var(--line);
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.surface-lift:hover {
+  box-shadow: var(--lift-shadow-hover);
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+}
+
+.surface-lift:active {
+  box-shadow: var(--lift-shadow-pressed);
+  transform: translateY(-1px);
+}
+
+/* glass chrome — nav + hero atmosphere only */
+.surface-glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+}
+
+.surface-glass-dark {
+  background: var(--glass-bg-dark);
+  border: 1px solid var(--glass-border-dark);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+}
+
+/* brutalist hard edge — numbered markers, key CTAs only */
+.edge-hard {
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--brand);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.edge-hard:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--brand);
+}
+
+.edge-hard:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--brand);
+}
+
+/* numbered kicker — the Swiss/brutalist marker used before every section */
+.kicker {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.kicker::before {
+  content: attr(data-n);
+  color: var(--brand);
+  font-weight: 900;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface-lift,
+  .edge-hard {
+    transition: none;
+  }
+  .surface-lift:hover,
+  .edge-hard:hover {
+    transform: none;
+  }
+}
+
+/* the connector rail between the Ethixweb / MegaCloudWorks wordmarks */
+.link-track {
+  position: relative;
+  overflow: hidden;
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+
+.link-track::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 42%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(245, 51, 59, 0) 0%, var(--brand) 50%, rgba(245, 51, 59, 0) 100%);
+  box-shadow:
+    0 0 10px 2px rgba(245, 51, 59, 0.75),
+    0 0 22px 6px rgba(245, 51, 59, 0.45);
+  animation: link-travel 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
+}
+
+@keyframes link-travel {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(calc(100% / 0.42));
+  }
+}
+
+/* re-reads ink/paper tokens as white-on-red so components work unchanged on a brand band */
+.on-brand {
+  --ink: #ffffff;
+  --ink-soft: rgba(255, 255, 255, 0.84);
+  --ink-faint: rgba(255, 255, 255, 0.66);
+}
+
+/* a surface that is always its own paper regardless of an .on-brand ancestor
+   — the phone mockups are real UI, not page copy, so their text can't flip
+   white-on-white just because they happen to sit on a red band */
+.reset-surface {
+  --ink: #101014;
+  --ink-soft: #56575f;
+  --ink-faint: #63646a;
+  --paper: #ffffff;
+  --paper-2: #f7f7f8;
+  --line: rgba(16, 16, 20, 0.1);
+  --line-strong: rgba(16, 16, 20, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-track::after {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Phone screens — the touch layer for the case-study concept mockups
+ * (ported from the production site's conceptScreens.tsx / phoneUI.tsx)
+ * ------------------------------------------------------------------ */
+.phone-tap {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 180ms ease;
+}
+
+.phone-tap[data-down] {
+  transform: scale(0.972);
+  filter: brightness(0.97);
+}
+
+.phone-tap--flat[data-down] {
+  transform: none;
+  filter: brightness(0.94);
+}
+
+.phone-tap:disabled {
+  cursor: default;
+}
+
+.phone-tap:focus-visible {
+  outline: 2px solid var(--ripple, currentColor);
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+
+.phone-tap__ripple {
+  position: absolute;
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 999px;
+  background: var(--ripple, currentColor);
+  opacity: 0.32;
+  pointer-events: none;
+  animation: phone-ripple 620ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes phone-ripple {
+  from {
+    transform: scale(1);
+    opacity: 0.32;
+  }
+  to {
+    transform: scale(34);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-tap,
+  .phone-tap[data-down] {
+    transition: none;
+    transform: none;
+  }
+  .phone-tap__ripple {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+.phone-tap--inert {
+  cursor: inherit;
+}
+
+/* ------------------------------------------------------------------ *
+ * iPhone device frame
+ * ------------------------------------------------------------------ */
+.iphone-frame {
+  position: relative;
+  border-radius: 2.75rem;
+  background: linear-gradient(155deg, #3a3a3e, #17171a 55%, #0a0a0b);
+  padding: 10px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 40px 80px -30px rgba(16, 16, 20, 0.55),
+    0 10px 26px -14px rgba(16, 16, 20, 0.4);
+}
+
+.iphone-frame__screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2.15rem;
+  background: #000;
+}
+
+.iphone-frame__island {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  z-index: 20;
+  height: 20px;
+  width: 84px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #000;
+  pointer-events: none;
+}
+
+.iphone-frame__side {
+  position: absolute;
+  background: linear-gradient(180deg, #2c2c30, #1a1a1d);
+  border-radius: 3px;
+}
+

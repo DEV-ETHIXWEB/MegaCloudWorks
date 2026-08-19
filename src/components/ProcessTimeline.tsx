@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { motion } from 'motion/react'
 import { Search, PenTool, Code2, Rocket } from 'lucide-react'
 import { Reveal } from './Reveal'
 import { STEPS } from '../content/home'
@@ -12,120 +11,67 @@ const ICONS = [Search, PenTool, Code2, Rocket]
 // rather than four cards sitting dead level with each other
 const STAIRCASE = ['lg:mt-0', 'lg:mt-5', 'lg:mt-10', 'lg:mt-5']
 
-// the four phases' positions on the connecting curve below — must match
-// the endpoints baked into that curve's own path string
-const CURVE_POINTS = [
-  { x: 0, y: 24 },
-  { x: 400, y: 10 },
-  { x: 800, y: 34 },
-  { x: 1200, y: 20 },
-]
-
 /**
  * "How we work" as a phase timeline instead of the old click-to-expand
  * accordion. Each phase gets an icon for what it actually is, and the
  * active phase lifts on a soft shadow rather than filling with a flat
- * color block — the connecting line's dot picks up the same soft halo,
- * so the "you are here" cue reads the same way in both places.
+ * color block.
  */
 export function ProcessTimeline() {
   const [active, setActive] = useState(0)
 
   return (
-    <div>
-      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-[var(--line)]">
-        {STEPS.map((s, i) => {
-          const isActive = active === i
-          const Icon = ICONS[i]
-          return (
-            <Reveal key={s.n} delay={i * 0.08} className={`lg:px-8 lg:first:pl-0 lg:last:pr-0 ${STAIRCASE[i]}`}>
-              <button
-                type="button"
-                onClick={() => setActive(i)}
-                onMouseEnter={() => setActive(i)}
-                className="-mx-3 -mt-3 block w-[calc(100%+1.5rem)] rounded-2xl p-3 text-left transition-transform duration-300"
+    <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-[var(--line)]">
+      {STEPS.map((s, i) => {
+        const isActive = active === i
+        const Icon = ICONS[i]
+        return (
+          <Reveal key={s.n} delay={i * 0.08} className={`lg:px-8 lg:first:pl-0 lg:last:pr-0 ${STAIRCASE[i]}`}>
+            <button
+              type="button"
+              onClick={() => setActive(i)}
+              onMouseEnter={() => setActive(i)}
+              className="-mx-3 -mt-3 block w-[calc(100%+1.5rem)] rounded-2xl p-3 text-left transition-transform duration-300"
+              style={{
+                transform: isActive ? 'translateY(-3px)' : 'translateY(0)',
+              }}
+            >
+              <span
+                className="flex size-12 items-center justify-center rounded-2xl transition-colors duration-300"
                 style={{
-                  transform: isActive ? 'translateY(-3px)' : 'translateY(0)',
+                  background: isActive ? 'var(--brand)' : 'var(--paper-2)',
+                  color: isActive ? '#fff' : 'var(--brand-text)',
                 }}
               >
+                <Icon size={20} strokeWidth={2} />
+              </span>
+
+              <div className="mt-4 flex items-baseline gap-3">
+                <h3 className="font-sans text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-[1.75rem]">
+                  {s.title}
+                </h3>
                 <span
-                  className="flex size-12 items-center justify-center rounded-2xl transition-colors duration-300"
+                  className="rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-colors duration-300"
                   style={{
-                    background: isActive ? 'var(--brand)' : 'var(--paper-2)',
+                    background: isActive ? 'var(--brand)' : 'var(--brand-soft)',
                     color: isActive ? '#fff' : 'var(--brand-text)',
                   }}
                 >
-                  <Icon size={20} strokeWidth={2} />
+                  {s.meta}
                 </span>
-
-                <div className="mt-4 flex items-baseline gap-3">
-                  <h3 className="font-sans text-2xl font-extrabold tracking-tight text-[var(--ink)] sm:text-[1.75rem]">
-                    {s.title}
-                  </h3>
-                  <span
-                    className="rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-colors duration-300"
-                    style={{
-                      background: isActive ? 'var(--brand)' : 'var(--brand-soft)',
-                      color: isActive ? '#fff' : 'var(--brand-text)',
-                    }}
-                  >
-                    {s.meta}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">{s.blurb}</p>
-              </button>
-              <ul className="mt-5 space-y-2 border-t border-[var(--line)] pt-5">
-                {s.points.map((p) => (
-                  <li key={p} className="text-sm text-[var(--ink-faint)]">
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          )
-        })}
-      </div>
-
-      {/* the connecting line — under the cards, not over them. A gentle
-          curve rather than a flat ruled line, hand-drawn in along its own
-          path (not just width 0→100%) so the reveal feels less mechanical.
-          Dots live in the same SVG as the curve so they sit exactly on it. */}
-      <div className="relative mt-10 hidden h-11 lg:block" aria-hidden="true">
-        <svg viewBox="0 0 1200 44" preserveAspectRatio="none" className="h-full w-full overflow-visible">
-          <path
-            d="M0,24 C130,24 270,10 400,10 C530,10 670,34 800,34 C930,34 1070,20 1200,20"
-            stroke="var(--line)"
-            strokeWidth="1.5"
-            fill="none"
-          />
-          <motion.path
-            d="M0,24 C130,24 270,10 400,10 C530,10 670,34 800,34 C930,34 1070,20 1200,20"
-            stroke="var(--brand)"
-            strokeOpacity="0.55"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 1.3, ease: [0.65, 0, 0.35, 1] }}
-          />
-          {CURVE_POINTS.map((p, i) => (
-            <g key={STEPS[i].n}>
-              {active === i && <circle cx={p.x} cy={p.y} r={9} fill="var(--brand-soft)" />}
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={4}
-                fill={active === i ? 'var(--brand)' : 'var(--paper)'}
-                stroke={active === i ? 'var(--brand)' : 'var(--line-strong)'}
-                strokeWidth={2}
-                style={{ transition: 'fill 300ms, stroke 300ms' }}
-              />
-            </g>
-          ))}
-        </svg>
-      </div>
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">{s.blurb}</p>
+            </button>
+            <ul className="mt-5 space-y-2 border-t border-[var(--line)] pt-5">
+              {s.points.map((p) => (
+                <li key={p} className="text-sm text-[var(--ink-faint)]">
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        )
+      })}
     </div>
   )
 }

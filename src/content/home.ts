@@ -69,4 +69,5 @@ export const STATS = [
   { value: '40+', label: 'Apps shipped' },
   { value: '9', label: 'Weeks, average' },
   { value: '98%', label: 'Client retention' },
+  { value: '5', label: 'Concepts built' },
 ] as const

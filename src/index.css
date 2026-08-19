@@ -175,6 +175,52 @@ body {
   box-shadow: 2px 2px 0 var(--brand);
 }
 
+/* the same brutalist hard edge as .edge-hard, but only drawn on :hover —
+   used where a second, secondary action should smoothly borrow the primary
+   CTA's red-offset treatment on hover and settle back to plain on leave */
+.edge-hard-onhover {
+  border: 2px solid transparent;
+  box-shadow: 0 0 0 0 rgba(245, 51, 59, 0);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.edge-hard-onhover:hover {
+  border-color: var(--ink);
+  box-shadow: 4px 4px 0 var(--brand);
+  transform: translate(-2px, -2px);
+}
+
+.edge-hard-onhover:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-hard-onhover {
+    transition: none;
+  }
+  .edge-hard-onhover:hover {
+    transform: none;
+  }
+}
+
+/* subtle grain — a fixed noise texture laid over a shader/gradient surface
+   so it reads as printed paper rather than a flat digital gradient. Kept to
+   a low opacity and blended so it never fights the content above it. */
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
 /* numbered kicker — the Swiss/brutalist marker used before every section */
 .kicker {
   display: inline-flex;

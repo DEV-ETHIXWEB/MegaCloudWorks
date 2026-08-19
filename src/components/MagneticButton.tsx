@@ -6,7 +6,7 @@ type Props = {
   children: ReactNode
   to?: string
   href?: string
-  variant?: 'solid' | 'outline' | 'ghost'
+  variant?: 'solid' | 'outline' | 'ghost' | 'edge-hover'
   size?: 'md' | 'lg'
   className?: string
 }
@@ -32,7 +32,9 @@ export function MagneticButton({ children, to, href, variant = 'solid', size = '
       ? 'edge-hard bg-[var(--brand)] text-white'
       : variant === 'outline'
         ? 'border-2 border-[var(--ink)] text-[var(--ink)] hover:bg-[var(--ink)] hover:text-white'
-        : 'text-[var(--ink)] hover:text-[var(--brand-text)]'
+        : variant === 'edge-hover'
+          ? 'edge-hard-onhover bg-[var(--paper)] text-[var(--ink)]'
+          : 'text-[var(--ink)] hover:text-[var(--brand-text)]'
 
   const sizing = size === 'lg' ? 'px-8 py-4 text-base' : 'px-6 py-3 text-sm'
 

@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# AI coding agent tooling — skills/hooks installed locally by npx
+# (impeccable, ghaida/intent, etc.), not part of the shipped app
+.claude/
+.agent/
+.agents/
+.gemini/
+.codex/

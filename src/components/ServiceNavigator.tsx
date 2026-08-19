@@ -125,7 +125,7 @@ export function ServiceNavigator() {
               <span className="kicker" data-n={service.n}>
                 {service.tagline}
               </span>
-              <h3 className="mt-4 font-sans text-[clamp(1.8rem,3.4vw,2.6rem)] font-extrabold leading-tight tracking-tight">
+              <h3 className="mt-4 font-sans text-[length:var(--fs-h3)] font-extrabold leading-tight tracking-[var(--tracking-tight)]">
                 {service.title}
               </h3>
               <p className="mt-4 text-lg leading-relaxed text-[var(--ink-soft)]">{service.body}</p>

@@ -83,18 +83,7 @@ export function Home() {
             className="mt-4 font-sans text-[length:var(--fs-display)] font-black leading-[0.98] tracking-[var(--tracking-tight)] sm:leading-[0.92]"
           >
             {HOME_HERO.headlineLines[0]} {HOME_HERO.headlineLines[1]}{' '}
-            <span className="relative inline-block text-[var(--brand)]">
-              {HOME_HERO.headlineLines[2]}
-              <svg
-                className="absolute -bottom-1 left-0 w-full"
-                height="10"
-                viewBox="0 0 200 10"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-              >
-                <path d="M0,6 Q50,0 100,5 T200,4" stroke="var(--brand)" strokeWidth="4" fill="none" strokeLinecap="round" />
-              </svg>
-            </span>
+            <span className="text-[var(--brand)]">{HOME_HERO.headlineLines[2]}</span>
           </motion.h1>
 
           <motion.p

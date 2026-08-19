@@ -3,7 +3,6 @@ import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
 import { Reveal } from './Reveal'
 import { IPhoneMockup } from './IPhoneMockup'
 import { AppLoadingScreen } from './AppLoadingScreen'
-import { HandHoldingPhone } from './HandHoldingPhone'
 import { TextGenerateEffect } from './TextGenerateEffect'
 import type { Concept } from '../content/concepts'
 
@@ -17,9 +16,9 @@ const AppLaunchPhoneLive = lazy(() =>
 /**
  * The product moment: a phone that actually starts up. A loading splash
  * plays first, then crossfades into the concept's real first screen — live
- * and tappable, not a picture of one. Laid out left (phone, held) / right
- * (copy), on the same paper background as the hero rather than a separate
- * dark band, so it reads as a continuation of the page instead of a jump.
+ * and tappable, not a picture of one. Laid out left (phone) / right (copy)
+ * on the same paper background as the hero rather than a separate dark
+ * band, so it reads as a continuation of the page instead of a jump.
  */
 export function AppLaunchPhone({ concept }: { concept: Concept }) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -41,8 +40,11 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
         style={{ background: `radial-gradient(circle, ${concept.accent}, transparent 70%)` }}
       />
 
-      <div className="mx-auto grid max-w-[var(--container-wide)] items-center gap-10 lg:grid-cols-[minmax(0,17rem)_1fr] lg:gap-16">
-        {/* phone, held — left on desktop, first on mobile */}
+      {/* narrower, centered container (not the full page-wide one) so the
+          phone/copy pair sits together as one balanced group with room on
+          both sides, instead of the phone pinned to the far left edge */}
+      <div className="mx-auto grid max-w-[56rem] items-center gap-10 lg:grid-cols-[minmax(0,17rem)_1fr] lg:gap-16">
+        {/* phone — left on desktop, first on mobile */}
         <Reveal className="mx-auto w-full max-w-[190px] lg:mx-0">
           <motion.div className="relative" style={{ rotateX: rotate, scale, transformPerspective: 1000 }}>
             <IPhoneMockup size="lg" label={`${concept.name} — ${live ? 'live' : 'launching'}`}>
@@ -72,7 +74,6 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
                 )}
               </AnimatePresence>
             </IPhoneMockup>
-            <HandHoldingPhone />
           </motion.div>
         </Reveal>
 

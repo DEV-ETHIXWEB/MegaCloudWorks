@@ -41,15 +41,18 @@ export function Home() {
 
       {/* 01 — Hero: centered headline over a drifting cloud-shader sky, grain
           on top so the shader reads as texture rather than a flat gradient.
-          min-h + flex centering keeps the headline in the middle of the
-          screen on short mobile viewports instead of pinned low with a
-          slab of empty space above it. `isolate` matters here, not just for
-          tidiness: neither this section nor <main> set a z-index, so
-          without it they never form their own stacking context and the
-          shader/gradient/grain's negative z-index layers escape all the way
-          up to the document root — painting behind <main>'s own opaque
-          background instead of behind this section's text. */}
-      <section className="relative isolate flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-[var(--edge)] pb-16 pt-24 sm:min-h-0 sm:pb-20 sm:pt-32">
+          min-h-[100svh] + flex centering does two things: keeps the
+          headline centered on short mobile viewports instead of pinned low
+          with empty space above it, and — at every breakpoint, not just
+          mobile — keeps the next section (AppLaunchPhone, phone on the
+          left) fully below the fold at rest, so it doesn't peek in at the
+          bottom-left the moment the page loads. `isolate` matters here,
+          not just for tidiness: neither this section nor <main> set a
+          z-index, so without it they never form their own stacking context
+          and the shader/gradient/grain's negative z-index layers escape
+          all the way up to the document root — painting behind <main>'s
+          own opaque background instead of behind this section's text. */}
+      <section className="relative isolate flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-[var(--edge)] pb-16 pt-24 sm:pb-20 sm:pt-32">
         {/* CloudShader owns its own position: 'relative' — a dedicated
             absolutely-positioned wrapper avoids fighting that with a
             conflicting utility class on the same element */}

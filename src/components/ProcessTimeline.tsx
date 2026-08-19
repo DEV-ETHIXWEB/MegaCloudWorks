@@ -12,6 +12,15 @@ const ICONS = [Search, PenTool, Code2, Rocket]
 // rather than four cards sitting dead level with each other
 const STAIRCASE = ['lg:mt-0', 'lg:mt-5', 'lg:mt-10', 'lg:mt-5']
 
+// the four phases' positions on the connecting curve below — must match
+// the endpoints baked into that curve's own path string
+const CURVE_POINTS = [
+  { x: 0, y: 24 },
+  { x: 400, y: 10 },
+  { x: 800, y: 34 },
+  { x: 1200, y: 20 },
+]
+
 /**
  * "How we work" as a phase timeline instead of the old click-to-expand
  * accordion. Each phase gets an icon for what it actually is, and the
@@ -24,31 +33,6 @@ export function ProcessTimeline() {
 
   return (
     <div>
-      {/* the connecting line — draws left to right on scroll-in, with a dot
-          over each phase that picks up a soft halo once selected */}
-      <div className="relative mb-2 hidden h-3 lg:block">
-        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[var(--line)]" />
-        <motion.div
-          className="absolute inset-y-0 left-0 top-1/2 h-px -translate-y-1/2 bg-[var(--brand)]/60"
-          initial={{ width: '0%' }}
-          whileInView={{ width: '100%' }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
-        />
-        {STEPS.map((s, i) => (
-          <span
-            key={s.n}
-            className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-all duration-300"
-            style={{
-              left: `${(i / (STEPS.length - 1)) * 100}%`,
-              borderColor: active === i ? 'var(--brand)' : 'var(--line-strong)',
-              background: active === i ? 'var(--brand)' : 'var(--paper)',
-              boxShadow: active === i ? '0 0 0 5px var(--brand-soft)' : 'none',
-            }}
-          />
-        ))}
-      </div>
-
       <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-[var(--line)]">
         {STEPS.map((s, i) => {
           const isActive = active === i
@@ -100,6 +84,47 @@ export function ProcessTimeline() {
             </Reveal>
           )
         })}
+      </div>
+
+      {/* the connecting line — under the cards, not over them. A gentle
+          curve rather than a flat ruled line, hand-drawn in along its own
+          path (not just width 0→100%) so the reveal feels less mechanical.
+          Dots live in the same SVG as the curve so they sit exactly on it. */}
+      <div className="relative mt-10 hidden h-11 lg:block" aria-hidden="true">
+        <svg viewBox="0 0 1200 44" preserveAspectRatio="none" className="h-full w-full overflow-visible">
+          <path
+            d="M0,24 C130,24 270,10 400,10 C530,10 670,34 800,34 C930,34 1070,20 1200,20"
+            stroke="var(--line)"
+            strokeWidth="1.5"
+            fill="none"
+          />
+          <motion.path
+            d="M0,24 C130,24 270,10 400,10 C530,10 670,34 800,34 C930,34 1070,20 1200,20"
+            stroke="var(--brand)"
+            strokeOpacity="0.55"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            fill="none"
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 1.3, ease: [0.65, 0, 0.35, 1] }}
+          />
+          {CURVE_POINTS.map((p, i) => (
+            <g key={STEPS[i].n}>
+              {active === i && <circle cx={p.x} cy={p.y} r={9} fill="var(--brand-soft)" />}
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={4}
+                fill={active === i ? 'var(--brand)' : 'var(--paper)'}
+                stroke={active === i ? 'var(--brand)' : 'var(--line-strong)'}
+                strokeWidth={2}
+                style={{ transition: 'fill 300ms, stroke 300ms' }}
+              />
+            </g>
+          ))}
+        </svg>
       </div>
     </div>
   )

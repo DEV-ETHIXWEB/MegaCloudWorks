@@ -40,12 +40,13 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
         style={{ background: `radial-gradient(circle, ${concept.accent}, transparent 70%)` }}
       />
 
-      {/* narrower, centered container (not the full page-wide one) so the
-          phone/copy pair sits together as one balanced group with room on
-          both sides, instead of the phone pinned to the far left edge */}
-      <div className="mx-auto grid max-w-[56rem] items-center gap-10 lg:grid-cols-[minmax(0,17rem)_1fr] lg:gap-16">
+      {/* flex, not grid — a 1fr track let the copy's own max-w-md sit inside
+          a much wider column than it filled, leaving a dead gap to its
+          right. Flex sizes both children to their own content and centers
+          the pair as one tight, balanced group instead. */}
+      <div className="mx-auto flex max-w-[52rem] flex-col items-center gap-10 lg:flex-row lg:justify-center lg:gap-14">
         {/* phone — left on desktop, first on mobile */}
-        <Reveal className="mx-auto w-full max-w-[190px] lg:mx-0">
+        <Reveal className="mx-auto w-full max-w-[190px] lg:mx-0 lg:shrink-0">
           <motion.div className="relative" style={{ rotateX: rotate, scale, transformPerspective: 1000 }}>
             <IPhoneMockup size="lg" label={`${concept.name} — ${live ? 'live' : 'launching'}`}>
               <AnimatePresence mode="wait">
@@ -78,7 +79,7 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
         </Reveal>
 
         {/* copy — right on desktop, centered under the phone on mobile */}
-        <Reveal delay={0.15} className="text-center lg:text-left">
+        <Reveal delay={0.15} className="text-center lg:max-w-sm lg:text-left">
           <p className="kicker justify-center lg:justify-start" data-n="02">
             Product experience
           </p>
@@ -87,7 +88,7 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
           </h2>
           <TextGenerateEffect
             words="A real MegaCloudWorks build, launching — not a screenshot."
-            className="mx-auto mt-4 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg lg:mx-0"
+            className="mx-auto mt-4 max-w-xs text-base leading-relaxed text-[var(--ink-soft)] sm:max-w-sm sm:text-lg lg:mx-0"
           />
         </Reveal>
       </div>

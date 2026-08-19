@@ -15,12 +15,13 @@ export function CTASection({
   ctaLabel?: string
 }) {
   return (
-    <section className="relative overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 sm:py-32">
+    <section className="relative isolate overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 sm:py-32">
       <div
         className="pointer-events-none absolute -right-40 -top-40 size-[32rem] rounded-full opacity-40 blur-3xl"
         style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.5), transparent 70%)' }}
       />
       <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
+      <div className="grain-overlay" aria-hidden="true" />
 
       <div className="relative mx-auto max-w-[var(--container)] text-center">
         <Reveal>

@@ -278,7 +278,22 @@ export function CloudShader({
 
     let frame = 0
     let running = true
+    // once it's scrolled out of view, keeping a continuous WebGL draw loop
+    // running costs battery/GPU for pixels nobody can see — pause here and
+    // resume the moment it's back on screen, rather than only respecting
+    // prefers-reduced-motion or the tab's own visibility.
+    let onScreen = true
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    const visibility = new IntersectionObserver(
+      ([entry]) => {
+        const wasOnScreen = onScreen
+        onScreen = entry.isIntersecting
+        if (onScreen && !wasOnScreen) frame = requestAnimationFrame(draw)
+      },
+      { threshold: 0 },
+    )
+    visibility.observe(canvas)
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -300,7 +315,7 @@ export function CloudShader({
 
     const start = performance.now()
     const draw = (now: number) => {
-      if (!running) return
+      if (!running || !onScreen) return
       const p = paramsRef.current
       const elapsed = reduceMotion ? 0 : ((now - start) / 1000) * p.speed
       const cloud = parseHex(p.cloudColor)
@@ -322,6 +337,7 @@ export function CloudShader({
       running = false
       cancelAnimationFrame(frame)
       observer.disconnect()
+      visibility.disconnect()
       gl.deleteBuffer(buffer)
       gl.deleteProgram(program)
       gl.deleteShader(vert)

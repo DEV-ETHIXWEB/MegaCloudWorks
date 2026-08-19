@@ -52,7 +52,7 @@ export function WorkDetail() {
               </span>
               <span className="text-xs font-semibold uppercase tracking-wide text-white/50">{concept.year}</span>
             </div>
-            <h1 className="mt-6 font-sans text-[clamp(2.6rem,7vw,5.5rem)] font-black leading-[0.94] tracking-[-0.03em]">
+            <h1 className="mt-6 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.94] tracking-[var(--tracking-tight)]">
               {concept.name}
             </h1>
             <p className="mt-3 max-w-lg text-xl text-white/80">{concept.tagline}</p>

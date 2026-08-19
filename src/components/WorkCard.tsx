@@ -3,12 +3,22 @@ import { ArrowUpRight } from 'lucide-react'
 import { Reveal } from './Reveal'
 import type { Concept } from '../content/concepts'
 
-export function WorkCard({ concept, delay = 0 }: { concept: Concept; delay?: number }) {
+export function WorkCard({
+  concept,
+  delay = 0,
+  bare = false,
+}: {
+  concept: Concept
+  delay?: number
+  /** omit the card's own surface-lift shadow/border — for when a caller
+   * (e.g. WobbleCard) already supplies the surface, so the two don't stack */
+  bare?: boolean
+}) {
   return (
     <Reveal delay={delay}>
       <Link
         to={`/work/${concept.slug}`}
-        className="surface-lift group block h-full overflow-hidden no-underline"
+        className={`${bare ? '' : 'surface-lift '}group block h-full overflow-hidden no-underline`}
       >
         <div
           className="relative flex aspect-[4/3] items-end overflow-hidden rounded-t-[inherit] p-6"

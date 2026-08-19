@@ -3,42 +3,42 @@ import { motion } from 'motion/react'
 
 const CONCEPTS = [
   {
-    to: '/minimalism',
+    to: '/concepts/minimalism',
     name: 'Minimalism',
     desc: 'Radical restraint. Whitespace as the loudest element, one accent color, no ornament.',
     bg: '#ffffff',
     fg: '#101014',
   },
   {
-    to: '/swiss',
+    to: '/concepts/swiss',
     name: 'Swiss Design',
     desc: 'Grid-locked type, red as a structural signal, International Typographic Style.',
     bg: '#ffffff',
     fg: '#101014',
   },
   {
-    to: '/brutalism',
+    to: '/concepts/brutalism',
     name: 'Brutalism',
     desc: 'Raw, unapologetic, oversized type, hard edges, thick borders, zero polish.',
     bg: '#f5333b',
     fg: '#101014',
   },
   {
-    to: '/neumorphism',
+    to: '/concepts/neumorphism',
     name: 'Neumorphism',
     desc: 'Soft extruded UI, subtle dual shadows, everything looks pressed from the same material.',
     bg: '#f0f0f3',
     fg: '#101014',
   },
   {
-    to: '/glassmorphism',
+    to: '/concepts/glassmorphism',
     name: 'Glassmorphism',
     desc: 'Frosted layers, blur, depth, floating panels over a rich gradient backdrop.',
     bg: '#1a1020',
     fg: '#ffffff',
   },
   {
-    to: '/claymorphism',
+    to: '/concepts/claymorphism',
     name: 'Claymorphism',
     desc: 'Puffy 3D shapes, soft shadows, playful and tactile, rounded like modeling clay.',
     bg: '#fef3f2',

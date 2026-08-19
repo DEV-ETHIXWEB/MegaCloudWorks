@@ -7,14 +7,14 @@ import { SiteHeader } from '../components/SiteHeader'
 import { SiteFooter } from '../components/SiteFooter'
 import { SectionHeading } from '../components/SectionHeading'
 import { ServiceCard } from '../components/ServiceCard'
-import { WorkCard } from '../components/WorkCard'
-import { ProcessSteps } from '../components/ProcessSteps'
+import { ProcessTimeline } from '../components/ProcessTimeline'
 import { StatsSection } from '../components/StatsSection'
 import { CTASection } from '../components/CTASection'
 import { Reveal } from '../components/Reveal'
 import { MagneticButton } from '../components/MagneticButton'
 import { CloudShader } from '../components/CloudShader'
 import { AppLaunchPhone } from '../components/AppLaunchPhone'
+import { WobbleCard } from '../components/WobbleCard'
 import { HOME_HERO, SERVICES } from '../content/home'
 import { CONCEPTS, getConcept } from '../content/concepts'
 import { STUDIOS, COVERAGE } from '../content/about'
@@ -160,7 +160,10 @@ export function Home() {
         <ProductExperienceSection concept={HERO_CONCEPT} />
       </Suspense>
 
-      {/* 05 — Selected work: one featured, two supporting — not three equal cards */}
+      {/* 05 — Selected work: three small, equal, refined cards — not one
+          oversized showcase piece. Each still gets the WobbleCard cursor-tilt,
+          just at roughly half the footprint of the original layout: a
+          shorter hero strip, tighter padding, and a smaller type scale. */}
       <section id="work" className="px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <div className="flex flex-wrap items-end justify-between gap-6">
@@ -172,53 +175,43 @@ export function Home() {
             </Reveal>
           </div>
 
-          <div className="mt-12 flex flex-col gap-6 lg:flex-row lg:items-stretch">
-            {/* featured */}
-            <Reveal className="lg:w-1/2">
-              <Link
-                to={`/work/${CONCEPTS[0].slug}`}
-                className="surface-lift group flex h-full flex-col overflow-hidden no-underline"
-              >
-                <div
-                  className="relative flex aspect-[4/3] flex-1 items-end overflow-hidden p-8"
-                  style={{ background: `linear-gradient(150deg, ${CONCEPTS[0].heroFrom}, ${CONCEPTS[0].heroTo})` }}
-                >
-                  <span
-                    className="absolute right-6 top-6 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide"
-                    style={{ background: CONCEPTS[0].accent, color: CONCEPTS[0].accentInk }}
-                  >
-                    {CONCEPTS[0].category}
-                  </span>
-                  <div
-                    className="pointer-events-none absolute -bottom-16 -right-16 size-64 rounded-full opacity-30 blur-3xl transition-transform duration-700 group-hover:scale-125"
-                    style={{ background: CONCEPTS[0].accent }}
-                  />
-                  <h3 className="relative font-sans text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-                    {CONCEPTS[0].name}
-                  </h3>
-                </div>
-                <div className="flex items-start justify-between gap-4 p-7">
-                  <div>
-                    <p className="font-sans text-lg font-bold text-[var(--ink)]">{CONCEPTS[0].tagline}</p>
-                    <p className="mt-1.5 max-w-md text-sm text-[var(--ink-soft)]">{CONCEPTS[0].blurb}</p>
-                    <p className="mt-2 text-xs font-semibold text-[var(--ink-faint)]">
-                      {CONCEPTS[0].platform} · {CONCEPTS[0].timeline}
-                    </p>
-                  </div>
-                  <ArrowUpRight
-                    className="mt-1 shrink-0 text-[var(--ink-faint)] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-[var(--brand)]"
-                    size={22}
-                  />
-                </div>
-              </Link>
-            </Reveal>
-
-            {/* supporting */}
-            <div className="flex flex-col gap-6 lg:w-1/2">
-              {CONCEPTS.slice(1, 3).map((c, i) => (
-                <WorkCard key={c.slug} concept={c} delay={0.1 + i * 0.08} />
-              ))}
-            </div>
+          <div className="mx-auto mt-12 grid max-w-2xl gap-5 sm:max-w-none sm:grid-cols-3">
+            {CONCEPTS.slice(0, 3).map((c, i) => (
+              <Reveal key={c.slug} delay={i * 0.07}>
+                <WobbleCard containerClassName="h-full">
+                  <Link to={`/work/${c.slug}`} className="group flex h-full flex-col overflow-hidden no-underline">
+                    <div
+                      className="relative flex aspect-[16/11] items-end overflow-hidden p-4"
+                      style={{ background: `linear-gradient(150deg, ${c.heroFrom}, ${c.heroTo})` }}
+                    >
+                      <span
+                        className="absolute right-3 top-3 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide"
+                        style={{ background: c.accent, color: c.accentInk }}
+                      >
+                        {c.category}
+                      </span>
+                      <div
+                        className="pointer-events-none absolute -bottom-8 -right-8 size-28 rounded-full opacity-30 blur-2xl transition-transform duration-700 group-hover:scale-125"
+                        style={{ background: c.accent }}
+                      />
+                      <h3 className="relative font-sans text-xl font-extrabold tracking-tight text-white">{c.name}</h3>
+                    </div>
+                    <div className="flex items-start justify-between gap-3 bg-[var(--paper)] p-4">
+                      <div>
+                        <p className="text-sm font-bold text-[var(--ink)]">{c.tagline}</p>
+                        <p className="mt-1 text-[11px] font-semibold text-[var(--ink-faint)]">
+                          {c.platform} · {c.timeline}
+                        </p>
+                      </div>
+                      <ArrowUpRight
+                        className="mt-0.5 shrink-0 text-[var(--ink-faint)] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-[var(--brand)]"
+                        size={16}
+                      />
+                    </div>
+                  </Link>
+                </WobbleCard>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -236,10 +229,10 @@ export function Home() {
                 <span className="text-[var(--brand)]">no surprises.</span>
               </>
             }
-            sub="Click a stage to see what it actually includes — nine weeks, start to store, the same order every time."
+            sub="Nine weeks, start to store, the same order every time."
           />
           <div className="mt-12">
-            <ProcessSteps />
+            <ProcessTimeline />
           </div>
         </div>
       </section>

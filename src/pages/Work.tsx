@@ -28,7 +28,7 @@ export function Work() {
           <p className="kicker" data-n="01">
             {WORK_HERO.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-3xl font-sans text-[clamp(2.6rem,7vw,5.5rem)] font-black leading-[0.92] tracking-[-0.03em]">
+          <h1 className="mt-6 max-w-3xl font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.92] tracking-[var(--tracking-tight)]">
             {WORK_HERO.headlineLines[0]}
             <br />
             {WORK_HERO.headlineLines[1]}

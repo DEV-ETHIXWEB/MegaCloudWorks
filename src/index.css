@@ -76,8 +76,9 @@
      heaviest weight (900): the hero H1 and the final-CTA headline; every
      other heading sits at 800, so the two flagships read as heavier by
      contrast rather than competing with headings at the same weight. */
-  --fs-display: clamp(2rem, 9vw, 5.4rem); /* hero H1 */
-  --fs-h1: clamp(2.2rem, 5.5vw, 4.2rem); /* CTASection headline */
+  --fs-display: clamp(1.6rem, 7.5vw, 5.4rem); /* the Home hero H1 — the single biggest moment site-wide */
+  --fs-page-h1: clamp(2.6rem, 7vw, 5.5rem); /* every other page's own hero H1 (About, Services, Work, WorkDetail, Contact) */
+  --fs-h1: clamp(2.2rem, 5.5vw, 4.2rem); /* CTASection headline, NotFound */
   --fs-h2: clamp(2rem, 4.6vw, 3.4rem); /* section headings */
   --fs-lead: clamp(1.3rem, 2.4vw, 1.8rem); /* large standalone paragraph */
   --tracking-tight: -0.03em;
@@ -123,6 +124,19 @@ body {
 
 ::selection {
   background: var(--brand-soft);
+}
+
+/* on-brand keyboard focus — replaces the browser default outline
+   everywhere so keyboard/switch navigation gets the same considered
+   treatment as everything else, instead of a generic blue ring */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* ------------------------------------------------------------------ *

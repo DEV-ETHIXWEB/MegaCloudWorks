@@ -23,7 +23,7 @@ export function About() {
             <p className="kicker" data-n="01">
               {ABOUT_HERO.eyebrow}
             </p>
-            <h1 className="mt-6 font-sans text-[clamp(3rem,8vw,6.5rem)] font-black leading-[0.88] tracking-[-0.03em]">
+            <h1 className="mt-6 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.88] tracking-[var(--tracking-tight)]">
               {ABOUT_HERO.headlineLines[0]}
               <br />
               {ABOUT_HERO.headlineLines[1]}
@@ -64,7 +64,7 @@ export function About() {
             </p>
           </div>
           <Reveal className="lg:col-span-7 lg:col-start-6">
-            <p className="text-[clamp(1.4rem,2.6vw,2rem)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">
+            <p className="text-[length:var(--fs-lead)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">
               {STUDIOS.body}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-8">
@@ -106,7 +106,7 @@ export function About() {
             <p className="kicker" data-n="04">
               {COVERAGE.eyebrow}
             </p>
-            <h2 className="mt-4 font-sans text-[clamp(2rem,4.6vw,3.4rem)] font-extrabold leading-[0.98] tracking-[-0.03em]">
+            <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)]">
               {COVERAGE.titleLines[0]}
               <br />
               <span className="text-[var(--brand)]">{COVERAGE.titleLines[1]}</span>

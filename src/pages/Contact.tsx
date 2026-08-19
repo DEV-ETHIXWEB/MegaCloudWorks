@@ -67,7 +67,7 @@ export function Contact() {
             {CONTACT_HERO.word}
           </p>
 
-          <h1 className="relative font-sans text-[clamp(2.6rem,6.5vw,4.6rem)] font-black tracking-[-0.03em]">
+          <h1 className="relative font-sans text-[length:var(--fs-page-h1)] font-black tracking-[var(--tracking-tight)]">
             {CONTACT_HERO.h1}
           </h1>
           <p className="relative mx-auto mt-4 max-w-lg text-lg text-[var(--ink-soft)]">{CONTACT_HERO.sub}</p>

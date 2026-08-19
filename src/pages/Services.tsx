@@ -7,7 +7,7 @@ import { SectionHeading } from '../components/SectionHeading'
 import { Reveal } from '../components/Reveal'
 import { MagneticButton } from '../components/MagneticButton'
 import { ServiceNavigator } from '../components/ServiceNavigator'
-import { ProcessSteps } from '../components/ProcessSteps'
+import { ProcessTimeline } from '../components/ProcessTimeline'
 import { WorkCard } from '../components/WorkCard'
 import { StatsSection } from '../components/StatsSection'
 import { CTASection } from '../components/CTASection'
@@ -48,7 +48,7 @@ export function Services() {
           <p className="kicker" data-n="01">
             {SERVICES_HERO.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-4xl font-sans text-[clamp(2.6rem,7vw,5.5rem)] font-black leading-[0.94] tracking-[-0.03em]">
+          <h1 className="mt-6 max-w-4xl font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.94] tracking-[var(--tracking-tight)]">
             {SERVICES_HERO.headlineLines[0]}
             <br />
             {SERVICES_HERO.headlineLines[1]}
@@ -145,10 +145,10 @@ export function Services() {
                 <span className="text-[var(--brand)]">no surprises.</span>
               </>
             }
-            sub="The same process behind every service above — click a stage to see what it actually includes."
+            sub="The same process behind every service above, start to finish."
           />
           <div className="mt-12">
-            <ProcessSteps />
+            <ProcessTimeline />
           </div>
         </div>
       </section>

@@ -186,6 +186,18 @@ export function Home() {
                         className="pointer-events-none absolute -bottom-8 -right-8 size-28 rounded-full opacity-30 blur-2xl transition-transform duration-700 group-hover:scale-125"
                         style={{ background: c.accent }}
                       />
+                      {/* a peek of the real product, tucked into the corner
+                          rather than filling the card — cropped by this
+                          div's own overflow-hidden so only a slice of it
+                          ever shows */}
+                      {c.slug === 'stamp' && (
+                        <img
+                          src="/preview-400.png"
+                          alt=""
+                          aria-hidden="true"
+                          className="pointer-events-none absolute -bottom-10 -right-8 w-28 rotate-3 opacity-95 drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)] transition-transform duration-700 group-hover:-translate-y-1"
+                        />
+                      )}
                       <h3 className="relative font-sans text-xl font-extrabold tracking-tight text-white">{c.name}</h3>
                     </div>
                     <div className="flex items-start justify-between gap-3 bg-[var(--paper)] p-4">

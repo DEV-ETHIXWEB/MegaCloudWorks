@@ -121,7 +121,22 @@
     0 38px 70px -34px rgba(14, 20, 28, 0.55);
 }
 
-.cdev__glass > .ios {
+/*
+  Whatever is on the glass is pinned to the glass.
+
+  Three different things can be the app root here - the running screen, the
+  slide wrapper it animates in, and the launch screen while it boots - and each
+  used to size itself with `height: 100%`. That silently collapses whenever the
+  parent's height is derived rather than declared, which on mobile left the
+  launch screen 37px tall in a 522px bezel. Pinned to all four edges there is
+  no height to resolve and nothing to get wrong: the app is the glass.
+*/
+.cdev__glass > .ios,
+.cdev__glass > .phone3d__slide {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
   border-radius: inherit;
 }
 

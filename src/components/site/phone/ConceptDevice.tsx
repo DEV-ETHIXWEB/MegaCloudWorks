@@ -1,43 +1,34 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { usePhoneNav } from '#/lib/phoneUI'
 import type { DeviceState } from './ConceptDeviceCanvas'
 import { clamp01 } from './deviceStage'
 
 import './concept-device.css'
 
-const ConceptDeviceCanvas = lazy(() => import('./ConceptDeviceCanvas'))
-
 /**
  * The case study's device.
  *
- * Everything a mockup image cannot do: it is the real model, it is switched
- * on, the app inside it is the running app, and it answers the pointer. The
- * WebGL half is a lazy chunk - three and drei are heavier than the entire rest
- * of the page - so the frame below is drawn in CSS first and the model takes
- * its place when it arrives.
+ * Everything a mockup image cannot do: it is switched on, the app inside it is
+ * the running app, and its own tab bar drives the case study.
  *
- * The whole thing is inert under `prefers-reduced-motion`: the model still
- * loads and the app still runs, it simply stands still.
+ * The bezel is DOM and so is the screen, which is the point. A WebGL model
+ * used to carry it and re-project the app onto the glass each frame; that
+ * projection drifted against the bezel as the model tilted, so the screen slid
+ * out of the phone - visibly on desktop, badly on mobile. Layout cannot drift.
  */
 export function ConceptDevice({
   accent,
-  /** changes whenever the screen does, so the glass can flare on the change */
-  pulse,
   children,
   className = '',
 }: {
   accent: string
-  pulse: number
+  /** kept for the call sites; the DOM glass has nothing to flare */
+  pulse?: number
   children?: ReactNode
   className?: string
 }) {
   const host = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
-
-  // read on this side of the canvas and handed through as a prop, because
-  // context does not cross r3f's own React root - see PhoneNavRelay
-  const nav = usePhoneNav()
 
   const state = useRef<DeviceState>({
     px: 0,
@@ -86,57 +77,6 @@ export function ConceptDevice({
     ro.observe(node)
     return () => ro.disconnect()
   }, [])
-
-  /*
-    Then make r3f actually look.
-
-    Mounting into a sized box is necessary but not sufficient: react-use-measure
-    - which is what <Canvas> sizes itself from - can settle on a zero reading
-    and then never hear about it again, because the box does not subsequently
-    *change*. The renderer is left at the canvas element's intrinsic 300x150,
-    the scene is never fitted, and <Html> puts the app somewhere off the glass.
-
-    It listens to window resize, so that is the lever. Watch the real canvas
-    for a couple of seconds after it appears and, while its CSS box does not
-    match the frame it lives in, nudge it. In the good case this costs one
-    check and stops; in the bad case it corrects on the first tick instead of
-    waiting for whatever incidental reflow the reader triggers first.
-  */
-  useEffect(() => {
-    if (!ready || typeof window === 'undefined') return
-    const node = host.current
-    if (!node) return
-
-    let frame = 0
-    const started = performance.now()
-
-    const nudge = () => {
-      const canvas = node.querySelector('canvas')
-      const box = node.getBoundingClientRect()
-
-      if (canvas && box.width > 0 && box.height > 0) {
-        const c = canvas.getBoundingClientRect()
-        /*
-          Both axes, deliberately. A canvas that has never been fitted sits at
-          its intrinsic 300x150, and this device is often *exactly* 300 wide -
-          so comparing width alone reports a healthy canvas while the height is
-          out by a factor of three.
-        */
-        const wrong =
-          Math.abs(c.width - box.width) > 2 ||
-          Math.abs(c.height - box.height) > 2
-        if (!wrong) return
-        window.dispatchEvent(new Event('resize'))
-      }
-
-      if (performance.now() - started < 2000) {
-        frame = window.requestAnimationFrame(nudge)
-      }
-    }
-
-    frame = window.requestAnimationFrame(nudge)
-    return () => window.cancelAnimationFrame(frame)
-  }, [ready])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -230,30 +170,31 @@ export function ConceptDevice({
       {/* the glow the device sits in - the accent, at two per cent, on snow */}
       <span aria-hidden="true" className="cdev__halo" />
 
-      {ready ? (
-        <Suspense fallback={<Frame>{null}</Frame>}>
-          <ConceptDeviceCanvas
-            accent={accent}
-            pulse={pulse}
-            state={state}
-            nav={nav}
-          >
-            {children}
-          </ConceptDeviceCanvas>
-        </Suspense>
-      ) : (
-        <Frame>{children}</Frame>
-      )}
+      {/*
+        The app is laid out inside the glass, not projected onto it.
+
+        The WebGL half used to own this: the model rendered, and drei's <Html
+        transform> re-projected the whole app through the camera every frame so
+        it appeared to sit on the glass. That projection is only ever as exact
+        as the camera fit, and the rig tilts the model continuously - so the
+        screen crept out of its bezel, differently at every viewport width, and
+        worse on phones where the canvas is smallest.
+
+        A DOM screen inside a DOM bezel cannot do that. It is the same box,
+        clipped by the same rounded rectangle, positioned by layout. There is
+        no room left for it to slide, which is the whole requirement.
+      */}
+      <Frame>{children}</Frame>
     </div>
   )
 }
 
 /**
- * The device before WebGL arrives.
+ * The bezel, at the display's own aspect.
  *
- * Deliberately not a picture of the same phone: it is a plain bezel at the
- * display's own aspect, so what swaps in is the shell appearing around an app
- * that was already running, rather than one phone replacing another.
+ * `--fit` carries the 300x662 rectangle every screen is authored into, so the
+ * glass and the app are the same box and the app is clipped by the same
+ * rounded corners that draw the phone.
  */
 function Frame({ children }: { children?: ReactNode }) {
   return (

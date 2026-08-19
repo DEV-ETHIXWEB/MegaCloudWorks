@@ -2442,7 +2442,7 @@
 }
 
 .phone3d__slide[data-mode='tab'] {
-  animation: screen-tab 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: screen-tab 380ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 @keyframes screen-tab {
@@ -2477,7 +2477,7 @@
 /* ---- console: Fieldly ---- */
 
 .phone3d__slide[data-motion='console'] {
-  animation: screen-console 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: screen-console 300ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .phone3d__slide[data-motion='console'][data-dir='-1'] {
@@ -2491,7 +2491,7 @@
   wipe rather than a fade, still square-edged, but it moves.
 */
 .phone3d__slide[data-motion='console'][data-mode='tab'] {
-  animation: screen-console-cut 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: screen-console-cut 320ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 @keyframes screen-console {
@@ -2535,7 +2535,7 @@
 /* ---- deck: Stamp ---- */
 
 .phone3d__slide[data-motion='deck'] {
-  animation: screen-deck 460ms cubic-bezier(0.2, 1.06, 0.4, 1) both;
+  animation: screen-deck 460ms cubic-bezier(0.2, 1.06, 0.4, 1) backwards;
   transform-origin: 50% 0%;
 }
 
@@ -2544,7 +2544,7 @@
 }
 
 .phone3d__slide[data-motion='deck'][data-mode='tab'] {
-  animation: screen-deck-lift 460ms cubic-bezier(0.18, 1.15, 0.4, 1) both;
+  animation: screen-deck-lift 460ms cubic-bezier(0.18, 1.15, 0.4, 1) backwards;
 }
 
 @keyframes screen-deck {
@@ -2583,7 +2583,7 @@
 /* ---- calendar: Slate ---- */
 
 .phone3d__slide[data-motion='calendar'] {
-  animation: screen-calendar 480ms cubic-bezier(0.4, 0, 0.1, 1) both;
+  animation: screen-calendar 480ms cubic-bezier(0.4, 0, 0.1, 1) backwards;
 }
 
 .phone3d__slide[data-motion='calendar'][data-dir='-1'] {
@@ -2594,7 +2594,7 @@
    has, and a cross-fade would be the only thing in it that does not run along
    that axis */
 .phone3d__slide[data-motion='calendar'][data-mode='tab'] {
-  animation: screen-calendar-step 380ms cubic-bezier(0.4, 0, 0.1, 1) both;
+  animation: screen-calendar-step 380ms cubic-bezier(0.4, 0, 0.1, 1) backwards;
 }
 
 @keyframes screen-calendar {
@@ -2635,7 +2635,7 @@
 .phone3d__slide[data-motion='chart'],
 .phone3d__slide[data-motion='chart'][data-dir='-1'],
 .phone3d__slide[data-motion='chart'][data-mode='tab'] {
-  animation: screen-chart 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: screen-chart 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 /* no travel in either direction - the whole point of this one */
@@ -2655,7 +2655,7 @@
 /* ---- board: Leadr ---- */
 
 .phone3d__slide[data-motion='board'] {
-  animation: screen-board 500ms cubic-bezier(0.32, 0.9, 0.2, 1) both;
+  animation: screen-board 500ms cubic-bezier(0.32, 0.9, 0.2, 1) backwards;
 }
 
 .phone3d__slide[data-motion='board'][data-dir='-1'] {
@@ -2663,7 +2663,7 @@
 }
 
 .phone3d__slide[data-motion='board'][data-mode='tab'] {
-  animation: screen-board-rack 400ms cubic-bezier(0.32, 0.9, 0.2, 1) both;
+  animation: screen-board-rack 400ms cubic-bezier(0.32, 0.9, 0.2, 1) backwards;
 }
 
 @keyframes screen-board {

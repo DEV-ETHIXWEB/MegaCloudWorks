@@ -122,21 +122,29 @@
 }
 
 /*
-  Whatever is on the glass is pinned to the glass.
+  Whatever is on the glass is pinned to the glass, at the size it was drawn.
 
-  Three different things can be the app root here - the running screen, the
-  slide wrapper it animates in, and the launch screen while it boots - and each
-  used to size itself with `height: 100%`. That silently collapses whenever the
-  parent's height is derived rather than declared, which on mobile left the
-  launch screen 37px tall in a 522px bezel. Pinned to all four edges there is
-  no height to resolve and nothing to get wrong: the app is the glass.
+  Two things have to be true at once. The app must cover the bezel exactly -
+  three different roots can be on the glass (the running screen, the slide
+  wrapper, the launch screen) and any of them sizing itself with `height: 100%`
+  collapses the moment the parent's height is derived rather than declared.
+  And it must be laid out at the 300x662 it is *authored* at: the kit's type
+  scale is in fixed pixels, so rendering it into a 200px-wide box does not make
+  it smaller, it makes it look zoomed in.
+
+  So: a fixed 300x662 rectangle, scaled from its top-left corner by --cdev-k,
+  which ConceptDevice keeps equal to glassWidth / 300. The glass carries the
+  same 300/662 aspect, so the scaled box lands on all four edges exactly.
 */
 .cdev__glass > .ios,
 .cdev__glass > .phone3d__slide {
   position: absolute;
-  inset: 0;
-  width: auto;
-  height: auto;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 662px;
+  transform-origin: 0 0;
+  transform: scale(var(--cdev-k, 1));
   border-radius: inherit;
 }
 

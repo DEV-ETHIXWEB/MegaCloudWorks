@@ -5,6 +5,9 @@ import { clamp01 } from './deviceStage'
 
 import './concept-device.css'
 
+/** the CSS width every concept screen is authored at - see DEVICE_PX */
+const AUTHORED_W = 300
+
 /**
  * The case study's device.
  *
@@ -38,42 +41,28 @@ export function ConceptDevice({
     reduced: false,
   })
 
-  /*
-    The canvas is client-only - the server paints the CSS frame and the app -
-    but it must also not mount until this box has a real size.
-
-    r3f measures its container once on mount and sizes the drawing buffer from
-    that. Measure it at zero and the canvas stays at the default 300x150, the
-    scene never renders, and drei's <Html> - which is where the entire app
-    screen lives - is projected through a camera that was never fitted. The app
-    then lands somewhere off the device instead of on its glass.
-
-    In dev the box happens to be measurable by the time the lazy chunk arrives.
-    In a production build the chunk can land inside the same frame as
-    hydration, the box is still 0x0, and the mockup ends up outside the phone.
-    It looks like a caching problem because any later layout change - a resize,
-    a font swap, a scroll that triggers reflow - silently corrects it.
-
-    So: wait for a non-zero box, then mount. There is no race left to lose.
-  */
   useEffect(() => {
     const node = host.current
     if (!node || typeof window === 'undefined') return
 
-    const check = () => {
-      const { width, height } = node.getBoundingClientRect()
-      if (width > 0 && height > 0) {
-        setReady(true)
-        return true
-      }
-      return false
+    /*
+      The app is laid out at the 300x662 it was drawn at and scaled onto the
+      glass, so its type stays the size the kit intends however big the device
+      is on the page. This keeps the scale factor in step with the bezel.
+    */
+    const fit = () => {
+      const glass = node.querySelector<HTMLElement>('.cdev__glass')
+      if (!glass) return false
+      const { width, height } = glass.getBoundingClientRect()
+      if (width <= 0 || height <= 0) return false
+      node.style.setProperty('--cdev-k', String(width / AUTHORED_W))
+      setReady(true)
+      return true
     }
 
-    if (check()) return
+    fit()
 
-    const ro = new ResizeObserver(() => {
-      if (check()) ro.disconnect()
-    })
+    const ro = new ResizeObserver(() => fit())
     ro.observe(node)
     return () => ro.disconnect()
   }, [])

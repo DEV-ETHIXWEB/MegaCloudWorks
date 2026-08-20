@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
 import { SiteHeader } from '../components/SiteHeader'
 import { SiteFooter } from '../components/SiteFooter'
@@ -6,6 +6,8 @@ import { SectionHeading } from '../components/SectionHeading'
 import { WorkCard } from '../components/WorkCard'
 import { Reveal } from '../components/Reveal'
 import { CTASection } from '../components/CTASection'
+import { MagneticButton } from '../components/MagneticButton'
+import { TypewriterEffect } from '../components/TypewriterEffect'
 import { WORK_HERO, MADE } from '../content/work'
 import { CONCEPTS } from '../content/concepts'
 
@@ -22,31 +24,49 @@ export function Work() {
       />
       <SiteHeader />
 
-      {/* Hero */}
-      <section className="px-[var(--edge)] pb-16 pt-36 sm:pt-44">
-        <div className="mx-auto max-w-[var(--container-wide)]">
-          <p className="kicker" data-n="01">
+      {/* Hero — same centered shape as the homepage and What-we-do: kicker,
+          headline (last line typed in), one line of copy, then two actions */}
+      <section className="relative isolate overflow-hidden px-[var(--edge)] pb-14 pt-36 sm:pb-16 sm:pt-44">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(16,16,20,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(16,16,20,0.05) 1px, transparent 1px)',
+            backgroundSize: '80px 80px',
+            maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute right-[6%] top-10 -z-10 size-[26rem] rounded-full opacity-[0.28] blur-[100px]"
+          style={{ background: 'radial-gradient(circle, var(--brand), transparent 70%)' }}
+        />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+          <p className="kicker justify-center" data-n="01">
             {WORK_HERO.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-3xl font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.92] tracking-[var(--tracking-tight)]">
+          <h1 className="mt-4 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.98] tracking-[var(--tracking-tight)] sm:leading-[0.92]">
             {WORK_HERO.headlineLines[0]}
             <br />
-            {WORK_HERO.headlineLines[1]}
-            <br />
-            <span className="text-[var(--brand)]">{WORK_HERO.headlineLines[2]}</span>
+            {WORK_HERO.headlineLines[1]}{' '}
+            <TypewriterEffect words={[{ text: WORK_HERO.headlineLines[2], className: 'text-[var(--brand)]' }]} />
           </h1>
-          <p className="mt-6 max-w-lg text-lg text-[var(--ink-soft)]">{WORK_HERO.sub}</p>
-          <Link
-            to="/contact"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-text)] no-underline underline decoration-[var(--brand)] decoration-2 underline-offset-4"
-          >
-            {WORK_HERO.cta} →
-          </Link>
+          <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
+            {WORK_HERO.sub}
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <MagneticButton to="/contact" size="lg">
+              {WORK_HERO.cta} <ArrowRight size={15} />
+            </MagneticButton>
+            <MagneticButton href="#index" size="lg" variant="edge-hover">
+              See the index <ArrowUpRight size={15} />
+            </MagneticButton>
+          </div>
         </div>
       </section>
 
       {/* Index */}
-      <section className="px-[var(--edge)] py-16">
+      <section id="index" className="scroll-mt-28 px-[var(--edge)] py-16">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <p className="kicker" data-n="02">

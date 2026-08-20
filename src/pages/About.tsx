@@ -1,9 +1,12 @@
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
 import { SiteHeader } from '../components/SiteHeader'
 import { SiteFooter } from '../components/SiteFooter'
 import { SectionHeading } from '../components/SectionHeading'
 import { Reveal } from '../components/Reveal'
 import { CTASection } from '../components/CTASection'
+import { MagneticButton } from '../components/MagneticButton'
+import { TypewriterEffect } from '../components/TypewriterEffect'
 import { ABOUT_HERO, STUDIOS, ABOUT_STEPS, COVERAGE } from '../content/about'
 
 export function About() {
@@ -17,22 +20,30 @@ export function About() {
       <SiteHeader />
 
       {/* Hero */}
-      <section className="px-[var(--edge)] pb-16 pt-36 sm:pt-44">
-        <div className="mx-auto grid max-w-[var(--container-wide)] gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-7">
-            <p className="kicker" data-n="01">
-              {ABOUT_HERO.eyebrow}
-            </p>
-            <h1 className="mt-6 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.88] tracking-[var(--tracking-tight)]">
-              {ABOUT_HERO.headlineLines[0]}
-              <br />
-              {ABOUT_HERO.headlineLines[1]}
-              <br />
-              <span className="text-[var(--brand)]">{ABOUT_HERO.headlineLines[2]}</span>
-            </h1>
-          </div>
-          <div className="lg:col-span-5">
-            <p className="text-lg leading-relaxed text-[var(--ink-soft)]">{ABOUT_HERO.sub}</p>
+      <section className="relative isolate overflow-hidden px-[var(--edge)] pb-16 pt-36 sm:pt-44">
+        {/* same centered shape as the homepage, What-we-do and Work:
+            kicker, headline (last line typed in), one line, two actions */}
+        <div className="relative mx-auto max-w-3xl text-center">
+          <p className="kicker justify-center" data-n="01">
+            {ABOUT_HERO.eyebrow}
+          </p>
+          <h1 className="mt-4 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.94] tracking-[var(--tracking-tight)] sm:leading-[0.88]">
+            {ABOUT_HERO.headlineLines[0]}
+            <br />
+            {ABOUT_HERO.headlineLines[1]}
+            <br />
+            <TypewriterEffect words={[{ text: ABOUT_HERO.headlineLines[2], className: 'text-[var(--brand)]' }]} />
+          </h1>
+          <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
+            {ABOUT_HERO.sub}
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <MagneticButton to="/contact" size="lg">
+              Start a project <ArrowRight size={15} />
+            </MagneticButton>
+            <MagneticButton href="#how-we-work" size="lg" variant="edge-hover">
+              How we work <ArrowUpRight size={15} />
+            </MagneticButton>
           </div>
         </div>
 
@@ -77,7 +88,12 @@ export function About() {
       </section>
 
       {/* How we work — brand band */}
-      <section data-header-tone="dark" className="on-brand bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-32">
+      <section
+        id="how-we-work"
+        data-header-tone="dark"
+        className="on-brand relative isolate scroll-mt-28 overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-32"
+      >
+        <div className="grain-overlay" aria-hidden="true" />
         <div className="mx-auto max-w-[var(--container-wide)]">
           <SectionHeading n="03" kicker="How we work" title="Four moves, in the same order, every time." light />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

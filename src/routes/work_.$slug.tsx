@@ -621,15 +621,21 @@ function ConceptDetail() {
 
           {/* The first feature is the argument the product is making; the
               other five are how it makes it. Sizing them all identically was
-              the old mistake - see .cs-bento. */}
-          <ul className="cs-bento mt-12 sm:mt-14">
+              the old mistake - see .cs-bento.
+
+              The six arrive as one move rather than six: the observer is on
+              the grid, and the order the tiles come out in is written in the
+              stylesheet - the lead fades up, the two beside it slide out from
+              behind it, the corner tile drops out of the one above it, and
+              the bottom row deals itself out of that. See .cs-bento in
+              styles-case.css. */}
+          <ul data-reveal="bento" className="cs-bento mt-12 sm:mt-14">
             {concept.features.map((f, i) => {
               const Icon = CONCEPT_ICONS[f.icon]
               const lead = i === 0
               return (
                 <li
                   key={f.title}
-                  data-reveal
                   className={`cs-tile ${lead ? 'cs-tile--lead' : ''}`}
                 >
                   <span className="cs-tile__head">

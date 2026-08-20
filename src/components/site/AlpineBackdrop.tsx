@@ -28,6 +28,16 @@ export function AlpineBackdrop({ c }: { c: Concept }) {
   const scroll = useRef(0)
   const [ready, setReady] = useState(false)
   const [reduced, setReduced] = useState(false)
+  /*
+    Whether the hero is still on screen.
+
+    The field is the most expensive thing on the page and a case study is a
+    long one, so it used to spend the whole scroll drawing fractal noise for
+    a hero nobody was looking at any more - which is the budget the device in
+    front of it needed. It runs while the hero is in frame and holds still
+    the rest of the time.
+  */
+  const [onscreen, setOnscreen] = useState(true)
 
   // WebGL is client-only, and it is the most expensive thing in the hero - so
   // the page paints first and the field arrives behind it
@@ -69,8 +79,21 @@ export function AlpineBackdrop({ c }: { c: Concept }) {
     measure()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
+
+    const io =
+      typeof IntersectionObserver === 'undefined'
+        ? null
+        : new IntersectionObserver(
+            ([entry]) => {
+              setOnscreen(entry.isIntersecting)
+            },
+            { rootMargin: '120px' },
+          )
+    io?.observe(node)
+
     return () => {
       if (frame) window.cancelAnimationFrame(frame)
+      io?.disconnect()
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
     }
@@ -121,7 +144,11 @@ export function AlpineBackdrop({ c }: { c: Concept }) {
       {ready ? (
         <div className="cs-sky__field" data-sky-layer="smoke">
           <Suspense fallback={null}>
-            <VolumetricSky scroll={scroll} reduced={reduced} />
+            <VolumetricSky
+              scroll={scroll}
+              reduced={reduced}
+              visible={onscreen}
+            />
           </Suspense>
         </div>
       ) : null}

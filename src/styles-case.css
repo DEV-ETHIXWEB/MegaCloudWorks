@@ -787,14 +787,17 @@
   by what they are, not by the order they happen to be in.
 */
 .cs-bento {
+  /* the gap is a token because the arrival reads it: a tile that starts
+     "behind" its neighbour has to travel its own width *plus* the gutter */
+  --cs-gap: 0.9rem;
   display: grid;
-  gap: 0.9rem;
+  gap: var(--cs-gap);
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (min-width: 1024px) {
   .cs-bento {
-    gap: 1.1rem;
+    --cs-gap: 1.1rem;
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
@@ -814,6 +817,19 @@
   }
 }
 
+/*
+  Filled, not outlined.
+
+  These were six white cards with a hairline round them, which made the
+  section the one place on a case study where the product's colour was a
+  detail rather than the material. They are now cut from the concept's own
+  deep accent - one solid colour across the whole grid, the lead a shade
+  richer than the rest - so the block reads as the product's, and the type
+  sits on it in white the way it does inside the app.
+
+  It also earns the arrival: a tile can only slide out from behind another
+  one if the one in front is opaque.
+*/
 .cs-tile {
   position: relative;
   display: flex;
@@ -821,9 +837,11 @@
   gap: 0.85rem;
   overflow: hidden;
   border-radius: 20px;
-  border: 1px solid var(--hair);
-  background: #ffffff;
+  border: 1px solid color-mix(in srgb, #ffffff 13%, transparent);
+  background: var(--c-band);
   padding: 1.35rem 1.25rem 1.45rem;
+  box-shadow: 0 18px 40px -34px
+    color-mix(in srgb, var(--c-band) 88%, transparent);
   transition:
     transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
     border-color 320ms ease,
@@ -832,9 +850,9 @@
 
 .cs-tile:hover {
   transform: translateY(-6px);
-  border-color: color-mix(in srgb, var(--c-accent) 42%, transparent);
-  box-shadow: 0 30px 54px -34px
-    color-mix(in srgb, var(--c-band) 70%, transparent);
+  border-color: color-mix(in srgb, #ffffff 34%, transparent);
+  box-shadow: 0 34px 60px -30px
+    color-mix(in srgb, var(--c-band) 90%, transparent);
 }
 
 /* the wash rises out of the foot of the tile rather than washing over it */
@@ -845,7 +863,13 @@
   height: 68%;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(to top, var(--c-wash), transparent);
+  /* light rising out of the foot, not a pale wash: the tile is already the
+     colour, so the only thing left to lift it with is light */
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, #ffffff 15%, transparent),
+    transparent
+  );
   opacity: 0;
   transition: opacity 460ms ease;
 }
@@ -871,8 +895,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background: var(--c-wash);
-  color: var(--c-band);
+  background: color-mix(in srgb, #ffffff 16%, transparent);
+  color: #ffffff;
   transition:
     transform 460ms cubic-bezier(0.16, 1, 0.3, 1),
     background-color 320ms ease,
@@ -881,8 +905,8 @@
 
 .cs-tile:hover .cs-tile__icon {
   transform: translateY(-2px) rotate(-6deg);
-  background: var(--c-accent);
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--c-band);
 }
 
 /* the folio, set large and hollow, sitting in the corner of its own tile */
@@ -894,12 +918,12 @@
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   color: transparent;
-  -webkit-text-stroke: 1px color-mix(in srgb, var(--granite) 22%, transparent);
+  -webkit-text-stroke: 1px color-mix(in srgb, #ffffff 34%, transparent);
   transition: -webkit-text-stroke-color 380ms ease;
 }
 
 .cs-tile:hover .cs-tile__n {
-  -webkit-text-stroke-color: var(--c-accent);
+  -webkit-text-stroke-color: color-mix(in srgb, #ffffff 78%, transparent);
 }
 
 .cs-tile__body {
@@ -914,7 +938,7 @@
   font-weight: 700;
   line-height: 1.22;
   letter-spacing: -0.02em;
-  color: var(--granite);
+  color: #ffffff;
   text-wrap: balance;
 }
 
@@ -923,13 +947,20 @@
   margin-top: 0.5rem;
   font-size: 0.92rem;
   line-height: 1.58;
-  color: var(--granite-soft);
+  color: color-mix(in srgb, #ffffff 76%, transparent);
 }
 
 /* ---- the lead tile ---- */
 
 .cs-tile--lead {
-  background: linear-gradient(168deg, #ffffff 0%, var(--c-wash) 100%);
+  /* the same colour, lit from the top corner and deepened at the foot, so the
+     argument the product is making is the richest thing in the grid */
+  background: linear-gradient(
+    158deg,
+    color-mix(in srgb, var(--c-accent) 46%, var(--c-band)) 0%,
+    var(--c-band) 56%,
+    color-mix(in srgb, #000000 24%, var(--c-band)) 100%
+  );
   padding: 1.8rem 1.6rem 1.9rem;
   min-height: 15rem;
 }
@@ -943,8 +974,8 @@
   height: 3.2rem;
   width: 3.2rem;
   border-radius: 17px;
-  background: var(--c-accent);
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--c-band);
 }
 
 .cs-tile--lead .cs-tile__t {
@@ -964,10 +995,13 @@
   inset: -40% -60%;
   z-index: 0;
   pointer-events: none;
+  /* the sheen was written for a white tile, where 85% white is a highlight.
+     On a filled one it is a searchlight - this is the same pass of light at
+     the strength a solid colour can take */
   background: linear-gradient(
     104deg,
     transparent 38%,
-    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.14) 50%,
     transparent 62%
   );
   animation: cs-tile-sheen 9s ease-in-out infinite;
@@ -985,6 +1019,201 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cs-tile--lead::before {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The bento arriving
+
+   Six tiles, one move. The observer is on the grid rather than on each tile,
+   so the order is fixed by the stylesheet and reads the same every time:
+
+     01  the lead fades up - the claim lands first, on its own
+     02  and 03 slide out to the right from behind it
+     06  drops out of the bottom of 03, into the corner
+     05  then 04 deal themselves leftward out of 06
+
+   Every tile that "comes from behind" another one has to be under it while it
+   travels, which is what the z-order below is for, and has to be hidden by an
+   opaque neighbour rather than by opacity - which is what the filled tiles
+   above bought.
+
+   The animations fill `backwards` and never `forwards`: they hold their first
+   frame through their delay, and the moment they are done the tile falls back
+   to its own resting style. Anything filling forwards would pin `transform`
+   and the hover lift would stop working for good.
+--------------------------------------------------------------------------- */
+
+/* the grid itself does not arrive - it only says when its tiles do */
+.cs-bento[data-reveal][data-armed] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
+  will-change: auto;
+}
+
+.cs-bento[data-armed] > .cs-tile {
+  opacity: 0;
+}
+
+.cs-bento[data-armed][data-shown] > .cs-tile {
+  opacity: 1;
+  animation: cs-bento-rise var(--cs-in, 620ms) var(--arrive) var(--cs-d, 0ms)
+    backwards;
+}
+
+/* stacked so each tile is covered by the one it comes out from behind */
+.cs-tile:nth-child(1) {
+  z-index: 6;
+}
+.cs-tile:nth-child(2),
+.cs-tile:nth-child(3) {
+  z-index: 5;
+}
+.cs-tile:nth-child(6) {
+  z-index: 3;
+}
+.cs-tile:nth-child(5) {
+  z-index: 2;
+}
+.cs-tile:nth-child(4) {
+  z-index: 1;
+}
+
+/* narrow: there is no bento to come apart, so they simply deal out in order */
+.cs-bento[data-armed][data-shown] > .cs-tile:nth-child(2) {
+  --cs-d: 90ms;
+}
+.cs-bento[data-armed][data-shown] > .cs-tile:nth-child(3) {
+  --cs-d: 180ms;
+}
+.cs-bento[data-armed][data-shown] > .cs-tile:nth-child(4) {
+  --cs-d: 270ms;
+}
+.cs-bento[data-armed][data-shown] > .cs-tile:nth-child(5) {
+  --cs-d: 360ms;
+}
+.cs-bento[data-armed][data-shown] > .cs-tile:nth-child(6) {
+  --cs-d: 450ms;
+}
+
+@keyframes cs-bento-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* 01 - the claim, on its own */
+  .cs-bento[data-armed][data-shown] > .cs-tile:nth-child(1) {
+    --cs-in: 660ms;
+    --cs-d: 0ms;
+    animation-name: cs-bento-lead;
+  }
+
+  /* 02 and 03 - out from behind the lead, to the right.
+     The travel is the tile's own width plus the gutter, which is exactly
+     where the lead is: they start covered by it and end in their slots. */
+  .cs-bento[data-armed][data-shown] > .cs-tile:nth-child(2) {
+    --cs-in: 700ms;
+    --cs-d: 480ms;
+    animation-name: cs-bento-out-right;
+  }
+  .cs-bento[data-armed][data-shown] > .cs-tile:nth-child(3) {
+    --cs-in: 700ms;
+    --cs-d: 600ms;
+    animation-name: cs-bento-out-right;
+  }
+
+  /* 06 - down out of the foot of 03, into the corner */
+  .cs-bento[data-armed][data-shown] > .cs-tile:nth-child(6) {
+    --cs-in: 660ms;
+    --cs-d: 1180ms;
+    animation-name: cs-bento-drop;
+  }
+
+  /* 05 then 04 - leftward, each out from behind the one to its right */
+  .cs-bento[data-armed][data-shown] > .cs-tile:nth-child(5) {
+    --cs-in: 640ms;
+    --cs-d: 1600ms;
+    animation-name: cs-bento-out-left;
+  }
+  .cs-bento[data-armed][data-shown] > .cs-tile:nth-child(4) {
+    --cs-in: 640ms;
+    --cs-d: 1860ms;
+    animation-name: cs-bento-out-left;
+  }
+
+  @keyframes cs-bento-lead {
+    from {
+      opacity: 0;
+      transform: scale(0.984);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /*
+    The opacity ramp is over in the first tenth of the travel and is only
+    there for the first frame: after that the tile is opaque and hidden by
+    the one in front of it, which is what the move is meant to look like.
+  */
+  @keyframes cs-bento-out-right {
+    0% {
+      opacity: 0;
+      transform: translate3d(calc(-100% - var(--cs-gap)), 0, 0);
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes cs-bento-out-left {
+    0% {
+      opacity: 0;
+      transform: translate3d(calc(100% + var(--cs-gap)), 0, 0);
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes cs-bento-drop {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, calc(-100% - var(--cs-gap)), 0);
+    }
+    14% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-bento[data-armed] > .cs-tile,
+  .cs-bento[data-armed][data-shown] > .cs-tile {
+    opacity: 1;
     animation: none;
   }
 }

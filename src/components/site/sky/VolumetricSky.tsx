@@ -169,9 +169,22 @@ export type VolumetricSkyProps = {
   /** the studio red - a constant across all five concepts */
   smoke?: string
   reduced?: boolean
+  /**
+   * Whether the hero is still on screen.
+   *
+   * The field costs the same whether or not anybody can see it, and a case
+   * study is a long page - so once the hero has left, it stops. It holds its
+   * last frame rather than clearing, so coming back up the page finds the
+   * weather where it was left.
+   */
+  visible?: boolean
 }
 
-function Field({ scroll, smoke = '#f5333b', reduced = false }: VolumetricSkyProps) {
+function Field({
+  scroll,
+  smoke = '#f5333b',
+  reduced = false,
+}: VolumetricSkyProps) {
   const mat = useRef<THREE.ShaderMaterial>(null)
 
   const uniforms = useMemo(
@@ -213,14 +226,27 @@ export function VolumetricSky(props: VolumetricSkyProps) {
   return (
     <Canvas
       /*
-        Deliberately below the device's cap. This is a full-bleed fullscreen
-        shader with five octaves in it: the pixel count is the entire cost, and
-        a retina pass buys nothing on a field whose smallest feature is forty
-        pixels across.
+        Well below the device's cap, and below 1:1 as well.
+
+        This is a full-bleed fullscreen shader with five octaves in it, run
+        twice for the two banks and again for the smoke column: the pixel
+        count is the entire cost. It was drawing at up to 1.25x, which on a
+        laptop hero is three million pixels of fractal noise every frame and
+        the reason the device standing in front of it stuttered.
+
+        The smallest feature in the field is about forty pixels across, so
+        there is nothing in it that survives to a single pixel anyway. Drawn
+        at two thirds and let up to size, it is the same weather for a
+        quarter of the work - and the upscale is a blur across cloud, which
+        is cloud.
       */
-      dpr={[1, 1.25]}
-      gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
-      frameloop={props.reduced ? 'demand' : 'always'}
+      dpr={[0.6, 0.8]}
+      gl={{
+        antialias: false,
+        alpha: true,
+        powerPreference: 'high-performance',
+      }}
+      frameloop={props.reduced || props.visible === false ? 'demand' : 'always'}
     >
       <Field {...props} />
     </Canvas>

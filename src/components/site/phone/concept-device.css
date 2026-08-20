@@ -135,6 +135,17 @@
   overflow: hidden;
   border-radius: calc(var(--cdev-k, 1) * var(--cdev-screen-r));
   background: #05070a;
+  /*
+    The backing runs a couple of pixels wider than the cut-out.
+
+    The plate and this box are laid out from the same origin but rounded to
+    device pixels independently, so at some widths their edges landed half a
+    pixel apart and the page showed through the gap as a pale hairline round
+    the display - broken into dashes by the rounding, which is exactly what it
+    looked like. The spread puts black under the plate's edge on all four
+    sides, so there is nothing left for a seam to reveal.
+  */
+  box-shadow: 0 0 0 2px #05070a;
   /* a drag on the glass scrolls the app inside it, and never the page */
   touch-action: pan-y;
   /* the app is a live, animating subtree; its own compositing context keeps a
@@ -285,23 +296,32 @@
   animation: cdev-drift-b 26s ease-in-out infinite;
 }
 
+/*
+  Translation only, in both of these.
+
+  They used to scale as well. A scale on a blurred element cannot be done on
+  the compositor - the blur has to be re-rasterised at the new size on every
+  frame of a thirty-four second loop, for two full-width layers, for as long
+  as the page is open. Drifting sideways is the part that reads as weather;
+  the breathing was costing the hero its frame rate to say nothing.
+*/
 @keyframes cdev-drift-a {
   0%,
   100% {
-    transform: translate3d(-2.5%, 0, 0) scale(1);
+    transform: translate3d(-2.5%, 0, 0);
   }
   50% {
-    transform: translate3d(3%, -1.5%, 0) scale(1.06);
+    transform: translate3d(3%, -1.5%, 0);
   }
 }
 
 @keyframes cdev-drift-b {
   0%,
   100% {
-    transform: translate3d(2%, 0, 0) scale(1.04);
+    transform: translate3d(2%, 0, 0);
   }
   50% {
-    transform: translate3d(-3%, -2%, 0) scale(1);
+    transform: translate3d(-3%, -2%, 0);
   }
 }
 
@@ -322,7 +342,9 @@
     color-mix(in srgb, var(--cdev-accent, #f5333b) 16%, transparent) 0%,
     transparent 70%
   );
-  filter: blur(14px);
+  /* no blur: this is a radial gradient that is already nothing but falloff,
+     and blurring it only asked the compositor for a full-width gaussian that
+     changes nothing anyone can see */
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -7,8 +7,19 @@ import './concept-device.css'
 const AUTHORED_W = 300
 const AUTHORED_H = 662
 
-/** the hand-held phone plate the app is shown inside */
-const HAND_SRC = '/concept/hand-phone.png'
+/**
+ * The hand-held phone plate the app is shown inside.
+ *
+ * De-matted webp rather than the original png. The plate is cut out of a
+ * photograph whose display was a checkerboard, and the pixels where the
+ * checks met the bezel survived that cut as a one-pixel light grey line -
+ * blown up to the size the hero draws the phone at, that line read as a white
+ * dashed outline round the display and the island. Those pixels have been
+ * un-matted against the check colour they were blended with, the handful of
+ * pinholes the same cut left in the fingernails are filled, and the result
+ * ships as webp: 153KB of png down to 19KB.
+ */
+const HAND_SRC = '/concept/hand-phone.webp'
 
 /**
  * The case study's device.
@@ -101,6 +112,10 @@ export function ConceptDevice({
             alt=""
             aria-hidden="true"
             draggable={false}
+            width={410}
+            height={553}
+            decoding="async"
+            fetchPriority="high"
             className="cdev__plate"
           />
         </div>

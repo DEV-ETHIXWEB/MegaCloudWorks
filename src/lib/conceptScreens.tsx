@@ -43,7 +43,7 @@ import { Tap, useChoice, usePhoneNav, useScreenState } from './phoneUI'
 
 /**
  * The status bar clock, live. Twenty mock screens all read "9:41" (the
- * standard iOS-marketing-screenshot time) until this — every phone across
+ * standard iOS-marketing-screenshot time) until this: every phone across
  * every concept now shows the visitor's actual local time, ticking once a
  * minute rather than on every render.
  */
@@ -115,8 +115,8 @@ function ScreenShell({
 /**
  * A dark-surface shell for the three products (Prophy, Leadr, Slate) whose
  * moodboard references run near-black/deep-teal instead of white. Text
- * inside can't lean on var(--ink) — .reset-surface pins that to near-black
- * for the light screens — so everything here is set in explicit whites.
+ * inside can't lean on var(--ink); .reset-surface pins that to near-black
+ * for the light screens, so everything here is set in explicit whites.
  */
 function DarkScreenShell({
   children,
@@ -145,7 +145,7 @@ function DarkStatusBar({ accent }: { accent: string }) {
   )
 }
 
-/** Small colored-initial avatar — the stand-in for photography everywhere. */
+/** Small colored-initial avatar: the stand-in for photography everywhere. */
 function Avatar({
   name,
   tone,
@@ -154,7 +154,7 @@ function Avatar({
 }: {
   name: string
   tone: string
-  /** pixel diameter — kept a plain style so it isn't at the mercy of Tailwind's JIT class scanner */
+  /** pixel diameter: kept a plain style so it isn't at the mercy of Tailwind's JIT class scanner */
   size?: number
   fontSize?: number
 }) {
@@ -174,7 +174,7 @@ function Avatar({
   )
 }
 
-/** A horizontal strip of icon + number + label — Dently/Leadr's stat-chip row. */
+/** A horizontal strip of icon + number + label: Dently/Leadr's stat-chip row. */
 function StatChipRow({
   items,
   tone = 'light',
@@ -214,7 +214,7 @@ function StatChipRow({
   )
 }
 
-/** Horizontal stage stepper — Leadr's deal-detail progress line. */
+/** Horizontal stage stepper: Leadr's deal-detail progress line. */
 function Stepper({
   stages,
   activeIndex,
@@ -255,7 +255,7 @@ function Stepper({
   )
 }
 
-/** A percentage progress ring — borrowed from the amber wallet reference. */
+/** A percentage progress ring: borrowed from the amber wallet reference. */
 function ProgressRing({
   pct,
   tone,
@@ -290,10 +290,10 @@ function ProgressRing({
 }
 
 /* ============================= FIELDLY =============================
- * Reference: Flux (image 7) — navy/near-black ground, map-pin price-style
+ * Reference: Flux (image 7): navy/near-black ground, map-pin price-style
  * highlight card, operational stat tiles + icon grid on the home screen,
  * colour-coded icon-chip rows for jobs/transactions. Indigo-blue accent
- * (#5B4FE8) — Flux's own primary colour, replacing the old amber.
+ * (#5B4FE8), Flux's own primary colour, replacing the old amber.
  */
 
 const FIELDLY_BG = '#0A0912'
@@ -636,7 +636,7 @@ function FieldlySchedule({ accent }: { accent: string }) {
 }
 
 /* ============================= STAMP =============================
- * Reference: Vault (image 3/4) — a balance/card hero, month-pill +
+ * Reference: Vault (image 3/4): a balance/card hero, month-pill +
  * chart treatment for anything numeric, category-icon-chip rows for
  * the reward catalog and offers. Purple accent already matches Vault's
  * own palette, so the cream/purple pairing carries over almost as-is.
@@ -763,7 +763,7 @@ function StampPunchCard({ accent }: { accent: string }) {
           </div>
           <p className="mt-2.5 text-center text-[9px] font-bold text-[var(--ink)]">
             {full
-              ? 'Card full — your next coffee is free'
+              ? 'Card full: your next coffee is free'
               : `${stamps} of 10 stamps, ${10 - stamps} more and it’s free`}
           </p>
         </div>
@@ -927,7 +927,7 @@ function StampOffers({ accent }: { accent: string }) {
 }
 
 /* ============================= SLATE =============================
- * Reference: Slotly (image 6) — near-black ground, stat tiles (Bookings
+ * Reference: Slotly (image 6): near-black ground, stat tiles (Bookings
  * Today / Revenue), staff/service filter pills, a day-schedule of coloured
  * time-block rows, bottom stat strip. Slate keeps its own teal accent
  * rather than Slotly's coral, and stays calmer/more spacious than
@@ -1300,7 +1300,7 @@ function SlateSchedule({ accent }: { accent: string }) {
 }
 
 /* ============================= PROPHY =============================
- * Reference: Dently (image 1/2) — deep teal ground, glassy frosted
+ * Reference: Dently (image 1/2): deep teal ground, glassy frosted
  * cards, pill bottom nav, avatar-and-stat-chip doctor/patient cards,
  * an appointment card with two buttons, and a proper chair-schedule
  * grid. Photography is replaced throughout with initials avatars.
@@ -1602,12 +1602,12 @@ function ProphyTreatment({ accent }: { accent: string }) {
 }
 
 /* ============================= LEADR =============================
- * Reference: Leadr (image 5) — the moodboard's actual "Pipeline" screen is
+ * Reference: Leadr (image 5): the moodboard's actual "Pipeline" screen is
  * a dashboard, not a bare kanban: a greeting header, a big gradient hero
  * card (pipeline value + a 4-number stat row), a horizontal run of stage
  * cards, an "Upcoming Follow-ups" list, and a floating "+" tab bar. That
  * composition is rebuilt here rather than the flatter 3-column kanban this
- * file used to have. Green accent (#16A34A) kept — the reference's own
+ * file used to have. Green accent (#16A34A) kept; the reference's own
  * purple/indigo gradients are swapped for our green throughout, layered
  * green-on-green (a lighter mint-to-green sweep) so the hero still reads
  * as a genuine gradient moment rather than a flat fill.
@@ -1651,7 +1651,7 @@ function LeadRow({
 /** the floating-FAB pill nav every Leadr screen shares */
 /**
  * The Leadr tab bar. `active`/`onNav` speak the tab bar's own 0-4 index
- * space (Home, Leads, FAB-slot, Tasks, Insights) — screen components map
+ * space (Home, Leads, FAB-slot, Tasks, Insights); screen components map
  * that back to their own 4-screen index space themselves, since which tab
  * "is home" for a given screen isn't the tab bar's business.
  */
@@ -1732,7 +1732,7 @@ function LeadrPipeline({ accent }: { accent: string }) {
           <Avatar name="Alex Rivera" tone={accent} size={24} fontSize={8} />
         </div>
 
-        {/* gradient hero — pipeline value + 4-up stat row */}
+        {/* gradient hero: pipeline value + 4-up stat row */}
         <Tap ripple="#ffffff" label="View pipeline value details" onTap={() => go(3)} className="mt-2.5">
           <span
             className="block rounded-2xl p-3"
@@ -1895,7 +1895,7 @@ function LeadrDetail({ accent }: { accent: string }) {
         {tab === 2 && (
           <div className="mt-3 rounded-xl p-2.5" style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}>
             <p className="text-[7.5px] leading-relaxed text-white/60">
-              Budget confirmed with finance. Wants rollout before end of quarter — prioritise the proposal follow-up.
+              Budget confirmed with finance. Wants rollout before end of quarter; prioritise the proposal follow-up.
             </p>
           </div>
         )}

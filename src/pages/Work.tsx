@@ -24,11 +24,31 @@ export function Work() {
       />
       <SiteHeader />
 
-      {/* Hero — same centered shape as the homepage and What-we-do: kicker,
+      {/* Hero: same centered shape as the homepage and What-we-do: kicker,
           headline (last line typed in), one line of copy, then two actions */}
-      <section className="relative isolate overflow-hidden px-[var(--edge)] pb-14 pt-36 sm:pb-16 sm:pt-44">
+      <section className="relative isolate flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-[var(--edge)] pb-14 pt-36 sm:pb-16 sm:pt-44">
+        <img
+          src="/work-hero-background.webp"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-30 h-full w-full object-cover opacity-[0.88]"
+        />
         <div
-          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
+          className="pointer-events-none absolute inset-0 -z-20"
+          style={{
+            background:
+              'linear-gradient(to bottom, var(--paper) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.1) 60%, var(--paper) 100%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 -z-20"
+          style={{
+            background:
+              'radial-gradient(ellipse 40% 60% at 44% 45%, var(--paper) 0%, rgba(255,255,255,0.5) 50%, transparent 82%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 -z-20 opacity-[0.5]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(16,16,20,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(16,16,20,0.05) 1px, transparent 1px)',
@@ -84,7 +104,7 @@ export function Work() {
         </div>
       </section>
 
-      {/* Inside every one — brand band with live stats */}
+      {/* Inside every one: brand band with live stats */}
       <section data-header-tone="dark" className="on-brand bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <SectionHeading n="03" kicker="Inside every one" title="Not mockups. Products, thought all the way through." light />

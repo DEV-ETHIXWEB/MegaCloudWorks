@@ -6,7 +6,7 @@ import { CONCEPT_SCREENS } from '../lib/conceptScreens'
 import type { Concept } from '../content/concepts'
 
 /**
- * One live, interactive phone for a concept — screens navigate each other
+ * One live, interactive phone for a concept: screens navigate each other
  * (tapping a job opens its detail, etc.) via PhoneNavProvider, and the strip
  * below lets a visitor jump straight to any of the four screens.
  */
@@ -28,7 +28,7 @@ export function ConceptPhone({
   return (
     <div className="flex flex-col items-center">
       <PhoneNavProvider index={index} count={screens.length} onGo={setIndex}>
-        <IPhoneMockup size={size} label={`${concept.name} — ${concept.screens[index]}`}>
+        <IPhoneMockup size={size} label={`${concept.name} · ${concept.screens[index]}`}>
           <Screen accent={concept.accent} />
         </IPhoneMockup>
       </PhoneNavProvider>

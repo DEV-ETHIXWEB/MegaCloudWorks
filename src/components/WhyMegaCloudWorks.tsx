@@ -6,13 +6,13 @@ import { COLUMNS } from '../content/services'
 const ICONS = [Palette, Layers, Users, Rocket]
 
 /**
- * "What working with us actually feels like" — four reasons, rebuilt from
+ * "What working with us actually feels like": four reasons, rebuilt from
  * four flat bordered columns into panels that respond.
  *
  * Restraint is the point: on a full-bleed brand-red band, anything with
  * real color would shout, so each panel is just frosted white at very low
  * alpha. Hovering (or focusing) one lifts it, lightens the frost a step,
- * brightens its hairline, and grows a short rule under the title — four
+ * brightens its hairline, and grows a short rule under the title: four
  * small moves in the same direction rather than one big effect.
  */
 export function WhyMegaCloudWorks() {

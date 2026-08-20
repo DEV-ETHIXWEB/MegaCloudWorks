@@ -34,7 +34,7 @@ type PhoneNavValue = {
   back: () => void
   /** false in the mini phones, where nothing is wired up */
   live: boolean
-  /** see useScreenState — the store that outlives a screen change */
+  /** see useScreenState: the store that outlives a screen change */
   store: Record<string, unknown>
   write: (key: string, value: unknown) => void
 }
@@ -72,7 +72,7 @@ export function PhoneNavProvider({
   )
 
   // Only the screen you are looking at is mounted, so anything a screen
-  // remembers in its own useState is thrown away the moment you leave it — you
+  // remembers in its own useState is thrown away the moment you leave it; you
   // would tick a patient off, walk to their chart, come back, and find the tick
   // gone. The store lives up here instead, where it outlives the screens.
   const [store, setStore] = useState<Record<string, unknown>>({})
@@ -109,7 +109,7 @@ export function usePhoneNav() {
  *
  * Renders a button, so Enter and Space work and the element is reachable by
  * tab. The press state is driven from pointer events rather than :active
- * because it has to survive the finger sliding a few pixels — on a real phone
+ * because it has to survive the finger sliding a few pixels: on a real phone
  * a tap that wobbles is still a tap.
  */
 export function Tap({
@@ -120,7 +120,7 @@ export function Tap({
   style,
   /** the ripple's colour; defaults to the concept accent passed by the screen */
   ripple = 'currentColor',
-  /** the whole row presses in — off for small controls that should only flash */
+  /** the whole row presses in: off for small controls that should only flash */
   press = true,
   disabled = false,
 }: {
@@ -155,7 +155,7 @@ export function Tap({
     )
   }
 
-  // Outside a provider — the mini phones in the screen picker — there is
+  // Outside a provider (the mini phones in the screen picker) there is
   // nothing to touch, and each of those phones already sits inside the
   // picker's own button. Rendering another button there would nest one inside
   // the other, which is invalid and makes the outer one unclickable in places.
@@ -231,7 +231,7 @@ export function useScreenState<T>(key: string, initial: T) {
 }
 
 /**
- * A row that is selected by touching it — the state most of these screens were
+ * A row that is selected by touching it: the state most of these screens were
  * faking with a hardcoded "the first one is highlighted".
  *
  * Seeded with whichever row the screen was drawn with, so it still looks right

@@ -7,6 +7,7 @@ import { Reveal } from '../components/Reveal'
 import { CTASection } from '../components/CTASection'
 import { MagneticButton } from '../components/MagneticButton'
 import { TypewriterEffect } from '../components/TypewriterEffect'
+import { StudioHandshake } from '../components/StudioHandshake'
 import { ABOUT_HERO, STUDIOS, ABOUT_STEPS, COVERAGE } from '../content/about'
 
 export function About() {
@@ -19,7 +20,7 @@ export function About() {
       />
       <SiteHeader />
 
-      {/* Hero — the photograph is the section's background now, not a framed
+      {/* Hero: the photograph is the section's background now, not a framed
           card. Its composition suits this: dark ridges hold the left and
           right edges while the middle stays near-white, so centred copy sits
           in the clear valley rather than fighting the picture. */}
@@ -30,7 +31,7 @@ export function About() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover"
         />
-        {/* a soft white bloom under the copy only — keeps the headline
+        {/* a soft white bloom under the copy only, keeps the headline
             legible at any crop without washing the ridges out at the edges */}
         <div
           className="pointer-events-none absolute inset-0 -z-10"
@@ -56,7 +57,7 @@ export function About() {
             {ABOUT_HERO.headlineLines[0]}
             <br />
             {/* the promise half of the line types itself in, a beat after the
-                static half has landed — brand red carries the differentiator */}
+                static half has landed; brand red carries the differentiator */}
             <TypewriterEffect
               startDelay={0.45}
               words={ABOUT_HERO.headlineLines[1]
@@ -90,16 +91,14 @@ export function About() {
             <p className="text-[length:var(--fs-lead)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">
               {STUDIOS.body}
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-8">
-              <img src="/ethixweb-black.png" alt="Ethixweb" className="h-7 w-auto object-contain opacity-70" onError={(e) => (e.currentTarget.style.display = 'none')} />
-              <div className="link-track h-px w-16" />
-              <img src="/logo-resized.svg" alt="MegaCloudWorks" className="h-7 w-auto" />
+            <div className="mt-10">
+              <StudioHandshake variant="feature" />
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* How we work — brand band */}
+      {/* How we work: brand band */}
       <section
         id="how-we-work"
         data-header-tone="dark"
@@ -111,10 +110,14 @@ export function About() {
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {ABOUT_STEPS.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.08}>
-                <div className="h-full rounded-2xl border border-white/25 bg-white/10 p-6 backdrop-blur-sm">
-                  <span className="text-4xl font-black text-white/90">{s.n}</span>
+                <div className="group h-full rounded-2xl border border-white/25 bg-white/10 p-6 backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-white/45 hover:bg-white/15 hover:shadow-[0_20px_44px_rgba(0,0,0,0.18)]">
+                  <span className="text-4xl font-black text-white/90 transition-colors duration-300 group-hover:text-white">
+                    {s.n}
+                  </span>
                   <h3 className="mt-3 font-sans text-xl font-extrabold tracking-tight">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/80">{s.body}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/80 transition-colors duration-300 group-hover:text-white/90">
+                    {s.body}
+                  </p>
                 </div>
               </Reveal>
             ))}

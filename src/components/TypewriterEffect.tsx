@@ -5,7 +5,7 @@ type Word = { text: string; className?: string }
 
 /**
  * Headline that types itself in, character by character, with a blinking
- * caret — ported from Aceternity UI's Typewriter Effect and retuned for
+ * caret, ported from Aceternity UI's Typewriter Effect and retuned for
  * this site: brand-red caret instead of blue, a quicker per-character
  * stagger so a full headline never keeps the reader waiting, and words
  * kept as inline-block units so the line still wraps naturally on mobile
@@ -32,7 +32,7 @@ export function TypewriterEffect({
   useEffect(() => {
     if (!isInView || reduced) return
     // each character resolves out of a soft blur rather than just popping
-    // in — the same blur-fade the homepage hero uses, so the reveal reads
+    // in; the same blur-fade the homepage hero uses, so the reveal reads
     // as part of the site's motion language instead of a literal typewriter
     animate(
       'span[data-tw-char]',
@@ -64,7 +64,7 @@ export function TypewriterEffect({
                 </span>
               ))}
             </span>
-            {/* the separator sits OUTSIDE the nowrap span on purpose — put
+            {/* the separator sits OUTSIDE the nowrap span on purpose: put
                 it inside and it inherits nowrap, which removes the only
                 break opportunity between words and pushes the whole line
                 off the edge of the screen. */}

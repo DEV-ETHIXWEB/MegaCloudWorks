@@ -7,7 +7,7 @@ import { CONCEPT_SCREENS } from '../lib/conceptScreens'
 import type { Concept } from '../content/concepts'
 
 // Each phone drifts on its own slow, slightly offset loop so the four never
-// move in lockstep — barely perceptible, a float rather than a bounce. Same
+// move in lockstep: barely perceptible, a float rather than a bounce. Same
 // idiom as ServiceCircles so the site has one floating language, not two.
 const FLOAT_DURATIONS = [7.2, 8.4, 7.8, 8.9]
 const FLOAT_DELAYS = [0, 0.7, 1.4, 0.35]
@@ -15,7 +15,7 @@ const FLOAT_DELAYS = [0, 0.7, 1.4, 0.35]
 /**
  * All four of a concept's screens, live and tappable, side by side.
  * Every phone runs its own PhoneNavProvider so tapping something in one
- * screen (open a job, claim a reward) navigates within that phone alone —
+ * screen (open a job, claim a reward) navigates within that phone alone:
  * an asymmetric stagger keeps four identical-width devices from reading as
  * a flat, boring grid, and a gentle idle float keeps them from sitting dead
  * on the page. Hovering one lifts it a little further out.
@@ -26,7 +26,7 @@ export function ScreensShowcase({ concept }: { concept: Concept }) {
   const [hovered, setHovered] = useState<number | null>(null)
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // a gentle wave, not a staircase — no card sits more than 24px off the
+  // a gentle wave, not a staircase: no card sits more than 24px off the
   // others' baseline, so all four stay comfortably inside the same viewport
   const lift = ['lg:mt-0', 'lg:mt-6', 'lg:mt-0', 'lg:mt-6']
 
@@ -71,7 +71,7 @@ export function ScreensShowcase({ concept }: { concept: Concept }) {
                     count={screens.length}
                     onGo={(next) => setIndices((cur) => cur.map((v, j) => (j === i ? next : v)))}
                   >
-                    <IPhoneMockup size="sm" label={`${concept.name} — ${concept.screens[indices[i]]}`}>
+                    <IPhoneMockup size="sm" label={`${concept.name} · ${concept.screens[indices[i]]}`}>
                       <Active accent={concept.accent} />
                     </IPhoneMockup>
                   </PhoneNavProvider>

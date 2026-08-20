@@ -19,7 +19,7 @@ export const MADE = [
     n: '02',
     title: 'Build',
     kicker: 'A feature set with edges',
-    body: 'What ships, what waits, and what we deliberately left out — written down, not implied.',
+    body: 'What ships, what waits, and what we deliberately left out: written down, not implied.',
     img: '/work/build.webp',
     w: 600,
     h: 596,

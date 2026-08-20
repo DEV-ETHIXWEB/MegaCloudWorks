@@ -9,11 +9,11 @@ import { Contact } from './pages/Contact'
 import { NotFound } from './pages/NotFound'
 
 // Case-study detail pulls in the full 20-screen interactive phone UI
-// library (~1600 lines) — split out so it only loads when a project is
+// library (~1600 lines), split out so it only loads when a project is
 // actually opened, not on every route.
 const WorkDetail = lazy(() => import('./pages/WorkDetail').then((m) => ({ default: m.WorkDetail })))
 
-// Original 6-way concept comparison — kept for reference, not part of the
+// Original 6-way concept comparison, kept for reference, not part of the
 // production site's information architecture, so it's split out too.
 const Gallery = lazy(() => import('./pages/Gallery').then((m) => ({ default: m.Gallery })))
 const Minimalism = lazy(() => import('./pages/Minimalism').then((m) => ({ default: m.Minimalism })))
@@ -63,7 +63,7 @@ function AppRoutes() {
           <Route path="/work/:slug" element={<WorkDetail />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* concept comparison — reference only */}
+          {/* concept comparison: reference only */}
           <Route path="/concepts" element={<Gallery />} />
           <Route path="/concepts/minimalism" element={<Minimalism />} />
           <Route path="/concepts/swiss" element={<Swiss />} />

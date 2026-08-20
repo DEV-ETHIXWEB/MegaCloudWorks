@@ -27,7 +27,7 @@ export function Services() {
       />
       <SiteHeader />
 
-      {/* 01 — Hero. `isolate` so the dot-grid/glow's negative z-index stays
+      {/* 01 · Hero. `isolate` so the dot-grid/glow's negative z-index stays
           scoped to this section instead of escaping to the document root
           and painting behind <main>'s own background (neither this section
           nor <main> otherwise sets a z-index, so nothing else contains
@@ -48,7 +48,7 @@ export function Services() {
         />
 
         {/* centered, same shape as the homepage hero: kicker, headline,
-            one short line, then two actions side by side — so landing and
+            one short line, then two actions side by side, so landing and
             What-we-do read as the same product rather than two layouts */}
         <div className="relative mx-auto max-w-3xl text-center">
           <p className="kicker justify-center" data-n="01">
@@ -75,13 +75,13 @@ export function Services() {
         </div>
       </section>
 
-      {/* Quick nav — three glass circles over a bed of concentric rings,
+      {/* Quick nav: three glass circles over a bed of concentric rings,
           jumps straight into the capability picker below */}
       <section className="px-[var(--edge)] py-10 sm:py-12">
         <ServiceCircles />
       </section>
 
-      {/* 02 — Capabilities: one interactive picker, not three duplicated blocks */}
+      {/* 02 · Capabilities: one interactive picker, not three duplicated blocks */}
       <section id="capabilities" className="scroll-mt-28 px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <SectionHeading n="02" kicker="Capabilities" title="What's included, service by service." />
@@ -91,7 +91,7 @@ export function Services() {
         </div>
       </section>
 
-      {/* 03 — Why MegaCloudWorks */}
+      {/* 03 · Why MegaCloudWorks */}
       <section
         data-header-tone="dark"
         className="on-brand relative isolate overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-28"
@@ -106,7 +106,7 @@ export function Services() {
         </div>
       </section>
 
-      {/* 04 — How we work */}
+      {/* 04 · How we work */}
       <section id="process" className="bg-[var(--paper-2)] px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <SectionHeading
@@ -129,7 +129,7 @@ export function Services() {
 
       <StatsSection />
 
-      {/* 05 — Selected work as proof */}
+      {/* 05 · Selected work as proof */}
       <section className="px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <div className="flex flex-wrap items-end justify-between gap-6">
@@ -170,7 +170,7 @@ export function Services() {
         </div>
       </section>
 
-      {/* 06 — Final CTA */}
+      {/* 06 · Final CTA */}
       <CTASection
         eyebrow="Start a project"
         title="Have something in mind?"

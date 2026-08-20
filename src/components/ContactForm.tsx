@@ -113,7 +113,7 @@ export function ContactForm() {
     setStatus('loading')
     setErrorMsg('')
     try {
-      // No backend is wired in this rebuild — simulate the original site's
+      // No backend is wired in this rebuild; simulate the original site's
       // one-business-day-reply flow so the UI states are real and testable.
       await new Promise((resolve, reject) => {
         setTimeout(() => (Math.random() > 0.05 ? resolve(null) : reject(new Error('Network error'))), 900)

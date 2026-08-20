@@ -8,7 +8,7 @@ import { CIRCLES } from '../content/services'
 
 // One consistent light source (top-left) across all three objects, so they
 // read as sitting in the same physical space rather than each having its
-// own shadow direction. Kept deliberately restrained — a soft ambient drop
+// own shadow direction. Kept deliberately restrained: a soft ambient drop
 // plus a faint inset highlight, not a cartoon bevel.
 const REST_SHADOW =
   '5px 7px 14px -8px rgba(20,20,20,0.1), -4px -4px 10px -8px rgba(255,255,255,0.8), inset 1.5px 1.5px 4px rgba(255,255,255,0.7), inset -1.5px -1.5px 5px rgba(20,20,20,0.03)'
@@ -18,7 +18,7 @@ const PRESSED_SHADOW =
   'inset 4px 5px 10px rgba(20,20,20,0.1), inset -3px -3px 8px rgba(255,255,255,0.6)'
 
 // each circle floats on its own slow, slightly offset loop so the three
-// never move in lockstep — barely perceptible, not a bounce
+// never move in lockstep: barely perceptible, not a bounce
 const FLOAT_DURATIONS = [7.5, 8.6, 7.9]
 const FLOAT_DELAYS = [0, 0.6, 1.3]
 
@@ -126,7 +126,7 @@ function ClayCircle({
 }
 
 /**
- * The three-circle quick nav — soft claymorphic objects: a subtle tonal
+ * The three-circle quick nav: soft claymorphic objects, a subtle tonal
  * surface gradient, one consistent top-left light source, a controlled
  * ambient shadow (never a glow, never bleeding into a neighbour), and an
  * inset highlight for a touch of roundness. Generous real gaps keep the

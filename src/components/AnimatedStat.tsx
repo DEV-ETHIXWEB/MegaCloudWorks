@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'motion/react'
 
 /**
- * A stat's number counts up from 0 once it scrolls into view — the same
+ * A stat's number counts up from 0 once it scrolls into view: the same
  * once-only, margin-triggered pattern Reveal uses for opacity/position,
  * driving a number instead so "40+ apps shipped" reads as a live tally
  * loading in rather than a static label.

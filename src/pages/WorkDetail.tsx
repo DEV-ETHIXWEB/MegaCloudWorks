@@ -23,13 +23,13 @@ export function WorkDetail() {
   return (
     <main className="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
       <PageMeta
-        title={`${concept.name} — ${concept.tagline}`}
+        title={`${concept.name} · ${concept.tagline}`}
         description={concept.blurb}
         path={`/work/${concept.slug}`}
       />
       <SiteHeader tone="dark" />
 
-      {/* Hero — concept's own accent palette */}
+      {/* Hero: concept's own accent palette */}
       <section
         className="relative overflow-hidden px-[var(--edge)] pb-20 pt-36 text-white sm:pt-44"
         style={{ background: `linear-gradient(160deg, ${concept.heroFrom}, ${concept.heroTo})` }}
@@ -75,7 +75,7 @@ export function WorkDetail() {
           {HeroScreen && (
             <Reveal delay={0.15} className="mx-auto lg:mx-0">
               <PhoneNavProvider index={0} count={CONCEPT_SCREENS[concept.slug].length} onGo={() => {}}>
-                <IPhoneMockup size="lg" label={`${concept.name} — ${concept.screens[0]}`}>
+                <IPhoneMockup size="lg" label={`${concept.name} · ${concept.screens[0]}`}>
                   <HeroScreen accent={concept.accent} />
                 </IPhoneMockup>
               </PhoneNavProvider>
@@ -105,7 +105,7 @@ export function WorkDetail() {
         </div>
       </section>
 
-      {/* Key screens — real, tappable phone UI, not placeholder tiles */}
+      {/* Key screens: real, tappable phone UI, not placeholder tiles */}
       <section
         className="relative overflow-hidden border-y border-[var(--line)] px-[var(--edge)] pb-28 pt-20 sm:pt-24"
         style={{
@@ -121,7 +121,7 @@ export function WorkDetail() {
               {concept.screensSubtitle}
             </h2>
             <p className="mt-3 text-sm text-[var(--ink-faint)]">
-              Live and tappable — try one. Each phone runs the actual interaction, not a picture of it.
+              Live and tappable: try one. Each phone runs the actual interaction, not a picture of it.
             </p>
           </div>
           <div className="mt-16">
@@ -159,7 +159,7 @@ export function WorkDetail() {
         </div>
       </section>
 
-      {/* Design approach — palette + typeface */}
+      {/* Design approach: palette + typeface */}
       <section className="border-t border-[var(--line)] bg-[var(--near-black)] px-[var(--edge)] py-24 text-white sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <p className="kicker" data-n="04" style={{ color: 'rgba(255,255,255,0.5)' }}>

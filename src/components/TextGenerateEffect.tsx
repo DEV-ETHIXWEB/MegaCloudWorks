@@ -3,7 +3,7 @@ import { stagger, useAnimate } from 'motion/react'
 
 /**
  * A line of copy that reveals word by word, each one un-blurring in as it
- * fades in — ported from Aceternity UI's Text Generate Effect. Used
+ * fades in, ported from Aceternity UI's Text Generate Effect. Used
  * sparingly (one short line) so it reads as a considered accent rather than
  * a gimmick applied everywhere.
  */

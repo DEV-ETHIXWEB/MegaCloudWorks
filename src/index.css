@@ -16,7 +16,7 @@
  *   Brutalism -> numbered markers, hard 2px edges, the CTA weight
  *   Clay/Neu -> one merged "lift" surface for interactive cards
  *   Glass    -> reserved for nav chrome + one hero atmosphere layer
- * Never combined per-element — each surface role picks exactly one.
+ * Never combined per-element: each surface role picks exactly one.
  * ------------------------------------------------------------------ */
 :root {
   /* brand */
@@ -40,7 +40,7 @@
   --near-black: #0d0d0f;
   --near-black-2: #16161a;
 
-  /* the one "lift" card treatment — clay+neu merged */
+  /* the one "lift" card treatment: clay+neu merged */
   --lift-shadow:
     0 1px 1px rgba(16, 16, 20, 0.03),
     0 10px 24px -12px rgba(16, 16, 20, 0.14),
@@ -52,7 +52,7 @@
   --lift-shadow-pressed: inset 0 2px 6px rgba(16, 16, 20, 0.12);
   --lift-radius: 1.25rem;
 
-  /* glass — nav chrome + hero atmosphere only */
+  /* glass: nav chrome + hero atmosphere only */
   --glass-bg: rgba(255, 255, 255, 0.86);
   --glass-border: rgba(255, 255, 255, 0.6);
   --glass-blur: 20px;
@@ -71,12 +71,12 @@
   --container-wide: 1600px;
   --edge: clamp(1.5rem, 4vw, 5rem);
 
-  /* type scale — a small, deliberate set of sizes instead of a bespoke
+  /* type scale: a small, deliberate set of sizes instead of a bespoke
      clamp() written per heading. Only two moments on the homepage get the
      heaviest weight (900): the hero H1 and the final-CTA headline; every
      other heading sits at 800, so the two flagships read as heavier by
      contrast rather than competing with headings at the same weight. */
-  --fs-display: clamp(1.6rem, 7.5vw, 5.4rem); /* the Home hero H1 — the single biggest moment site-wide */
+  --fs-display: clamp(1.6rem, 7.5vw, 5.4rem); /* the Home hero H1: the single biggest moment site-wide */
   --fs-page-h1: clamp(2.6rem, 7vw, 5.5rem); /* every other page's own hero H1 (About, Services, Work, WorkDetail, Contact) */
   --fs-h1: clamp(2.2rem, 5.5vw, 4.2rem); /* CTASection headline, NotFound */
   --fs-h2: clamp(2rem, 4.6vw, 3.4rem); /* section headings */
@@ -127,7 +127,7 @@ body {
   background: var(--brand-soft);
 }
 
-/* on-brand keyboard focus — replaces the browser default outline
+/* on-brand keyboard focus: replaces the browser default outline
    everywhere so keyboard/switch navigation gets the same considered
    treatment as everything else, instead of a generic blue ring */
 a:focus-visible,
@@ -144,7 +144,7 @@ textarea:focus-visible,
  * Surface primitives
  * ------------------------------------------------------------------ */
 
-/* the one lift card — every interactive card in the system uses this */
+/* the one lift card: every interactive card in the system uses this */
 .surface-lift {
   background: var(--paper);
   border-radius: var(--lift-radius);
@@ -167,7 +167,7 @@ textarea:focus-visible,
   transform: translateY(-1px);
 }
 
-/* glass chrome — nav + hero atmosphere only */
+/* glass chrome: nav + hero atmosphere only */
 .surface-glass {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
@@ -182,7 +182,7 @@ textarea:focus-visible,
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
 }
 
-/* brutalist hard edge — numbered markers, key CTAs only */
+/* brutalist hard edge: numbered markers, key CTAs only */
 .edge-hard {
   border: 2px solid var(--ink);
   box-shadow: 4px 4px 0 var(--brand);
@@ -201,7 +201,7 @@ textarea:focus-visible,
   box-shadow: 2px 2px 0 var(--brand);
 }
 
-/* the same brutalist hard edge as .edge-hard, but only drawn on :hover —
+/* the same brutalist hard edge as .edge-hard, but only drawn on :hover:
    used where a second, secondary action should smoothly borrow the primary
    CTA's red-offset treatment on hover and settle back to plain on leave */
 .edge-hard-onhover {
@@ -233,13 +233,13 @@ textarea:focus-visible,
   }
 }
 
-/* subtle grain — a fixed noise texture laid over a shader/gradient surface
+/* subtle grain: a fixed noise texture laid over a shader/gradient surface
    so it reads as printed paper rather than a flat digital gradient. Kept to
    a low opacity and blended so it never fights the content above it. */
 .grain-overlay {
   position: absolute;
   inset: 0;
-  /* negative so it stays a background texture — sits above whatever
+  /* negative so it stays a background texture: sits above whatever
      shader/gradient it's layered over (those use -z-10/-z-20) but below
      any ordinary (z-index: auto) content stacked on top of it */
   z-index: -5;
@@ -267,14 +267,14 @@ textarea:focus-visible,
   background-size: 180px 180px;
 }
 
-/* the same grain, but tucked behind a section's own content — for a photo
+/* the same grain, but tucked behind a section's own content: for a photo
    used as a full-bleed background rather than a framed image. Sits above
    the picture and its scrim (which go further back) and below the copy. */
 .grain-media--behind {
   z-index: -5;
 }
 
-/* numbered kicker — the Swiss/brutalist marker used before every section */
+/* numbered kicker: the Swiss/brutalist marker used before every section */
 .kicker {
   display: inline-flex;
   align-items: baseline;
@@ -341,8 +341,8 @@ textarea:focus-visible,
   --ink-faint: rgba(255, 255, 255, 0.66);
 }
 
-/* a surface that is always its own paper regardless of an .on-brand ancestor
-   — the phone mockups are real UI, not page copy, so their text can't flip
+/* a surface that is always its own paper regardless of an .on-brand ancestor:
+   the phone mockups are real UI, not page copy, so their text can't flip
    white-on-white just because they happen to sit on a red band */
 .reset-surface {
   --ink: #101014;
@@ -362,7 +362,7 @@ textarea:focus-visible,
 }
 
 /* ------------------------------------------------------------------ *
- * Phone screens — the touch layer for the case-study concept mockups
+ * Phone screens: the touch layer for the case-study concept mockups
  * (ported from the production site's conceptScreens.tsx / phoneUI.tsx)
  * ------------------------------------------------------------------ */
 .phone-tap {
@@ -443,7 +443,7 @@ textarea:focus-visible,
   cursor: inherit;
 }
 
-/* the percentage progress ring used by Prophy's Treatment Plan screen —
+/* the percentage progress ring used by Prophy's Treatment Plan screen:
    animates its stroke in from empty so a status change reads as motion,
    not just a redraw */
 .progress-ring-arc {

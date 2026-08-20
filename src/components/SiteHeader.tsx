@@ -9,7 +9,7 @@ type Tone = 'light' | 'dark'
 /**
  * Auto-detects whether the header is currently floating over a dark/brand
  * band by checking which [data-header-tone] section sits at the header's own
- * height — pages with a single background pass a fixed `tone` instead and
+ * height; pages with a single background pass a fixed `tone` instead and
  * this never has anything to find, so it's a no-op there.
  */
 function useAutoTone(fixedTone?: Tone): Tone {
@@ -109,7 +109,7 @@ export function SiteHeader({ tone: fixedTone }: { tone?: Tone }) {
               {({ isActive }) => (
                 <>
                   {/* subtle pill that glides between nav items to mark the
-                      current page — one shared layoutId so it tweens
+                      current page: one shared layoutId so it tweens
                       position instead of popping, kept low-contrast so it
                       reads as a hint rather than a highlight */}
                   {isActive && (
@@ -119,7 +119,7 @@ export function SiteHeader({ tone: fixedTone }: { tone?: Tone }) {
                       transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                     />
                   )}
-                  {/* the same pill, previewed on hover — its own layoutId so
+                  {/* the same pill, previewed on hover: its own layoutId so
                       it glides from item to item as the cursor moves, and
                       fades in/out rather than popping; a touch fainter than
                       the active-page pill so the two stay legible together */}

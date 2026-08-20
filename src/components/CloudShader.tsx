@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 /**
  * Procedural drifting-cloud WebGL background, adapted from Aceternity UI's
- * Cloud Shader (https://ui.aceternity.com/components/cloud-shader) — same
+ * Cloud Shader (https://ui.aceternity.com/components/cloud-shader), same
  * shader math, re-tinted to the MegaCloudWorks brand palette instead of a
  * literal blue sky, and stripped of the shadcn `cn` helper this project
  * doesn't have.
@@ -230,7 +230,7 @@ export function CloudShader({
   const paramsRef = useRef({ speed, count, cloudColor, skyTopColor, skyBottomColor })
 
   // kept out of the render body itself (refs shouldn't be written while
-  // rendering) — the draw loop below reads this ref every frame instead of
+  // rendering); the draw loop below reads this ref every frame instead of
   // depending on these props, so the animation never restarts when they
   // change, only the uniforms it feeds do.
   useEffect(() => {
@@ -279,7 +279,7 @@ export function CloudShader({
     let frame = 0
     let running = true
     // once it's scrolled out of view, keeping a continuous WebGL draw loop
-    // running costs battery/GPU for pixels nobody can see — pause here and
+    // running costs battery/GPU for pixels nobody can see; pause here and
     // resume the moment it's back on screen, rather than only respecting
     // prefers-reduced-motion or the tab's own visibility.
     let onScreen = true

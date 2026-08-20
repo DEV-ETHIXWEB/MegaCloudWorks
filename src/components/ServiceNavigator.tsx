@@ -12,7 +12,7 @@ function indexForHash(hash: string) {
 
 /**
  * One interactive capability picker: tabs on desktop drive a single detail
- * panel (progressive disclosure — nothing is duplicated three times on the
+ * panel (progressive disclosure: nothing is duplicated three times on the
  * page), collapsing to an accordion of the same content on mobile where a
  * hover/tab pattern doesn't translate to touch.
  *
@@ -31,7 +31,7 @@ export function ServiceNavigator() {
     setActive(i)
     // the panel for this id only just mounted, so the browser's own
     // navigation-time scroll (which ran before it existed) has nothing to
-    // land on yet — do it ourselves once the element is actually there.
+    // land on yet, so do it ourselves once the element is actually there.
     requestAnimationFrame(() => {
       document.getElementById(SERVICE_DETAILS[i].id)?.scrollIntoView({ block: 'start' })
     })
@@ -58,10 +58,10 @@ export function ServiceNavigator() {
 
   return (
     <div>
-      {/* desktop / tablet — tab rail + single detail panel */}
+      {/* desktop / tablet: tab rail + single detail panel */}
       <div className="hidden md:block">
         {/* stable scroll target for hash deep-links (e.g. /services#brand-ui
-            from the homepage's service cards) — separate from the ARIA
+            from the homepage's service cards), separate from the ARIA
             tabpanel id below, which changes meaning ("the active panel")
             rather than naming one specific service */}
         <div id={SERVICE_DETAILS[active].id} className="scroll-mt-28" />
@@ -148,7 +148,7 @@ export function ServiceNavigator() {
         </AnimatePresence>
       </div>
 
-      {/* mobile — accordion; every service's full content stays reachable
+      {/* mobile: accordion; every service's full content stays reachable
           without relying on a hover/tab interaction that doesn't fit touch */}
       <div className="space-y-4 md:hidden">
         {SERVICE_DETAILS.map((s, i) => {

@@ -3,13 +3,13 @@ import type { ReactNode, MouseEvent } from 'react'
 import { motion } from 'motion/react'
 
 /**
- * A card that tilts gently toward the cursor — ported from Aceternity UI's
+ * A card that tilts gently toward the cursor, ported from Aceternity UI's
  * Wobble Card (two-depth mouse-parallax: the outer shell tracks the cursor,
  * the inner content drifts the opposite way at a slightly larger scale, so
  * it reads as one surface with real depth rather than a flat hover state).
  * Kept deliberately restrained here: a smaller max travel distance than the
  * original, our own `.grain-overlay` texture in place of its external
- * noise.webp, and no default background — the caller's own content (a
+ * noise.webp, and no default background: the caller's own content (a
  * gradient hero, a photo) supplies that.
  */
 export function WobbleCard({

@@ -4,7 +4,7 @@ import { Bell, CalendarDays, ClipboardList, Home as HomeIcon, User, Wrench, Zap,
 import { Tap } from '../lib/phoneUI'
 
 /**
- * The home page's own phone screen — a light, MegaCloudWorks-branded mobile
+ * The home page's own phone screen, a light, MegaCloudWorks-branded mobile
  * home screen, not one of the five work concepts. It used to reuse Fieldly's
  * real dispatch board (dark, indigo, built to match Flux's moodboard
  * reference), which meant the splash-to-live crossfade jumped from a light

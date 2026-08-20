@@ -17,7 +17,7 @@ export function IPhoneMockup({
   children: ReactNode
   size?: Size
   className?: string
-  /** accessible name for the screen content, e.g. "Fieldly — Dispatch Board" */
+  /** accessible name for the screen content, e.g. "Fieldly · Dispatch Board" */
   label?: string
 }) {
   const maxWidth = MAX_WIDTH[size]
@@ -30,7 +30,7 @@ export function IPhoneMockup({
       aria-label={label}
     >
       <div className="iphone-frame__island" aria-hidden="true" />
-      {/* the glass is always its own paper — reset ink/paper tokens here so
+      {/* the glass is always its own paper: reset ink/paper tokens here so
           screens still read correctly when the phone sits on an .on-brand
           (white-on-red) section instead of the normal light page */}
       <div className="iphone-frame__screen reset-surface h-full w-full">{children}</div>

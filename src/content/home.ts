@@ -1,7 +1,7 @@
 export const HOME_HERO = {
   eyebrow: 'App design & development studio',
   headlineLines: ['We build the app', 'you keep', 'describing.'],
-  sub: 'Research, UI, and engineering under one roof — nine weeks, start to store.',
+  sub: 'Research, UI, and engineering under one roof: nine weeks, start to store.',
   cta: 'Get in touch',
   ctaSecondary: 'View our work',
 }
@@ -42,7 +42,7 @@ export const STEPS = [
   {
     n: '02',
     title: 'Design',
-    meta: 'Weeks 2—3',
+    meta: 'Weeks 2-3',
     weeks: 2,
     blurb: 'Flows, then screens. Prototyped early so you can feel it working.',
     points: ['Flows and states', 'Clickable prototype', 'Design system started'],
@@ -50,7 +50,7 @@ export const STEPS = [
   {
     n: '03',
     title: 'Build',
-    meta: 'Weeks 4—8',
+    meta: 'Weeks 4-8',
     weeks: 5,
     blurb: 'Typed, tested, reviewed. Shipped to a staging build every week.',
     points: ['Weekly staging builds', 'Automated tests', 'Code review on everything'],

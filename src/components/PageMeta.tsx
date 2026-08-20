@@ -53,7 +53,7 @@ export function PageMeta({
     setMeta('twitter:image', image)
     setCanonical(url)
 
-    // A route change normally resets to the top — but not when the URL
+    // A route change normally resets to the top, but not when the URL
     // carries a hash. Scrolling to 0 unconditionally is what made deep
     // links like /about#how-we-work (linked from the Services page) land
     // the reader at the top of the page instead of the section they asked

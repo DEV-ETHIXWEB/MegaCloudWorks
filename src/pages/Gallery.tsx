@@ -51,7 +51,7 @@ export function Gallery() {
     <main className="min-h-screen bg-[var(--paper-2)] px-6 py-16 sm:px-10 lg:px-20">
       <div className="mx-auto max-w-[1400px]">
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--brand-text)]">
-          MegaCloudWorks — redesign concepts
+          MegaCloudWorks · redesign concepts
         </p>
         <h1 className="mt-4 font-sans text-[clamp(2.2rem,5vw,4rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-[var(--ink)]">
           Six directions.
@@ -60,7 +60,7 @@ export function Gallery() {
         </h1>
         <p className="mt-4 max-w-xl text-[var(--ink-soft)]">
           Every concept reuses the exact MegaCloudWorks copy, brand red (#f5333b) and
-          Geologica typeface — only the visual language changes. Pick the direction
+          Geologica typeface, only the visual language changes. Pick the direction
           that should become the real site.
         </p>
 

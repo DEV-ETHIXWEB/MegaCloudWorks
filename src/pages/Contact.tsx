@@ -23,7 +23,7 @@ export function Contact() {
           the document root and paint behind <main>'s own background
           instead of behind this section's content. */}
       <section className="relative isolate overflow-hidden px-[var(--edge)] pb-24 pt-36 sm:pt-44">
-        {/* atmosphere — a clearly visible top wash in the brand colours,
+        {/* atmosphere: a clearly visible top wash in the brand colours,
             a Swiss grid texture, and two large soft glows kept off to the
             sides so neither competes with the centered watermark word or
             the heading sitting on top of it */}
@@ -53,7 +53,7 @@ export function Contact() {
         />
 
         <div className="relative mx-auto max-w-[var(--container)] text-center">
-          {/* giant background word — filled into the same box the heading
+          {/* giant background word: filled into the same box the heading
               sits in and centered on it, so its size is always relative to
               the heading's own footprint and it can never grow past it */}
           <p

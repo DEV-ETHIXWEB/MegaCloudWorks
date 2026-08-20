@@ -6,7 +6,7 @@ import { AppLoadingScreen } from './AppLoadingScreen'
 import { TextGenerateEffect } from './TextGenerateEffect'
 import type { Concept } from '../content/concepts'
 
-// The concept's real, tappable screens — deferred behind their own chunk so
+// The concept's real, tappable screens, deferred behind their own chunk so
 // this section's first paint (the loading splash) never waits on the
 // ~1600-line phone-UI library. See AppLaunchPhoneLive.tsx.
 const AppLaunchPhoneLive = lazy(() =>
@@ -15,7 +15,7 @@ const AppLaunchPhoneLive = lazy(() =>
 
 /**
  * The product moment: a phone that actually starts up. A loading splash
- * plays first, then crossfades into the concept's real first screen — live
+ * plays first, then crossfades into the concept's real first screen: live
  * and tappable, not a picture of one. Laid out left (phone) / right (copy)
  * on the same paper background as the hero rather than a separate dark
  * band, so it reads as a continuation of the page instead of a jump.
@@ -40,15 +40,15 @@ export function AppLaunchPhone({ concept, home = false }: { concept: Concept; ho
         style={{ background: `radial-gradient(circle, ${home ? '#f5333b' : concept.accent}, transparent 70%)` }}
       />
 
-      {/* flex, not grid — a 1fr track let the copy's own max-w-md sit inside
+      {/* flex, not grid: a 1fr track let the copy's own max-w-md sit inside
           a much wider column than it filled, leaving a dead gap to its
           right. Flex sizes both children to their own content and centers
           the pair as one tight, balanced group instead. */}
       <div className="mx-auto flex max-w-[52rem] flex-col items-center gap-10 lg:flex-row lg:justify-center lg:gap-14">
-        {/* phone — left on desktop, first on mobile */}
+        {/* phone: left on desktop, first on mobile */}
         <Reveal className="mx-auto w-full max-w-[190px] lg:mx-0 lg:shrink-0">
           <motion.div className="relative" style={{ rotateX: rotate, scale, transformPerspective: 1000 }}>
-            <IPhoneMockup size="lg" label={`${home ? 'MegaCloudWorks' : concept.name} — ${live ? 'live' : 'launching'}`}>
+            <IPhoneMockup size="lg" label={`${home ? 'MegaCloudWorks' : concept.name} · ${live ? 'live' : 'launching'}`}>
               <AnimatePresence mode="wait">
                 {live ? (
                   <motion.div
@@ -78,7 +78,7 @@ export function AppLaunchPhone({ concept, home = false }: { concept: Concept; ho
           </motion.div>
         </Reveal>
 
-        {/* copy — right on desktop, centered under the phone on mobile */}
+        {/* copy: right on desktop, centered under the phone on mobile */}
         <Reveal delay={0.15} className="text-center lg:max-w-sm lg:text-left">
           <p className="kicker justify-center lg:justify-start" data-n="02">
             Product experience
@@ -87,7 +87,7 @@ export function AppLaunchPhone({ concept, home = false }: { concept: Concept; ho
             Every app starts <span className="text-[var(--brand)]">here.</span>
           </h2>
           <TextGenerateEffect
-            words="A real MegaCloudWorks build, launching — not a screenshot."
+            words="A real MegaCloudWorks build, launching, not a screenshot."
             className="mx-auto mt-4 max-w-xs text-base leading-relaxed text-[var(--ink-soft)] sm:max-w-sm sm:text-lg lg:mx-0"
           />
         </Reveal>

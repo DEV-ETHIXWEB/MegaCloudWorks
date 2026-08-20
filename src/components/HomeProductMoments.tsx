@@ -6,7 +6,7 @@ import { Reveal } from './Reveal'
 import type { Concept } from '../content/concepts'
 
 /**
- * The homepage's screens-showcase moment — needs the ~1600-line interactive
+ * The homepage's screens-showcase moment: needs the ~1600-line interactive
  * phone-UI library, bundled behind one React.lazy boundary (see Home.tsx) so
  * that library only downloads once a visitor actually scrolls this far,
  * instead of shipping in the homepage's initial bundle.
@@ -24,7 +24,7 @@ export function ProductExperienceSection({ concept }: { concept: Concept }) {
           n="04"
           kicker="Product experience"
           title="We don't just design apps. We build them."
-          sub={`${concept.name} — ${concept.blurb}`}
+          sub={`${concept.name} · ${concept.blurb}`}
           light
         />
         <div className="mt-16">

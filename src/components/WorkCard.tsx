@@ -10,7 +10,7 @@ export function WorkCard({
 }: {
   concept: Concept
   delay?: number
-  /** omit the card's own surface-lift shadow/border — for when a caller
+  /** omit the card's own surface-lift shadow/border, for when a caller
    * (e.g. WobbleCard) already supplies the surface, so the two don't stack */
   bare?: boolean
 }) {

@@ -1,16 +1,16 @@
 export const ABOUT_HERO = {
   eyebrow: 'About us',
-  // three bare words read thin as a page headline — this keeps the same
+  // three bare words read thin as a page headline; this keeps the same
   // design/build/ship spine but says the thing that actually separates the
   // studio (they don't hand off at launch), which the process content and
   // the "team that stays on the line" promise both already back up
   headlineLines: ['We design it, build it,', 'and stay after it ships.'],
-  sub: 'Two studios, one team. We partner with businesses end to end — research and UI through engineering, launch, and everything after.',
+  sub: 'Two studios, one team. We partner with businesses end to end: research and UI through engineering, launch, and everything after.',
 }
 
 export const STUDIOS = {
   eyebrow: 'Two studios. One team.',
-  body: 'Ethixweb builds the web presence — marketing sites, e-commerce, and platforms. MegaCloudWorks is aimed squarely at apps: native and cross-platform products designed and engineered end to end. Same team, same standards, two focused studios.',
+  body: 'Ethixweb builds the web presence: marketing sites, e-commerce, and platforms. MegaCloudWorks is aimed squarely at apps: native and cross-platform products designed and engineered end to end. Same team, same standards, two focused studios.',
 }
 
 export const ABOUT_STEPS = [
@@ -27,7 +27,7 @@ export const ABOUT_STEPS = [
   {
     n: '03',
     title: 'Build',
-    body: 'We develop it properly — tested, reviewed, and built to hold up as the product and its traffic grow.',
+    body: 'We develop it properly: tested, reviewed, and built to hold up as the product and its traffic grow.',
   },
   {
     n: '04',

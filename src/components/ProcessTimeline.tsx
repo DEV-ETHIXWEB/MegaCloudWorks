@@ -7,7 +7,7 @@ import { STEPS } from '../content/home'
 // rather than an abstract bar
 const ICONS = [Search, PenTool, Code2, Rocket]
 
-// a light staircase offset per column — a quiet rhythm across the row
+// a light staircase offset per column: a quiet rhythm across the row
 // rather than four cards sitting dead level with each other
 const STAIRCASE = ['lg:mt-0', 'lg:mt-5', 'lg:mt-10', 'lg:mt-5']
 

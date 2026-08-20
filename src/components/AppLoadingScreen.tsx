@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 
 /**
  * The splash a MegaCloudWorks-built app shows for the half-second between
- * icon tap and first screen — used here as the phone's own content so the
+ * icon tap and first screen, used here as the phone's own content so the
  * hero's product moment reads as "an app starting up", not a static photo.
  */
 export function AppLoadingScreen({ accent }: { accent: string }) {

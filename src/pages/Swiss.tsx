@@ -41,7 +41,7 @@ export function Swiss() {
           </a>
         </header>
 
-        {/* Hero — huge grid-numbered type block */}
+        {/* Hero: huge grid-numbered type block */}
         <section className="grid grid-cols-12 border-b border-[var(--ink)]">
           <div className="col-span-12 border-r border-[var(--line)] px-6 py-4 sm:col-span-1">
             <span className="text-xs font-bold tracking-widest text-[var(--ink-faint)]">

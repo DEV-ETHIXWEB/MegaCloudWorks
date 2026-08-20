@@ -29,7 +29,7 @@ const ProductExperienceSection = lazy(() =>
 )
 
 const HERO_CONCEPT = getConcept('fieldly')!
-// the four-phone showcase runs Slate's screens — a booking flow reads more
+// the four-phone showcase runs Slate's screens: a booking flow reads more
 // legibly at four-across than Fieldly's denser dispatch UI
 const SHOWCASE_CONCEPT = getConcept('slate')!
 
@@ -38,26 +38,26 @@ export function Home() {
     <main className="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
       <PageMeta
         title="MegaCloudWorks · App Design & Development Studio"
-        description="MegaCloudWorks is an app design & development studio. We design and build apps end to end — research, UI, and engineering under one roof."
+        description="MegaCloudWorks is an app design & development studio. We design and build apps end to end: research, UI, and engineering under one roof."
         path="/"
       />
       <SiteHeader />
 
-      {/* 01 — Hero: centered headline over a drifting cloud-shader sky, grain
+      {/* 01 · Hero: centered headline over a drifting cloud-shader sky, grain
           on top so the shader reads as texture rather than a flat gradient.
           min-h-[100svh] + flex centering does two things: keeps the
           headline centered on short mobile viewports instead of pinned low
-          with empty space above it, and — at every breakpoint, not just
-          mobile — keeps the next section (AppLaunchPhone, phone on the
+          with empty space above it, and, at every breakpoint, not just
+          mobile, keeps the next section (AppLaunchPhone, phone on the
           left) fully below the fold at rest, so it doesn't peek in at the
           bottom-left the moment the page loads. `isolate` matters here,
           not just for tidiness: neither this section nor <main> set a
           z-index, so without it they never form their own stacking context
           and the shader/gradient/grain's negative z-index layers escape
-          all the way up to the document root — painting behind <main>'s
+          all the way up to the document root, painting behind <main>'s
           own opaque background instead of behind this section's text. */}
       <section className="relative isolate flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-[var(--edge)] pb-16 pt-24 sm:pb-20 sm:pt-32">
-        {/* CloudShader owns its own position: 'relative' — a dedicated
+        {/* CloudShader owns its own position: 'relative', a dedicated
             absolutely-positioned wrapper avoids fighting that with a
             conflicting utility class on the same element */}
         <div className="absolute inset-0 -z-20">
@@ -110,7 +110,7 @@ export function Home() {
             <MagneticButton to="/contact" size="lg">
               {HOME_HERO.cta} <ArrowRight size={15} />
             </MagneticButton>
-            {/* secondary action — plain by default, and on hover it smoothly
+            {/* secondary action: plain by default, and on hover it smoothly
                 borrows the primary button's red-offset edge treatment,
                 settling back to plain the moment the cursor leaves */}
             <MagneticButton to="/work" size="lg" variant="edge-hover">
@@ -120,13 +120,13 @@ export function Home() {
         </div>
       </section>
 
-      {/* 02 — The product moment, surfaced on its own once you scroll to it */}
+      {/* 02 · The product moment, surfaced on its own once you scroll to it */}
       <AppLaunchPhone concept={HERO_CONCEPT} home />
 
-      {/* 03 — Immediate proof */}
+      {/* 03 · Immediate proof */}
       <StatsSection />
 
-      {/* 04 — What we do */}
+      {/* 04 · What we do */}
       <section id="services" className="px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <div className="flex flex-wrap items-end justify-between gap-6">
@@ -145,7 +145,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* 04 — Product experience */}
+      {/* 04 · Product experience */}
       <Suspense
         fallback={
           <div className="bg-[var(--brand)] px-[var(--edge)] py-24 sm:py-32">
@@ -156,7 +156,7 @@ export function Home() {
         <ProductExperienceSection concept={SHOWCASE_CONCEPT} />
       </Suspense>
 
-      {/* 05 — Selected work: three small, equal, refined cards — not one
+      {/* 05 · Selected work: three small, equal, refined cards, not one
           oversized showcase piece. Each still gets the WobbleCard cursor-tilt,
           just at roughly half the footprint of the original layout: a
           shorter hero strip, tighter padding, and a smaller type scale. */}
@@ -192,7 +192,7 @@ export function Home() {
                       />
                       {/* Stamp gets a real product peek: name held on the
                           left, the screen sitting large on the right and
-                          running off the card's edge — cropped by this div's
+                          running off the card's edge, cropped by this div's
                           own overflow-hidden, so it reads as a framed hero
                           rather than a small corner sticker. Card size and
                           shape are untouched; only this inner composition
@@ -233,7 +233,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* 06 — How we work */}
+      {/* 06 · How we work */}
       <section id="process" className="bg-[var(--paper-2)] px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <SectionHeading
@@ -254,7 +254,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* 07 — Studio */}
+      {/* 07 · Studio */}
       <section className="border-y border-[var(--line)] px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto grid max-w-[var(--container-wide)] gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
@@ -262,7 +262,7 @@ export function Home() {
               <p className="kicker" data-n="07">
                 The studio
               </p>
-              {/* promoted from a small kicker to a real headline — this line
+              {/* promoted from a small kicker to a real headline: this line
                   carries the section, so it sits on the shared h2 step of
                   the type scale rather than at label size */}
               <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)] text-[var(--ink)]">
@@ -286,7 +286,7 @@ export function Home() {
         </div>
       </section>
 
-      {/* 08 — Final CTA */}
+      {/* 08 · Final CTA */}
       <CTASection
         eyebrow="Let's build"
         title={

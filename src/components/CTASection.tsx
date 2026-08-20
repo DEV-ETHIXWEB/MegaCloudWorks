@@ -8,14 +8,40 @@ export function CTASection({
   title,
   sub,
   ctaLabel = 'Get in touch',
+  bgImage = false,
 }: {
   eyebrow: string
   title: ReactNode
   sub?: string
   ctaLabel?: string
+  /** Swap the flat brand-red field for the coral cloudscape photo, used
+   * on the homepage's closing CTA. Off by default so the other spots
+   * this component appears (About, Work, a case study's own CTA) keep
+   * the plain colour field their copy was designed against. */
+  bgImage?: boolean
 }) {
   return (
     <section className="relative isolate overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 sm:py-32">
+      {bgImage && (
+        <>
+          <img
+            src="/cta-sky.webp"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
+          />
+          {/* the photo alone reads a touch light for white text; a soft
+              bottom-weighted scrim in the same brand red keeps contrast
+              without flattening the clouds back into a solid field */}
+          <div
+            className="pointer-events-none absolute inset-0 -z-10"
+            style={{
+              background:
+                'radial-gradient(ellipse 70% 65% at 50% 60%, rgba(193,20,32,0.32) 0%, rgba(193,20,32,0.12) 55%, rgba(193,20,32,0.4) 100%)',
+            }}
+          />
+        </>
+      )}
       <div
         className="pointer-events-none absolute -right-40 -top-40 size-[32rem] rounded-full opacity-40 blur-3xl"
         style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.5), transparent 70%)' }}

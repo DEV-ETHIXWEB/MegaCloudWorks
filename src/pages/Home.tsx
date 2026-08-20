@@ -291,6 +291,7 @@ export function Home() {
           </>
         }
         sub="Tell us about your project, we'll come back with a plan."
+        bgImage
       />
 
       <SiteFooter />

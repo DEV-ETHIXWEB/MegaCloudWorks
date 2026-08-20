@@ -152,10 +152,17 @@ export function SummitCta() {
     >
       {/* The mountain arrives with the button, not before it: the section
           opens as bare paper so the headline has the stage to itself. */}
+      {/* the plate is 150kB and sits at the very foot of the page, but a
+          background-image on a rendered element is fetched at load whether
+          or not it is visible - so the URL is only attached once the
+          section's sequence has started, which is several beats before the
+          photograph is faded up */}
       <div
         data-summit
         aria-hidden="true"
-        className="summit__plate pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] bg-[image:url('/about/footer.webp')] bg-contain bg-[position:right_20%] bg-no-repeat sm:block lg:w-[54%]"
+        className={`summit__plate pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] bg-contain bg-[position:right_20%] bg-no-repeat sm:block lg:w-[54%] ${
+          beat >= 1 ? "bg-[image:url('/about/footer.webp')]" : ''
+        }`}
       />
       <div
         aria-hidden="true"
@@ -163,7 +170,9 @@ export function SummitCta() {
       />
       <div
         aria-hidden="true"
-        className="summit__plate pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-[image:url('/about/footer.webp')] bg-cover bg-[position:center_top] bg-no-repeat sm:hidden"
+        className={`summit__plate pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-cover bg-[position:center_top] bg-no-repeat sm:hidden ${
+          beat >= 1 ? "bg-[image:url('/about/footer.webp')]" : ''
+        }`}
       />
 
       <div

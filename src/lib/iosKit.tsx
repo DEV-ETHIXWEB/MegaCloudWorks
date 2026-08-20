@@ -318,11 +318,18 @@ export function LaunchScreen({ c }: { c: Concept }) {
 export function Booting({
   c,
   delay = 0,
+  hold = 620,
   children,
 }: {
   c: Concept
   /** how long after mount this one starts, in ms */
   delay?: number
+  /**
+   * How long the launch screen is held before the app takes over. The hero of
+   * a case study can afford the full beat; a page of ten devices cannot, and
+   * turns this right down so the screens are simply there on arrival.
+   */
+  hold?: number
   children: ReactNode
 }) {
   const [booted, setBooted] = useState(false)
@@ -333,9 +340,9 @@ export function Booting({
       setBooted(true)
       return
     }
-    const t = window.setTimeout(() => setBooted(true), 620 + delay)
+    const t = window.setTimeout(() => setBooted(true), hold + delay)
     return () => window.clearTimeout(t)
-  }, [delay])
+  }, [delay, hold])
 
   return booted ? <>{children}</> : <LaunchScreen c={c} />
 }
@@ -356,34 +363,66 @@ export function Booting({
  * then takes the real time on mount and keeps it. Minute-granular, so the
  * interval is cheap.
  */
+/*
+ * One clock for the whole page.
+ *
+ * A page of devices used to run a timeout and an interval per status bar -
+ * ten phones on the Work index meant ten timers all firing on the same minute
+ * to write the same string. The tick lives at module scope instead: the first
+ * status bar to mount starts it, the last to unmount stops it, and everything
+ * in between is a subscription.
+ */
+const clockWatchers = new Set<(t: string) => void>()
+let clockNow = '9:41'
+let clockLead = 0
+let clockInterval = 0
+
+function readClock() {
+  const now = new Date()
+  const h = now.getHours() % 12 || 12
+  return `${h}:${String(now.getMinutes()).padStart(2, '0')}`
+}
+
+function publishClock() {
+  const next = readClock()
+  if (next === clockNow) return
+  clockNow = next
+  clockWatchers.forEach((fn) => fn(next))
+}
+
+function watchClock(fn: (t: string) => void) {
+  clockWatchers.add(fn)
+
+  if (clockWatchers.size === 1) {
+    publishClock()
+    // wait out the rest of the current minute so the clock turns over on the
+    // minute rather than 40 seconds into it, then settle into a plain interval
+    clockLead = window.setTimeout(
+      () => {
+        publishClock()
+        clockInterval = window.setInterval(publishClock, 60_000)
+      },
+      (60 - new Date().getSeconds()) * 1000,
+    )
+  }
+
+  return () => {
+    clockWatchers.delete(fn)
+    if (clockWatchers.size) return
+    if (clockLead) window.clearTimeout(clockLead)
+    if (clockInterval) window.clearInterval(clockInterval)
+    clockLead = 0
+    clockInterval = 0
+  }
+}
+
 function useClock() {
   const [time, setTime] = useState('9:41')
 
   useEffect(() => {
-    let interval = 0
-
-    const tick = () => {
-      const now = new Date()
-      const h = now.getHours() % 12 || 12
-      setTime(`${h}:${String(now.getMinutes()).padStart(2, '0')}`)
-    }
-
-    tick()
-
-    // wait out the rest of the current minute so the clock turns over on the
-    // minute rather than 40 seconds into it, then settle into a plain interval
-    const lead = window.setTimeout(
-      () => {
-        tick()
-        interval = window.setInterval(tick, 60_000)
-      },
-      (60 - new Date().getSeconds()) * 1000,
-    )
-
-    return () => {
-      window.clearTimeout(lead)
-      if (interval) window.clearInterval(interval)
-    }
+    if (typeof window === 'undefined') return
+    setTime(readClock())
+    return watchClock(setTime)
   }, [])
 
   return time

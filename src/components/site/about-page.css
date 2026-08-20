@@ -1,0 +1,136 @@
+/* ------------------------------------------------------------------ *
+ * The About page, tuned to the home page's system.
+ *
+ * Nothing here is new design: it is the home page's ground, eyebrow,
+ * type scale, measure and arrival curve, applied to the sections About
+ * already had. The tokens are scoped to `.about-page` rather than set
+ * globally, because Work and Contact still run on the old white ground
+ * and would otherwise change underneath this pass.
+ * ------------------------------------------------------------------ */
+
+.about-page {
+  /* the warm off-white every band of the home page stands on */
+  --paper: #fdf9f8;
+  --paper-card: #ffffff;
+  /* the dark plate the home page punctuates with */
+  --stop: #131316;
+  --arrive: cubic-bezier(0.22, 1, 0.36, 1);
+
+  background: var(--paper);
+}
+
+/* ---------------- the eyebrow ---------------- *
+ *
+ * One mark across the whole page: 13px, heavy, wide, red, with the red
+ * dot ahead of it. About had three variants of this (a rule after it, an
+ * ink-coloured version, a tighter tracked version in the team block);
+ * they are all this now. */
+
+.about-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.about-eyebrow::before {
+  content: '';
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+/* the hero says it wider and without the dot, exactly as the home hero
+   does: it is the page's opening line, not a section label */
+.about-eyebrow--hero {
+  letter-spacing: 0.3em;
+}
+
+.about-eyebrow--hero::before {
+  content: none;
+}
+
+/* ---------------- type ---------------- */
+
+.about-h1 {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(3.375rem, 6vw, 5.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  /* the home hero sets its drawn face at -4 on 88px; this is that ratio */
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+
+.about-h2 {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.03;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.about-lede {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+@media (min-width: 640px) {
+  .about-lede {
+    font-size: 1.125rem;
+  }
+}
+
+/* ---------------- the step band ---------------- *
+ *
+ * The band used to paint its own slightly different paper (#fbf8f7) so
+ * the ridge artwork had something to sit on. It sits on the page's
+ * ground now, which is what the artwork was sampled from anyway. */
+
+.about-page .step-band {
+  background-color: var(--paper);
+
+  --band: var(--paper);
+  --paper: #fdf9f8;
+}
+
+/* ---------------- the closing CTA ---------------- *
+ *
+ * SummitCta is shared with the case study pages, so its own markup is left
+ * alone and the page's eyebrow is applied to it from here: the rule after
+ * the words becomes the dot before them, at the page's tracking and size. */
+
+.about-page .summit__eyebrow {
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+
+.about-page .summit__eyebrow::before {
+  content: '';
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.about-page .summit__eyebrow > span {
+  display: none;
+}
+
+/* the CTA headline is set larger than any other heading on the page; it
+   comes down onto the page's own h2 so the ask does not outrank the work */
+.about-page .summit__head {
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  line-height: 1.03;
+}

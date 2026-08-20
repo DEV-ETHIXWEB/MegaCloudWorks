@@ -229,7 +229,22 @@ export function PhoneMockup({
     let toY = ry
     let pointing = false
     let frame = 0
+    let running = false
+    let onscreen = true
     const start = performance.now()
+
+    const startLoop = () => {
+      if (running || !onscreen) return
+      running = true
+      frame = window.requestAnimationFrame(tick)
+    }
+
+    const stopLoop = () => {
+      if (!running) return
+      running = false
+      window.cancelAnimationFrame(frame)
+      frame = 0
+    }
 
     // how far the pointer can turn it, and how far a drag can
     const REACH = mini ? 16 : 13
@@ -273,10 +288,49 @@ export function PhoneMockup({
       // and the shadow leans the opposite way to the turn
       el.style.setProperty('--lean', `${(-ry * 0.7).toFixed(2)}px`)
 
+      // A mini is only ever travelling towards one fixed angle, so the moment
+      // it arrives there is nothing left to compute: the loop stops, and the
+      // pointer starts it again. A page of ten devices was otherwise burning
+      // ten callbacks every frame to write the same three properties.
+      if (
+        mini &&
+        !pointing &&
+        !drag &&
+        Math.abs(toX - rx) < 0.01 &&
+        Math.abs(toY - ry) < 0.01
+      ) {
+        running = false
+        frame = 0
+        return
+      }
+
       frame = window.requestAnimationFrame(tick)
     }
 
-    frame = window.requestAnimationFrame(tick)
+    startLoop()
+
+    /*
+     * Nothing stirs off-screen.
+     *
+     * The tilt is a per-frame loop, and the Work index mounts a device for
+     * every concept twice over - one set on the stage, one riding the rows -
+     * so all but one of them is hidden or well out of frame at any moment.
+     * Gating the loop on intersection means only the devices actually in view
+     * cost anything, and a hidden element never reports as intersecting, so
+     * the set the current breakpoint isn't using goes quiet on its own.
+     */
+    const io =
+      typeof IntersectionObserver === 'undefined'
+        ? null
+        : new IntersectionObserver(
+            ([entry]) => {
+              onscreen = entry.isIntersecting
+              if (onscreen) startLoop()
+              else stopLoop()
+            },
+            { rootMargin: '150px' },
+          )
+    io?.observe(stage)
 
     const clamp = (v: number, limit: number) =>
       Math.max(-limit, Math.min(limit, v))
@@ -301,10 +355,13 @@ export function PhoneMockup({
       pointing = true
       toY = nx * REACH * 2
       toX = -ny * REACH * 1.5
+      startLoop()
     }
 
     const onLeave = () => {
       pointing = false
+      // it still has to travel back to rest, so the loop runs on
+      startLoop()
     }
 
     // only the full device is pickup-able: a mini lives inside a button, and
@@ -318,6 +375,7 @@ export function PhoneMockup({
       drag = { id: e.pointerId, x: e.clientX, y: e.clientY, ry, rx }
       stage.setPointerCapture(e.pointerId)
       stage.dataset.held = ''
+      startLoop()
     }
 
     const onUp = (e: PointerEvent) => {
@@ -335,6 +393,8 @@ export function PhoneMockup({
     stage.addEventListener('pointercancel', onUp)
 
     return () => {
+      io?.disconnect()
+      stopLoop()
       window.cancelAnimationFrame(frame)
       stage.removeEventListener('pointermove', onMove)
       stage.removeEventListener('pointerleave', onLeave)
@@ -368,7 +428,12 @@ export function PhoneMockup({
           stagger: 0.035,
         },
         deck: {
-          from: { y: -18, scale: 0.97, autoAlpha: 0, transformOrigin: '50% 0%' },
+          from: {
+            y: -18,
+            scale: 0.97,
+            autoAlpha: 0,
+            transformOrigin: '50% 0%',
+          },
           duration: 0.62,
           stagger: 0.07,
         },

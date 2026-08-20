@@ -99,11 +99,11 @@ export function StepRow({
         <p className="step-num font-display text-[2.75rem] font-extrabold leading-none tracking-tight text-[var(--brand)] sm:text-[3.25rem]">
           {step.n}
         </p>
-        <h3 className="step-copy mt-3 font-display text-xl font-extrabold tracking-tight text-[var(--ink)] sm:text-2xl">
+        <h3 className="step-copy mt-3 font-display text-[1.375rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--ink)] sm:text-[1.625rem]">
           {step.title}
         </h3>
         <p
-          className={`step-copy step-copy--late mx-auto mt-2 max-w-[24rem] text-[15px] leading-relaxed text-[var(--ink-soft)] ${
+          className={`step-copy step-copy--late mx-auto mt-2.5 max-w-[24rem] text-[0.9375rem] leading-[1.55] text-[var(--ink-soft)] ${
             centred ? '' : side === 'left' ? 'sm:mx-0' : 'sm:ml-auto sm:mr-0'
           }`}
         >

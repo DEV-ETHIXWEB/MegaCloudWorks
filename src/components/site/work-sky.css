@@ -110,7 +110,9 @@
     rgba(245, 51, 59, 0.08) 44%,
     transparent 72%
   );
-  filter: blur(38px);
+  /* there was a 38px blur here as well. Blurring a radial gradient that is
+     already nothing but falloff changes nothing you can see, and it cost a
+     full-screen gaussian on every frame of an eleven-second loop */
   mix-blend-mode: screen;
   animation: work-sky-ember 11s ease-in-out infinite;
 }

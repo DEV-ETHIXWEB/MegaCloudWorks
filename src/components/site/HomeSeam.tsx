@@ -27,7 +27,6 @@ export function HomeSeam() {
         />
 
         <div className="home-seam__mark">
-          <span className="home-seam__halo" />
           <img
             src="/logo-mark.svg"
             alt=""

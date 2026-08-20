@@ -302,6 +302,22 @@ body {
   will-change: transform;
 }
 
+/* the photograph used to be faded in by GSAP on mount; it is a one-shot
+   entry with no scroll dependency, so CSS does it without the page having
+   to hydrate first */
+[data-hero-art] {
+  animation: hero-in 1.4s ease-out both;
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* only the left edge dissolves, into the copy column. The foot is left as a
    clean horizon: the photograph ends on its own edge rather than bleeding
    away into the paper. */
@@ -513,6 +529,11 @@ body {
   .hero-haze,
   .hero-sheen {
     animation: none;
+  }
+
+  [data-hero-art] {
+    animation: none;
+    opacity: 1;
   }
 
   /* nothing strikes; the callout is simply drawn */
@@ -1974,8 +1995,6 @@ a.contact-card:hover .contact-go {
   filter: drop-shadow(0 -1px 2px rgba(255, 255, 255, 0.35));
 }
 
-
-
 /* the copy does not animate: the words of this section are simply there,
    and only the marks and the route between them move */
 
@@ -3282,12 +3301,28 @@ a.contact-card:hover .contact-go {
 .work-stage .work-plate {
   opacity: 0;
   transform: translate3d(0, 22px, 0) scale(0.97);
-  filter: blur(14px);
+  /* the blur used to be 14px. Animating a gaussian that wide across a card
+     this size is the single most expensive thing on the page, and at this
+     radius the plate still arrives out of focus - the depth reads the same
+     and the switch stops dropping frames */
+  filter: blur(7px);
   pointer-events: none;
+  /*
+    Once it has faded out it is taken out of the page entirely.
+
+    Four of the five plates are always parked behind the current one, each
+    carrying a whole app screen in a device. At opacity 0 they were still
+    laid out, still painted, and still animating; hidden, the browser skips
+    them, and the tilt loop inside each one sees itself leave the viewport
+    and stops. The delay is what keeps the fade visible - visibility flips
+    only after the opacity has finished travelling.
+  */
+  visibility: hidden;
   transition:
     opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    filter 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 720ms;
 }
 
 .work-stage .work-plate[data-active] {
@@ -3295,6 +3330,12 @@ a.contact-card:hover .contact-go {
   transform: none;
   filter: blur(0);
   pointer-events: auto;
+  visibility: visible;
+  transition:
+    opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
 }
 
 /* the screen chips deal themselves out once the plate has landed */

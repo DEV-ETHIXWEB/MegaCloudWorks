@@ -88,7 +88,10 @@ export function HomeFooter() {
             </p>
           </div>
 
-          <Link to="/contact" className="footer-cta self-start lg:self-auto">
+          <Link
+            to="/contact"
+            className="footer-cta cta-diagonal self-start lg:self-auto"
+          >
             Start a project
             <ArrowRight />
           </Link>
@@ -142,7 +145,7 @@ export function HomeFooter() {
               </li>
               <li className="flex items-center gap-2.5 py-1 text-white/60">
                 <PinIcon />
-                India — building for teams worldwide
+                India, building for teams worldwide
               </li>
               <li className="flex items-center gap-2.5 py-1 text-white/60">
                 <ClockIcon />

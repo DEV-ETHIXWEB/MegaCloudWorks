@@ -96,11 +96,11 @@
   font-size: 0.9375rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.2s ease;
 }
 
+/* the wipe is `.cta-diagonal`, the same one the header button runs */
 .footer-cta:hover {
-  background: var(--brand-strong);
+  color: var(--brand);
 }
 
 .footer-rule {

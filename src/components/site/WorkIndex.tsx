@@ -7,6 +7,7 @@ import type { Concept } from '#/lib/concepts'
 import { CONCEPT_SCREENS } from '#/lib/conceptScreens'
 import { Booting } from '#/lib/iosKit'
 import { PhoneNavProvider } from '#/lib/phoneUI'
+import { useMediaQuery } from '#/lib/useMediaQuery'
 
 import '#/styles-index.css'
 
@@ -27,6 +28,15 @@ import '#/styles-index.css'
 export function WorkIndex() {
   const [active, setActive] = useState(0)
   const rows = useRef<Array<HTMLElement | null>>([])
+  /*
+   * Below lg every row carries its own plate and the stage is gone; above it
+   * the stage carries all five and the rows carry none. Both used to be in the
+   * tree at once, which meant ten devices mounted to show one - ten React
+   * trees, ten frames' worth of screen furniture, and (before the loop learned
+   * to sleep) ten tilt loops. Only the set the current width actually uses is
+   * built now.
+   */
+  const narrow = useMediaQuery('(max-width: 1023.98px)')
 
   // Scroll hands the stage over as each row crosses the middle of the screen.
   //
@@ -68,11 +78,12 @@ export function WorkIndex() {
       <div className="work-stage hidden lg:block">
         <div className="work-stage__inner">
           <div className="work-stage__frame">
-            {CONCEPTS.map((c, i) => (
-              <div key={c.slug} className="work-stage__slot">
-                <ConceptPlate concept={c} index={i} active={i === active} />
-              </div>
-            ))}
+            {!narrow &&
+              CONCEPTS.map((c, i) => (
+                <div key={c.slug} className="work-stage__slot">
+                  <ConceptPlate concept={c} index={i} active={i === active} />
+                </div>
+              ))}
           </div>
 
           <p className="work-stage__foot">
@@ -133,9 +144,11 @@ export function WorkIndex() {
             </Link>
 
             {/* below lg there is no stage, so the plate rides with its row */}
-            <div className="mt-5 lg:hidden">
-              <ConceptPlate concept={c} index={i} active />
-            </div>
+            {narrow ? (
+              <div className="mt-5 lg:hidden">
+                <ConceptPlate concept={c} index={i} active />
+              </div>
+            ) : null}
           </li>
         ))}
       </ol>
@@ -217,7 +230,10 @@ function ConceptPlate({
                 inert
               >
                 <PhoneMockup variant="mini" accent={c.accent} motion={c.motion}>
-                  <Booting c={c} delay={index * 220}>
+                  {/* the index is a shelf, not a hero: the launch screen is
+                      a flicker here rather than a beat, so the five apps are
+                      simply running by the time the page has settled */}
+                  <Booting c={c} hold={110} delay={index * 45}>
                     <Screen c={c} />
                   </Booting>
                 </PhoneMockup>

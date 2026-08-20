@@ -161,9 +161,9 @@
   opacity: 0;
   scale: 0.72;
   transition:
-    opacity 0.45s ease,
-    scale 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
-  transition-delay: calc(var(--i) * 0.42s);
+    opacity 0.7s ease,
+    scale 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i) * 0.32s);
 }
 
 [data-shown='true'] .approach-step__disc {
@@ -213,10 +213,14 @@
   height: 6.5rem;
   opacity: 0;
   scale: 0.72;
+  /* eased rather than sprung: the overshoot read as a flick on artwork
+     this detailed, and the longer curve settles instead of snapping */
   transition:
-    opacity 0.5s ease,
-    scale 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
-  transition-delay: calc(var(--i) * 0.42s);
+    opacity 0.7s ease,
+    scale 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    translate 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i) * 0.32s);
+  will-change: transform, opacity;
 }
 
 /* both dimensions are fixed and object-fit does the letterboxing: with
@@ -232,7 +236,7 @@
 [data-shown='true'] .approach-step__art {
   opacity: 1;
   scale: 1;
-  animation: approach-drift 6s ease-in-out infinite;
+  animation: approach-drift 8s ease-in-out infinite;
   /* only once it has landed, and offset per step so the row never bobs
      in unison */
   animation-delay: calc(1s + var(--i) * 0.7s);
@@ -244,7 +248,88 @@
     translate: 0 0;
   }
   50% {
-    translate: 0 -7px;
+    translate: 0 -5px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Tablet and up: every step stands in its own box
+ *
+ * Five illustrations floating on open paper read as one loose row rather
+ * than five steps. Each step now takes a card - its own artwork, number,
+ * name and line inside a panel - so the sequence is five things, counted.
+ * ------------------------------------------------------------------ */
+
+@media (min-width: 768px) {
+  .home-approach ol li {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.1rem 1rem 1.5rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(16, 16, 20, 0.06);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 26px 60px -50px rgba(16, 16, 20, 0.5);
+  }
+
+  /* the artwork is the card's own head, so it no longer needs the
+     standing room it had on open paper */
+  .approach-step__art {
+    height: 5.5rem;
+  }
+
+  .approach-step__disc {
+    margin-top: 1rem;
+  }
+
+  .approach-step__note {
+    max-width: none;
+  }
+
+  /* the dashed wave joined five floating marks and would now only run
+     behind the cards; the sequence is carried between them instead, by a
+     dotted run through each gutter */
+  .approach-hops {
+    display: none;
+  }
+
+  .home-approach ol li::after {
+    content: '';
+    position: absolute;
+    top: 3.6rem;
+    left: 100%;
+    width: 2rem;
+    border-top: 2px dotted rgba(245, 51, 59, 0.5);
+  }
+
+  /* nothing to join after the last stop, or at the end of a wrapped row */
+  .home-approach ol li:last-child::after {
+    content: none;
+  }
+
+  /* pointed at, a card lifts off the paper - the one bit of movement in
+     the row, and it belongs to the card, not to a link */
+  .home-approach ol li {
+    position: relative;
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
+  }
+
+  .home-approach ol li:hover {
+    transform: translateY(-8px);
+    border-color: rgba(245, 51, 59, 0.28);
+    box-shadow: 0 34px 60px -38px rgba(16, 16, 20, 0.55);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* three across: the run wraps, so the stop at the end of a row has
+     nothing to its right either */
+  .home-approach ol li:nth-child(3n)::after {
+    content: none;
   }
 }
 

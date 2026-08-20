@@ -1,21 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion } from 'motion/react'
-import type { Transition } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 
-type Snapshot = Record<string, string | number>
-
-const buildKeyframes = (from: Snapshot, steps: Array<Snapshot>) => {
-  const keys = new Set([
-    ...Object.keys(from),
-    ...steps.flatMap((s) => Object.keys(s)),
-  ])
-
-  const keyframes: Record<string, Array<string | number>> = {}
-  keys.forEach((k) => {
-    keyframes[k] = [from[k], ...steps.map((s) => s[k])]
-  })
-  return keyframes
-}
+import './blur-text.css'
 
 /**
  * Text that blurs into focus a word (or letter) at a time.
@@ -23,6 +9,9 @@ const buildKeyframes = (from: Snapshot, steps: Array<Snapshot>) => {
  * By default it fires when it scrolls into view. Pass `start` to drive it from
  * outside instead - the scroll-choreographed bridge on the About page holds
  * each block until its beat in the sequence arrives.
+ *
+ * The entry itself is three CSS keyframes on a per-segment delay: the same
+ * blur/opacity/rise the animation library used to run, without shipping it.
  */
 export function BlurText({
   text = '',
@@ -55,6 +44,11 @@ export function BlurText({
   const ref = useRef<HTMLElement>(null)
   const driven = start !== undefined
 
+  // held in a ref so a caller passing a fresh closure every render does not
+  // re-arm the observer below
+  const done = useRef(onAnimationComplete)
+  done.current = onAnimationComplete
+
   useEffect(() => {
     if (driven) return
     const el = ref.current
@@ -72,58 +66,51 @@ export function BlurText({
     return () => observer.disconnect()
   }, [threshold, rootMargin, driven])
 
-  const from = useMemo<Snapshot>(
-    () =>
-      direction === 'top'
-        ? { filter: 'blur(10px)', opacity: 0, y: -22 }
-        : { filter: 'blur(10px)', opacity: 0, y: 22 },
-    [direction],
-  )
-
-  const to = useMemo<Array<Snapshot>>(
-    () => [
-      { filter: 'blur(5px)', opacity: 0.5, y: direction === 'top' ? 4 : -4 },
-      { filter: 'blur(0px)', opacity: 1, y: 0 },
-    ],
-    [direction],
-  )
-
   const playing = driven ? start : inView
-  const stepCount = to.length + 1
-  const totalDuration = stepDuration * (stepCount - 1)
-  const times = Array.from({ length: stepCount }, (_, i) =>
-    stepCount === 1 ? 0 : i / (stepCount - 1),
-  )
-  const keyframes = buildKeyframes(from, to)
 
-  const MotionTag = motion[Tag]
+  // the whole run: the two keyframe steps, plus the wait for the last
+  // segment's turn to come round
+  const totalDuration = stepDuration * 2
+
+  // reduced motion skips the animation entirely, so `animationend` never
+  // fires and a sequence waiting on it would stall - report in on a timer
+  // that matches when the run would have finished
+  useEffect(() => {
+    if (!playing || !done.current) return
+    const el = ref.current
+    if (!el) return
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const wait = window.setTimeout(
+      () => done.current?.(),
+      (elements.length - 1) * delay + totalDuration * 1000,
+    )
+    return () => window.clearTimeout(wait)
+  }, [playing, delay, elements.length, totalDuration])
+
+  const Tagged = Tag
 
   return (
-    <MotionTag ref={ref as never} className={className}>
-      {elements.map((segment, index) => {
-        const transition: Transition = {
-          duration: totalDuration,
-          times,
-          delay: (index * delay) / 1000,
-        }
-
-        return (
-          <motion.span
-            key={index}
-            className="inline-block will-change-[transform,filter,opacity]"
-            initial={from}
-            animate={playing ? keyframes : from}
-            transition={transition}
-            onAnimationComplete={
-              index === elements.length - 1 ? onAnimationComplete : undefined
-            }
-          >
-            {segment === ' ' ? ' ' : segment}
-            {animateBy === 'words' && index < elements.length - 1 && ' '}
-          </motion.span>
-        )
-      })}
-    </MotionTag>
+    <Tagged
+      ref={ref as never}
+      className={`blur-text ${direction === 'bottom' ? 'blur-text--bottom' : ''} ${className}`}
+      data-play={playing ? 'true' : 'false'}
+      style={{ '--blur-text-duration': `${totalDuration}s` } as CSSProperties}
+    >
+      {elements.map((segment, index) => (
+        <span
+          key={index}
+          className="blur-text__seg"
+          style={{ animationDelay: `${(index * delay) / 1000}s` }}
+          onAnimationEnd={
+            index === elements.length - 1 ? () => done.current?.() : undefined
+          }
+        >
+          {segment === ' ' ? ' ' : segment}
+          {animateBy === 'words' && index < elements.length - 1 && ' '}
+        </span>
+      ))}
+    </Tagged>
   )
 }
 

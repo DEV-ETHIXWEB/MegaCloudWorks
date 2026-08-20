@@ -10,12 +10,15 @@
   position: relative;
   overflow: hidden;
   background-color: #fdf9f8;
-  background-image: url('/ridge-bg.webp');
-  background-size: cover;
-  /* the summit sits 22.7% down the plate; at cover the plate is far
-     taller than this section, so this figure is what lands the tip just
-     under the mark */
-  background-position: center 9%;
+  /* the landscape crop of the plate: 1414 across against the portrait
+     one's 938, so at desk width it is scaled down rather than blown up
+     half again, and the rock keeps its detail. Its summit sits 48.6%
+     down the picture. */
+  background-image: url('/why-us-bg.webp');
+  /* sized off the section's own height and hung from the top, so the tip
+     lands just under the studio's card whatever the screen is doing */
+  background-size: auto 152%;
+  background-position: center top;
   background-repeat: no-repeat;
 }
 
@@ -78,60 +81,27 @@
   min-height: 17rem;
 }
 
-/* the orbit the studio sits inside, with a stop on each quarter */
-.why-orbit {
+/* the studio stands on a round card, not inside a ring: a plate of paper
+   on the summit, so the mark reads as mounted rather than orbited */
+.why-disc {
   position: absolute;
   top: 2rem;
+  display: grid;
+  place-items: center;
   width: 12rem;
   height: 12rem;
   border-radius: 50%;
-  border: 1px solid rgba(245, 51, 59, 0.22);
-}
-
-.why-orbit span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0.55rem;
-  height: 0.55rem;
-  margin: -0.275rem 0 0 -0.275rem;
-  border-radius: 50%;
-  background: var(--brand);
-  /* each stop is pushed out to the rim along its own bearing */
-  transform: rotate(var(--a)) translateY(-6rem);
-
-  /* The ring does not turn - it lights. The stops fire in rings from the
-     ground up: the pair at the sides, then the pair above them, then the
-     one at the summit, and the whole run repeats. `--step` is which of
-     the three beats a stop belongs to. */
-  opacity: 0.35;
-  box-shadow: 0 0 0 0 rgba(245, 51, 59, 0);
-  animation: why-stop 3.6s ease-in-out infinite;
-  animation-delay: calc(var(--step) * 0.55s);
-}
-
-@keyframes why-stop {
-  0%,
-  22%,
-  100% {
-    opacity: 0.35;
-    box-shadow: 0 0 0 0 rgba(245, 51, 59, 0);
-  }
-  8% {
-    opacity: 1;
-    box-shadow:
-      0 0 14px 3px rgba(245, 51, 59, 0.75),
-      0 0 30px 8px rgba(245, 51, 59, 0.35);
-  }
+  border: 1px solid rgba(16, 16, 20, 0.06);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 30px 70px -45px rgba(16, 16, 20, 0.55);
 }
 
 .why-mark {
-  position: absolute;
-  top: 4.6rem;
   width: 5.5rem;
   height: auto;
-  filter: drop-shadow(0 0 30px rgba(245, 51, 59, 0.45))
-    drop-shadow(0 10px 20px rgba(16, 16, 20, 0.15));
+  /* a plain shadow, no bloom: the mark is never lit */
+  filter: drop-shadow(0 10px 20px rgba(16, 16, 20, 0.15));
   animation: why-mark 6s ease-in-out infinite;
 }
 
@@ -149,6 +119,13 @@
 
 .why-card {
   position: relative;
+  /* each column arrives from its own side, one after the other, once the
+     section is on screen - so the pair reads as closing in on the summit */
+  opacity: 0;
+  transition:
+    opacity 0.6s ease,
+    translate 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i) * 0.12s);
   display: flex;
   gap: 0.9rem;
   border-radius: 1rem;
@@ -157,9 +134,6 @@
   backdrop-filter: blur(6px);
   padding: 1.05rem 1.25rem;
   box-shadow: 0 26px 60px -50px rgba(16, 16, 20, 0.5);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
 }
 
 /* the red tab down the inner edge, pointing at the summit */
@@ -173,6 +147,19 @@
   background: var(--brand);
 }
 
+.why-card--left {
+  translate: -2.5rem 0;
+}
+
+.why-card--right {
+  translate: 2.5rem 0;
+}
+
+[data-shown='true'] .why-card {
+  opacity: 1;
+  translate: 0 0;
+}
+
 .why-card--left::before {
   left: -1px;
 }
@@ -181,10 +168,8 @@
   right: -1px;
 }
 
-.why-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 30px 60px -45px rgba(16, 16, 20, 0.5);
-}
+/* deliberately inert: these are six statements, not six links, so
+   nothing about them lifts, lights or invites a tap */
 
 .why-card__disc {
   display: grid;
@@ -274,23 +259,17 @@
     min-height: 16rem;
   }
 
-  .why-orbit {
+  .why-disc {
     width: 11rem;
     height: 11rem;
   }
 
-  .why-orbit span {
-    transform: rotate(var(--a)) translateY(-5.5rem);
-  }
-
   .why-mark {
-    top: 5.5rem;
     width: 5rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .why-orbit,
   .why-mark {
     animation: none;
   }
@@ -373,15 +352,14 @@
   }
 
   /* On a phone the plate is cropped by width, so at plain `cover` there
-     is no vertical slack to slide it with and the summit lands well
-     above the mark. Over-scaling the height buys that slack back, and
-     the mark then sits on the tip here exactly as it does on a desk. */
+     is no vertical slack to slide it with. Over-scaling the height buys
+     that slack back, and the plate is then slid up until the tip lands
+     under the studio's card, as it does on a desk. */
   .home-why {
     background-size: auto 150%;
     /* a length, not a percentage: percentages here are a share of the
-       slack between plate and section, which changes with the phone -
-       40px is 40px, and it drops the summit onto the mark's base */
-    background-position: center 40px;
+       slack between plate and section, which changes with the phone */
+    background-position: center -97px;
   }
 
   .why-summit {
@@ -397,5 +375,28 @@
 @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
   .why-card {
     animation: none;
+  }
+}
+
+/* ---------------- desktop: one section, one screen ---------------- *
+ *
+ * On a laptop the section used to end well short of the viewport, so the
+ * band below it was always peeking in under the last row of cards. It
+ * now stands a full screen tall, so the reason cards and the summit are
+ * all you see while you are on them. */
+
+@media (min-width: 1024px) {
+  .home-why {
+    /* the content still sits at the top - the summit is drawn to stand
+       under it - and the extra height falls to the mountain below */
+    min-height: 100svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-card {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
   }
 }

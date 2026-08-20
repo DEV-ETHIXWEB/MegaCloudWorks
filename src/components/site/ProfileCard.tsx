@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import './ProfileCard.css'
@@ -26,6 +26,8 @@ const adjust = (
 
 export type ProfileCardProps = {
   avatarUrl?: string
+  /** drawn mark shown in place of a photograph */
+  artwork?: React.ReactNode
   iconUrl?: string
   grainUrl?: string
   innerGradient?: string
@@ -48,6 +50,7 @@ export type ProfileCardProps = {
 
 function ProfileCardComponent({
   avatarUrl = '',
+  artwork,
   iconUrl = '',
   grainUrl = '',
   innerGradient,
@@ -69,6 +72,36 @@ function ProfileCardComponent({
 }: ProfileCardProps) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const shellRef = useRef<HTMLDivElement>(null)
+
+  // A row of these sits well below the fold, and each one used to arm its
+  // pointer engine and run its 1.2s intro sweep the moment the page
+  // hydrated - five spring loops writing nine custom properties a frame,
+  // for cards nobody was looking at yet. Nothing here starts until the
+  // card is actually on screen.
+  const [near, setNear] = useState(false)
+
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setNear(true)
+      return
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setNear(true)
+        io.disconnect()
+      },
+      // armed a little before it arrives, so the intro is already running
+      // by the time the card is properly in view
+      { rootMargin: '200px 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   const enterTimerRef = useRef<number | null>(null)
   const leaveRafRef = useRef<number | null>(null)
@@ -135,7 +168,8 @@ function ProfileCardComponent({
       setVarsFromXY(currentX, currentY)
 
       const stillFar =
-        Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05
+        Math.abs(targetX - currentX) > 0.05 ||
+        Math.abs(targetY - currentY) > 0.05
 
       if (stillFar) {
         rafId = requestAnimationFrame(step)
@@ -269,7 +303,7 @@ function ProfileCardComponent({
   )
 
   useEffect(() => {
-    if (!enableTilt || !tiltEngine) return
+    if (!near || !enableTilt || !tiltEngine) return
 
     const shell = shellRef.current
     if (!shell) return
@@ -320,6 +354,7 @@ function ProfileCardComponent({
       shell.classList.remove('entering')
     }
   }, [
+    near,
     enableTilt,
     enableMobileTilt,
     tiltEngine,
@@ -358,6 +393,7 @@ function ProfileCardComponent({
             <div className="pc-shine" />
             <div className="pc-glare" />
             <div className="pc-content pc-avatar-content">
+              {artwork ? <div className="pc-artwork">{artwork}</div> : null}
               {avatarUrl ? (
                 <img
                   className="avatar"

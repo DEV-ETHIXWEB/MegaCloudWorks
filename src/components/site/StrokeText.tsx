@@ -103,10 +103,19 @@ export function StrokeText({
       if (!bbox || !bbox.width) return
 
       const pad = Math.max(Number(strokeWidth) || 1, fontSize * 0.1)
+      /*
+       * Set left, the box's left edge IS the margin the copy under it
+       * lines up on, so a pad there pushes the first glyph off that
+       * margin by pad x the fit scale - about 8px on the home headline.
+       * The drawing keeps its room on every other side; the stroke that
+       * would have used the left pad hangs out of the box instead, which
+       * the stylesheet allows.
+       */
+      const padLeft = align === 'left' ? 0 : pad
       const next = {
-        x: bbox.x - pad,
+        x: bbox.x - padLeft,
         y: bbox.y - pad,
-        width: bbox.width + pad * 2,
+        width: bbox.width + padLeft + pad,
         height: bbox.height + pad * 2,
       }
 
@@ -128,7 +137,7 @@ export function StrokeText({
     return () => {
       cancelled = true
     }
-  }, [characters, fontSize, fontWeight, letterSpacing, strokeWidth])
+  }, [align, characters, fontSize, fontWeight, letterSpacing, strokeWidth])
 
   useEffect(() => {
     const root = rootRef.current

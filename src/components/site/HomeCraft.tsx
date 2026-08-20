@@ -127,9 +127,16 @@ function CloudUpIcon() {
  * place while the motion itself stays in CSS.
  * ------------------------------------------------------------------ */
 
+/**
+ * How fast the queue runs. The order below is written in beats; this is
+ * what a beat is worth in seconds, so the whole table can be sped up or
+ * slowed down from one number.
+ */
+const RATE = 0.55
+
 /** a part's cue, in seconds from the moment the table comes into view */
 const cue = (at: number) =>
-  ({ '--d': `${at.toFixed(2)}s` }) as React.CSSProperties
+  ({ '--d': `${(at * RATE).toFixed(2)}s` }) as React.CSSProperties
 
 /* One queue, not six things at once: the table is read left to right in
    the order asked for - the code, the flow, the wireframe, the screen, the
@@ -253,10 +260,7 @@ function UserFlowPanel() {
           {/* the box lands, its label is written into it, then the line
               reaches down for the next one */}
           <span className="craft-node craft-pop" style={cue(T_FLOW + i * 0.45)}>
-            <span
-              className="craft-fade"
-              style={cue(T_FLOW + i * 0.45 + 0.16)}
-            >
+            <span className="craft-fade" style={cue(T_FLOW + i * 0.45 + 0.16)}>
               {step}
             </span>
           </span>
@@ -426,7 +430,10 @@ function UiDesignPanel() {
               d="M2 26 L14 20 L24 24 L34 14 L44 19 L56 9 L66 15 L76 10 L88 16 L100 6 L112 11 L118 4"
             />
           </svg>
-          <p className="craft-fade mt-0.5 text-[0.4rem]" style={cue(T_UI + 1.1)}>
+          <p
+            className="craft-fade mt-0.5 text-[0.4rem]"
+            style={cue(T_UI + 1.1)}
+          >
             <span className="font-bold text-[var(--brand)]">↑ 12.5%</span>{' '}
             <span className="text-white/50">vs last month</span>
           </p>
@@ -669,32 +676,32 @@ const DISCIPLINES = [
   {
     icon: <TargetIcon />,
     title: 'Strategy',
-    body: 'The right problem, properly validated.',
+    body: 'We start on the problem, not the feature list - the goal, the market and the constraints, all validated before a line is written. That means the workshops, the competitor teardown and the numbers that decide whether a build is worth starting at all.',
   },
   {
     icon: <FlowIcon />,
     title: 'User Experience',
-    body: 'Flows that feel obvious to use.',
+    body: 'Flows are mapped before they are drawn, so the first time someone opens the app they already know where they are going. Every screen earns its place in the journey, and the dead ends are found on paper rather than in your first round of reviews.',
   },
   {
     icon: <PenIcon />,
     title: 'UI Design',
-    body: 'Interfaces users actually love.',
+    body: 'Interfaces built on a real system - type, spacing and colour that still hold together on the twentieth screen, not just the first. The components are documented and handed over, so the look survives every feature added after we have finished.',
   },
   {
     icon: <CodeIcon />,
     title: 'Development',
-    body: 'Scalable architecture, clean code.',
+    body: 'Scalable architecture and clean, tested code, written so the next developer on it reads the work as easily as we do. Sensible dependencies, reviewed pull requests and a repository your own team can pick up without a handover call.',
   },
   {
     icon: <ShieldIcon />,
     title: 'Testing',
-    body: 'Secure, stable, fast at scale.',
+    body: 'Functional, performance and security passes on every build, so what ships stays stable and fast under a real load. Devices, edge cases and the awkward network conditions your users actually have, checked before release rather than after it.',
   },
   {
     icon: <RocketIcon />,
     title: 'Deployment',
-    body: 'From beta to store, and after.',
+    body: 'Shipped to both stores and looked after once it is there - releases, monitoring, and the fixes that follow. Store listings, staged rollouts and the version after this one, planned with you rather than dropped on you.',
   },
 ] as const
 
@@ -738,76 +745,91 @@ export function HomeCraft() {
 
   return (
     <section id="craft" className="home-craft">
-      <div className="relative mx-auto max-w-[1360px] px-6 py-10 sm:px-10 lg:px-28 lg:py-6">
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
-          {/* ---------- the claim ---------- */}
-          <div>
-            <span className="craft-tick" aria-hidden="true" />
-            <p className="text-[0.8125rem] font-bold uppercase tracking-[0.28em] text-[var(--brand)]">
-              Behind the build
-            </p>
-
-            <h2 className="mt-4 font-display text-[clamp(1.8rem,2.8vw,2.6rem)] font-extrabold leading-[1.03] tracking-[-0.04em] text-[var(--ink)]">
-              Thoughtful process.
-              <br />
-              Solid <span className="text-[var(--brand)]">engineering.</span>
-            </h2>
-
-            <p className="mt-3.5 max-w-md text-[0.9375rem] leading-[1.55] text-[var(--ink-soft)]">
-              We go beyond code. Every piece matters, every time.
-            </p>
-          </div>
-
-          {/* ---------- what a build leaves behind ---------- */}
-          <div ref={collage} className="craft-collage" aria-hidden="true">
-            <UserFlowPanel />
-            <WireframePanel />
-            <UiDesignPanel />
-            <CleanCodePanel />
-            <TestingPanel />
-            <DeploymentPanel />
-          </div>
-        </div>
-
-        {/* ---------- the six disciplines ---------- */}
-        <ul className="craft-strip mt-5 grid grid-cols-2 gap-y-6 px-6 py-4 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x lg:divide-[var(--line)] lg:px-2">
-          {DISCIPLINES.map((item) => (
-            <li key={item.title} className="lg:px-6">
-              <span className="craft-strip__tile">{item.icon}</span>
-              <h3 className="mt-3 text-[1rem] font-bold tracking-[-0.02em] text-[var(--ink)]">
-                {item.title}
-              </h3>
-              <p className="mt-1.5 text-[0.8125rem] leading-[1.45] text-[var(--ink-soft)]">
-                {item.body}
+      {/* ---------- one screen: the claim, the table, the run, the toolkit ---------- */}
+      <div className="craft-pane">
+        <div className="craft-pane__body relative mx-auto max-w-[1360px] px-6 py-10 sm:px-10 lg:px-28 lg:py-6">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
+            {/* ---------- the claim ---------- */}
+            <div>
+              <span className="craft-tick" aria-hidden="true" />
+              <p className="text-[0.8125rem] font-bold uppercase tracking-[0.28em] text-[var(--brand)]">
+                Behind the build
               </p>
-              <span className="craft-strip__rule" />
-            </li>
-          ))}
-        </ul>
 
-        {/* ---------- and what it is all built with ---------- */}
-        <p className="mt-8 text-center text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-[var(--ink-faint)]">
-          Technologies we work with
-        </p>
+              <h2 className="mt-4 font-display text-[clamp(1.8rem,2.8vw,2.6rem)] font-extrabold leading-[1.03] tracking-[-0.04em] text-[var(--ink)]">
+                Thoughtful process.
+                <br />
+                Solid <span className="text-[var(--brand)]">engineering.</span>
+              </h2>
 
-        {/* the chips ride a belt: one row, doubled, sliding for ever. The
-            copy is hidden from assistive tech so the list is read once. */}
-        <div className="craft-marquee mt-4">
-          <div className="craft-marquee__track">
-            {[0, 1].map((copy) => (
-              <ul
-                key={copy}
-                className="craft-marquee__row"
-                aria-hidden={copy === 1 ? 'true' : undefined}
-              >
-                {TECH.map((tool) => (
-                  <li key={tool.name} className="craft-tech">
-                    {tool.mark}
-                    {tool.name}
-                  </li>
-                ))}
-              </ul>
+              <p className="mt-3.5 max-w-md text-[0.9375rem] leading-[1.55] text-[var(--ink-soft)]">
+                Every piece matters, every time.
+              </p>
+            </div>
+
+            {/* ---------- what a build leaves behind ---------- */}
+            <div ref={collage} className="craft-collage" aria-hidden="true">
+              <UserFlowPanel />
+              <WireframePanel />
+              <UiDesignPanel />
+              <CleanCodePanel />
+              <TestingPanel />
+              <DeploymentPanel />
+            </div>
+          </div>
+
+          {/* ---------- the six disciplines, one to a line ---------- */}
+          <ul className="craft-run mt-10">
+            {DISCIPLINES.map((item) => (
+              <li key={item.title} className="craft-run__item">
+                <span className="craft-strip__tile">{item.icon}</span>
+                <h3 className="craft-run__name">{item.title}</h3>
+                <p className="craft-run__note">{item.body}</p>
+              </li>
             ))}
+          </ul>
+
+          {/* ---------- and what it is all built with, straight
+              under the run rather than a screen away ---------- */}
+          <p className="mt-20 text-center text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-[var(--ink-faint)]">
+            Technologies we work with
+          </p>
+
+          {/* the chips ride a belt: one row, doubled, sliding for ever. The
+              copy is hidden from assistive tech so the list is read once. */}
+          <div className="craft-marquee mt-5">
+            <div className="craft-marquee__track">
+              {[0, 1].map((copy) => (
+                <ul
+                  key={copy}
+                  className="craft-marquee__row"
+                  aria-hidden={copy === 1 ? 'true' : undefined}
+                >
+                  {TECH.map((tool) => (
+                    <li key={tool.name} className="craft-tech">
+                      {tool.mark}
+                      {tool.name}
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
+
+          {/* the studio's own mark, standing between the belt and the
+              contact form below - flat, no bloom */}
+          <div className="craft-sign mt-24 lg:mt-28">
+            <span className="craft-sign__rule" aria-hidden="true" />
+            <img
+              src="/logo-resized.svg"
+              alt="MegaCloudWorks"
+              width={210}
+              height={54}
+              loading="lazy"
+              decoding="async"
+              className="craft-sign__mark"
+            />
+            <span className="craft-sign__rule" aria-hidden="true" />
           </div>
         </div>
       </div>

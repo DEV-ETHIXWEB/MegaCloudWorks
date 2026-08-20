@@ -12,6 +12,9 @@
   display: block;
   width: 100%;
   height: var(--stroke-text-height, 160px);
+  /* set left the viewBox holds no left pad, so the outer half of the
+     stroke sits just outside the box rather than being clipped off */
+  overflow: visible;
 }
 
 .stroke-text__stroke,

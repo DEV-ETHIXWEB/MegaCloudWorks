@@ -1,0 +1,60 @@
+/* ------------------------------------------------------------------ *
+ * BlurText - copy that blurs into focus a word (or letter) at a time.
+ *
+ * This used to be driven by `motion/react`, which meant every page that
+ * carried a line of animated copy also carried the animation library.
+ * The effect is three fixed keyframes on a per-segment delay - nothing
+ * the compositor cannot do on its own - so it is plain CSS now and the
+ * dependency is gone.
+ * ------------------------------------------------------------------ */
+
+.blur-text__seg {
+  display: inline-block;
+  /* the state before the beat arrives, and where the animation is held
+     while `start` is still false */
+  opacity: 0;
+  filter: blur(10px);
+  translate: 0 var(--blur-text-from, -22px);
+}
+
+.blur-text[data-play='true'] .blur-text__seg {
+  animation-name: blur-text-in;
+  animation-duration: var(--blur-text-duration, 0.7s);
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  will-change: filter, opacity, translate;
+}
+
+.blur-text--bottom {
+  --blur-text-from: 22px;
+  --blur-text-mid: -4px;
+}
+
+@keyframes blur-text-in {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    translate: 0 var(--blur-text-from, -22px);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(5px);
+    translate: 0 var(--blur-text-mid, 4px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    translate: 0 0;
+  }
+}
+
+/* the words are simply there, with no entry at all */
+@media (prefers-reduced-motion: reduce) {
+  .blur-text__seg,
+  .blur-text[data-play='true'] .blur-text__seg {
+    animation: none;
+    opacity: 1;
+    filter: none;
+    translate: none;
+  }
+}

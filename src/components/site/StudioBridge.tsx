@@ -313,7 +313,7 @@ export function StudioBridge() {
             src="/ethixweb-black.png"
             alt="Ethixweb"
             className="h-6 w-auto sm:h-7"
-            loading="eager"
+            loading="lazy"
             decoding="async"
           />
 
@@ -382,7 +382,7 @@ export function StudioBridge() {
             className={`bridge-cloud h-9 w-auto sm:-mt-8 sm:h-10 ${
               stage >= 2 ? 'is-live' : ''
             } ${armed && stage < 1 ? 'opacity-0' : ''}`}
-            loading="eager"
+            loading="lazy"
             decoding="async"
           />
 

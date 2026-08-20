@@ -7,39 +7,49 @@
  * unrelated tiles.
  * ------------------------------------------------------------------ */
 
+/* the page's one eyebrow: 13px, heavy, 0.24em, red, red dot ahead of it */
 .team__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 0.8125rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
+  font-weight: 700;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--brand);
 }
 
-.team__rule {
-  display: block;
-  width: 3.5rem;
-  height: 3px;
-  margin-top: 0.6rem;
-  border-radius: 999px;
+.team__eyebrow::before {
+  content: '';
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
   background: var(--brand);
 }
 
 .team__title {
-  margin-top: 1.6rem;
+  margin-top: 1.25rem;
   font-family: var(--font-display, inherit);
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
   font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.035em;
+  line-height: 1.03;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
 .team__lede {
   margin-top: 1.1rem;
-  max-width: 27rem;
-  font-size: 1rem;
+  max-width: 30rem;
+  font-size: 1.0625rem;
   line-height: 1.6;
   color: var(--ink-soft);
+}
+
+@media (min-width: 640px) {
+  .team__lede {
+    font-size: 1.125rem;
+  }
 }
 
 /* ---------------- the five disciplines ---------------- */
@@ -53,75 +63,203 @@
   list-style: none;
 }
 
-/* Each slot holds a ProfileCard. The card ships sized for a hero - most of
-   the viewport tall - so here it is handed the column's width instead and
-   takes its height from its own aspect ratio. */
-.team-cards__slot {
-  min-width: 0;
+/* the claim on the left, the deck on the right: the same split the plate of
+   figures below this band already uses */
+.team__top {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .team__top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    gap: 4rem;
+  }
+}
+
+/* ---------------- the deck ---------------- *
+ *
+ * Five cards, one behind the next, offset to the right and down so the
+ * stack can be counted from the front. Only the front card is read, tilts,
+ * or takes a pointer; the ones behind it are held out of the tab order and
+ * out of the accessibility tree until they are dealt forward.
+ * ------------------------------------------------------------------ */
+
+.team-deck {
+  margin-top: 0;
+}
+
+.team-deck__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* the card's own aspect at deck width, plus the room the stack behind it
+     leans into */
+  min-height: 26rem;
+}
+
+.team-deck__slot {
+  position: absolute;
+  top: 0;
+  width: min(20rem, 82%);
+  transform-origin: 50% 100%;
+  transition:
+    translate 0.62s var(--arrive, cubic-bezier(0.22, 1, 0.36, 1)),
+    scale 0.62s var(--arrive, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity 0.45s ease;
+
+  /* each step back: right, down, smaller, and quieter */
+  translate: calc(var(--depth) * 2.4rem) calc(var(--depth) * 0.9rem);
+  scale: calc(1 - var(--depth) * 0.05);
+  opacity: 1;
+  z-index: calc(10 - var(--depth));
+}
+
+/* past the third card back there is nothing left to see, so the tail of the
+   deck waits off the edge of the stack rather than piling up inside it */
+.team-deck__slot[data-depth='3'],
+.team-deck__slot[data-depth='4'],
+.team-deck__slot[data-depth='5'] {
+  opacity: 0;
+  translate: 7rem 2.7rem;
+  scale: 0.85;
 }
 
 .team-profile {
-  --card-radius: 18px;
+  --card-radius: 1.25rem;
   width: 100%;
+}
+
+/* The card ships as a holographic collectible: a rainbow sheen that sweeps
+   with the pointer, a violet bloom behind it, and gradient type. All three
+   are off. What is left is the plate, the tilt, and the mark. */
+.team-profile .pc-shine,
+.team-profile .pc-glare {
+  display: none;
 }
 
 .team-profile .pc-card {
   height: auto;
   max-height: none;
   width: 100%;
+  aspect-ratio: 0.84;
+  background: #131316;
+  animation: none;
+  box-shadow: 0 40px 90px -55px rgba(16, 16, 20, 0.85);
 }
 
-/* the holding copy is long for a name, so it wraps rather than running off
-   the card the way a real one never would */
+.team-profile .pc-inside {
+  background-color: #131316;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .team-profile .pc-details {
-  top: 2.2em;
-  padding: 0 1rem;
+  top: 2.4em;
+  padding: 0 1.5rem;
+}
+
+.team-profile .pc-details h3,
+.team-profile .pc-details p {
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+  color: #fff;
 }
 
 .team-profile .pc-details h3 {
-  font-size: 1.5rem;
+  font-size: 1.375rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 .team-profile .pc-details p {
-  top: -4px;
+  top: 0.55rem;
   white-space: normal;
   width: auto;
   font-size: 0.8125rem;
-  line-height: 1.35;
+  line-height: 1.5;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.66);
 }
 
-/* the footer bar is drawn for a card twice this size - at column width its
-   avatar and buttons have to come down with it */
-.team-profile .pc-user-info {
-  --ui-inset: 10px;
-  padding: 8px 9px;
-  gap: 8px;
+/* the mark sits in the lower half of the card, in the same red-tinted disc
+   the home page stands its icons in */
+.pc-artwork {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+  background: rgba(245, 51, 59, 0.1);
+  border: 1px solid rgba(245, 51, 59, 0.22);
+  color: var(--brand);
+  z-index: 2;
 }
 
-.team-profile .pc-mini-avatar {
-  width: 30px;
-  height: 30px;
+/* ---------------- the deck's controls ---------------- */
+
+.team-deck__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  margin-top: 1.75rem;
 }
 
-.team-profile .pc-user-details {
-  gap: 8px;
+.team-deck__btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.team-profile .pc-user-text {
-  gap: 4px;
+.team-deck__btn:hover {
+  border-color: var(--brand);
+  color: var(--brand);
 }
 
-.team-profile .pc-handle {
-  font-size: 12px;
+.team-deck__btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
 }
 
-.team-profile .pc-status {
-  font-size: 11px;
+.team-deck__count {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
 }
 
-.team-profile .pc-contact-btn {
-  padding: 7px 10px;
-  font-size: 10px;
+.team-deck__count-now {
+  color: var(--brand);
+}
+
+.team-deck__count-rule {
+  width: 1.75rem;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-deck__slot {
+    transition: none;
+  }
 }
 
 /* ---------------- the figures ---------------- */
@@ -133,15 +271,16 @@
   gap: 2rem;
   margin-top: 1.75rem;
   padding: 2.4rem 2.5rem;
-  border-radius: 1rem;
-  background: #101014;
+  border-radius: 1.5rem;
+  background: #131316;
   color: #fff;
+  box-shadow: 0 40px 90px -55px rgba(16, 16, 20, 0.8);
 }
 
 .team-figures__eyebrow {
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.2em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--brand);
 }
@@ -184,7 +323,7 @@
   justify-items: center;
   gap: 0.55rem;
   padding: 0 0.75rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .team-figure__icon {
@@ -209,10 +348,6 @@
 /* ---------------- narrower ---------------- */
 
 @media (max-width: 1200px) {
-  .team-cards {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .team-figures {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
@@ -224,17 +359,12 @@
 }
 
 @media (max-width: 767px) {
-  .team-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.9rem;
-  }
-
   .team-profile {
-    --card-radius: 14px;
+    --card-radius: 1rem;
   }
 
   .team-profile .pc-details h3 {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
   }
 
   .team-figures {
@@ -256,11 +386,22 @@
 }
 
 @media (max-width: 460px) {
-  .team-cards {
-    grid-template-columns: minmax(0, 1fr);
+  .team-deck__slot {
+    /* the stack leans less: there is no room to the right of a card that is
+       already most of the screen */
+    translate: calc(var(--depth) * 1.3rem) calc(var(--depth) * 0.7rem);
+  }
+
+  .team-deck__stage {
+    min-height: 24rem;
   }
 
   .team-profile .pc-details {
-    top: 1.6em;
+    top: 2em;
+  }
+
+  .pc-artwork {
+    width: 6.5rem;
+    height: 6.5rem;
   }
 }

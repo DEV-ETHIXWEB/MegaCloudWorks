@@ -100,53 +100,15 @@
   display: block;
   width: clamp(5.5rem, 7.6vw, 7.6rem);
   height: auto;
-  /* it sits on cloud rather than paper, so the lift is its own: a warm
-     bloom underneath, then a tighter shadow to keep the edge readable */
-  filter: drop-shadow(0 0 22px rgba(245, 51, 59, 0.55))
-    drop-shadow(0 0 8px rgba(245, 51, 59, 0.45))
-    drop-shadow(0 5px 12px rgba(16, 16, 20, 0.18));
+  /* flat on the cloud: no bloom, and no shadow either - against soft
+     smoke a cast shadow only reads as the mark bleeding into it */
   animation: seam-breathe 5.5s ease-in-out infinite;
-  transition:
-    filter 0.35s ease,
-    scale 0.35s ease;
+  transition: scale 0.35s ease;
 }
 
-/* pointed at, it lights: the mark's own glow doubles and the halo
-   behind it opens out, so the light reads as coming off the cloud */
+/* pointed at, it only grows a little - nothing lights up */
 .home-seam__mark:hover img {
   scale: 1.06;
-  filter: drop-shadow(0 0 34px rgba(245, 51, 59, 0.9))
-    drop-shadow(0 0 14px rgba(245, 51, 59, 0.75))
-    drop-shadow(0 6px 14px rgba(16, 16, 20, 0.22));
-}
-
-/* the glow behind it, so the light reads as coming off the mark */
-.home-seam__halo {
-  position: absolute;
-  width: clamp(11rem, 19vw, 16rem);
-  height: clamp(11rem, 19vw, 16rem);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(245, 51, 59, 0.22) 0%,
-    rgba(245, 51, 59, 0.08) 38%,
-    rgba(245, 51, 59, 0) 68%
-  );
-  animation: seam-halo 5.5s ease-in-out infinite;
-  transition:
-    opacity 0.35s ease,
-    scale 0.35s ease;
-}
-
-.home-seam__mark:hover .home-seam__halo {
-  opacity: 1;
-  scale: 1.18;
-  background: radial-gradient(
-    circle,
-    rgba(245, 51, 59, 0.38) 0%,
-    rgba(245, 51, 59, 0.14) 38%,
-    rgba(245, 51, 59, 0) 68%
-  );
 }
 
 @keyframes seam-breathe {
@@ -159,21 +121,8 @@
   }
 }
 
-@keyframes seam-halo {
-  0%,
-  100% {
-    opacity: 0.75;
-    scale: 1;
-  }
-  50% {
-    opacity: 1;
-    scale: 1.06;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .home-seam__mark img,
-  .home-seam__halo {
+  .home-seam__mark img {
     animation: none;
   }
 }

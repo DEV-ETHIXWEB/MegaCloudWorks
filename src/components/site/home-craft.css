@@ -559,32 +559,90 @@
   }
 }
 
-/* ---------------- the six disciplines ---------------- */
+/* ---------------- the six disciplines ---------------- *
+ *
+ * One to a line, ruled apart. The mark leads, the name sits beside it
+ * and the line runs out across the rest of the page - and every other
+ * step turns the order around, so the run reads down the page in a
+ * measure rather than as a block of columns.
+ */
 
-.craft-strip {
-  border-radius: 1.4rem;
-  border: 1px solid var(--line);
-  background: #fff;
-  box-shadow: 0 26px 60px -45px rgba(16, 16, 20, 0.35);
+.craft-run {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.craft-run__item {
+  display: flex;
+  align-items: center;
+  /* on a phone the line drops under the mark and its name rather than
+     being squeezed in beside them */
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  padding: 1.5rem 0.75rem;
+  border-top: 1px solid var(--line);
+  transition: background-color 0.3s ease;
+}
+
+/* the run opens on type, not on a rule */
+.craft-run__item:first-child {
+  border-top: 0;
+}
+
+.craft-run__item:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.craft-run__name {
+  flex: none;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.craft-run__note {
+  flex: 1 1 100%;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+@media (min-width: 768px) {
+  .craft-run__item {
+    gap: 1.75rem;
+    padding: 1.6rem 1rem;
+  }
+
+  .craft-run__item {
+    flex-wrap: nowrap;
+  }
+
+  .craft-run__name {
+    width: 11rem;
+  }
+
+  .craft-run__note {
+    flex: 1 1 auto;
+  }
+
+  /* every other step turns around: the line first, the name and its mark
+     out at the far edge */
+  .craft-run__item:nth-child(even) {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
 }
 
 .craft-strip__tile {
   display: grid;
   place-items: center;
+  flex: none;
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.85rem;
   background: rgba(245, 51, 59, 0.09);
   color: var(--brand);
-}
-
-.craft-strip__rule {
-  display: block;
-  width: 1.6rem;
-  height: 2px;
-  margin-top: 0.7rem;
-  border-radius: 999px;
-  background: var(--brand);
 }
 
 /* ---------------- narrow ---------------- */
@@ -651,8 +709,10 @@
 .craft-marquee__row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding-right: 0.75rem;
+  /* with the chips gone the run needs its own air, or the names read as
+     one long string */
+  gap: 2.75rem;
+  padding-right: 2.75rem;
 }
 
 @keyframes craft-marquee {
@@ -668,22 +728,25 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  border-radius: 0.9rem;
-  border: 1px solid var(--line);
-  background: #fff;
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 0;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--ink-faint);
   white-space: nowrap;
+  /* no chip: the marks simply run, and they run grey - a tool only takes
+     its own colour when it is pointed at */
+  filter: grayscale(1);
+  opacity: 0.72;
   transition:
-    border-color 0.25s ease,
-    transform 0.25s ease;
+    filter 0.3s ease,
+    opacity 0.3s ease,
+    color 0.3s ease;
 }
 
 .craft-tech:hover {
-  border-color: rgba(245, 51, 59, 0.3);
-  transform: translateY(-2px);
+  filter: none;
+  opacity: 1;
+  color: var(--ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -733,27 +796,23 @@
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  .craft-strip {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
+  .craft-run__item {
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
-  .craft-strip > li + li {
-    border-color: rgba(255, 255, 255, 0.08);
+  .craft-run__item:hover {
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .craft-tech {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .craft-tech:hover {
     color: #fff;
   }
 
-  .craft-strip {
-    border-radius: 1.1rem;
-  }
-
   .craft-tech {
-    padding: 0.6rem 0.9rem;
     font-size: 0.8125rem;
   }
 
@@ -762,4 +821,49 @@
   .craft-marquee__track {
     animation-duration: 22s;
   }
+}
+
+/* ---------------- desktop: the whole build on one screen ---------------- *
+ *
+ * The claim, the table of artefacts, the six disciplines and the toolkit
+ * belt read as one run, so the toolkit sits under the work it belongs to
+ * rather than a screen below it. The wordmark closes it off before the
+ * contact form. */
+
+.craft-pane__body {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .craft-pane {
+    display: flex;
+    align-items: center;
+    min-height: 100svh;
+  }
+}
+
+/* ---------------- the mark that closes the belt ---------------- *
+ *
+ * The studio's own wordmark, ruled off either side, standing between the
+ * toolkit belt and the contact form. Flat on purpose: no bloom, no lift
+ * on hover - it signs the page rather than lighting it. */
+
+.craft-sign {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.craft-sign__rule {
+  height: 1px;
+  flex: 1 1 0;
+  max-width: 16rem;
+  background: linear-gradient(to right, transparent, var(--line), transparent);
+}
+
+.craft-sign__mark {
+  width: clamp(9rem, 14vw, 13rem);
+  height: auto;
+  filter: none;
 }

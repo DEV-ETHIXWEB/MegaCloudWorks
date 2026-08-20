@@ -418,18 +418,42 @@
     border-radius: 1.25rem;
   }
 
-  /* the three devices are sized for a half-card on a desk; on a phone the
-     stage is the full column, so they come down to match */
+  /*
+   * The three devices are pinned by percentage and scaled from their top
+   * left, so at phone width the pair on the right ran past the stage and
+   * all three ran past its foot - the stage clips, so the screens were
+   * being cut off mid-phone. On a phone they are placed and sized to
+   * stand inside the box whole: a taller stage, smaller devices, and the
+   * fan pulled in from the right edge.
+   */
   .work-stage {
-    aspect-ratio: 16 / 13;
+    aspect-ratio: 16 / 15;
   }
 
-  .work-device--front {
-    transform: rotate(-7deg) scale(0.42) !important;
+  .work-device--front,
+  .work-card:hover .work-device--front {
+    left: 4% !important;
+    top: 8% !important;
+    transform: rotate(-7deg) scale(0.28) !important;
   }
 
-  .work-device--back {
-    transform: rotate(6deg) scale(0.34) !important;
+  .work-device--back,
+  .work-card:hover .work-device--back {
+    transform: rotate(6deg) scale(0.22) !important;
+  }
+
+  /* the far screen of the pair, furthest right and set back */
+  .work-stage .work-device--back:nth-child(2),
+  .work-card:hover .work-device--back:nth-child(2) {
+    left: 56% !important;
+    top: 12% !important;
+    transform: rotate(13deg) scale(0.22) !important;
+  }
+
+  .work-stage .work-device--back:nth-child(3),
+  .work-card:hover .work-device--back:nth-child(3) {
+    left: 30% !important;
+    top: 3% !important;
   }
 
   .work-tally__cell {

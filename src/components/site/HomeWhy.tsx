@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react'
+
 import './home-why.css'
 
 /* ------------------------------------------------------------------ *
@@ -126,26 +128,48 @@ const RIGHT = [
 ] as const
 
 /**
- * The stops on the orbit: where each sits (degrees off twelve o'clock)
- * and which beat of the glow it belongs to.
- *
- * The run climbs: the pair at the sides first, then the pair above them,
- * then the one on the summit.
+ * Held back until the section is on screen, so the two columns close in
+ * on the summit as you arrive rather than having already done it.
  */
-const ORBIT_STOPS = [
-  { a: -90, step: 0 },
-  { a: 90, step: 0 },
-  { a: -42, step: 1 },
-  { a: 42, step: 1 },
-  { a: 0, step: 2 },
-] as const
+function useShown() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    if (
+      typeof IntersectionObserver === 'undefined' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      setShown(true)
+      return
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setShown(true)
+        io.disconnect()
+      },
+      { threshold: 0.15 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  return { ref, shown }
+}
 
 export function HomeWhy() {
+  const run = useShown()
+
   return (
     <section id="why" className="home-why">
       <div className="home-why__wash" aria-hidden="true" />
 
-      <div className="relative z-[2] mx-auto max-w-[1360px] px-6 py-12 sm:px-10 lg:px-28 lg:py-8">
+      <div className="relative z-[2] mx-auto max-w-[1360px] px-6 py-12 sm:px-10 lg:px-28 lg:pb-10 lg:pt-20">
         {/* ---------- the claim ---------- */}
         <p className="why-eyebrow">Why choose MegaCloud</p>
 
@@ -160,7 +184,11 @@ export function HomeWhy() {
         </p>
 
         {/* ---------- the reasons, either side of the summit ---------- */}
-        <div className="mt-7 grid grid-cols-1 items-center gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)_minmax(0,1fr)] lg:gap-8">
+        <div
+          ref={run.ref}
+          data-shown={run.shown ? 'true' : 'false'}
+          className="mt-7 grid grid-cols-1 items-center gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)_minmax(0,1fr)] lg:gap-8"
+        >
           <ul className="space-y-4">
             {LEFT.map((item, i) => (
               <li
@@ -186,28 +214,17 @@ export function HomeWhy() {
             className="why-summit order-first lg:order-none"
             aria-hidden="true"
           >
-            <span className="why-orbit">
-              {ORBIT_STOPS.map((stop) => (
-                <span
-                  key={stop.a}
-                  style={
-                    {
-                      '--a': `${stop.a}deg`,
-                      '--step': stop.step,
-                    } as React.CSSProperties
-                  }
-                />
-              ))}
+            <span className="why-disc">
+              <img
+                src="/logo-mark.svg"
+                alt=""
+                width={231}
+                height={141}
+                loading="lazy"
+                decoding="async"
+                className="why-mark"
+              />
             </span>
-            <img
-              src="/logo-mark.svg"
-              alt=""
-              width={231}
-              height={141}
-              loading="lazy"
-              decoding="async"
-              className="why-mark"
-            />
           </div>
 
           <ul className="space-y-4">

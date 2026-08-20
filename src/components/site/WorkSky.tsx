@@ -23,7 +23,13 @@ export function WorkSky({ className }: { className?: string }) {
     <div aria-hidden="true" className={cn('work-sky', className)}>
       <img
         className="work-sky__plate"
-        src="/work/work-bg.jpeg"
+        src="/work/work-bg.webp"
+        /* a phone never needs the 1600px plate - it is overscanned and then
+           veiled, so the 900px cut is indistinguishable and a third the bytes */
+        srcSet="/work/work-bg-900.webp 900w, /work/work-bg.webp 1600w"
+        sizes="(max-width: 900px) 100vw, 114vw"
+        width={1600}
+        height={900}
         alt=""
         /* the hero is the first thing on the route, so this is never lazy */
         loading="eager"

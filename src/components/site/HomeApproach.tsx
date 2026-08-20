@@ -275,7 +275,7 @@ export function HomeApproach() {
 
           <ol
             ref={list}
-            className="relative grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-5"
+            className="relative grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-3 md:gap-x-8 lg:grid-cols-5"
           >
             {STEPS.map((step, i) => (
               <li key={step.index} style={{ '--i': i } as React.CSSProperties}>
@@ -308,7 +308,6 @@ export function HomeApproach() {
             ))}
           </ol>
         </div>
-
       </div>
     </section>
   )

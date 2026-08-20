@@ -279,9 +279,8 @@
  * every page.
  * ------------------------------------------------------------------ */
 
-.nav-link--on {
-  background: var(--brand-soft);
-}
+/* the page you are on is marked once - the red rule under the label.
+   The soft red pill on top of it read as a button you had not pressed. */
 
 .nav-sheet__link[data-active] {
   color: var(--brand);

@@ -1,21 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SiteHeader } from '#/components/site/SiteHeader'
-import { SiteFooter } from '#/components/site/SiteFooter'
+import { HomeFooter } from '#/components/site/HomeFooter'
 import { SummitCta } from '#/components/site/SummitCta'
 import { StudioBridge } from '#/components/site/StudioBridge'
-import { PageWash } from '#/components/site/PageWash'
 import { StepRow } from '#/components/site/StepRow'
 import { TeamExpertise } from '#/components/site/TeamExpertise'
 import { StepTrail } from '#/components/site/StepTrail'
 import { StepSky } from '#/components/site/StepSky'
 import { seo } from '#/lib/seo'
 
+import '#/components/site/about-page.css'
+
 export const Route = createFileRoute('/about')({
   component: About,
   head: () =>
+    // React hoists a preload for the hero photograph itself (it is marked
+    // eager/high priority), so there is nothing to add here
     seo({
       title: 'About',
       description:
@@ -68,83 +69,16 @@ function About() {
     (index: number) => setReached((cur) => Math.max(cur, index + 1)),
     [],
   )
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) return
-
-    let ctx: gsap.Context | undefined
-
-    try {
-      gsap.registerPlugin(ScrollTrigger)
-
-      ctx = gsap.context(() => {
-        // the headline copy is plain type now, so the only thing left for
-        // GSAP here is the photograph. It fades - the slow drift/scale lives
-        // in CSS on the <img> itself, and a GSAP transform on the same
-        // element would be steamrolled by that animation anyway.
-        gsap.from('[data-hero-art]', {
-          opacity: 0,
-          duration: 1.4,
-          ease: 'power2.out',
-        })
-
-        // The type on this page does not animate at all any more - no
-        // scroll-gated fades on `[data-reveal]`, no per-line reveal in "How
-        // we work". Only the marks and the artwork move; the words are
-        // simply there to be read the moment they are on screen.
-      }, root)
-    } catch {
-      // animation setup failed for any reason (extension conflict, GSAP
-      // load error, etc.) - bail out silently rather than leaving
-      // scroll-gated content stuck at opacity:0 with no way to reveal it
-      gsap.set('[data-hero-art], [data-callout], [data-reveal], [data-step]', {
-        clearProps: 'all',
-      })
-      return
-    }
-
-    // photographs load async and change document height; refresh once they
-    // land so ScrollTrigger's trigger positions reflect final layout
-    const images = Array.from(document.querySelectorAll('img'))
-    const onImageSettle = () => ScrollTrigger.refresh()
-    images.forEach((img) => {
-      if (img.complete) return
-      img.addEventListener('load', onImageSettle, { once: true })
-      img.addEventListener('error', onImageSettle, { once: true })
-    })
-
-    // absolute safety net: if a section is still invisible five seconds
-    // after mount (animation library failed silently, a trigger never
-    // fired, etc.) force it visible so content can never be permanently lost
-    const safetyTimer = window.setTimeout(() => {
-      document
-        .querySelectorAll<HTMLElement>('[data-reveal], [data-step]')
-        .forEach((el) => {
-          if (getComputedStyle(el).opacity === '0') {
-            gsap.to(el, { opacity: 1, y: 0, duration: 0.4 })
-          }
-        })
-    }, 5000)
-
-    return () => {
-      window.clearTimeout(safetyTimer)
-      images.forEach((img) => {
-        img.removeEventListener('load', onImageSettle)
-        img.removeEventListener('error', onImageSettle)
-      })
-      ctx.revert()
-    }
-  }, [])
 
   return (
     <div
       ref={root}
-      className="relative min-h-screen overflow-x-clip text-[var(--ink)]"
+      className="about-page relative min-h-screen overflow-x-clip text-[var(--ink)]"
     >
-      {/* the page's colour lives here, not on the sections: it cross-fades
-          between paper and brand as the bands come up */}
-      <PageWash />
+      {/* every band on this page is paper - there is no red section to
+          cross-fade to - so the ground is painted once here rather than by
+          <PageWash>, which would measure five bands on every scroll frame
+          to arrive at the same colour every time */}
 
       {/* ================= 1. HERO - Design. Build. Ship. ================= */}
       {/* the mountain photograph sits behind the (transparent, absolutely
@@ -221,22 +155,16 @@ function About() {
         <SiteHeader ctaLabel="Get notified" />
 
         {/* ---- headline copy, floats over the photograph's left/top ---- */}
-        <div className="relative z-10 px-6 pb-10 pt-28 sm:px-10 sm:pb-12 sm:pt-32 lg:px-20 lg:pb-0 lg:pt-40">
-          <div className="mx-auto max-w-[1600px]">
+        <div className="relative z-10 px-6 pb-10 pt-28 sm:px-10 sm:pb-12 sm:pt-32 lg:px-28 lg:pb-0 lg:pt-40">
+          <div className="mx-auto max-w-[1360px]">
             <div className="max-w-xl">
-              <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[var(--brand)]">
-                <span>About us</span>
-                <span
-                  aria-hidden="true"
-                  className="h-px w-8 origin-left bg-[var(--brand)]"
-                />
-              </p>
-              <h1 className="mt-5 font-display text-[clamp(3rem,7vw,5.25rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]">
+              <p className="about-eyebrow about-eyebrow--hero">About us</p>
+              <h1 className="about-h1 mt-6 lg:mt-7">
                 <span className="block">Design.</span>
                 <span className="block">Build.</span>
                 <span className="block text-[var(--brand)]">Ship.</span>
               </h1>
-              <p className="mt-6 max-w-md text-lg leading-relaxed text-[var(--ink-soft)]">
+              <p className="about-lede mt-6 max-w-md">
                 We partner with businesses through two studios to create digital
                 experiences that work.
               </p>
@@ -271,9 +199,7 @@ function About() {
             </p>
           </div>
 
-          <div
-            className="hero-mask--foot relative mt-5 h-[21rem] overflow-hidden sm:h-[26rem]"
-          >
+          <div className="hero-mask--foot relative mt-5 h-[21rem] overflow-hidden sm:h-[26rem]">
             <img
               src="/about/hero.webp"
               alt="A red basecamp tent pitched on a dark volcanic ridge beneath a snow-capped mountain, red signal smoke drifting past a weather mast."
@@ -290,18 +216,10 @@ function About() {
       {/* ================= 2. TWO STUDIOS - on paper ================= */}
       <section
         data-band="paper"
-        className="relative px-6 pb-24 pt-12 sm:px-10 sm:pb-28 sm:pt-16 lg:px-20 lg:pb-32 lg:pt-20"
+        className="relative px-6 pb-24 pt-12 sm:px-10 sm:pb-28 sm:pt-16 lg:px-28 lg:pb-32 lg:pt-20"
       >
-        <div className="mx-auto max-w-[1600px]">
-          <p
-            className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink)]"
-          >
-            <span
-              aria-hidden="true"
-              className="size-1.5 shrink-0 rounded-full bg-[var(--brand)]"
-            />
-            Two studios. One team.
-          </p>
+        <div className="mx-auto max-w-[1360px]">
+          <p className="about-eyebrow">Two studios. One team.</p>
 
           <div className="mt-6">
             <StudioBridge />
@@ -321,21 +239,15 @@ function About() {
           container - at which point it would never stick. */}
       <section
         data-band="paper"
-        className="step-band relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
+        className="step-band relative px-6 py-24 sm:px-10 sm:py-28 lg:px-28 lg:py-36"
       >
         {/* the sky the four steps are walked across */}
         <StepSky />
 
-        <div className="relative z-10 mx-auto max-w-[72rem]">
-          <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink)]">
-            <span
-              aria-hidden="true"
-              className="size-1.5 shrink-0 rounded-full bg-[var(--brand)]"
-            />
-            How we work
-          </p>
+        <div className="relative z-10 mx-auto max-w-[1360px]">
+          <p className="about-eyebrow">How we work</p>
 
-          <h2 className="mt-5 max-w-[22ch] font-display text-[clamp(2rem,4vw,3.25rem)] font-extrabold leading-[1.03] tracking-[-0.03em] text-[var(--ink)]">
+          <h2 className="about-h2 mt-5 max-w-[22ch]">
             Four moves, in the same order, every time.
           </h2>
         </div>
@@ -369,9 +281,9 @@ function About() {
       {/* ================= 4. TEAM & EXPERTISE ================= */}
       <section
         data-band="paper"
-        className="relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-32"
+        className="relative px-6 py-24 sm:px-10 sm:py-28 lg:px-28 lg:py-32"
       >
-        <div className="mx-auto max-w-[1600px]">
+        <div className="mx-auto max-w-[1360px]">
           <TeamExpertise />
         </div>
       </section>
@@ -386,7 +298,10 @@ function About() {
         <SummitCta />
       </section>
 
-      <SiteFooter tone="dark" variant="compact" />
+      {/* the site's footer, the same one the home page ends on: About used
+          to end on a compact strip with a different measure and its own
+          dark */}
+      <HomeFooter />
     </div>
   )
 }

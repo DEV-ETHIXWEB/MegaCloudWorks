@@ -157,9 +157,12 @@ export function StepTrail({
           d={d}
           mask={`url(#step-trail-wipe-${i})`}
           stroke="var(--brand)"
-          strokeWidth="2.4"
+          // the same line the home page draws between its approach tiles:
+          // 1.4 wide on a 5/5 dash, so the route reads as one route across
+          // the two pages rather than two dialects of the same idea
+          strokeWidth="1.4"
           strokeLinecap="round"
-          strokeDasharray="7 9"
+          strokeDasharray="5 5"
         />
       ))}
     </svg>

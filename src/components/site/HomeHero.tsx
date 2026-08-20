@@ -264,7 +264,7 @@ export function HomeHero() {
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-x-10 gap-y-5">
-            <Link to="/work" className="hero-cta">
+            <Link to="/work" className="hero-cta cta-diagonal">
               View our work
               <ArrowOut />
             </Link>

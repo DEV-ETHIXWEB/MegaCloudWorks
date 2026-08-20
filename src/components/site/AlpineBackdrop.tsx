@@ -128,10 +128,15 @@ export function AlpineBackdrop({ c }: { c: Concept }) {
         an eye. The slow drift keeps it from setting like wallpaper.
       */}
       <img
-        src="/work/bg1.png"
+        src="/work/bg1.webp"
+        srcSet="/work/bg1-900.webp 900w, /work/bg1.webp 1600w"
+        sizes="(max-width: 900px) 100vw, 116vw"
+        width={1600}
+        height={900}
         alt=""
         loading="eager"
         decoding="async"
+        fetchPriority="high"
         className="cs-sky__plate"
         data-sky-layer="plate"
       />

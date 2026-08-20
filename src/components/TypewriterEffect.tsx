@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
 import { motion, stagger, useAnimate, useInView } from 'motion/react'
 
 type Word = { text: string; className?: string }
@@ -17,10 +17,13 @@ export function TypewriterEffect({
   words,
   className = '',
   cursorClassName = '',
+  startDelay = 0,
 }: {
   words: Word[]
   className?: string
   cursorClassName?: string
+  /** hold before the first character lands, so this can follow a static line */
+  startDelay?: number
 }) {
   const [scope, animate] = useAnimate()
   const isInView = useInView(scope)
@@ -28,10 +31,13 @@ export function TypewriterEffect({
 
   useEffect(() => {
     if (!isInView || reduced) return
+    // each character resolves out of a soft blur rather than just popping
+    // in — the same blur-fade the homepage hero uses, so the reveal reads
+    // as part of the site's motion language instead of a literal typewriter
     animate(
       'span[data-tw-char]',
-      { opacity: 1, transform: 'translateY(0px)' },
-      { duration: 0.22, delay: stagger(0.035), ease: 'easeOut' },
+      { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' },
+      { duration: 0.34, delay: stagger(0.035, { startDelay }), ease: [0.22, 1, 0.36, 1] },
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInView])
@@ -40,22 +46,30 @@ export function TypewriterEffect({
     <span className={`inline ${className}`}>
       <span ref={scope} className="inline">
         {words.map((word, wi) => (
-          <span key={`w-${wi}`} className={`inline-block whitespace-nowrap ${word.className ?? ''}`}>
-            {word.text.split('').map((char, ci) => (
-              <span
-                key={`c-${ci}`}
-                data-tw-char
-                className="inline-block"
-                style={reduced ? undefined : { opacity: 0, transform: 'translateY(0.12em)' }}
-              >
-                {char}
-              </span>
-            ))}
-            {/* a real space *between* words so the line can still break
-                there — but never after the last one, or the caret ends up
-                floating a word-space away from the final character */}
-            {wi < words.length - 1 && <span className="inline-block">&nbsp;</span>}
-          </span>
+          <Fragment key={`w-${wi}`}>
+            {/* `inline`, not `inline-block`: an inline-block word is an
+                atomic box that text-wrap:balance cannot measure into, which
+                left headlines breaking greedily and stranding the last word
+                alone. whitespace-nowrap keeps each word's characters
+                together so nothing breaks mid-word. */}
+            <span className={`inline whitespace-nowrap ${word.className ?? ''}`}>
+              {word.text.split('').map((char, ci) => (
+                <span
+                  key={`c-${ci}`}
+                  data-tw-char
+                  className="inline-block"
+                  style={reduced ? undefined : { opacity: 0, filter: 'blur(6px)', transform: 'translateY(0.14em)' }}
+                >
+                  {char}
+                </span>
+              ))}
+            </span>
+            {/* the separator sits OUTSIDE the nowrap span on purpose — put
+                it inside and it inherits nowrap, which removes the only
+                break opportunity between words and pushes the whole line
+                off the edge of the screen. */}
+            {wi < words.length - 1 && ' '}
+          </Fragment>
         ))}
       </span>
       <motion.span

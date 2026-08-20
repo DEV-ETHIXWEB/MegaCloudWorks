@@ -1,7 +1,11 @@
 export const ABOUT_HERO = {
   eyebrow: 'About us',
-  headlineLines: ['Design.', 'Build.', 'Ship.'],
-  sub: 'We partner with businesses through two studios to create digital experiences that work.',
+  // three bare words read thin as a page headline — this keeps the same
+  // design/build/ship spine but says the thing that actually separates the
+  // studio (they don't hand off at launch), which the process content and
+  // the "team that stays on the line" promise both already back up
+  headlineLines: ['We design it, build it,', 'and stay after it ships.'],
+  sub: 'Two studios, one team. We partner with businesses end to end — research and UI through engineering, launch, and everything after.',
   calloutTitle: 'MegaCloudWorks',
   calloutSub: 'Basecamp',
   calloutMeta: 'App design & development',

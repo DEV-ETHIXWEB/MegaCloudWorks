@@ -250,6 +250,23 @@ textarea:focus-visible,
   background-size: 180px 180px;
 }
 
+/* the same grain, but laid *over* media instead of under page copy.
+   .grain-overlay sits at z-index -5 so it can tuck behind text on a shader
+   or gradient band; on a photograph it has to paint on top instead, or the
+   image simply covers it. `overlay` blending means the texture lands in the
+   mid-tones and leaves blown-out whites clean, which suits a bright,
+   high-key photo. */
+.grain-media {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.38;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
 /* numbered kicker — the Swiss/brutalist marker used before every section */
 .kicker {
   display: inline-flex;

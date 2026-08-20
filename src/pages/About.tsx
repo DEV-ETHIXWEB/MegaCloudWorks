@@ -23,16 +23,26 @@ export function About() {
       <section className="relative isolate overflow-hidden px-[var(--edge)] pb-16 pt-36 sm:pt-44">
         {/* same centered shape as the homepage, What-we-do and Work:
             kicker, headline (last line typed in), one line, two actions */}
-        <div className="relative mx-auto max-w-3xl text-center">
+        {/* wider than the other heroes: this headline is a full sentence
+            rather than three short lines, so it needs room to break well */}
+        <div className="relative mx-auto max-w-4xl text-center">
           <p className="kicker justify-center" data-n="01">
             {ABOUT_HERO.eyebrow}
           </p>
-          <h1 className="mt-4 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.94] tracking-[var(--tracking-tight)] sm:leading-[0.88]">
+          {/* --fs-h1, not --fs-page-h1: display size scales inversely with
+              line length, and at the page-hero step this sentence ran to
+              four rows and swamped everything under it */}
+          <h1 className="mt-4 text-balance font-sans text-[length:var(--fs-h1)] font-black leading-[1.02] tracking-[var(--tracking-tight)] sm:leading-[0.94]">
             {ABOUT_HERO.headlineLines[0]}
             <br />
-            {ABOUT_HERO.headlineLines[1]}
-            <br />
-            <TypewriterEffect words={[{ text: ABOUT_HERO.headlineLines[2], className: 'text-[var(--brand)]' }]} />
+            {/* the promise half of the line types itself in, a beat after the
+                static half has landed — brand red carries the differentiator */}
+            <TypewriterEffect
+              startDelay={0.45}
+              words={ABOUT_HERO.headlineLines[1]
+                .split(' ')
+                .map((w) => ({ text: w, className: 'text-[var(--brand)]' }))}
+            />
           </h1>
           <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
             {ABOUT_HERO.sub}
@@ -49,13 +59,19 @@ export function About() {
 
         <Reveal delay={0.15} className="mx-auto mt-12 max-w-[var(--container-wide)]">
           <div className="surface-glass relative overflow-hidden rounded-[2rem] p-2 shadow-[0_30px_80px_-30px_rgba(16,16,20,0.35)]">
-            <div className="relative aspect-[16/8] overflow-hidden rounded-[1.6rem] sm:aspect-[21/8]">
+            {/* taller crop on small screens so the peaks survive; the photo is
+                1.55:1, so an ultra-wide strip would slice the subject away */}
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.6rem] sm:aspect-[16/9] lg:aspect-[21/9]">
               <img
-                src="/about/hero.webp"
-                alt="A red basecamp tent pitched on a dark volcanic ridge beneath a snow-capped mountain, red signal smoke drifting past a weather mast."
+                src="/about/sky-ready.webp"
+                alt="Dark jagged mountain peaks rising through a bank of white cloud, with plumes of red smoke drifting between the ridges."
                 className="h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+              {/* the previous black-to-transparent wash belonged to the old
+                  dark photo — on this high-key image it only muddied the
+                  clouds, so it is gone. The callout below carries its own
+                  2px border and white fill, so it stays legible unaided. */}
+              <div className="grain-media" aria-hidden="true" />
               <div className="edge-hard absolute bottom-6 left-6 hidden rounded-2xl bg-white px-5 py-4 sm:block">
                 <p className="text-sm font-black tracking-tight">{ABOUT_HERO.calloutTitle}</p>
                 <p className="text-xs font-bold text-[var(--brand-text)]">{ABOUT_HERO.calloutSub}</p>

@@ -28,11 +28,11 @@ export function Glassmorphism() {
 
       {/* Header */}
       <header className="sticky top-0 z-40 px-6 py-5 sm:px-10">
-        <div className={`mx-auto flex max-w-[1300px] items-center justify-between rounded-2xl px-6 py-3 ${glass}`}>
+        <div className={`mx-auto flex max-w-[1300px] flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-2xl py-3 pl-40 pr-6 lg:flex-nowrap lg:pl-40 lg:pr-6 ${glass}`}>
           <span className="text-lg font-extrabold tracking-tight">
             {BRAND.name}
           </span>
-          <nav className="hidden items-center gap-8 sm:flex">
+          <nav className="hidden items-center gap-8 lg:flex">
             {NAV.map((n) => (
               <a
                 key={n.label}

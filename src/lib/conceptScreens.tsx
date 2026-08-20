@@ -1220,7 +1220,7 @@ function SlateSchedule({ accent }: { accent: string }) {
           Today&rsquo;s Schedule
         </p>
         <p className="text-[8.5px] text-white/45">Mon, 18 Nov · 5 booked</p>
-        <div className="mt-2 flex gap-1.5 overflow-x-auto">
+        <div className="no-scrollbar mt-2 flex gap-1.5 overflow-x-auto">
           {staffOptions.map((s, i) => (
             <Tap
               key={s}

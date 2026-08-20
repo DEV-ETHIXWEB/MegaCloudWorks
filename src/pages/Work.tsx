@@ -7,7 +7,6 @@ import { WorkCard } from '../components/WorkCard'
 import { Reveal } from '../components/Reveal'
 import { CTASection } from '../components/CTASection'
 import { MagneticButton } from '../components/MagneticButton'
-import { TypewriterEffect } from '../components/TypewriterEffect'
 import { WORK_HERO, MADE } from '../content/work'
 import { CONCEPTS } from '../content/concepts'
 
@@ -65,11 +64,10 @@ export function Work() {
           <p className="kicker justify-center" data-n="01">
             {WORK_HERO.eyebrow}
           </p>
-          <h1 className="mt-4 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.98] tracking-[var(--tracking-tight)] sm:leading-[0.92]">
+          <h1 className="mt-4 font-sans text-[length:var(--fs-page-h1)] font-black leading-[1.06] tracking-[var(--tracking-tight)] sm:leading-[1.02]">
             {WORK_HERO.headlineLines[0]}
             <br />
-            {WORK_HERO.headlineLines[1]}{' '}
-            <TypewriterEffect words={[{ text: WORK_HERO.headlineLines[2], className: 'text-[var(--brand)]' }]} />
+            {WORK_HERO.headlineLines[1]} <span className="text-[var(--brand)]">{WORK_HERO.headlineLines[2]}</span>
           </h1>
           <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
             {WORK_HERO.sub}
@@ -132,7 +130,9 @@ export function Work() {
             {MADE.map((m, i) => (
               <Reveal key={m.title} delay={i * 0.08}>
                 <div className="surface-lift h-full overflow-hidden">
-                  <img src={m.img} alt="" width={m.w} height={m.h} className="aspect-[4/3.6] w-full object-cover" />
+                  <div className="flex aspect-[4/3.6] w-full items-center justify-center bg-[var(--paper-2)]">
+                    <img src={m.img} alt="" width={m.w} height={m.h} className="w-[70%] object-contain" />
+                  </div>
                   <div className="p-6">
                     <span className="kicker" data-n={m.n}>
                       {m.kicker}

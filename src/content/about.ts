@@ -41,3 +41,32 @@ export const COVERAGE = {
   titleLines: ['Built for', 'American teams.'],
   body: "We ship on your calendar, not ours. And everywhere else, we're still one call away.",
 }
+
+export const ORIGIN = {
+  eyebrow: 'Where this started',
+  quote: 'We spent years building the web side of other people’s products under Ethixweb. MegaCloudWorks exists because the app work kept showing up, and it deserved its own team instead of a side project.',
+  attribution: 'The founding brief, more or less',
+}
+
+export const VALUES = [
+  {
+    n: '01',
+    title: 'No handoffs',
+    body: 'The people who scope the work are the people who build it. Nothing gets thrown over a wall to a team that never met the client.',
+  },
+  {
+    n: '02',
+    title: 'Real engineering',
+    body: 'Typed, tested, and reviewed. We build things we would be comfortable maintaining ourselves in a year.',
+  },
+  {
+    n: '03',
+    title: 'One team, two studios',
+    body: 'Web and apps run under the same standards and the same reviews, not two different vendors wearing one logo.',
+  },
+  {
+    n: '04',
+    title: 'Say no early',
+    body: "If something is not going to work, we would rather tell you in week one than let you find out in week nine.",
+  },
+] as const

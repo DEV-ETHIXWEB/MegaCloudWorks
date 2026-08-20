@@ -76,7 +76,7 @@
      heaviest weight (900): the hero H1 and the final-CTA headline; every
      other heading sits at 800, so the two flagships read as heavier by
      contrast rather than competing with headings at the same weight. */
-  --fs-display: clamp(1.6rem, 7.5vw, 5.4rem); /* the Home hero H1: the single biggest moment site-wide */
+  --fs-display: clamp(2.1rem, 8.6vw, 5.4rem); /* the Home hero H1: the single biggest moment site-wide */
   --fs-page-h1: clamp(2.6rem, 7vw, 5.5rem); /* every other page's own hero H1 (About, Services, Work, WorkDetail, Contact) */
   --fs-h1: clamp(2.2rem, 5.5vw, 4.2rem); /* CTASection headline, NotFound */
   --fs-h2: clamp(2rem, 4.6vw, 3.4rem); /* section headings */
@@ -441,6 +441,19 @@ textarea:focus-visible,
 
 .phone-tap--inert {
   cursor: inherit;
+}
+
+/* a horizontally scrollable strip (Slate's staff-filter row, mockups in
+   general) that scrolls without a visible OS/browser scrollbar track —
+   the phone frame reads as native UI, not a web page with a scrollbar
+   printed across the middle of it. Scrolling itself is untouched. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* the percentage progress ring used by Prophy's Treatment Plan screen:

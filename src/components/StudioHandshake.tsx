@@ -27,12 +27,15 @@ export function StudioHandshake({ variant = 'compact' }: StudioHandshakeProps) {
       onMouseLeave={() => setJoined(false)}
     >
       <div className={feature ? 'flex items-stretch gap-4 sm:gap-6' : 'flex items-center gap-3'}>
-        {/* Ethixweb */}
-        <div
+        {/* Ethixweb — the studio's own site, one click out */}
+        <a
+          href="https://www.ethixweb.com/"
+          target="_blank"
+          rel="noopener noreferrer"
           className={
             feature
-              ? 'group surface-lift flex min-w-0 flex-1 flex-col items-center gap-3 px-6 py-10 transition-shadow duration-300 hover:shadow-[0_16px_40px_rgba(16,16,20,0.08)] sm:py-12'
-              : 'surface-lift flex min-w-0 flex-1 flex-col items-center gap-2 px-3 py-4'
+              ? 'group surface-lift flex min-w-0 flex-1 flex-col items-center gap-3 px-6 py-10 no-underline transition-shadow duration-300 hover:shadow-[0_16px_40px_rgba(16,16,20,0.08)] sm:py-12'
+              : 'surface-lift flex min-w-0 flex-1 flex-col items-center gap-2 px-3 py-4 no-underline'
           }
           style={{
             transform: joined ? `translateX(${feature ? '10px' : '6px'})` : 'translateX(0)',
@@ -63,7 +66,7 @@ export function StudioHandshake({ variant = 'compact' }: StudioHandshakeProps) {
               Marketing sites, e-commerce, platforms.
             </p>
           )}
-        </div>
+        </a>
 
         {/* the join */}
         <div className={feature ? 'flex shrink-0 flex-col items-center justify-center gap-1.5' : 'flex shrink-0 flex-col items-center gap-1.5'} aria-hidden="true">

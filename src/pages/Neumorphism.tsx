@@ -17,11 +17,11 @@ export function Neumorphism() {
       </Link>
 
       {/* Header */}
-      <header className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-8 sm:px-10">
+      <header className="mx-auto flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-8 pl-40 pr-6 lg:flex-nowrap lg:pl-40 lg:pr-10">
         <span className="text-lg font-extrabold tracking-tight">
           {BRAND.name}
         </span>
-        <nav className="hidden items-center gap-2 sm:flex">
+        <nav className="hidden items-center gap-2 lg:flex">
           {NAV.map((n) => (
             <a
               key={n.label}

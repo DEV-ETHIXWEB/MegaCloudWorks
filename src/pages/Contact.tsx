@@ -74,8 +74,10 @@ export function Contact() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-[var(--container)] gap-8 md:grid-cols-2 lg:grid-cols-5">
-          {/* details card */}
-          <Reveal className="md:col-span-1 lg:col-span-2 self-start">
+          {/* details card: after the form on mobile (visitors fill the form
+              first, contact details are a fallback below), back to its own
+              left column from md up */}
+          <Reveal className="order-2 md:order-1 md:col-span-1 lg:col-span-2 self-start">
             <div className="surface-lift p-2">
               {DETAILS.map((d, i) => {
                 const Icon = ICONS[i]
@@ -115,8 +117,8 @@ export function Contact() {
             </div>
           </Reveal>
 
-          {/* form */}
-          <Reveal delay={0.1} className="md:col-span-1 lg:col-span-3">
+          {/* form: first on mobile, its usual right column from md up */}
+          <Reveal delay={0.1} className="order-1 md:order-2 md:col-span-1 lg:col-span-3">
             <ContactForm />
           </Reveal>
         </div>

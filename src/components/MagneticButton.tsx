@@ -2,6 +2,8 @@ import { useRef, useState, type ReactNode, type MouseEvent } from 'react'
 import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 
+const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
+
 type Props = {
   children: ReactNode
   to?: string
@@ -17,11 +19,17 @@ export function MagneticButton({ children, to, href, variant = 'solid', size = '
   const reduced =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  // A magnetic pull that actually reads as magnetic rather than the button
+  // chasing the cursor: displacement is clamped to a couple of pixels
+  // regardless of how large the button is or how close to its edge the
+  // cursor gets, so the effect stays a subtle nudge, not a slide.
+  const MAX_PULL = 2
+
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     if (reduced || !ref.current) return
     const rect = ref.current.getBoundingClientRect()
-    const x = (e.clientX - rect.left - rect.width / 2) * 0.3
-    const y = (e.clientY - rect.top - rect.height / 2) * 0.4
+    const x = clamp(((e.clientX - rect.left - rect.width / 2) / (rect.width / 2)) * MAX_PULL, -MAX_PULL, MAX_PULL)
+    const y = clamp(((e.clientY - rect.top - rect.height / 2) / (rect.height / 2)) * MAX_PULL, -MAX_PULL, MAX_PULL)
     setPos({ x, y })
   }
 

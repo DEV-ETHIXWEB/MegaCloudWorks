@@ -21,9 +21,9 @@ export function Minimalism() {
       </Link>
 
       {/* Header */}
-      <header className="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-10 sm:px-8">
+      <header className="mx-auto flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-10 pl-40 pr-6 lg:flex-nowrap lg:pl-40 lg:pr-8">
         <span className="text-sm font-bold tracking-tight">{BRAND.name}</span>
-        <nav className="hidden items-center gap-10 sm:flex">
+        <nav className="hidden items-center gap-10 lg:flex">
           {NAV.map((n) => (
             <a
               key={n.label}

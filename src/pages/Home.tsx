@@ -16,6 +16,8 @@ import { CloudShader } from '../components/CloudShader'
 import { AppLaunchPhone } from '../components/AppLaunchPhone'
 import { WobbleCard } from '../components/WobbleCard'
 import { StudioHandshake } from '../components/StudioHandshake'
+import { CodeScreenPeek } from '../components/CodeScreenPeek'
+import { CardSpotlight } from '../components/CardSpotlight'
 import { HOME_HERO, SERVICES } from '../content/home'
 import { CONCEPTS, getConcept } from '../content/concepts'
 import { STUDIOS, COVERAGE } from '../content/about'
@@ -87,7 +89,7 @@ export function Home() {
             initial={{ opacity: 0, y: 20, filter: 'blur(14px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.75, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 font-sans text-[length:var(--fs-display)] font-black leading-[0.98] tracking-[var(--tracking-tight)] sm:leading-[0.92]"
+            className="mt-4 font-sans text-[length:var(--fs-display)] font-black leading-[1.08] tracking-[var(--tracking-tight)] sm:leading-[0.96]"
           >
             {HOME_HERO.headlineLines[0]} {HOME_HERO.headlineLines[1]}{' '}
             <span className="text-[var(--brand)]">{HOME_HERO.headlineLines[2]}</span>
@@ -175,6 +177,7 @@ export function Home() {
             {CONCEPTS.slice(0, 3).map((c, i) => (
               <Reveal key={c.slug} delay={i * 0.07}>
                 <WobbleCard containerClassName="h-full">
+                <CardSpotlight className="h-full" color="rgba(255,255,255,0.16)" radius={240}>
                   <Link to={`/work/${c.slug}`} className="group flex h-full flex-col overflow-hidden no-underline">
                     <div
                       className="relative flex aspect-[16/11] items-end overflow-hidden p-4"
@@ -190,26 +193,18 @@ export function Home() {
                         className="pointer-events-none absolute -bottom-8 -right-8 size-28 rounded-full opacity-30 blur-2xl transition-transform duration-700 group-hover:scale-125"
                         style={{ background: c.accent }}
                       />
-                      {/* Stamp gets a real product peek: name held on the
-                          left, the screen sitting large on the right and
-                          running off the card's edge, cropped by this div's
-                          own overflow-hidden, so it reads as a framed hero
-                          rather than a small corner sticker. Card size and
-                          shape are untouched; only this inner composition
-                          changes. */}
-                      {c.slug === 'stamp' && (
-                        <img
-                          src="/preview-400.png"
-                          alt=""
-                          aria-hidden="true"
-                          className="pointer-events-none absolute -bottom-5 -right-5 w-[40%] max-w-[160px] rotate-[4deg] opacity-95 drop-shadow-[0_18px_32px_rgba(0,0,0,0.5)] transition-transform duration-700 group-hover:-translate-y-2 group-hover:rotate-[2deg]"
-                        />
-                      )}
-                      <h3
-                        className={`relative font-sans text-xl font-extrabold tracking-tight text-white ${
-                          c.slug === 'stamp' ? 'max-w-[55%]' : ''
-                        }`}
-                      >
+                      {/* every card gets a code-screen peek in its corner: a
+                          small dark mockup with syntax-colored lines, tinted
+                          to the concept's own accent and carrying its own
+                          line rhythm/file name, so all three read as three
+                          different products being built, not one recolored
+                          twice */}
+                      <CodeScreenPeek
+                        accent={c.accent}
+                        slug={c.slug}
+                        className="absolute -bottom-4 -right-4 h-[78%] w-[46%] max-w-[180px] rotate-[4deg] transition-transform duration-700 group-hover:-translate-y-2 group-hover:rotate-[2deg]"
+                      />
+                      <h3 className="relative max-w-[58%] font-sans text-4xl font-extrabold leading-[0.95] tracking-tight text-white sm:text-5xl">
                         {c.name}
                       </h3>
                     </div>
@@ -226,6 +221,7 @@ export function Home() {
                       />
                     </div>
                   </Link>
+                </CardSpotlight>
                 </WobbleCard>
               </Reveal>
             ))}

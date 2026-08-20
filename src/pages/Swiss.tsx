@@ -17,12 +17,12 @@ export function Swiss() {
       <div className="mx-auto max-w-[1400px] border-x border-[var(--line)]">
         {/* Header */}
         <header className="grid grid-cols-12 border-b border-[var(--ink)]">
-          <div className="col-span-6 border-r border-[var(--line)] px-6 py-6 sm:col-span-3">
+          <div className="col-span-12 border-r border-[var(--line)] py-6 pl-40 pr-6 xl:col-span-3 xl:pt-6">
             <span className="text-lg font-extrabold uppercase tracking-tight">
               {BRAND.name}
             </span>
           </div>
-          <nav className="col-span-6 hidden items-center justify-end gap-8 px-6 sm:col-span-6 sm:flex">
+          <nav className="col-span-6 hidden items-center justify-end gap-8 px-6 xl:col-span-6 xl:flex">
             {NAV.map((n) => (
               <a
                 key={n.label}
@@ -35,7 +35,7 @@ export function Swiss() {
           </nav>
           <a
             href="#contact"
-            className="col-span-6 flex items-center justify-center bg-[var(--brand)] px-6 py-6 text-sm font-bold uppercase tracking-wide text-white no-underline sm:col-span-3"
+            className="col-span-12 flex items-center justify-center bg-[var(--brand)] px-6 py-6 text-sm font-bold uppercase tracking-wide text-white no-underline xl:col-span-3"
           >
             {HERO.cta}
           </a>
@@ -215,7 +215,7 @@ export function Swiss() {
           <div className="col-span-12 flex flex-col justify-center border-t border-[var(--ink)] px-6 py-12 sm:col-span-4 sm:border-l sm:border-t-0">
             <a
               href={`mailto:${BRAND.email}`}
-              className="text-lg font-bold text-[var(--ink)] no-underline"
+              className="break-words text-lg font-bold text-[var(--ink)] no-underline"
             >
               {BRAND.email}
             </a>

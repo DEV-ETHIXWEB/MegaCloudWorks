@@ -34,9 +34,14 @@ function ClayCircle({
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
   const [pressed, setPressed] = useState(false)
+  // Touch-only devices can leave a synthetic hover engaged after a tap since
+  // there's no real pointer to trigger mouseleave; only tilt/glow on devices
+  // that report genuine hover support. The explicit onTouchStart/onTouchEnd
+  // below still give touch its own tactile "pressed" feedback.
+  const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
 
   const onMove = (e: MouseEvent<HTMLElement>) => {
-    if (reduced) return
+    if (reduced || !canHover) return
     const rect = e.currentTarget.getBoundingClientRect()
     setPos({ x: (e.clientX - (rect.left + rect.width / 2)) / 22, y: (e.clientY - (rect.top + rect.height / 2)) / 22 })
   }
@@ -65,7 +70,7 @@ function ClayCircle({
       >
         <motion.div
           onMouseMove={onMove}
-          onMouseEnter={() => setHovering(true)}
+          onMouseEnter={() => canHover && setHovering(true)}
           onMouseLeave={() => {
             setHovering(false)
             setPressed(false)

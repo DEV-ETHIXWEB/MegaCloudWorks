@@ -14,8 +14,8 @@ export function Brutalism() {
       </Link>
 
       {/* Header */}
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b-4 border-black px-6 py-5 sm:px-10">
-        <span className="text-2xl font-black uppercase tracking-tight">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b-4 border-black py-5 pl-44 pr-6 sm:pl-48 sm:pr-10">
+        <span className="text-base font-black uppercase tracking-tight sm:text-2xl">
           {BRAND.name}
         </span>
         <nav className="flex flex-wrap items-center gap-5">

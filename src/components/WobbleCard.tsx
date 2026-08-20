@@ -24,9 +24,13 @@ export function WobbleCard({
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // Touch-only devices can fire a synthetic mouseenter on tap with no
+  // matching mouseleave, which would otherwise leave the tilt stuck after
+  // the finger lifts. Only engage on devices that report real hover support.
+  const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
 
   const onMove = (e: MouseEvent<HTMLElement>) => {
-    if (reduced) return
+    if (reduced || !canHover) return
     const rect = e.currentTarget.getBoundingClientRect()
     setPos({
       x: (e.clientX - (rect.left + rect.width / 2)) / 26,
@@ -37,7 +41,7 @@ export function WobbleCard({
   return (
     <motion.section
       onMouseMove={onMove}
-      onMouseEnter={() => setHovering(true)}
+      onMouseEnter={() => canHover && setHovering(true)}
       onMouseLeave={() => {
         setHovering(false)
         setPos({ x: 0, y: 0 })

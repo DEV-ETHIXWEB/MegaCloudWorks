@@ -8,7 +8,6 @@ import { Reveal } from '../components/Reveal'
 import { MagneticButton } from '../components/MagneticButton'
 import { ServiceNavigator } from '../components/ServiceNavigator'
 import { ServiceCircles } from '../components/ServiceCircles'
-import { TypewriterEffect } from '../components/TypewriterEffect'
 import { WhyMegaCloudWorks } from '../components/WhyMegaCloudWorks'
 import { ProcessTimeline } from '../components/ProcessTimeline'
 import { WorkCard } from '../components/WorkCard'
@@ -33,8 +32,28 @@ export function Services() {
           nor <main> otherwise sets a z-index, so nothing else contains
           them). */}
       <section className="relative isolate overflow-hidden px-[var(--edge)] pb-14 pt-36 sm:pb-16 sm:pt-44">
+        <img
+          src="/services-hero-background.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-30 h-full w-full object-cover opacity-[0.88]"
+        />
         <div
-          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
+          className="pointer-events-none absolute inset-0 -z-20"
+          style={{
+            background:
+              'linear-gradient(to bottom, var(--paper) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.1) 60%, var(--paper) 100%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 -z-20"
+          style={{
+            background:
+              'radial-gradient(ellipse 40% 60% at 50% 45%, var(--paper) 0%, rgba(255,255,255,0.5) 50%, transparent 82%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 -z-20 opacity-[0.5]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(16,16,20,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(16,16,20,0.05) 1px, transparent 1px)',
@@ -57,9 +76,7 @@ export function Services() {
           <h1 className="mt-4 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.98] tracking-[var(--tracking-tight)] sm:leading-[0.94]">
             {SERVICES_HERO.headlineLines[0]}
             <br />
-            <TypewriterEffect
-              words={[{ text: 'under' }, { text: 'one' }, { text: 'roof.', className: 'text-[var(--brand)]' }]}
-            />
+            under one <span className="text-[var(--brand)]">roof.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
             {SERVICES_HERO.sub}

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { Reveal } from './Reveal'
 import { IPhoneMockup } from './IPhoneMockup'
 import { PhoneNavProvider } from '../lib/phoneUI'
@@ -12,13 +12,93 @@ import type { Concept } from '../content/concepts'
 const FLOAT_DURATIONS = [7.2, 8.4, 7.8, 8.9]
 const FLOAT_DELAYS = [0, 0.7, 1.4, 0.35]
 
+const AUTOPLAY_MS = 3200
+
 /**
- * All four of a concept's screens, live and tappable, side by side.
- * Every phone runs its own PhoneNavProvider so tapping something in one
- * screen (open a job, claim a reward) navigates within that phone alone:
- * an asymmetric stagger keeps four identical-width devices from reading as
- * a flat, boring grid, and a gentle idle float keeps them from sitting dead
- * on the page. Hovering one lifts it a little further out.
+ * The mobile case: four full-size stacked phones read as a wall of near-
+ * identical devices on a narrow screen, and a visitor has to scroll past
+ * three of them to see the fourth. One phone that loops through all four
+ * screens on its own says the same thing in a tenth of the scroll — tap to
+ * take over is still there, it just isn't required.
+ */
+function AutoplayPhone({ concept }: { concept: Concept }) {
+  const screens = CONCEPT_SCREENS[concept.slug] ?? []
+  const [index, setIndex] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  useEffect(() => {
+    if (reduced || paused || screens.length < 2) return
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % screens.length), AUTOPLAY_MS)
+    return () => window.clearInterval(id)
+  }, [reduced, paused, screens.length])
+
+  const Active = screens[index]
+  if (!Active) return null
+
+  return (
+    <div className="mx-auto flex w-full max-w-[220px] flex-col items-center">
+      <div
+        // a tap on the phone hands control to the visitor: pause the
+        // autoplay so their own navigation isn't yanked away mid-read
+        onPointerDown={() => setPaused(true)}
+        style={{ filter: 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))' }}
+      >
+        <PhoneNavProvider index={index} count={screens.length} onGo={setIndex}>
+          <IPhoneMockup size="sm" label={`${concept.name} · ${concept.screens[index]}, screen ${index + 1} of ${screens.length}`}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={index}
+                className="h-full w-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+              >
+                <Active accent={concept.accent} />
+              </motion.div>
+            </AnimatePresence>
+          </IPhoneMockup>
+        </PhoneNavProvider>
+      </div>
+
+      <p className="mt-4 text-center text-xs font-bold uppercase tracking-wide text-[var(--ink-faint)]">
+        Screen {String(index + 1).padStart(2, '0')} of {String(screens.length).padStart(2, '0')}
+      </p>
+      <p className="mt-1 text-center font-sans text-sm font-bold text-[var(--ink)]">{concept.screens[index]}</p>
+
+      {/* progress dots double as manual controls: tapping one both jumps
+          the phone and pauses the loop, same as tapping the phone itself */}
+      <div className="mt-3 flex items-center gap-1.5">
+        {screens.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            aria-label={`Show screen ${i + 1}`}
+            aria-current={i === index}
+            onClick={() => {
+              setPaused(true)
+              setIndex(i)
+            }}
+            className="p-1.5"
+          >
+            <span
+              className="block size-1.5 rounded-full opacity-40 transition-opacity"
+              style={{ background: i === index ? concept.accent : 'var(--ink-faint)', opacity: i === index ? 1 : 0.4 }}
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * All four of a concept's screens, live and tappable, side by side on
+ * tablet/desktop. On mobile a single autoplaying phone takes over instead
+ * (see AutoplayPhone above) — both read from the same PhoneNavProvider,
+ * live-tappable phone underneath, just a different presentation per
+ * viewport.
  */
 export function ScreensShowcase({ concept }: { concept: Concept }) {
   const screens = CONCEPT_SCREENS[concept.slug] ?? []
@@ -31,67 +111,75 @@ export function ScreensShowcase({ concept }: { concept: Concept }) {
   const lift = ['lg:mt-0', 'lg:mt-6', 'lg:mt-0', 'lg:mt-6']
 
   return (
-    <div className="mx-auto grid max-w-xs grid-cols-1 gap-x-8 gap-y-14 sm:max-w-none sm:grid-cols-2 lg:max-w-none lg:grid-cols-4 lg:gap-x-6">
-      {screens.map((_, i) => {
-        const Active = screens[indices[i]]
-        const isHovered = hovered === i
-        return (
-          <Reveal key={concept.screens[i]} delay={i * 0.08} className={lift[i % lift.length]}>
-            <div className="mx-auto flex w-full max-w-[220px] flex-col items-center lg:max-w-none">
-              <motion.div
-                className="w-full"
-                onMouseEnter={() => setHovered(i)}
-                onMouseLeave={() => setHovered(null)}
-                animate={reduced ? undefined : { y: [0, -6, 0] }}
-                transition={
-                  reduced
-                    ? undefined
-                    : {
-                        duration: FLOAT_DURATIONS[i % FLOAT_DURATIONS.length],
-                        delay: FLOAT_DELAYS[i % FLOAT_DELAYS.length],
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }
-                }
-              >
-                {/* the hover lift rides on its own wrapper so it composes with
-                    the idle float above instead of fighting it for the
-                    transform channel */}
-                <div
-                  style={{
-                    transform: isHovered && !reduced ? 'translateY(-10px) scale(1.02)' : 'translateY(0) scale(1)',
-                    transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 420ms ease',
-                    filter: isHovered
-                      ? 'drop-shadow(0 26px 36px rgba(0,0,0,0.30))'
-                      : 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))',
-                  }}
+    <>
+      <div className="sm:hidden">
+        <Reveal>
+          <AutoplayPhone concept={concept} />
+        </Reveal>
+      </div>
+
+      <div className="mx-auto hidden max-w-xs grid-cols-1 gap-x-8 gap-y-14 sm:grid sm:max-w-none sm:grid-cols-2 lg:max-w-none lg:grid-cols-4 lg:gap-x-6">
+        {screens.map((_, i) => {
+          const Active = screens[indices[i]]
+          const isHovered = hovered === i
+          return (
+            <Reveal key={concept.screens[i]} delay={i * 0.08} className={lift[i % lift.length]}>
+              <div className="mx-auto flex w-full max-w-[220px] flex-col items-center lg:max-w-none">
+                <motion.div
+                  className="w-full"
+                  onMouseEnter={() => setHovered(i)}
+                  onMouseLeave={() => setHovered(null)}
+                  animate={reduced ? undefined : { y: [0, -6, 0] }}
+                  transition={
+                    reduced
+                      ? undefined
+                      : {
+                          duration: FLOAT_DURATIONS[i % FLOAT_DURATIONS.length],
+                          delay: FLOAT_DELAYS[i % FLOAT_DELAYS.length],
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        }
+                  }
                 >
-                  <PhoneNavProvider
-                    index={indices[i]}
-                    count={screens.length}
-                    onGo={(next) => setIndices((cur) => cur.map((v, j) => (j === i ? next : v)))}
+                  {/* the hover lift rides on its own wrapper so it composes with
+                      the idle float above instead of fighting it for the
+                      transform channel */}
+                  <div
+                    style={{
+                      transform: isHovered && !reduced ? 'translateY(-10px) scale(1.02)' : 'translateY(0) scale(1)',
+                      transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 420ms ease',
+                      filter: isHovered
+                        ? 'drop-shadow(0 26px 36px rgba(0,0,0,0.30))'
+                        : 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))',
+                    }}
                   >
-                    <IPhoneMockup size="sm" label={`${concept.name} · ${concept.screens[indices[i]]}`}>
-                      <Active accent={concept.accent} />
-                    </IPhoneMockup>
-                  </PhoneNavProvider>
-                </div>
-              </motion.div>
-              {/* --ink-faint, not the concept's accentText: this showcase
-                  runs both on the homepage's brand-red band and on a light
-                  case-study page, and a mid-tone accent goes unreadable on
-                  red. `.on-brand` already flips this token to white/66%, so
-                  one value stays legible in both places. */}
-              <p className="mt-4 text-center text-xs font-bold uppercase tracking-wide text-[var(--ink-faint)]">
-                Screen {String(i + 1).padStart(2, '0')}
-              </p>
-              <p className="mt-1 text-center font-sans text-sm font-bold text-[var(--ink)]">
-                {concept.screens[i]}
-              </p>
-            </div>
-          </Reveal>
-        )
-      })}
-    </div>
+                    <PhoneNavProvider
+                      index={indices[i]}
+                      count={screens.length}
+                      onGo={(next) => setIndices((cur) => cur.map((v, j) => (j === i ? next : v)))}
+                    >
+                      <IPhoneMockup size="sm" label={`${concept.name} · ${concept.screens[indices[i]]}`}>
+                        <Active accent={concept.accent} />
+                      </IPhoneMockup>
+                    </PhoneNavProvider>
+                  </div>
+                </motion.div>
+                {/* --ink-faint, not the concept's accentText: this showcase
+                    runs both on the homepage's brand-red band and on a light
+                    case-study page, and a mid-tone accent goes unreadable on
+                    red. `.on-brand` already flips this token to white/66%, so
+                    one value stays legible in both places. */}
+                <p className="mt-4 text-center text-xs font-bold uppercase tracking-wide text-[var(--ink-faint)]">
+                  Screen {String(i + 1).padStart(2, '0')}
+                </p>
+                <p className="mt-1 text-center font-sans text-sm font-bold text-[var(--ink)]">
+                  {concept.screens[i]}
+                </p>
+              </div>
+            </Reveal>
+          )
+        })}
+      </div>
+    </>
   )
 }

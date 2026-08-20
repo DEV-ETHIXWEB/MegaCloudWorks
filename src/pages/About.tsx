@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
 import { SiteHeader } from '../components/SiteHeader'
@@ -6,9 +7,11 @@ import { SectionHeading } from '../components/SectionHeading'
 import { Reveal } from '../components/Reveal'
 import { CTASection } from '../components/CTASection'
 import { MagneticButton } from '../components/MagneticButton'
-import { TypewriterEffect } from '../components/TypewriterEffect'
 import { StudioHandshake } from '../components/StudioHandshake'
-import { ABOUT_HERO, STUDIOS, ABOUT_STEPS, COVERAGE } from '../content/about'
+import { StatsSection } from '../components/StatsSection'
+import { WorkCard } from '../components/WorkCard'
+import { ABOUT_HERO, STUDIOS, ABOUT_STEPS, COVERAGE, ORIGIN, VALUES } from '../content/about'
+import { CONCEPTS } from '../content/concepts'
 
 export function About() {
   return (
@@ -56,14 +59,7 @@ export function About() {
           <h1 className="mt-4 text-balance font-sans text-[length:var(--fs-h1)] font-black leading-[1.02] tracking-[var(--tracking-tight)] sm:leading-[0.94]">
             {ABOUT_HERO.headlineLines[0]}
             <br />
-            {/* the promise half of the line types itself in, a beat after the
-                static half has landed; brand red carries the differentiator */}
-            <TypewriterEffect
-              startDelay={0.45}
-              words={ABOUT_HERO.headlineLines[1]
-                .split(' ')
-                .map((w) => ({ text: w, className: 'text-[var(--brand)]' }))}
-            />
+            <span className="text-[var(--brand)]">{ABOUT_HERO.headlineLines[1]}</span>
           </h1>
           <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
             {ABOUT_HERO.sub}
@@ -79,12 +75,19 @@ export function About() {
         </div>
       </section>
 
+      {/* Immediate proof: same stats band the homepage and services page
+          run, real numbers rather than new copy invented for this page */}
+      <StatsSection />
+
       {/* Two studios */}
       <section className="px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto grid max-w-[var(--container-wide)] gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 lg:self-start lg:sticky lg:top-32">
             <p className="kicker" data-n="02">
               {STUDIOS.eyebrow}
+            </p>
+            <p className="mt-4 hidden max-w-[16rem] text-sm leading-relaxed text-[var(--ink-faint)] lg:block">
+              One team, two studios: the web side and the app side of the same standard.
             </p>
           </div>
           <Reveal className="lg:col-span-7 lg:col-start-6">
@@ -98,6 +101,26 @@ export function About() {
         </div>
       </section>
 
+      {/* What we actually believe: same card weight as the process steps
+          below, so the page reads as having a point of view, not just a
+          workflow diagram */}
+      <section className="border-y border-[var(--line)] bg-[var(--paper-2)] px-[var(--edge)] py-24 sm:py-32">
+        <div className="mx-auto max-w-[var(--container-wide)]">
+          <SectionHeading n="03" kicker="What we won't compromise on" title="Four things that don't flex, project to project." />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {VALUES.map((v, i) => (
+              <Reveal key={v.n} delay={i * 0.08}>
+                <div className="surface-lift h-full p-6">
+                  <span className="text-4xl font-black text-[var(--ink-faint)]">{v.n}</span>
+                  <h3 className="mt-3 font-sans text-xl font-extrabold tracking-tight">{v.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--ink-soft)]">{v.body}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How we work: brand band */}
       <section
         id="how-we-work"
@@ -106,7 +129,7 @@ export function About() {
       >
         <div className="grain-overlay" aria-hidden="true" />
         <div className="mx-auto max-w-[var(--container-wide)]">
-          <SectionHeading n="03" kicker="How we work" title="Four moves, in the same order, every time." light />
+          <SectionHeading n="04" kicker="How we work" title="Four moves, in the same order, every time." light />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {ABOUT_STEPS.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.08}>
@@ -125,8 +148,24 @@ export function About() {
         </div>
       </section>
 
-      {/* Coverage */}
+      {/* Origin: the human "why" behind two studios instead of one, as a
+          pull-quote rather than another paragraph block */}
       <section className="px-[var(--edge)] py-24 sm:py-32">
+        <div className="mx-auto max-w-[var(--container)] text-center">
+          <p className="kicker justify-center" data-n="05">
+            {ORIGIN.eyebrow}
+          </p>
+          <p className="mx-auto mt-6 max-w-2xl text-balance font-sans text-[length:var(--fs-lead)] font-bold leading-relaxed tracking-tight text-[var(--ink)]">
+            &ldquo;{ORIGIN.quote}&rdquo;
+          </p>
+          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+            {ORIGIN.attribution}
+          </p>
+        </div>
+      </section>
+
+      {/* Coverage */}
+      <section className="border-t border-[var(--line)] px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto grid max-w-[var(--container-wide)] items-center gap-12 lg:grid-cols-2">
           <Reveal>
             <div className="surface-lift aspect-[4/3] overflow-hidden">
@@ -134,7 +173,7 @@ export function About() {
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="kicker" data-n="04">
+            <p className="kicker" data-n="06">
               {COVERAGE.eyebrow}
             </p>
             <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)]">
@@ -144,6 +183,26 @@ export function About() {
             </h2>
             <p className="mt-4 max-w-md text-lg text-[var(--ink-soft)]">{COVERAGE.body}</p>
           </Reveal>
+        </div>
+      </section>
+
+      {/* Proof: the same five concepts Work runs, tying "here's who we are"
+          back to "here's what we've actually built" before the final ask */}
+      <section className="bg-[var(--paper-2)] px-[var(--edge)] py-24 sm:py-32">
+        <div className="mx-auto max-w-[var(--container-wide)]">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <SectionHeading n="07" kicker="What we build" title="Five products, one standard." />
+            <Reveal>
+              <Link to="/work" className="text-sm font-semibold text-[var(--brand-text)] no-underline hover:opacity-70">
+                See the whole index →
+              </Link>
+            </Reveal>
+          </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {CONCEPTS.slice(0, 3).map((c, i) => (
+              <WorkCard key={c.slug} concept={c} delay={i * 0.08} />
+            ))}
+          </div>
         </div>
       </section>
 

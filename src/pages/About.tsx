@@ -83,10 +83,10 @@ export function About() {
       <section className="px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto grid max-w-[var(--container-wide)] gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4 lg:self-start lg:sticky lg:top-32">
-            <p className="kicker" data-n="02">
+            <p className="kicker text-sm sm:text-base" data-n="02">
               {STUDIOS.eyebrow}
             </p>
-            <p className="mt-4 hidden max-w-[16rem] text-sm leading-relaxed text-[var(--ink-faint)] lg:block">
+            <p className="mt-4 hidden max-w-[18rem] text-lg leading-relaxed text-[var(--ink-faint)] lg:block">
               One team, two studios: the web side and the app side of the same standard.
             </p>
           </div>

@@ -47,15 +47,6 @@ export function Work() {
           }}
         />
         <div
-          className="pointer-events-none absolute inset-0 -z-20 opacity-[0.5]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(16,16,20,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(16,16,20,0.05) 1px, transparent 1px)',
-            backgroundSize: '80px 80px',
-            maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%)',
-          }}
-        />
-        <div
           className="pointer-events-none absolute right-[6%] top-10 -z-10 size-[26rem] rounded-full opacity-[0.28] blur-[100px]"
           style={{ background: 'radial-gradient(circle, var(--brand), transparent 70%)' }}
         />

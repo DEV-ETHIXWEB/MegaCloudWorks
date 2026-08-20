@@ -17,7 +17,6 @@ export function ProductExperienceSection({ concept }: { concept: Concept }) {
       data-header-tone="dark"
       className="on-brand relative isolate overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-32"
     >
-      <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
       <div className="grain-overlay" aria-hidden="true" />
       <div className="relative mx-auto max-w-[var(--container-wide)]">
         <SectionHeading

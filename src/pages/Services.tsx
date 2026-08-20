@@ -53,15 +53,6 @@ export function Services() {
           }}
         />
         <div
-          className="pointer-events-none absolute inset-0 -z-20 opacity-[0.5]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(16,16,20,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(16,16,20,0.05) 1px, transparent 1px)',
-            backgroundSize: '80px 80px',
-            maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%)',
-          }}
-        />
-        <div
           className="pointer-events-none absolute right-[4%] top-6 -z-10 size-[30rem] rounded-full opacity-[0.3] blur-[100px]"
           style={{ background: 'radial-gradient(circle, var(--brand), transparent 70%)' }}
         />
@@ -113,7 +104,6 @@ export function Services() {
         data-header-tone="dark"
         className="on-brand relative isolate overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-28"
       >
-        <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
         <div className="grain-overlay" aria-hidden="true" />
         <div className="relative mx-auto max-w-[var(--container-wide)]">
           <SectionHeading n="03" kicker="Why MegaCloudWorks" title="What working with us actually feels like." light />

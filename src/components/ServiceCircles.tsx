@@ -10,12 +10,16 @@ import { CIRCLES } from '../content/services'
 // read as sitting in the same physical space rather than each having its
 // own shadow direction. Kept deliberately restrained: a soft ambient drop
 // plus a faint inset highlight, not a cartoon bevel.
+// A restrained red "pixel shadow" ring around each circle: present at
+// rest, starting darker right at the edge and fading out fast so it never
+// bleeds far enough to touch a neighbour, then intensifies a little more
+// on hover/press.
 const REST_SHADOW =
-  '5px 7px 14px -8px rgba(20,20,20,0.1), -4px -4px 10px -8px rgba(255,255,255,0.8), inset 1.5px 1.5px 4px rgba(255,255,255,0.7), inset -1.5px -1.5px 5px rgba(20,20,20,0.03)'
+  '5px 7px 14px -8px rgba(20,20,20,0.1), -4px -4px 10px -8px rgba(255,255,255,0.8), inset 1.5px 1.5px 4px rgba(255,255,255,0.7), inset -1.5px -1.5px 5px rgba(20,20,20,0.03), 0 0 2px 0.5px rgba(193,20,32,0.14), 0 0 10px 1px rgba(193,20,32,0.06)'
 const HOVER_SHADOW =
-  '7px 10px 18px -9px rgba(20,20,20,0.15), -5px -5px 12px -9px rgba(255,255,255,0.85), inset 1.5px 1.5px 4px rgba(255,255,255,0.75), inset -1.5px -1.5px 5px rgba(20,20,20,0.03)'
+  '7px 10px 18px -9px rgba(20,20,20,0.15), -5px -5px 12px -9px rgba(255,255,255,0.85), inset 1.5px 1.5px 4px rgba(255,255,255,0.75), inset -1.5px -1.5px 5px rgba(20,20,20,0.03), 0 0 4px 1px rgba(193,20,32,0.3), 0 0 18px 3px rgba(193,20,32,0.14)'
 const PRESSED_SHADOW =
-  'inset 4px 5px 10px rgba(20,20,20,0.1), inset -3px -3px 8px rgba(255,255,255,0.6)'
+  'inset 4px 5px 10px rgba(20,20,20,0.1), inset -3px -3px 8px rgba(255,255,255,0.6), 0 0 3px 1px rgba(193,20,32,0.18), 0 0 10px 1px rgba(193,20,32,0.08)'
 
 // each circle floats on its own slow, slightly offset loop so the three
 // never move in lockstep: barely perceptible, not a bounce

@@ -1974,23 +1974,10 @@ a.contact-card:hover .contact-go {
   filter: drop-shadow(0 -1px 2px rgba(255, 255, 255, 0.35));
 }
 
-[data-step].is-lit .step-num {
-  animation: step-num 1100ms ease-out var(--slot) both;
-}
 
-/* the copy only exists once its own mark is alive */
-.step-copy {
-  opacity: 0;
-}
 
-[data-step].is-lit .step-copy {
-  animation: step-copy 620ms cubic-bezier(0.22, 1, 0.36, 1)
-    calc(var(--slot) + 300ms) both;
-}
-
-[data-step].is-lit .step-copy--late {
-  animation-delay: calc(var(--slot) + 440ms);
-}
+/* the copy does not animate: the words of this section are simply there,
+   and only the marks and the route between them move */
 
 /* The mark rises into place on one long, soft curve, and that is the only
    movement it makes. It used to travel here *and* again inside `step-charge`
@@ -2015,19 +2002,6 @@ a.contact-card:hover .contact-go {
 /* the number is the loudest thing in the row, so it gets the most room */
 .step-row .step-num {
   opacity: 0.9;
-}
-
-@keyframes step-copy {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-    filter: blur(0);
-  }
 }
 
 /* ---- the four marks, each doing the thing its step describes ---- */
@@ -2295,16 +2269,16 @@ a.contact-card:hover .contact-go {
  * NB the band must not carry `overflow: hidden` - that would make it the
  * scroll container for its own sticky child, which then never sticks.
  * ------------------------------------------------------------------ */
-/* the flat red the three plates are painted in, sampled from the artwork -
-   the band carries it edge to edge so the plates have nothing to seam
-   against, and so the section is already the right colour while they load */
+/* the paper the plate is painted on, sampled from the artwork - the band
+   carries it edge to edge so the plate has nothing to seam against, and so
+   the section is already the right colour while it loads. The band keeps the
+   page's own ink now: the artwork is pale through the middle, which is where
+   every word of this section sits. */
 .step-band {
-  background-color: #ec2a37;
+  background-color: #fbf8f7;
 
-  /* the on-brand tokens still name the old red; anything in this band that
-     paints itself the band colour has to use the plates' red instead */
-  --band: #ec2a37;
-  --paper: #ec2a37;
+  --band: #fbf8f7;
+  --paper: #fbf8f7;
 }
 
 .step-sky {
@@ -2314,42 +2288,53 @@ a.contact-card:hover .contact-go {
   z-index: 0;
 }
 
-.step-sky__hold {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-}
-
-.step-sky__plate {
+/* The two ridges are cut out of the artwork and pinned to the section's
+   margins - the upper one high on the right, above the first mark, the lower
+   one along the bottom left, past the last. The middle of this band is where
+   every word of it sits, so nothing is laid across it. */
+.step-sky__ridge {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  /* bottom-anchored: every plate keeps its weather along the ground, and
-     that is the half that must survive the crop */
-  object-fit: cover;
-  object-position: center bottom;
+  height: auto;
   opacity: 0;
   transition: opacity 900ms ease;
 }
 
-.step-sky__plate.is-on {
+.step-sky__ridge.is-on {
   opacity: 1;
 }
 
-/* a 16:9 plate cropped to a phone keeps only its middle strip, and on the
-   04 plate the middle is the one part with no weather in it - the banks are
-   piled at the edges. Pulling the crop left brings one of them back. */
-@media (max-width: 640px) {
-  .step-sky__plate {
-    object-position: 24% bottom;
+.step-sky__ridge--right {
+  /* bled off the top edge: what is wanted here is the ridge line, not the
+     empty sky the artwork carries above it */
+  top: -2%;
+  right: -2%;
+  width: min(33%, 480px);
+}
+
+.step-sky__ridge--left {
+  bottom: 0;
+  left: -2%;
+  /* narrower than the ridge opposite: the last mark's copy is centred, and
+     this is the piece that would otherwise reach into it */
+  width: min(30%, 460px);
+}
+
+/* Stacked, the copy runs the full width of the page and there are no margins
+   left to stand a ridge in - so they thin out and sit behind the type rather
+   than beside it, which the artwork's own pale middle makes readable. */
+@media (max-width: 900px) {
+  .step-sky__ridge {
+    width: 62%;
+    opacity: 0;
+  }
+
+  .step-sky__ridge.is-on {
+    opacity: 0.5;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .step-sky__plate {
+  .step-sky__ridge {
     transition: none;
   }
 }
@@ -2392,11 +2377,9 @@ a.contact-card:hover .contact-go {
 /* the charge that runs through the mark as it lands: light only, no travel.
    The wrapper is already carrying it up the page, and a second transform
    here fought that one for the same pixels. */
-/* The charge that runs through a mark as it lands. Both passes had to invert
-   with the solids: a red glow is invisible against the red band, and a
-   near-black contact shadow under a white object reads as grime rather than
-   as shade - so the charge is white and the shadow it settles into is a
-   deeper tone of the band itself. */
+/* The charge that runs through a mark as it lands. Over pale ground the
+   flash is the brand red - a white one would be invisible - and it settles
+   into an ordinary contact shadow underneath the object. */
 @keyframes step-charge {
   0% {
     opacity: 0.55;
@@ -2404,12 +2387,12 @@ a.contact-card:hover .contact-go {
   }
   45% {
     opacity: 1;
-    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9))
-      drop-shadow(0 0 26px rgba(255, 255, 255, 0.5));
+    filter: drop-shadow(0 0 12px rgba(245, 51, 59, 0.65))
+      drop-shadow(0 0 26px rgba(245, 51, 59, 0.35));
   }
   100% {
     opacity: 1;
-    filter: drop-shadow(0 8px 14px rgba(139, 18, 24, 0.28));
+    filter: drop-shadow(0 10px 18px rgba(16, 16, 20, 0.18));
   }
 }
 
@@ -2436,23 +2419,6 @@ a.contact-card:hover .contact-go {
   }
   50% {
     opacity: 0.75;
-  }
-}
-
-@keyframes step-num {
-  0% {
-    opacity: 0.35;
-    text-shadow: none;
-  }
-  45% {
-    opacity: 1;
-    text-shadow:
-      0 0 10px rgba(245, 51, 59, 0.65),
-      0 0 24px rgba(245, 51, 59, 0.35);
-  }
-  100% {
-    opacity: 1;
-    text-shadow: none;
   }
 }
 

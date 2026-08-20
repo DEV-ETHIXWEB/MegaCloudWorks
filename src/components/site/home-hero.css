@@ -443,4 +443,19 @@
   .stroke-text__svg {
     margin-block: -0.35rem;
   }
+
+  .hero-title .stroke-text__svg {
+    margin-block: -0.95rem;
+  }
+}
+
+/* the two drawn lines of the headline sit as one block, not two */
+.hero-title .stroke-text__svg {
+  margin-block: -1.4rem;
+}
+
+@media (max-width: 767px) {
+  .hero-title .stroke-text__svg {
+    margin-block: -0.95rem;
+  }
 }

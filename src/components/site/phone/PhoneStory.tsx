@@ -151,7 +151,7 @@ export function PhoneStory() {
   })
 
   const openService = useCallback(
-    (hash: string) => void navigate({ to: '/services', hash }),
+    (hash: string) => void navigate({ to: '/contact', hash }),
     [navigate],
   )
 

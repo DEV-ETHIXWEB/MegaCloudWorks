@@ -64,48 +64,6 @@
   aspect-ratio: 916 / 500;
 }
 
-/* the route weaving between the panels */
-.craft-collage__route {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.craft-collage__route path,
-.craft-collage__route circle {
-  vector-effect: non-scaling-stroke;
-}
-
-.craft-collage__route path {
-  fill: none;
-}
-
-.craft-route-glow {
-  stroke: var(--brand);
-  stroke-width: 10;
-  opacity: 0.3;
-  filter: blur(6px);
-}
-
-.craft-route-body {
-  stroke: var(--brand);
-  stroke-width: 2.2;
-  opacity: 0.9;
-}
-
-.craft-route-core {
-  stroke: #fff;
-  stroke-width: 0.9;
-  opacity: 0.9;
-}
-
-.craft-route-stop {
-  fill: #fff;
-  stroke: var(--brand);
-  stroke-width: 1.4;
-}
-
 /* A pinned artefact.
  *
  * They stand square to the page and drift, each on its own offset, so
@@ -328,6 +286,277 @@
   border-radius: 50%;
   background: rgba(245, 51, 59, 0.1);
   color: var(--brand);
+}
+
+/* ------------------------------------------------------------------ *
+ * The build, played out
+ *
+ * Six artefacts, one clock. `data-play` is written by the component, so
+ * the hidden state below only ever exists where the script is running -
+ * with no JS the table is simply finished. `armed` holds every part at
+ * its start; `run` releases them, each on the `--d` its own markup
+ * carries.
+ * ------------------------------------------------------------------ */
+
+.craft-collage[data-play] .craft-pop,
+.craft-collage[data-play] .craft-fade,
+.craft-collage[data-play] .craft-rise,
+.craft-collage[data-play] .craft-slide,
+.craft-collage[data-play] .craft-lift {
+  opacity: 0;
+}
+
+.craft-collage[data-play] .craft-pop {
+  scale: 0.86;
+}
+
+.craft-collage[data-play] .craft-draw {
+  scale: 1 0;
+  transform-origin: top center;
+}
+
+.craft-collage[data-play] .craft-code__ink {
+  width: 0;
+}
+
+.craft-collage[data-play] .craft-trace {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.craft-collage[data-play] .craft-pass {
+  background: rgba(16, 16, 20, 0.07);
+  color: rgba(16, 16, 20, 0.28);
+}
+
+.craft-collage[data-play] .craft-spin {
+  opacity: 0;
+  rotate: -120deg;
+}
+
+/* ---- and the same parts, released ---- */
+
+.craft-collage[data-play='run'] .craft-pop {
+  animation: craft-pop 0.42s cubic-bezier(0.34, 1.46, 0.64, 1) var(--d, 0s) both;
+}
+
+.craft-collage[data-play='run'] .craft-fade {
+  animation: craft-fade 0.34s ease var(--d, 0s) both;
+}
+
+.craft-collage[data-play='run'] .craft-rise {
+  animation: craft-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both;
+}
+
+.craft-collage[data-play='run'] .craft-slide {
+  animation: craft-slide 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both;
+}
+
+.craft-collage[data-play='run'] .craft-draw {
+  animation: craft-draw 0.22s ease-out var(--d, 0s) both;
+}
+
+/* the terminal tick: the ink box grows a character at a time rather than
+   sliding open, and the caret rides its edge */
+.craft-collage[data-play='run'] .craft-code__ink {
+  animation: craft-type var(--dur, 0.4s) steps(var(--n, 20), end) var(--d, 0s)
+    both;
+}
+
+.craft-collage[data-play='run'] .craft-trace {
+  animation: craft-trace 0.75s ease-out var(--d, 0s) both;
+}
+
+.craft-collage[data-play='run'] .craft-pass {
+  animation: craft-pass 0.55s cubic-bezier(0.34, 1.46, 0.64, 1) var(--d, 0s)
+    both;
+}
+
+.craft-collage[data-play='run'] .craft-spin {
+  animation: craft-spin 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both;
+}
+
+.craft-collage[data-play='run'] .craft-lift {
+  animation: craft-lift 0.55s cubic-bezier(0.34, 1.46, 0.64, 1) var(--d, 0s)
+    both;
+}
+
+@keyframes craft-pop {
+  from {
+    opacity: 0;
+    scale: 0.86;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes craft-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes craft-rise {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes craft-slide {
+  from {
+    opacity: 0;
+    translate: 8px 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes craft-draw {
+  from {
+    scale: 1 0;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+
+@keyframes craft-type {
+  from {
+    width: 0;
+  }
+  to {
+    width: calc(var(--n, 20) * 1ch);
+  }
+}
+
+@keyframes craft-trace {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* grey, then a flash of green as the case passes, then it settles */
+@keyframes craft-pass {
+  0% {
+    background: rgba(16, 16, 20, 0.07);
+    color: rgba(16, 16, 20, 0.28);
+    scale: 1;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+  45% {
+    background: rgba(34, 197, 94, 0.28);
+    color: #16a34a;
+    scale: 1.28;
+    box-shadow: 0 0 0 0.28rem rgba(34, 197, 94, 0.22);
+  }
+  100% {
+    background: rgba(34, 197, 94, 0.14);
+    color: #16a34a;
+    scale: 1;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes craft-spin {
+  from {
+    opacity: 0;
+    rotate: -120deg;
+  }
+  to {
+    opacity: 1;
+    rotate: 0deg;
+  }
+}
+
+@keyframes craft-lift {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* the line being typed carries the caret, and only while it is typing */
+.craft-code__line {
+  display: block;
+  white-space: pre;
+}
+
+.craft-code__ink {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: pre;
+}
+
+.craft-collage[data-play='run'] .craft-code__line::after {
+  content: '';
+  display: inline-block;
+  width: 0.5ch;
+  height: 0.9em;
+  vertical-align: text-bottom;
+  background: var(--brand);
+  opacity: 0;
+  animation: craft-caret var(--dur, 0.4s) steps(1, end) var(--d, 0s) both;
+}
+
+@keyframes craft-caret {
+  0%,
+  99% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .craft-collage[data-play] .craft-pop,
+  .craft-collage[data-play] .craft-fade,
+  .craft-collage[data-play] .craft-rise,
+  .craft-collage[data-play] .craft-slide,
+  .craft-collage[data-play] .craft-lift,
+  .craft-collage[data-play] .craft-spin {
+    opacity: 1;
+    scale: 1;
+    rotate: 0deg;
+  }
+
+  .craft-collage[data-play] .craft-draw {
+    scale: 1 1;
+  }
+
+  .craft-collage[data-play] .craft-code__ink {
+    width: auto;
+  }
+
+  .craft-collage[data-play] .craft-trace {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+
+  .craft-collage[data-play] .craft-pass {
+    background: rgba(34, 197, 94, 0.14);
+    color: #16a34a;
+  }
 }
 
 /* ---------------- the six disciplines ---------------- */

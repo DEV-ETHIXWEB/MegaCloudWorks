@@ -295,8 +295,8 @@ export function HomeStart() {
                 text="Looking forward"
                 fontSize={40}
                 letterSpacing={-1.5}
-                strokeColor="#fff"
-                fillColor="#fff"
+                strokeColor="#101014"
+                fillColor="#101014"
                 strokeWidth={0.9}
                 drawDuration={0.8}
                 stagger={0.025}
@@ -307,8 +307,8 @@ export function HomeStart() {
                 text="to working with you."
                 fontSize={40}
                 letterSpacing={-1.5}
-                strokeColor="#fff"
-                fillColor="#fff"
+                strokeColor="var(--brand)"
+                fillColor="var(--brand)"
                 strokeWidth={0.9}
                 drawDuration={0.8}
                 stagger={0.025}

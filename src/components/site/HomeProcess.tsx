@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 
 import './home-process.css'
@@ -532,13 +531,6 @@ export function HomeProcess() {
           A proven 4-step process that keeps things clear, moves fast and builds
           apps that last.
         </p>
-
-        <Link to="/services" className="process-link mt-6">
-          <span className="process-link__disc">
-            <ArrowRight />
-          </span>
-          <span className="process-link__label">See the full process</span>
-        </Link>
 
         {/* ---------- the four steps ---------- */}
         <div className="relative mt-7">

@@ -56,7 +56,6 @@ const SOCIALS = [
 /* Every link below points at a route that exists - the studio pages and
    the five case studies. Nothing here is a placeholder. */
 const STUDIO = [
-  { label: 'What we do', to: '/services' },
   { label: 'Work', to: '/work' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },

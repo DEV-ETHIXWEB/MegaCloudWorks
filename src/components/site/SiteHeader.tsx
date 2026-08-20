@@ -6,7 +6,6 @@ import './site-header.css'
 
 const NAV = [
   { label: 'Home', to: '/' },
-  { label: 'What we do', to: '/services' },
   { label: 'Work', to: '/work' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
 
 import './home-approach.css'
 
@@ -60,41 +59,6 @@ function RocketIcon() {
   )
 }
 
-function ShieldIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" {...stroke} aria-hidden>
-      <path d="M12 3 19 6v5.5c0 4.2-2.9 7.6-7 9.5-4.1-1.9-7-5.3-7-9.5V6z" />
-    </svg>
-  )
-}
-
-function TeamIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" {...stroke} aria-hidden>
-      <circle cx="9" cy="9.5" r="3" />
-      <path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 7.2a3 3 0 0 1 0 5.6M17.5 19a5.3 5.3 0 0 0-2-4.1" />
-    </svg>
-  )
-}
-
-function BoltIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" {...stroke} aria-hidden>
-      <path d="M13 2.5 5.5 13.5H11l-1 8 8.5-11H13z" />
-    </svg>
-  )
-}
-
-function TargetIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" {...stroke} aria-hidden>
-      <circle cx="12" cy="12" r="8.5" />
-      <circle cx="12" cy="12" r="3.6" />
-      <path d="m14.5 9.5 5-5M17 4.6l.4 2 2 .4" />
-    </svg>
-  )
-}
-
 /* ------------------------------------------------------------------ *
  * the content
  * ------------------------------------------------------------------ */
@@ -134,29 +98,6 @@ const STEPS = [
     art: '/process/rocket-growth.webp',
     icon: <RocketIcon />,
     note: 'We ship it, then help you scale it.',
-  },
-] as const
-
-const PROMISES = [
-  {
-    icon: <ShieldIcon />,
-    title: 'Transparent',
-    body: 'You’re involved at every step with full visibility.',
-  },
-  {
-    icon: <TeamIcon />,
-    title: 'Collaborative',
-    body: 'Your goals guide our process, always.',
-  },
-  {
-    icon: <BoltIcon />,
-    title: 'Agile & Fast',
-    body: 'We adapt quickly and deliver results that matter.',
-  },
-  {
-    icon: <TargetIcon />,
-    title: 'Results Driven',
-    body: 'We focus on outcomes that drive real business growth.',
   },
 ] as const
 
@@ -304,7 +245,7 @@ export function HomeApproach() {
         aria-hidden="true"
       />
 
-      <div className="relative z-[2] mx-auto max-w-[1360px] px-6 pb-14 pt-24 sm:px-10 lg:px-28 lg:pb-10 lg:pt-[9rem]">
+      <div className="relative z-[2] mx-auto w-full max-w-[1360px] px-6 pb-20 pt-24 sm:px-10 lg:px-28 lg:pb-24 lg:pt-28">
         {/* ---------- the claim ---------- */}
         <span className="approach-tick" aria-hidden="true" />
         <p className="approach-eyebrow">Our process</p>
@@ -338,8 +279,19 @@ export function HomeApproach() {
           >
             {STEPS.map((step, i) => (
               <li key={step.index} style={{ '--i': i } as React.CSSProperties}>
-                {step.art ? (
-                  <span className="approach-step__art">
+                <span className="approach-step__art">
+                  <img
+                    src={step.art}
+                    alt=""
+                    width={420}
+                    height={384}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+                <p className="approach-step__index">
+                  <span className="approach-step__num">{step.index}</span>
+                  <span className="approach-step__mark" aria-hidden="true">
                     <img
                       src={step.art}
                       alt=""
@@ -349,10 +301,7 @@ export function HomeApproach() {
                       decoding="async"
                     />
                   </span>
-                ) : (
-                  <span className="approach-step__disc">{step.icon}</span>
-                )}
-                <p className="approach-step__index">{step.index}</p>
+                </p>
                 <h3 className="approach-step__title">{step.title}</h3>
                 <p className="approach-step__note">{step.note}</p>
               </li>
@@ -360,22 +309,6 @@ export function HomeApproach() {
           </ol>
         </div>
 
-        {/* ---------- how we work while we do it ---------- */}
-        <dl className="approach-band mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {PROMISES.map((promise) => (
-            <div key={promise.title} className="approach-promise">
-              <span className="approach-promise__disc">{promise.icon}</span>
-              <div>
-                <dt className="text-[1rem] font-bold tracking-[-0.02em] text-[var(--ink)]">
-                  {promise.title}
-                </dt>
-                <dd className="mt-1 max-w-[13rem] text-[0.875rem] leading-[1.5] text-[var(--ink-soft)]">
-                  {promise.body}
-                </dd>
-              </div>
-            </div>
-          ))}
-        </dl>
       </div>
     </section>
   )

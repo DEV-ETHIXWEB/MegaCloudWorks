@@ -182,13 +182,6 @@
   right: 1.1rem;
   bottom: 1.1rem;
   display: block;
-  /* The plate is bright cloud in places, so the words carry their own
-     ground rather than relying on the picture behind them - and the
-     brand glow underneath is what ties the white lettering back to the
-     rest of the page. */
-  filter: drop-shadow(0 2px 8px rgba(16, 16, 20, 0.5))
-    drop-shadow(0 4px 18px rgba(245, 51, 59, 0.75))
-    drop-shadow(0 0 34px rgba(245, 51, 59, 0.45));
 }
 
 /* the tag riding its top corner */

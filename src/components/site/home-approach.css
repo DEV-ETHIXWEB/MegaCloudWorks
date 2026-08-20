@@ -10,6 +10,22 @@
   position: relative;
   overflow: hidden;
   background: #fdf9f8;
+  /* the run is short for what it carries - five marks and their copy read as
+     a strip when the sections above and below crowd in on them. Given the
+     screen to itself, with its content held in the middle of it, arriving
+     here shows this process and nothing else. */
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+}
+
+@media (max-width: 767px) {
+  /* stacked, the timeline is already taller than the screen - holding it to
+     a screen height would only add empty paper at one end */
+  .home-approach {
+    min-height: 0;
+    display: block;
+  }
 }
 
 /* the ridge on the left and the red smoke on the right, both well back */
@@ -163,6 +179,10 @@
   color: var(--brand);
 }
 
+.approach-step__mark {
+  display: none;
+}
+
 .approach-step__title {
   margin-top: 0.45rem;
   text-align: center;
@@ -269,57 +289,9 @@
   }
 }
 
-.approach-band {
-  border-radius: 1.25rem;
-  border: 1px solid rgba(16, 16, 20, 0.06);
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 26px 60px -50px rgba(16, 16, 20, 0.5);
-}
-
 @media (max-width: 767px) {
   /* stacked and see-through, the four promises read as text floating on
      the sky; each one takes its own card and a shadow to sit on */
-  .approach-band {
-    border: 0;
-    background: transparent;
-    backdrop-filter: none;
-    box-shadow: none;
-    gap: 0.75rem;
-  }
-
-  .approach-promise {
-    border-radius: 1rem;
-    border: 1px solid rgba(16, 16, 20, 0.05);
-    background: rgba(255, 255, 255, 0.94);
-    box-shadow: 0 18px 40px -28px rgba(16, 16, 20, 0.45);
-  }
-
-  .approach-promise + .approach-promise {
-    border-top: 1px solid rgba(16, 16, 20, 0.05);
-  }
-}
-
-.approach-promise {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.35rem 1.6rem;
-}
-
-.approach-promise + .approach-promise {
-  border-left: 1px solid rgba(16, 16, 20, 0.07);
-}
-
-.approach-promise__disc {
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background: rgba(245, 51, 59, 0.09);
-  color: var(--brand);
-  flex: none;
 }
 
 /* ---------------- narrow ---------------- */
@@ -327,11 +299,6 @@
 @media (max-width: 1023px) {
   .approach-hops {
     display: none;
-  }
-
-  .approach-promise + .approach-promise {
-    border-left: 0;
-    border-top: 1px solid rgba(16, 16, 20, 0.07);
   }
 
   .home-approach__wisp {
@@ -361,26 +328,47 @@
 
   .home-approach ol li {
     display: grid;
-    grid-template-columns: 2.3rem minmax(0, 1fr);
+    grid-template-columns: 3.4rem minmax(0, 1fr);
     align-items: start;
     /* no row gap: the title and its note are two halves of one card, and
        a gap between them would show as a seam through it */
     gap: 0 0.9rem;
   }
 
+  /* the stop is the step's artwork itself - no disc around it, the
+     track behind carries the sequence */
   .approach-step__index {
     grid-row: 1 / span 3;
     display: grid;
     place-items: center;
-    width: 2.3rem;
-    height: 2.3rem;
+    width: 3.4rem;
+    height: 3.4rem;
     margin: 0;
-    border-radius: 50%;
-    border: 1.5px solid rgba(245, 51, 59, 0.35);
-    background: #fff;
-    font-size: 0.8125rem;
-    font-weight: 700;
     color: var(--brand);
+  }
+
+  .approach-step__num {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* the stop carries the step's artwork, the same illustration the wide
+     layout pins above it */
+  .approach-step__mark {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .approach-step__mark img {
+    width: 3.4rem;
+    height: 3.4rem;
+    object-fit: contain;
   }
 
   /* the card the stop points at */
@@ -404,10 +392,6 @@
     border: 1px solid rgba(16, 16, 20, 0.05);
     border-top: 0;
     text-align: left;
-  }
-
-  .approach-promise {
-    padding: 1rem 1.1rem;
   }
 
   /* the stops arrive in order as the track comes into view */

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
-import { StepIcon } from './StepIcon'
 
 export type Step = {
   n: string
-  icon: 1 | 2 | 3 | 4
+  /** the artwork for this beat - the same modelled pieces the home page uses */
+  art: string
   title: string
   desc: string
 }
@@ -132,9 +132,12 @@ export function StepRow({
             target. The wrapper shrink-wraps the icon and never transforms, so
             its box is the settled one. */}
         <span className="step-row__mark inline-flex">
-          <StepIcon
-            step={step.icon}
-            className="step-row__icon h-[9.9rem] w-[9.9rem] sm:h-[13.2rem] sm:w-[13.2rem] lg:h-[15.4rem] lg:w-[15.4rem]"
+          <img
+            src={step.art}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="step-row__icon h-[9.9rem] w-[9.9rem] object-contain sm:h-[13.2rem] sm:w-[13.2rem] lg:h-[15.4rem] lg:w-[15.4rem]"
           />
         </span>
       </div>

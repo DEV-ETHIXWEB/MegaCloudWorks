@@ -231,7 +231,7 @@ export function HomeHero() {
           {/* Still an h1: the drawn lines are images with labels, and a
               page without a heading is a page a screen reader cannot
               skim. The size is the only thing the breakpoint changes. */}
-          <h1 className="mt-6 lg:mt-7">
+          <h1 className="hero-title mt-6 lg:mt-7">
             <StrokeText
               text="From idea"
               fontSize={phone ? 54 : 88}
@@ -267,10 +267,6 @@ export function HomeHero() {
             <Link to="/work" className="hero-cta">
               View our work
               <ArrowOut />
-            </Link>
-            <Link to="/services" className="hero-link">
-              Explore process
-              <ArrowOut size={16} />
             </Link>
           </div>
 

@@ -1,4 +1,5 @@
-import { Link } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
+
 import { TECH } from './TechMarks'
 
 import './home-craft.css'
@@ -14,14 +15,6 @@ const stroke = {
   strokeLinecap: 'round',
   strokeLinejoin: 'round',
 } as const
-
-function ArrowOut() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" {...stroke} aria-hidden>
-      <path d="M7 17 17 7M8 7h9v9" />
-    </svg>
-  )
-}
 
 function TargetIcon() {
   return (
@@ -123,7 +116,124 @@ function CloudUpIcon() {
  * the artefacts
  * ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ *
+ * the choreography
+ *
+ * Every artefact on the table is drawn in the order a build actually
+ * happens: the wireframe is blocked out, the flow is joined up, the
+ * screen loads, the route is typed, the suite goes green and only then
+ * does the release fire. One clock, kept here in seconds and handed to
+ * the stylesheet as `--d` on each part, so the timing is readable in one
+ * place while the motion itself stays in CSS.
+ * ------------------------------------------------------------------ */
+
+/** a part's cue, in seconds from the moment the table comes into view */
+const cue = (at: number) =>
+  ({ '--d': `${at.toFixed(2)}s` }) as React.CSSProperties
+
+/* One queue, not six things at once: the table is read left to right in
+   the order asked for - the code, the flow, the wireframe, the screen, the
+   suite, the release - and each artefact waits for the one before it to
+   finish. Every panel's parts are cued from its own start, so the order
+   here is the only thing that has to change to re-cut the sequence. */
+const T_START = 0.15
+
+/** the beat between one artefact finishing and the next beginning */
+const GAP = 0.15
+
+type Tok = { t: string; c?: string }
+
+const CODE: Array<Array<Tok>> = [
+  [
+    { t: 'const ', c: 'craft-tok-key' },
+    { t: 'app = ' },
+    { t: 'express', c: 'craft-tok-fn' },
+    { t: '();' },
+  ],
+  [],
+  [
+    { t: 'app.' },
+    { t: 'get', c: 'craft-tok-fn' },
+    { t: '(' },
+    { t: "'/api/dashboard'", c: 'craft-tok-str' },
+    { t: ', ' },
+    { t: 'async', c: 'craft-tok-key' },
+    { t: ' (req, res) => {' },
+  ],
+  [{ t: '  ' }, { t: 'try', c: 'craft-tok-key' }, { t: ' {' }],
+  [
+    { t: '    ' },
+    { t: 'const', c: 'craft-tok-key' },
+    { t: ' data = ' },
+    { t: 'await', c: 'craft-tok-key' },
+    { t: ' ' },
+    { t: 'getDashboard', c: 'craft-tok-fn' },
+    { t: '(' },
+  ],
+  [{ t: '      req.user.id' }],
+  [{ t: '    );' }],
+  [
+    { t: '    res.' },
+    { t: 'json', c: 'craft-tok-fn' },
+    { t: '({ success: ' },
+    { t: 'true', c: 'craft-tok-key' },
+    { t: ', data });' },
+  ],
+  [{ t: '  } ' }, { t: 'catch', c: 'craft-tok-key' }, { t: ' (error) {' }],
+  [
+    { t: '    res.' },
+    { t: 'status', c: 'craft-tok-fn' },
+    { t: '(' },
+    { t: '500', c: 'craft-tok-num' },
+    { t: ').' },
+    { t: 'json', c: 'craft-tok-fn' },
+    { t: '({ error: error.message });' },
+  ],
+  [{ t: '  }' }],
+  [{ t: '});' }],
+]
+
+/** each line's cue, how long it takes to type, and how many steps that is */
+const CODE_RUN = (() => {
+  let at = T_START
+  return CODE.map((line) => {
+    const n = Math.max(
+      line.reduce((sum, tok) => sum + tok.t.length, 0),
+      1,
+    )
+    const dur = Math.max(0.07, n * 0.008)
+    const row = { at, dur, n }
+    at += dur + 0.025
+    return row
+  })
+})()
+
+const CODE_LAST = CODE_RUN[CODE_RUN.length - 1]
+const T_CODE_END = CODE_LAST.at + CODE_LAST.dur
+
+/* 02 the flow: three boxes, each written into and joined to the next,
+   then the three leaves */
+const T_FLOW = T_CODE_END + GAP
+const T_FLOW_END = T_FLOW + 1.45 + 2 * 0.12 + 0.42
+
+/* 03 the wireframe: eleven blocks dealt out */
+const T_WIRE = T_FLOW_END + GAP
+const T_WIRE_END = T_WIRE + 10 * 0.07 + 0.42
+
+/* 04 the screen, loading a part at a time */
+const T_UI = T_WIRE_END + GAP
+const T_UI_END = T_UI + 1.79 + 0.5
+
+/* 05 the suite, and 06 the release once it is green */
+const T_TESTS = T_UI_END + GAP
+const T_DEPLOY = T_TESTS + 4 * 0.32 + 0.15
+
+/* ------------------------------ the flow ------------------------------ */
+
 function UserFlowPanel() {
+  const steps = ['Splash', 'Onboarding', 'Home']
+  const leaves = ['Search', 'Category', 'Profile']
+
   return (
     <div
       className="craft-panel"
@@ -137,16 +247,36 @@ function UserFlowPanel() {
       }
     >
       <p className="craft-panel__label">User Flow</p>
-      <span className="craft-node">Splash</span>
-      <span className="craft-arrow" />
-      <span className="craft-node">Onboarding</span>
-      <span className="craft-arrow" />
-      <span className="craft-node">Home</span>
-      <span className="craft-arrow" />
+
+      {steps.map((step, i) => (
+        <div key={step}>
+          {/* the box lands, its label is written into it, then the line
+              reaches down for the next one */}
+          <span className="craft-node craft-pop" style={cue(T_FLOW + i * 0.45)}>
+            <span
+              className="craft-fade"
+              style={cue(T_FLOW + i * 0.45 + 0.16)}
+            >
+              {step}
+            </span>
+          </span>
+          <span
+            className="craft-arrow craft-draw"
+            style={cue(T_FLOW + i * 0.45 + 0.3)}
+          />
+        </div>
+      ))}
+
       <div className="grid grid-cols-3 gap-1">
-        {['Search', 'Category', 'Profile'].map((leaf) => (
-          <span key={leaf} className="craft-node craft-node--leaf">
-            {leaf}
+        {leaves.map((leaf, i) => (
+          <span
+            key={leaf}
+            className="craft-node craft-node--leaf craft-pop"
+            style={cue(T_FLOW + 1.45 + i * 0.12)}
+          >
+            <span className="craft-fade" style={cue(T_FLOW + 1.6 + i * 0.12)}>
+              {leaf}
+            </span>
           </span>
         ))}
       </div>
@@ -154,7 +284,13 @@ function UserFlowPanel() {
   )
 }
 
+/* --------------------------- the wireframe --------------------------- */
+
 function WireframePanel() {
+  /* the blocks pop in the order a wireframe gets drawn: chrome first,
+     then the hero, the cards, the copy and the tab bar */
+  const pop = (i: number) => cue(T_WIRE + i * 0.07)
+
   return (
     <div
       className="craft-panel"
@@ -171,23 +307,45 @@ function WireframePanel() {
       <p className="craft-panel__label">Wireframe</p>
       <div className="craft-wire">
         <div className="flex items-center gap-1">
-          <span className="craft-wire__block size-[0.35rem] rounded-full" />
-          <span className="craft-wire__block h-[0.25rem] flex-1" />
+          <span
+            className="craft-wire__block craft-pop size-[0.35rem] rounded-full"
+            style={pop(0)}
+          />
+          <span
+            className="craft-wire__block craft-pop h-[0.25rem] flex-1"
+            style={pop(1)}
+          />
         </div>
-        <div className="craft-wire__block mt-1.5 h-[2.6rem] w-full" />
+        <div
+          className="craft-wire__block craft-pop mt-1.5 h-[2.6rem] w-full"
+          style={pop(2)}
+        />
         <div className="mt-1.5 grid grid-cols-2 gap-1">
-          <span className="craft-wire__block h-[1.4rem]" />
-          <span className="craft-wire__block h-[1.4rem]" />
+          <span
+            className="craft-wire__block craft-pop h-[1.4rem]"
+            style={pop(3)}
+          />
+          <span
+            className="craft-wire__block craft-pop h-[1.4rem]"
+            style={pop(4)}
+          />
         </div>
         <div className="mt-1.5 space-y-1">
-          <span className="craft-wire__block block h-[0.25rem] w-full" />
-          <span className="craft-wire__block block h-[0.25rem] w-[70%]" />
+          <span
+            className="craft-wire__block craft-pop block h-[0.25rem] w-full"
+            style={pop(5)}
+          />
+          <span
+            className="craft-wire__block craft-pop block h-[0.25rem] w-[70%]"
+            style={pop(6)}
+          />
         </div>
         <div className="mt-2 flex justify-around border-t border-[var(--line)] pt-1.5">
           {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
-              className="craft-wire__block size-[0.45rem] rounded-full"
+              className="craft-wire__block craft-pop size-[0.45rem] rounded-full"
+              style={pop(7 + i)}
             />
           ))}
         </div>
@@ -209,6 +367,8 @@ const ACTIVITY = [
   { t: 'Shopping', w: 'May 13, 6:20 PM', a: '-$120', up: false },
 ] as const
 
+/* ---------------------------- the screen ---------------------------- */
+
 function UiDesignPanel() {
   return (
     <div
@@ -224,10 +384,18 @@ function UiDesignPanel() {
       }
     >
       <p className="craft-panel__label">UI Design</p>
-      <div className="craft-screen">
-        <p className="text-[0.6rem] font-bold">Good morning, Alex 👋</p>
 
-        <p className="mt-1.5 flex items-center gap-1 rounded-full bg-white/8 px-1.5 py-[0.22rem] text-[0.45rem] text-white/50">
+      {/* the screen loads the way a real one does: greeting, search,
+          balance, then the two lists under it */}
+      <div className="craft-screen">
+        <p className="craft-rise text-[0.6rem] font-bold" style={cue(T_UI)}>
+          Good morning, Alex 👋
+        </p>
+
+        <p
+          className="craft-rise mt-1.5 flex items-center gap-1 rounded-full bg-white/8 px-1.5 py-[0.22rem] text-[0.45rem] text-white/50"
+          style={cue(T_UI + 0.14)}
+        >
           <svg width="7" height="7" viewBox="0 0 24 24" {...stroke}>
             <circle cx="11" cy="11" r="7" />
             <path d="m16.5 16.5 4 4" />
@@ -235,7 +403,10 @@ function UiDesignPanel() {
           Search anything…
         </p>
 
-        <div className="craft-screen__card mt-1.5">
+        <div
+          className="craft-screen__card craft-rise mt-1.5"
+          style={cue(T_UI + 0.3)}
+        >
           <p className="text-[0.42rem] text-white/50">Total balance</p>
           <p className="text-[0.72rem] font-extrabold tracking-[-0.02em]">
             $24,680.50
@@ -247,20 +418,32 @@ function UiDesignPanel() {
             style={{ height: '1.5rem' }}
             aria-hidden
           >
-            <path d="M2 26 L14 20 L24 24 L34 14 L44 19 L56 9 L66 15 L76 10 L88 16 L100 6 L112 11 L118 4" />
+            {/* the trace draws itself once the card has landed */}
+            <path
+              className="craft-trace"
+              pathLength={100}
+              style={cue(T_UI + 0.48)}
+              d="M2 26 L14 20 L24 24 L34 14 L44 19 L56 9 L66 15 L76 10 L88 16 L100 6 L112 11 L118 4"
+            />
           </svg>
-          <p className="mt-0.5 text-[0.4rem]">
+          <p className="craft-fade mt-0.5 text-[0.4rem]" style={cue(T_UI + 1.1)}>
             <span className="font-bold text-[var(--brand)]">↑ 12.5%</span>{' '}
             <span className="text-white/50">vs last month</span>
           </p>
         </div>
 
-        <p className="mt-1.5 text-[0.45rem] font-semibold">Quick actions</p>
+        <p
+          className="craft-rise mt-1.5 text-[0.45rem] font-semibold"
+          style={cue(T_UI + 1.2)}
+        >
+          Quick actions
+        </p>
         <div className="mt-1 grid grid-cols-4 gap-1">
-          {QUICK.map((action) => (
+          {QUICK.map((action, i) => (
             <span
               key={action.label}
-              className="grid justify-items-center gap-0.5"
+              className="craft-pop grid justify-items-center gap-0.5"
+              style={cue(T_UI + 1.3 + i * 0.09)}
             >
               <span className="craft-screen__tile">
                 <svg width="9" height="9" viewBox="0 0 24 24" {...stroke}>
@@ -274,10 +457,19 @@ function UiDesignPanel() {
           ))}
         </div>
 
-        <p className="mt-1.5 text-[0.45rem] font-semibold">Recent activity</p>
+        <p
+          className="craft-rise mt-1.5 text-[0.45rem] font-semibold"
+          style={cue(T_UI + 1.7)}
+        >
+          Recent activity
+        </p>
         <div className="mt-1 space-y-1">
-          {ACTIVITY.map((row) => (
-            <div key={row.t} className="craft-screen__row">
+          {ACTIVITY.map((row, i) => (
+            <div
+              key={row.t}
+              className="craft-screen__row craft-slide"
+              style={cue(T_UI + 1.8 + i * 0.12)}
+            >
               <span className="craft-screen__tile size-[0.9rem] rounded-[0.28rem]" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[0.42rem] font-semibold">
@@ -301,6 +493,13 @@ function UiDesignPanel() {
   )
 }
 
+/* ----------------------------- the code -----------------------------
+ *
+ * Held as tokens per line rather than one block of markup, because the
+ * typing is per line: each line is clipped to nothing and wiped open in
+ * `steps(characters)`, which is what gives it a terminal's tick instead
+ * of a smooth slide. */
+
 function CleanCodePanel() {
   return (
     <div
@@ -318,41 +517,47 @@ function CleanCodePanel() {
       <p className="craft-panel__label">Clean Code</p>
       <div className="craft-code">
         <div className="craft-code__gutter">
-          {Array.from({ length: 12 }, (_, i) => (
-            <div key={i}>{i + 1}</div>
+          {CODE_RUN.map((row, i) => (
+            <div key={i} className="craft-fade" style={cue(row.at)}>
+              {i + 1}
+            </div>
           ))}
         </div>
         <pre>
           <code>
-            <span className="craft-tok-key">const</span> app ={' '}
-            <span className="craft-tok-fn">express</span>();
-            {'\n'}
-            {'\n'}app.<span className="craft-tok-fn">get</span>(
-            <span className="craft-tok-str">'/api/dashboard'</span>,{' '}
-            <span className="craft-tok-key">async</span> (req, res) =&gt; {'{'}
-            {'\n'} <span className="craft-tok-key">try</span> {'{'}
-            {'\n'} <span className="craft-tok-key">const</span> data ={' '}
-            <span className="craft-tok-key">await</span>{' '}
-            <span className="craft-tok-fn">getDashboard</span>({'\n'}{' '}
-            req.user.id
-            {'\n'} );
-            {'\n'} res.<span className="craft-tok-fn">json</span>({'{'} success:{' '}
-            <span className="craft-tok-key">true</span>, data {'}'});
-            {'\n'} {'}'} <span className="craft-tok-key">catch</span> (error){' '}
-            {'{'}
-            {'\n'} res.<span className="craft-tok-fn">status</span>(
-            <span className="craft-tok-num">500</span>).
-            <span className="craft-tok-fn">json</span>({'{'} error:
-            error.message {'}'});
-            {'\n'} {'}'}
-            {'\n'}
-            {'}'});
+            {CODE.map((line, i) => (
+              <span
+                key={i}
+                className="craft-code__line"
+                style={
+                  {
+                    '--d': `${CODE_RUN[i].at.toFixed(2)}s`,
+                    '--dur': `${CODE_RUN[i].dur.toFixed(2)}s`,
+                    '--n': CODE_RUN[i].n,
+                  } as React.CSSProperties
+                }
+              >
+                <span className="craft-code__ink">
+                  {line.length ? (
+                    line.map((tok, j) => (
+                      <span key={j} className={tok.c}>
+                        {tok.t}
+                      </span>
+                    ))
+                  ) : (
+                    <>{' '}</>
+                  )}
+                </span>
+              </span>
+            ))}
           </code>
         </pre>
       </div>
     </div>
   )
 }
+
+/* --------------------------- the test run --------------------------- */
 
 const TESTS = [
   'Functional testing',
@@ -376,16 +581,23 @@ function TestingPanel() {
       }
     >
       <p className="craft-panel__label">Testing &amp; QA</p>
-      {TESTS.map((test) => (
+      {TESTS.map((test, i) => (
         <div key={test} className="craft-test">
-          <span className="craft-test__tick">
+          {/* grey until its case passes, then it lights */}
+          <span
+            className="craft-test__tick craft-pass"
+            style={cue(T_TESTS + i * 0.32)}
+          >
             <TickIcon />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[0.5rem] font-semibold">
               {test}
             </span>
-            <span className="block text-[0.42rem] text-[var(--ink-faint)]">
+            <span
+              className="craft-fade block text-[0.42rem] text-[var(--ink-faint)]"
+              style={cue(T_TESTS + i * 0.32 + 0.16)}
+            >
               Passed
             </span>
           </span>
@@ -397,6 +609,8 @@ function TestingPanel() {
     </div>
   )
 }
+
+/* ---------------------------- the release ---------------------------- */
 
 function DeploymentPanel() {
   return (
@@ -413,17 +627,32 @@ function DeploymentPanel() {
       }
     >
       <p className="craft-panel__label">Deployment</p>
+      {/* nothing here moves until the suite is green */}
       <div className="craft-dial">
-        <span className="craft-dial__ring" />
-        <span className="craft-dial__core">
+        <span className="craft-dial__ring craft-spin" style={cue(T_DEPLOY)} />
+        <span
+          className="craft-dial__core craft-lift"
+          style={cue(T_DEPLOY + 0.45)}
+        >
           <CloudUpIcon />
         </span>
       </div>
-      <p className="mt-1.5 text-center text-[0.6rem] font-bold">Deployed</p>
-      <p className="text-center text-[0.45rem] text-[var(--ink-faint)]">
+      <p
+        className="craft-rise mt-1.5 text-center text-[0.6rem] font-bold"
+        style={cue(T_DEPLOY + 0.75)}
+      >
+        Deployed
+      </p>
+      <p
+        className="craft-rise text-center text-[0.45rem] text-[var(--ink-faint)]"
+        style={cue(T_DEPLOY + 0.85)}
+      >
         v1.2.0
       </p>
-      <p className="mt-1 text-center text-[0.45rem] leading-snug text-[var(--ink-soft)]">
+      <p
+        className="craft-rise mt-1 text-center text-[0.45rem] leading-snug text-[var(--ink-soft)]"
+        style={cue(T_DEPLOY + 0.95)}
+      >
         Live on App Store
         <br />
         &amp; Play Store
@@ -469,17 +698,44 @@ const DISCIPLINES = [
   },
 ] as const
 
-/** The route threading the artefacts, bottom left to top right. */
-const ROUTE = 'M 2 96 C 18 92, 30 84, 44 74 S 66 58, 78 40 S 92 18, 99 6'
+/**
+ * The table's own clock.
+ *
+ * The parts are hidden by the stylesheet only while `data-play` is on the
+ * table, and that attribute is written here - so a browser that never
+ * runs this effect shows the finished artefacts rather than an empty
+ * box. Once the table reaches the screen it flips to `run` and every
+ * part fires off its own `--d`.
+ */
+function useSequence() {
+  const ref = useRef<HTMLDivElement>(null)
 
-const STOPS = [
-  { x: 20, y: 90 },
-  { x: 44, y: 74 },
-  { x: 66, y: 55 },
-  { x: 86, y: 27 },
-] as const
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce || typeof IntersectionObserver === 'undefined') return
+
+    el.dataset.play = 'armed'
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        el.dataset.play = 'run'
+        io.disconnect()
+      },
+      { threshold: 0.2 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  return ref
+}
 
 export function HomeCraft() {
+  const collage = useSequence()
+
   return (
     <section id="craft" className="home-craft">
       <div className="relative mx-auto max-w-[1360px] px-6 py-10 sm:px-10 lg:px-28 lg:py-6">
@@ -500,36 +756,10 @@ export function HomeCraft() {
             <p className="mt-3.5 max-w-md text-[0.9375rem] leading-[1.55] text-[var(--ink-soft)]">
               We go beyond code. Every piece matters, every time.
             </p>
-
-            <Link to="/services" className="craft-link mt-7">
-              <span className="craft-link__disc">
-                <ArrowOut />
-              </span>
-              <span className="craft-link__label">See how we build</span>
-            </Link>
           </div>
 
           {/* ---------- what a build leaves behind ---------- */}
-          <div className="craft-collage" aria-hidden="true">
-            <svg
-              className="craft-collage__route"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
-              <path className="craft-route-glow" d={ROUTE} />
-              <path className="craft-route-body" d={ROUTE} />
-              <path className="craft-route-core" d={ROUTE} />
-              {STOPS.map((stop) => (
-                <circle
-                  key={stop.x}
-                  className="craft-route-stop"
-                  cx={stop.x}
-                  cy={stop.y}
-                  r="0.9"
-                />
-              ))}
-            </svg>
-
+          <div ref={collage} className="craft-collage" aria-hidden="true">
             <UserFlowPanel />
             <WireframePanel />
             <UiDesignPanel />

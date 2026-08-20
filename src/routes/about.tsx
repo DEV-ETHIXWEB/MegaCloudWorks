@@ -6,12 +6,11 @@ import { SiteHeader } from '#/components/site/SiteHeader'
 import { SiteFooter } from '#/components/site/SiteFooter'
 import { SummitCta } from '#/components/site/SummitCta'
 import { StudioBridge } from '#/components/site/StudioBridge'
-import { BlurText } from '#/components/site/BlurText'
 import { PageWash } from '#/components/site/PageWash'
 import { StepRow } from '#/components/site/StepRow'
+import { TeamExpertise } from '#/components/site/TeamExpertise'
 import { StepTrail } from '#/components/site/StepTrail'
 import { StepSky } from '#/components/site/StepSky'
-import { ReachMap } from '#/components/site/ReachMap'
 import { seo } from '#/lib/seo'
 
 export const Route = createFileRoute('/about')({
@@ -31,28 +30,28 @@ export const Route = createFileRoute('/about')({
 const STEPS = [
   {
     n: '01',
-    icon: 1,
+    art: '/card-brand-400.webp',
     side: 'left',
     title: 'Understand',
     desc: 'We start with your problem, not a template: who this is for, what it has to do, and what counts as done.',
   },
   {
     n: '02',
-    icon: 2,
+    art: '/card-design-400.webp',
     side: 'right',
     title: 'Design',
     desc: 'We shape the flows before the pixels, then draw an interface that makes the next step obvious.',
   },
   {
     n: '03',
-    icon: 3,
+    art: '/card-development-400.webp',
     side: 'left',
     title: 'Build',
     desc: 'We develop it properly - tested, reviewed, and built to hold up as the product and its traffic grow.',
   },
   {
     n: '04',
-    icon: 4,
+    art: '/process/rocket-growth.webp',
     side: 'center',
     title: 'Ship & Evolve',
     desc: 'We launch, watch how it is actually used, and keep improving it release after release.',
@@ -61,9 +60,6 @@ const STEPS = [
 
 function About() {
   const root = useRef<HTMLDivElement>(null)
-  // the hero headline blurs in a line at a time, on the same beat system the
-  // studio bridge uses further down the page - one language for big type
-  const [beat, setBeat] = useState(0)
   // how far down the "How we work" route the reader has walked - each row
   // reports in as it arrives, and the spine draws itself to match
   const steps = useRef<HTMLDivElement>(null)
@@ -72,51 +68,6 @@ function About() {
     (index: number) => setReached((cur) => Math.max(cur, index + 1)),
     [],
   )
-  // the coverage block: the map is the front plate, the copy slides out from
-  // behind it once the block has arrived
-  const coverage = useRef<HTMLDivElement>(null)
-  const [covered, setCovered] = useState(false)
-
-  useEffect(() => {
-    const el = coverage.current
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setCovered(true)
-      return
-    }
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const seen = entries.some(
-          (e) => e.isIntersecting || e.boundingClientRect.bottom < 0,
-        )
-        if (!seen) return
-        setCovered(true)
-        io.disconnect()
-      },
-      { threshold: 0.3 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) {
-      setBeat(99)
-      return
-    }
-
-    // the last mark is the basecamp callout: it lands after the headline copy
-    // has settled, so the label reads as a second thought rather than a
-    // competing one
-    const marks = [80, 300, 560, 820, 1180, 1520]
-    const timers = marks.map((ms, i) =>
-      window.setTimeout(() => setBeat(i + 1), ms),
-    )
-    return () => timers.forEach((t) => window.clearTimeout(t))
-  }, [])
-
   useEffect(() => {
     if (typeof window === 'undefined') return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -128,57 +79,20 @@ function About() {
       gsap.registerPlugin(ScrollTrigger)
 
       ctx = gsap.context(() => {
-        // the headline copy is driven by BlurText (see `beat` above), so the
-        // only thing left for GSAP here is the photograph. It fades - the slow
-        // drift/scale lives in CSS on the <img> itself, and a GSAP transform on
-        // the same element would be steamrolled by that animation anyway.
+        // the headline copy is plain type now, so the only thing left for
+        // GSAP here is the photograph. It fades - the slow drift/scale lives
+        // in CSS on the <img> itself, and a GSAP transform on the same
+        // element would be steamrolled by that animation anyway.
         gsap.from('[data-hero-art]', {
           opacity: 0,
           duration: 1.4,
           ease: 'power2.out',
         })
 
-        // the basecamp callout is not tweened here: its type runs on the same
-        // BlurText beat system as the headline and its leader line strikes on
-        // a stepped CSS flicker. A GSAP fade on the wrapper would smooth over
-        // exactly the hard on/off edges that make the strike read as retro.
-
-        // an element already on-screen at mount (common on tall viewports,
-        // or once the hero photo finishes loading and shrinks the page)
-        // will never fire ScrollTrigger's onEnter, since that only fires on
-        // a scroll/refresh crossing - so those play immediately instead of
-        // waiting on a trigger that has already been passed
-        const revealables = gsap.utils.toArray<HTMLElement>('[data-reveal]')
-        const inView = (el: HTMLElement) =>
-          el.getBoundingClientRect().top < window.innerHeight * 0.92
-
-        revealables.forEach((el) => {
-          if (inView(el)) {
-            gsap.from(el, {
-              y: 42,
-              opacity: 0,
-              duration: 0.9,
-              ease: 'power3.out',
-            })
-            return
-          }
-          gsap.from(el, {
-            y: 42,
-            opacity: 0,
-            duration: 0.9,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 92%',
-              invalidateOnRefresh: true,
-            },
-          })
-        })
-
-        // "How we work" is not animated here. Its four marks run their own
-        // sequence off the `lit` flag above - mark, then copy, then the
-        // dotted trail on to the next one - and a GSAP tween on the card
-        // would be fading the same pixels a second time, out of step.
+        // The type on this page does not animate at all any more - no
+        // scroll-gated fades on `[data-reveal]`, no per-line reveal in "How
+        // we work". Only the marks and the artwork move; the words are
+        // simply there to be read the moment they are on screen.
       }, root)
     } catch {
       // animation setup failed for any reason (extension conflict, GSAP
@@ -271,28 +185,16 @@ function About() {
               close to the text column, leaving no clean spot for the label */}
           <div
             data-callout
-            className={`callout pointer-events-none absolute left-[40%] top-[48%] hidden w-[13.5rem] lg:block ${
-              beat >= 6 ? 'is-on' : ''
-            }`}
+            className="callout is-on pointer-events-none absolute left-[40%] top-[48%] hidden w-[13.5rem] lg:block"
           >
             <div className="flex items-center gap-3">
               <div className="w-[9.5rem] shrink-0">
-                <BlurText
-                  text="MegaCloudWorks"
-                  animateBy="letters"
-                  start={beat >= 6}
-                  delay={26}
-                  stepDuration={0.28}
-                  className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--brand)]"
-                />
-                <BlurText
-                  text="Basecamp"
-                  animateBy="letters"
-                  start={beat >= 6}
-                  delay={26}
-                  stepDuration={0.28}
-                  className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--ink)]"
-                />
+                <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--brand)]">
+                  MegaCloudWorks
+                </p>
+                <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--ink)]">
+                  Basecamp
+                </p>
               </div>
               {/* the leader strikes rather than fades: it grows in stepped
                   stutters like a tube light finding its charge */}
@@ -310,13 +212,9 @@ function About() {
                 />
               </span>
             </div>
-            <BlurText
-              text="App design & development"
-              start={beat >= 6}
-              delay={48}
-              stepDuration={0.3}
-              className="mt-1.5 w-[9.5rem] text-[10.5px] font-semibold uppercase leading-snug tracking-[0.06em] text-[var(--ink-soft)]"
-            />
+            <p className="mt-1.5 w-[9.5rem] text-[10.5px] font-semibold uppercase leading-snug tracking-[0.06em] text-[var(--ink-soft)]">
+              App design &amp; development
+            </p>
           </div>
         </div>
 
@@ -327,59 +225,21 @@ function About() {
           <div className="mx-auto max-w-[1600px]">
             <div className="max-w-xl">
               <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[var(--brand)]">
-                <BlurText
-                  as="span"
-                  text="About us"
-                  start={beat >= 1}
-                  delay={70}
-                  stepDuration={0.3}
-                />
+                <span>About us</span>
                 <span
                   aria-hidden="true"
-                  className={`h-px w-8 origin-left bg-[var(--brand)] transition-transform duration-700 ease-out ${
-                    beat >= 1 ? 'scale-x-100' : 'scale-x-0'
-                  }`}
+                  className="h-px w-8 origin-left bg-[var(--brand)]"
                 />
               </p>
               <h1 className="mt-5 font-display text-[clamp(3rem,7vw,5.25rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--ink)]">
-                {/* one BlurText per line, letter by letter - the words are
-                    short enough that per-word staggering would land them all
-                    at once and lose the cascade */}
-                <BlurText
-                  as="span"
-                  text="Design."
-                  animateBy="letters"
-                  start={beat >= 2}
-                  delay={38}
-                  stepDuration={0.32}
-                  className="block"
-                />
-                <BlurText
-                  as="span"
-                  text="Build."
-                  animateBy="letters"
-                  start={beat >= 3}
-                  delay={38}
-                  stepDuration={0.32}
-                  className="block"
-                />
-                <BlurText
-                  as="span"
-                  text="Ship."
-                  animateBy="letters"
-                  start={beat >= 4}
-                  delay={38}
-                  stepDuration={0.32}
-                  className="block text-[var(--brand)]"
-                />
+                <span className="block">Design.</span>
+                <span className="block">Build.</span>
+                <span className="block text-[var(--brand)]">Ship.</span>
               </h1>
-              <BlurText
-                text="We partner with businesses through two studios to create digital experiences that work."
-                start={beat >= 5}
-                delay={34}
-                stepDuration={0.3}
-                className="mt-6 max-w-md text-lg leading-relaxed text-[var(--ink-soft)]"
-              />
+              <p className="mt-6 max-w-md text-lg leading-relaxed text-[var(--ink-soft)]">
+                We partner with businesses through two studios to create digital
+                experiences that work.
+              </p>
             </div>
           </div>
         </div>
@@ -387,7 +247,7 @@ function About() {
         {/* ---- below lg the photograph gets its own full-bleed block under the
             copy, with the basecamp label sitting above it as a caption ---- */}
         <div className="lg:hidden">
-          <div data-reveal className="px-6 sm:px-10">
+          <div className="px-6 sm:px-10">
             <div className="flex items-center gap-3">
               <div className="shrink-0">
                 <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--brand)]">
@@ -412,7 +272,6 @@ function About() {
           </div>
 
           <div
-            data-reveal
             className="hero-mask--foot relative mt-5 h-[21rem] overflow-hidden sm:h-[26rem]"
           >
             <img
@@ -435,7 +294,6 @@ function About() {
       >
         <div className="mx-auto max-w-[1600px]">
           <p
-            data-reveal
             className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink)]"
           >
             <span
@@ -445,28 +303,25 @@ function About() {
             Two studios. One team.
           </p>
 
-          <div data-reveal className="mt-6">
+          <div className="mt-6">
             <StudioBridge />
           </div>
         </div>
       </section>
 
-      {/* ================= 3. HOW WE WORK - the red stretch ================= */}
-      {/* the section itself is flat: the colour lives in <PageWash>, which
-          flips the whole page over as this band comes up */}
-      {/* This band paints itself. It used to hand the page over to <PageWash>,
-          but the wash's red and the red the sky plates are painted in are not
-          the same red, and the two met in a visible line at the band's edges -
-          so the band stays `paper` as far as the wash is concerned, keeps the
-          on-brand tokens for its white type, and carries the plates' own red
-          underneath them.
+      {/* ================= 3. HOW WE WORK ================= */}
+      {/* This band paints itself rather than handing the page over to
+          <PageWash>: it stays `paper` as far as the wash is concerned and
+          carries its own ground - the artwork behind it is pale through the
+          middle, which is exactly where the type sits, so the section keeps
+          the page's ordinary ink and red instead of inverting.
 
-          No overflow clipping here either: the plates are held by a sticky
+          No overflow clipping here either: the plate is held by a sticky
           frame, and a clipping ancestor would make this section its scroll
           container - at which point it would never stick. */}
       <section
         data-band="paper"
-        className="step-band on-brand relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
+        className="step-band relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-36"
       >
         {/* the sky the four steps are walked across */}
         <StepSky />
@@ -511,47 +366,13 @@ function About() {
         </div>
       </section>
 
-      {/* ================= 4. OUR COVERAGE - back on paper ================= */}
+      {/* ================= 4. TEAM & EXPERTISE ================= */}
       <section
         data-band="paper"
         className="relative px-6 py-24 sm:px-10 sm:py-28 lg:px-20 lg:py-32"
       >
         <div className="mx-auto max-w-[1600px]">
-          <p
-            data-reveal
-            className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink)]"
-          >
-            <span
-              aria-hidden="true"
-              className="size-1.5 shrink-0 rounded-full bg-[var(--brand)]"
-            />
-            Our coverage
-          </p>
-
-          {/* the map runs the full width of the card and the copy is a small
-              plate that pops out from behind it, bottom right */}
-          <div
-            ref={coverage}
-            className={`coverage relative mt-6 rounded-2xl border border-[var(--line)] bg-[var(--paper)] ${
-              covered ? 'is-out' : ''
-            }`}
-          >
-            <div className="coverage__map flex items-center justify-center px-3 py-6 sm:px-6 sm:py-10 lg:px-10 lg:py-14">
-              <ReachMap className="w-full" />
-            </div>
-
-            <div className="coverage__copy border-t border-[var(--line)] p-5 sm:p-6 lg:absolute lg:bottom-6 lg:right-6 lg:z-20 lg:max-w-[20rem] lg:rounded-xl lg:border lg:bg-[var(--paper)] lg:p-6 lg:shadow-[0_18px_50px_-20px_rgba(16,16,20,0.35)]">
-              <h3 className="font-display text-[clamp(1.4rem,2.2vw,1.75rem)] font-extrabold leading-[1.06] tracking-[-0.03em] text-[var(--ink)]">
-                Built for{' '}
-                <span className="text-[var(--brand)]">American teams.</span>
-              </h3>
-
-              <p className="mt-2.5 text-sm leading-relaxed text-[var(--ink-soft)]">
-                We ship on your calendar, not ours. And everywhere else,
-                we&rsquo;re still one call away.
-              </p>
-            </div>
-          </div>
+          <TeamExpertise />
         </div>
       </section>
 

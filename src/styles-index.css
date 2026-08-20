@@ -148,6 +148,28 @@
   max-width: 202px;
 }
 
+/* On the stage the plate is a fixed height, and the device has to live inside
+   the room that leaves it. At 202px wide the phone stood 429px tall in a
+   286px slot, so the plate's own clip cut it off at the knee. Two things fix
+   it: the pointer-room padding comes off - nothing is picked up and turned
+   here - and the width is set so the device's own 300:620 ratio lands inside
+   the slot. */
+.work-stage .work-plate__device {
+  overflow: hidden;
+}
+
+.work-stage .work-plate__device > span {
+  /* the slot is whatever the frame has left after the name, the chips and
+     the footer - about 17rem of the plate - and 300/620 of that height is
+     the widest the device can be and still stand in it whole */
+  --slot: calc(min(34rem, 100vh - 13rem) - 17rem);
+  max-width: min(122px, calc((var(--slot) - 1.5rem) * 0.48));
+}
+
+.work-stage .work-plate__device .phone3d {
+  padding: 0;
+}
+
 /*
   The kit is authored against a ~300px display, so a 158px device has to be
   told the app is running at half scale or a nav-bar title wraps mid-word.

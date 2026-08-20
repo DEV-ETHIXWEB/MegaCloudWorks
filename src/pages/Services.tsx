@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
 import { SiteHeader } from '../components/SiteHeader'
 import { SiteFooter } from '../components/SiteFooter'
@@ -8,11 +8,13 @@ import { Reveal } from '../components/Reveal'
 import { MagneticButton } from '../components/MagneticButton'
 import { ServiceNavigator } from '../components/ServiceNavigator'
 import { ServiceCircles } from '../components/ServiceCircles'
+import { TypewriterEffect } from '../components/TypewriterEffect'
+import { WhyMegaCloudWorks } from '../components/WhyMegaCloudWorks'
 import { ProcessTimeline } from '../components/ProcessTimeline'
 import { WorkCard } from '../components/WorkCard'
 import { StatsSection } from '../components/StatsSection'
 import { CTASection } from '../components/CTASection'
-import { SERVICES_HERO, COLUMNS, FACTS } from '../content/services'
+import { SERVICES_HERO, FACTS } from '../content/services'
 import { CONCEPTS } from '../content/concepts'
 
 export function Services() {
@@ -30,7 +32,7 @@ export function Services() {
           and painting behind <main>'s own background (neither this section
           nor <main> otherwise sets a z-index, so nothing else contains
           them). */}
-      <section className="relative isolate overflow-hidden px-[var(--edge)] pb-20 pt-36 sm:pt-44">
+      <section className="relative isolate overflow-hidden px-[var(--edge)] pb-14 pt-36 sm:pb-16 sm:pt-44">
         <div
           className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
           style={{
@@ -45,28 +47,30 @@ export function Services() {
           style={{ background: 'radial-gradient(circle, var(--brand), transparent 70%)' }}
         />
 
-        <div className="mx-auto max-w-[var(--container-wide)]">
-          <p className="kicker" data-n="01">
+        {/* centered, same shape as the homepage hero: kicker, headline,
+            one short line, then two actions side by side — so landing and
+            What-we-do read as the same product rather than two layouts */}
+        <div className="relative mx-auto max-w-3xl text-center">
+          <p className="kicker justify-center" data-n="01">
             {SERVICES_HERO.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-4xl font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.94] tracking-[var(--tracking-tight)]">
+          <h1 className="mt-4 font-sans text-[length:var(--fs-page-h1)] font-black leading-[0.98] tracking-[var(--tracking-tight)] sm:leading-[0.94]">
             {SERVICES_HERO.headlineLines[0]}
             <br />
-            {SERVICES_HERO.headlineLines[1]}
+            <TypewriterEffect
+              words={[{ text: 'under' }, { text: 'one' }, { text: 'roof.', className: 'text-[var(--brand)]' }]}
+            />
           </h1>
-          <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
-            <p className="max-w-lg text-lg text-[var(--ink-soft)]">{SERVICES_HERO.sub}</p>
-            <div className="flex flex-wrap items-center gap-4">
-              <MagneticButton to="/contact" size="lg">
-                Start a project <ArrowRight size={15} />
-              </MagneticButton>
-              <a
-                href="#capabilities"
-                className="text-sm font-semibold text-[var(--ink)] no-underline underline decoration-[var(--brand)] decoration-2 underline-offset-4"
-              >
-                See what's included
-              </a>
-            </div>
+          <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-[var(--ink-soft)] sm:text-lg">
+            {SERVICES_HERO.sub}
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <MagneticButton to="/contact" size="lg">
+              Start a project <ArrowRight size={15} />
+            </MagneticButton>
+            <MagneticButton href="#capabilities" size="lg" variant="edge-hover">
+              See what's included <ArrowUpRight size={15} />
+            </MagneticButton>
           </div>
         </div>
       </section>
@@ -90,29 +94,14 @@ export function Services() {
       {/* 03 — Why MegaCloudWorks */}
       <section
         data-header-tone="dark"
-        className="on-brand relative overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-28"
+        className="on-brand relative isolate overflow-hidden bg-[var(--brand)] px-[var(--edge)] py-24 text-white sm:py-28"
       >
         <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
+        <div className="grain-overlay" aria-hidden="true" />
         <div className="relative mx-auto max-w-[var(--container-wide)]">
           <SectionHeading n="03" kicker="Why MegaCloudWorks" title="What working with us actually feels like." light />
-          <div className="mt-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-            {COLUMNS.map((c, i) => (
-              <Reveal
-                key={c.title}
-                delay={i * 0.06}
-                className={
-                  i === 0
-                    ? ''
-                    : i === 2
-                      ? 'border-t border-white/20 pt-6 sm:border-l sm:pl-6 lg:border-t-0 lg:pt-0'
-                      : 'border-t border-white/20 pt-6 sm:border-t-0 sm:border-l sm:pl-6 sm:pt-0'
-                }
-              >
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/60">{c.kicker}</p>
-                <h3 className="mt-3 font-sans text-xl font-extrabold tracking-tight">{c.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/75">{c.body}</p>
-              </Reveal>
-            ))}
+          <div className="mt-14">
+            <WhyMegaCloudWorks />
           </div>
         </div>
       </section>

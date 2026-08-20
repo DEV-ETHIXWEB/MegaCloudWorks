@@ -15,6 +15,7 @@ import { MagneticButton } from '../components/MagneticButton'
 import { CloudShader } from '../components/CloudShader'
 import { AppLaunchPhone } from '../components/AppLaunchPhone'
 import { WobbleCard } from '../components/WobbleCard'
+import { StudioHandshake } from '../components/StudioHandshake'
 import { HOME_HERO, SERVICES } from '../content/home'
 import { CONCEPTS, getConcept } from '../content/concepts'
 import { STUDIOS, COVERAGE } from '../content/about'
@@ -28,6 +29,9 @@ const ProductExperienceSection = lazy(() =>
 )
 
 const HERO_CONCEPT = getConcept('fieldly')!
+// the four-phone showcase runs Slate's screens — a booking flow reads more
+// legibly at four-across than Fieldly's denser dispatch UI
+const SHOWCASE_CONCEPT = getConcept('slate')!
 
 export function Home() {
   return (
@@ -149,7 +153,7 @@ export function Home() {
           </div>
         }
       >
-        <ProductExperienceSection concept={HERO_CONCEPT} />
+        <ProductExperienceSection concept={SHOWCASE_CONCEPT} />
       </Suspense>
 
       {/* 05 — Selected work: three small, equal, refined cards — not one
@@ -186,19 +190,28 @@ export function Home() {
                         className="pointer-events-none absolute -bottom-8 -right-8 size-28 rounded-full opacity-30 blur-2xl transition-transform duration-700 group-hover:scale-125"
                         style={{ background: c.accent }}
                       />
-                      {/* a peek of the real product, tucked into the corner
-                          rather than filling the card — cropped by this
-                          div's own overflow-hidden so only a slice of it
-                          ever shows */}
+                      {/* Stamp gets a real product peek: name held on the
+                          left, the screen sitting large on the right and
+                          running off the card's edge — cropped by this div's
+                          own overflow-hidden, so it reads as a framed hero
+                          rather than a small corner sticker. Card size and
+                          shape are untouched; only this inner composition
+                          changes. */}
                       {c.slug === 'stamp' && (
                         <img
                           src="/preview-400.png"
                           alt=""
                           aria-hidden="true"
-                          className="pointer-events-none absolute -bottom-10 -right-8 w-28 rotate-3 opacity-95 drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)] transition-transform duration-700 group-hover:-translate-y-1"
+                          className="pointer-events-none absolute -bottom-5 -right-5 w-[40%] max-w-[160px] rotate-[4deg] opacity-95 drop-shadow-[0_18px_32px_rgba(0,0,0,0.5)] transition-transform duration-700 group-hover:-translate-y-2 group-hover:rotate-[2deg]"
                         />
                       )}
-                      <h3 className="relative font-sans text-xl font-extrabold tracking-tight text-white">{c.name}</h3>
+                      <h3
+                        className={`relative font-sans text-xl font-extrabold tracking-tight text-white ${
+                          c.slug === 'stamp' ? 'max-w-[55%]' : ''
+                        }`}
+                      >
+                        {c.name}
+                      </h3>
                     </div>
                     <div className="flex items-start justify-between gap-3 bg-[var(--paper)] p-4">
                       <div>
@@ -245,9 +258,18 @@ export function Home() {
       <section className="border-y border-[var(--line)] px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto grid max-w-[var(--container-wide)] gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="kicker" data-n="07">
-              {STUDIOS.eyebrow}
-            </p>
+            <Reveal>
+              <p className="kicker" data-n="07">
+                The studio
+              </p>
+              {/* promoted from a small kicker to a real headline — this line
+                  carries the section, so it sits on the shared h2 step of
+                  the type scale rather than at label size */}
+              <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)] text-[var(--ink)]">
+                {STUDIOS.eyebrow}
+              </h2>
+              <StudioHandshake />
+            </Reveal>
           </div>
           <Reveal className="lg:col-span-7 lg:col-start-6">
             <p className="text-[length:var(--fs-lead)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">

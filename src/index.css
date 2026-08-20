@@ -267,6 +267,13 @@ textarea:focus-visible,
   background-size: 180px 180px;
 }
 
+/* the same grain, but tucked behind a section's own content — for a photo
+   used as a full-bleed background rather than a framed image. Sits above
+   the picture and its scrim (which go further back) and below the copy. */
+.grain-media--behind {
+  z-index: -5;
+}
+
 /* numbered kicker — the Swiss/brutalist marker used before every section */
 .kicker {
   display: inline-flex;

@@ -6,9 +6,6 @@ export const ABOUT_HERO = {
   // the "team that stays on the line" promise both already back up
   headlineLines: ['We design it, build it,', 'and stay after it ships.'],
   sub: 'Two studios, one team. We partner with businesses end to end — research and UI through engineering, launch, and everything after.',
-  calloutTitle: 'MegaCloudWorks',
-  calloutSub: 'Basecamp',
-  calloutMeta: 'App design & development',
 }
 
 export const STUDIOS = {

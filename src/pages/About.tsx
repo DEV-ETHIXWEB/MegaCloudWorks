@@ -19,10 +19,30 @@ export function About() {
       />
       <SiteHeader />
 
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden px-[var(--edge)] pb-16 pt-36 sm:pt-44">
-        {/* same centered shape as the homepage, What-we-do and Work:
-            kicker, headline (last line typed in), one line, two actions */}
+      {/* Hero — the photograph is the section's background now, not a framed
+          card. Its composition suits this: dark ridges hold the left and
+          right edges while the middle stays near-white, so centred copy sits
+          in the clear valley rather than fighting the picture. */}
+      <section className="relative isolate flex min-h-[86svh] flex-col items-center justify-center overflow-hidden px-[var(--edge)] pb-24 pt-32 sm:pt-36">
+        <img
+          src="/about/sky-ready.webp"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        {/* a soft white bloom under the copy only — keeps the headline
+            legible at any crop without washing the ridges out at the edges */}
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              'radial-gradient(ellipse 68% 58% at 50% 44%, rgba(255,255,255,0.88), rgba(255,255,255,0.42) 56%, rgba(255,255,255,0) 82%)',
+          }}
+        />
+        {/* dissolve the photo into the page rather than ending on a hard seam */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-b from-transparent to-[var(--paper)]" />
+        <div className="grain-media grain-media--behind" aria-hidden="true" />
+
         {/* wider than the other heroes: this headline is a full sentence
             rather than three short lines, so it needs room to break well */}
         <div className="relative mx-auto max-w-4xl text-center">
@@ -56,30 +76,6 @@ export function About() {
             </MagneticButton>
           </div>
         </div>
-
-        <Reveal delay={0.15} className="mx-auto mt-12 max-w-[var(--container-wide)]">
-          <div className="surface-glass relative overflow-hidden rounded-[2rem] p-2 shadow-[0_30px_80px_-30px_rgba(16,16,20,0.35)]">
-            {/* taller crop on small screens so the peaks survive; the photo is
-                1.55:1, so an ultra-wide strip would slice the subject away */}
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.6rem] sm:aspect-[16/9] lg:aspect-[21/9]">
-              <img
-                src="/about/sky-ready.webp"
-                alt="Dark jagged mountain peaks rising through a bank of white cloud, with plumes of red smoke drifting between the ridges."
-                className="h-full w-full object-cover"
-              />
-              {/* the previous black-to-transparent wash belonged to the old
-                  dark photo — on this high-key image it only muddied the
-                  clouds, so it is gone. The callout below carries its own
-                  2px border and white fill, so it stays legible unaided. */}
-              <div className="grain-media" aria-hidden="true" />
-              <div className="edge-hard absolute bottom-6 left-6 hidden rounded-2xl bg-white px-5 py-4 sm:block">
-                <p className="text-sm font-black tracking-tight">{ABOUT_HERO.calloutTitle}</p>
-                <p className="text-xs font-bold text-[var(--brand-text)]">{ABOUT_HERO.calloutSub}</p>
-                <p className="mt-1 text-[11px] text-[var(--ink-faint)]">{ABOUT_HERO.calloutMeta}</p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
       </section>
 
       {/* Two studios */}

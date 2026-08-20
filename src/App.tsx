@@ -52,9 +52,15 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
+  // Suspense sits outside the fade: a lazy chunk that's still downloading
+  // renders its spinner at full opacity immediately, rather than the
+  // spinner itself being born inside a motion.div whose enter animation
+  // starts from opacity: 0 — that combination was the white-screen bug,
+  // a blank frame during every lazy-route transition until the fade
+  // caught up with the fetch.
   return (
-    <PageTransition>
-      <Suspense fallback={<RouteFallback />}>
+    <Suspense fallback={<RouteFallback />}>
+      <PageTransition>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -74,8 +80,8 @@ function AppRoutes() {
 
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Suspense>
-    </PageTransition>
+      </PageTransition>
+    </Suspense>
   )
 }
 

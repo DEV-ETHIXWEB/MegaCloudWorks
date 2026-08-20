@@ -45,6 +45,7 @@ function useAutoTone(fixedTone?: Tone): Tone {
 export function SiteHeader({ tone: fixedTone }: { tone?: Tone }) {
   const [open, setOpen] = useState(false)
   const [lifted, setLifted] = useState(false)
+  const [hovered, setHovered] = useState<string | null>(null)
   const close = () => setOpen(false)
   const tone = useAutoTone(fixedTone)
   const dark = tone === 'dark'
@@ -89,11 +90,12 @@ export function SiteHeader({ tone: fixedTone }: { tone?: Tone }) {
           />
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 lg:flex" onMouseLeave={() => setHovered(null)}>
           {NAV.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
+              onMouseEnter={() => setHovered(item.to)}
               className={({ isActive }) =>
                 `relative rounded-full px-4 py-2 text-sm font-semibold no-underline transition-colors ${
                   isActive
@@ -104,7 +106,40 @@ export function SiteHeader({ tone: fixedTone }: { tone?: Tone }) {
                 }`
               }
             >
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  {/* subtle pill that glides between nav items to mark the
+                      current page — one shared layoutId so it tweens
+                      position instead of popping, kept low-contrast so it
+                      reads as a hint rather than a highlight */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className={`absolute inset-0 -z-10 rounded-full ${dark ? 'bg-white/10' : 'bg-[var(--ink)]/[0.05]'}`}
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  {/* the same pill, previewed on hover — its own layoutId so
+                      it glides from item to item as the cursor moves, and
+                      fades in/out rather than popping; a touch fainter than
+                      the active-page pill so the two stay legible together */}
+                  {!isActive && (
+                    <AnimatePresence>
+                      {hovered === item.to && (
+                        <motion.span
+                          layoutId="nav-hover-pill"
+                          className={`absolute inset-0 -z-10 rounded-full ${dark ? 'bg-white/[0.07]' : 'bg-[var(--ink)]/[0.035]'}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                        />
+                      )}
+                    </AnimatePresence>
+                  )}
+                  {item.label}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>

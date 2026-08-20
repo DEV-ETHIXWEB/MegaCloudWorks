@@ -12,7 +12,7 @@ export function NotFound() {
         <p className="kicker" data-n="404">
           Not found
         </p>
-        <h1 className="mt-6 font-sans text-[clamp(2.4rem,6vw,4.5rem)] font-black tracking-[-0.03em]">
+        <h1 className="mt-6 font-sans text-[length:var(--fs-h1)] font-black tracking-[var(--tracking-tight)]">
           That page went <span className="text-[var(--brand)]">offline.</span>
         </h1>
         <p className="mt-4 max-w-sm text-[var(--ink-soft)]">

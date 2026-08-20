@@ -22,7 +22,7 @@ export function SectionHeading({
         {kicker}
       </p>
       <h2
-        className={`mt-4 font-sans text-[clamp(2rem,4.6vw,3.4rem)] font-extrabold leading-[0.98] tracking-[-0.03em] ${
+        className={`mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)] ${
           light ? 'text-white' : 'text-[var(--ink)]'
         }`}
       >

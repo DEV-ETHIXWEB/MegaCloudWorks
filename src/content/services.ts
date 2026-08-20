@@ -12,9 +12,9 @@ export const COLUMNS = [
 ] as const
 
 export const CIRCLES = [
-  { n: '01', title: 'App Design', hash: '#app-design' },
-  { n: '02', title: 'Development', hash: '#app-development' },
-  { n: '03', title: 'Brand & UI', hash: '#brand-ui' },
+  { n: '01', title: 'App Design', hash: '#app-design', tags: ['Discovery', 'Prototyping', 'Design systems'] },
+  { n: '02', title: 'Development', hash: '#app-development', tags: ['Cross-platform', 'API design', 'CI/CD'] },
+  { n: '03', title: 'Brand & UI', hash: '#brand-ui', tags: ['Brand systems', 'UI kits', 'Guidelines'] },
 ] as const
 
 export const SERVICE_DETAILS = [
@@ -23,7 +23,7 @@ export const SERVICE_DETAILS = [
     n: '01',
     title: 'App Design',
     tagline: 'Product design & UX',
-    img: '/card-design.webp',
+    img: '/card-design-400.webp',
     body: 'We turn a rough idea into a clear, usable product. Research and flows first, then interfaces people actually enjoy, designed in high fidelity and handed off ready to build.',
     includes: [
       'Discovery, user flows & information architecture',
@@ -38,7 +38,7 @@ export const SERVICE_DETAILS = [
     n: '02',
     title: 'App Development',
     tagline: 'Web & mobile engineering',
-    img: '/card-development.webp',
+    img: '/card-development-400.webp',
     body: 'Clean, performant, maintainable code, shipped on a schedule you can plan around. We build with modern, well-supported stacks so what we ship keeps working after launch.',
     includes: [
       'Web apps, PWAs & cross-platform mobile',
@@ -53,7 +53,7 @@ export const SERVICE_DETAILS = [
     n: '03',
     title: 'Brand & UI',
     tagline: 'Identity & visual systems',
-    img: '/card-brand.webp',
+    img: '/card-brand-400.webp',
     body: 'A visual language that feels cohesive everywhere, from the logo to the smallest button. We build systems, not one-off screens, so your product looks intentional as it grows.',
     includes: [
       'Logo, colour and typography systems',

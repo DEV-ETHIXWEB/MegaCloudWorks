@@ -20,7 +20,7 @@ const AppLaunchPhoneLive = lazy(() =>
  * on the same paper background as the hero rather than a separate dark
  * band, so it reads as a continuation of the page instead of a jump.
  */
-export function AppLaunchPhone({ concept }: { concept: Concept }) {
+export function AppLaunchPhone({ concept, home = false }: { concept: Concept; home?: boolean }) {
   const sectionRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'center center'] })
   const rotate = useTransform(scrollYProgress, [0, 1], [6, 0])
@@ -37,7 +37,7 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
     <section ref={sectionRef} className="relative isolate overflow-hidden bg-[var(--paper)] px-[var(--edge)] py-16 sm:py-20">
       <div
         className="pointer-events-none absolute left-[10%] top-1/2 -z-10 size-[24rem] -translate-y-1/2 rounded-full opacity-20 blur-[110px]"
-        style={{ background: `radial-gradient(circle, ${concept.accent}, transparent 70%)` }}
+        style={{ background: `radial-gradient(circle, ${home ? '#f5333b' : concept.accent}, transparent 70%)` }}
       />
 
       {/* flex, not grid — a 1fr track let the copy's own max-w-md sit inside
@@ -48,7 +48,7 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
         {/* phone — left on desktop, first on mobile */}
         <Reveal className="mx-auto w-full max-w-[190px] lg:mx-0 lg:shrink-0">
           <motion.div className="relative" style={{ rotateX: rotate, scale, transformPerspective: 1000 }}>
-            <IPhoneMockup size="lg" label={`${concept.name} — ${live ? 'live' : 'launching'}`}>
+            <IPhoneMockup size="lg" label={`${home ? 'MegaCloudWorks' : concept.name} — ${live ? 'live' : 'launching'}`}>
               <AnimatePresence mode="wait">
                 {live ? (
                   <motion.div
@@ -58,8 +58,8 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <Suspense fallback={<AppLoadingScreen accent={concept.accent} />}>
-                      <AppLaunchPhoneLive concept={concept} />
+                    <Suspense fallback={<AppLoadingScreen accent={home ? '#f5333b' : concept.accent} />}>
+                      <AppLaunchPhoneLive concept={concept} home={home} />
                     </Suspense>
                   </motion.div>
                 ) : (
@@ -70,7 +70,7 @@ export function AppLaunchPhone({ concept }: { concept: Concept }) {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <AppLoadingScreen accent={concept.accent} />
+                    <AppLoadingScreen accent={home ? '#f5333b' : concept.accent} />
                   </motion.div>
                 )}
               </AnimatePresence>

@@ -117,7 +117,7 @@ export function Home() {
       </section>
 
       {/* 02 — The product moment, surfaced on its own once you scroll to it */}
-      <AppLaunchPhone concept={HERO_CONCEPT} />
+      <AppLaunchPhone concept={HERO_CONCEPT} home />
 
       {/* 03 — Immediate proof */}
       <StatsSection />

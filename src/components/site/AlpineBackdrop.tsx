@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import type { Concept } from '#/lib/concepts'
 
 const VolumetricSky = lazy(() => import('#/components/site/sky/VolumetricSky'))
@@ -11,59 +11,23 @@ const VolumetricSky = lazy(() => import('#/components/site/sky/VolumetricSky'))
  * any size above a phone it reads as clip art. What the studio's picture is
  * actually made of is weather - white cloud with movement inside it and one
  * red plume going through it - and weather is the part a shader can do
- * honestly. So the frame is snow, the field is WebGL, and nothing is drawn.
+ * honestly. So the field is WebGL, and nothing is drawn.
+ *
+ * There was falling snow over the whole frame as well - two dozen drifting
+ * specks on their own keyframes. It read as dust on the lens rather than
+ * weather, and it moved across the one thing in the hero anybody is meant to
+ * be looking at.
  *
  * Nothing in it is tinted by the product either. The concept's colour lives on
  * the glass of the device standing in front of this and nowhere else, which is
  * the same discipline the studio's own photograph has: monochrome, and one red.
  */
 
-/**
- * A flake.
- *
- * Seeded from the concept's slug rather than Math.random: the hero is server
- * rendered, and a random layout on the server that disagrees with the client's
- * is a hydration mismatch on every single flake.
- */
-function useFlakes(seed: string, count: number) {
-  return useMemo(() => {
-    let h = 2166136261
-    for (let i = 0; i < seed.length; i++) {
-      h ^= seed.charCodeAt(i)
-      h = Math.imul(h, 16777619)
-    }
-    const rand = () => {
-      h ^= h << 13
-      h ^= h >>> 17
-      h ^= h << 5
-      return ((h >>> 0) % 10000) / 10000
-    }
-
-    return Array.from({ length: count }, () => {
-      const size = 2 + rand() * 4
-      return {
-        left: rand() * 100,
-        size,
-        // the big ones are nearer, so they fall faster and drift further
-        duration: 20 - size * 1.6 + rand() * 8,
-        delay: -rand() * 26,
-        drift: (rand() - 0.5) * 14,
-        opacity: 0.3 + rand() * 0.45,
-      }
-    })
-  }, [seed, count])
-}
-
 export function AlpineBackdrop({ c }: { c: Concept }) {
   const host = useRef<HTMLDivElement>(null)
   const scroll = useRef(0)
   const [ready, setReady] = useState(false)
   const [reduced, setReduced] = useState(false)
-  const [narrow, setNarrow] = useState(false)
-
-  // fewer flakes on a phone: the same count over a third of the width is
-  // a snowstorm, and it is behind the only thing on the screen that matters
-  const flakes = useFlakes(c.slug, narrow ? 12 : 26)
 
   // WebGL is client-only, and it is the most expensive thing in the hero - so
   // the page paints first and the field arrives behind it
@@ -72,17 +36,13 @@ export function AlpineBackdrop({ c }: { c: Concept }) {
     setReady(true)
 
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const small = window.matchMedia('(max-width: 767px)')
     const sync = () => {
       setReduced(motion.matches)
-      setNarrow(small.matches)
     }
     sync()
     motion.addEventListener('change', sync)
-    small.addEventListener('change', sync)
     return () => {
       motion.removeEventListener('change', sync)
-      small.removeEventListener('change', sync)
     }
   }, [])
 
@@ -136,6 +96,19 @@ export function AlpineBackdrop({ c }: { c: Concept }) {
         data-sky-layer="plate"
       />
 
+      {/*
+        The picture, in the product's colour.
+
+        The photograph is the studio's own: a snow ridge with red smoke coming
+        off it. Five case studies share it, and on four of them that red is a
+        sixth brand in a hero already carrying one. This blends the concept's
+        accent over it on `color`, which takes the hue and leaves the
+        luminosity - so the smoke turns the product's colour and the ridge
+        stays a ridge. No parallax layer: it is flat colour over the whole
+        frame, and has nothing to come out of register with.
+      */}
+      <span className="cs-sky__tint" />
+
       {/* the light in the air, before anything moves in it */}
       <span className="cs-sky__haze" data-sky-layer="haze" />
 
@@ -147,26 +120,6 @@ export function AlpineBackdrop({ c }: { c: Concept }) {
           </Suspense>
         </div>
       ) : null}
-
-      <div className="cs-snow">
-        {flakes.map((f, i) => (
-          <span
-            key={i}
-            className="cs-snow__flake"
-            style={
-              {
-                left: `${f.left}%`,
-                height: f.size,
-                width: f.size,
-                opacity: f.opacity,
-                animationDuration: `${f.duration}s`,
-                animationDelay: `${f.delay}s`,
-                '--drift': `${f.drift}rem`,
-              } as React.CSSProperties
-            }
-          />
-        ))}
-      </div>
     </div>
   )
 }

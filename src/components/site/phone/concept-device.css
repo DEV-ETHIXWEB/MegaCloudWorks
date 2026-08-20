@@ -1,191 +1,342 @@
 /**
  * The case-study device.
  *
- * Two states share these rules: the CSS bezel the server paints, and the
- * WebGL model that replaces it. Everything that is *inside the glass* - the
- * black rectangle, the reflection, the corner radius - is common to both, so
- * the swap is the shell arriving around a running app rather than one picture
- * cutting to another.
+ * A hand-held phone plate (a transparent PNG) laid over a live DOM screen.
+ * Everything the plate draws - bezel, notch, fingers - is in front of the app;
+ * the app itself is an ordinary box positioned inside the plate's cut-out, so
+ * the two can never drift apart.
+ *
+ * Nothing here tilts. An earlier pass had the plate leaning towards the
+ * pointer on a perspective, which on a photograph of a hand reads as the
+ * photograph being bent rather than the phone being turned. The device stands
+ * still, and the app inside it does the moving.
+ *
+ * The cut-out is measured off the art - a 189x410 hole in a 410x553 plate -
+ * and written here in per-cent, so the numbers hold at every size it is drawn
+ * at. scripts/build-hand-plate.mjs prints them if the art is ever recut.
  */
 
 .cdev {
+  /* where the display sits inside the plate */
+  --cdev-screen-x: 13.17%;
+  --cdev-screen-y: 1.81%;
+  --cdev-screen-w: 46.1%;
+  --cdev-screen-h: 74.14%;
+  /* under the plate's own corner radius: the plate covers a square corner,
+     but it cannot fill a rounded one */
+  --cdev-screen-r: 42px;
+
+  /*
+    The plate is drawn wider than the frame it is read through.
+
+    A phone in a hand is about half the picture, so shown whole it would put a
+    230px app in a 500px column. Instead the plate runs past the frame and the
+    frame is held on the phone: the hand carries on out of shot, the way it
+    would in a photograph, and the screen comes up to full size.
+  */
+  --cdev-zoom: 1.18;
+  /*
+    What the frame is centred on, in the plate's own coordinates.
+
+    Not the middle of the display. Vertically it is, but horizontally the
+    frame is pushed right of it, because the two edges are not alike: past the
+    left of the phone there are two finger joints and then nothing, while past
+    the right there is the whole back of the hand running off towards the edge
+    of the page. Centring on the glass cuts that hand in half; this lets it
+    leave the frame the way it leaves the photograph.
+
+    The zoom is as far in as the plate can go before the frame's lower edge
+    rises past the bottom of the phone. Beyond it the device is sliced flat.
+  */
+  --cdev-focus-x: 40%;
+  --cdev-focus-y: 38.88%;
+
+  /*
+    Where the left edge of the display lands inside the frame, once the plate
+    has been blown up by --cdev-zoom and pulled over to centre the phone. The
+    hero's leader line points at the phone, so it needs to know this too.
+  */
+  --cdev-screen-left: calc(
+    50% - (var(--cdev-focus-x) - var(--cdev-screen-x)) * var(--cdev-zoom)
+  );
+
   position: relative;
   isolation: isolate;
   margin-inline: auto;
   width: 100%;
-  /* the canvas needs air around the body for the tilt and the ground shadow;
-     the phone itself is fitted to about 88% of this height */
-  aspect-ratio: 400 / 660;
+  aspect-ratio: 40 / 59;
 }
-
-.cdev canvas {
-  /* three sizes the canvas element itself; this only stops the inline-block
-     baseline gap from adding a stray pixel under it */
-  display: block;
-  /*
-    The canvas must not eat a vertical drag.
-
-    drei's <Html transform> puts the app in a CSS3D layer over this element,
-    but a touch that starts on the shell either side of the glass still lands
-    here - and without this the page refuses to scroll from anywhere near the
-    device, which on a phone is most of the screen.
-  */
-  touch-action: pan-y;
-}
-
-/* ---- the light the device stands in ---------------------------------- */
 
 /*
-  Not a drop shadow. The device is lit from the front on a white page, so what
-  belongs under it is a bloom of its own colour in the snow - the same way the
-  studio's red reads on the ridge.
+  The frame the plate is read through.
+
+  Its edges are a straight cut across a photograph, which is the one thing a
+  photograph never does - so where the hand runs out of the frame, the frame
+  lets go of it rather than slicing it. The right edge and the foot are masked
+  off over the last few per cent; the display ends at 73% across and 90% down,
+  so neither fade ever reaches the app.
 */
-.cdev__halo {
-  position: absolute;
-  inset: -12% -18% -6%;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      52% 42% at 50% 46%,
-      color-mix(in srgb, var(--cdev-accent, #f5333b) 15%, transparent) 0%,
-      transparent 72%
-    ),
-    radial-gradient(
-      70% 30% at 50% 88%,
-      rgba(16, 22, 30, 0.14) 0%,
-      transparent 70%
-    );
-  filter: blur(6px);
-  animation: cdev-halo 9s ease-in-out infinite;
-}
-
-@keyframes cdev-halo {
-  0%,
-  100% {
-    opacity: 0.78;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.045);
-  }
-}
-
-/* ---- the fallback bezel ---------------------------------------------- */
-
-.cdev__frame {
+.cdev__crop {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  overflow: clip;
+  -webkit-mask-image:
+    linear-gradient(to right, #000 84%, transparent 99%),
+    linear-gradient(to bottom, #000 91%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, #000 84%, transparent 99%),
+    linear-gradient(to bottom, #000 91%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
-.cdev__glass {
+/* the plate, pulled over so the display lands in the middle of the frame */
+.cdev__rig {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(100% * var(--cdev-zoom));
+  transform: translate(
+    calc(-1 * var(--cdev-focus-x)),
+    calc(-1 * var(--cdev-focus-y))
+  );
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cdev.is-live .cdev__rig {
+  opacity: 1;
+}
+
+/* ---- the plate ------------------------------------------------------ */
+
+.cdev__plate {
   position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: auto;
+  /* the plate is entirely decoration and its transparent pixels must not
+     swallow taps meant for the app behind it */
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---- the running app ------------------------------------------------ */
+
+.cdev__screen {
+  position: absolute;
+  z-index: 1;
+  left: var(--cdev-screen-x);
+  top: var(--cdev-screen-y);
+  width: var(--cdev-screen-w);
+  height: var(--cdev-screen-h);
   overflow: hidden;
-  border-radius: 30px;
+  border-radius: calc(var(--cdev-k, 1) * var(--cdev-screen-r));
   background: #05070a;
-  /* pointer events have to be explicit here: drei's <Html transform> wrapper
-     turns them off on everything it owns so the canvas keeps orbit input */
-  pointer-events: auto;
   /* a drag on the glass scrolls the app inside it, and never the page */
   touch-action: pan-y;
-  /* the app is a CSS3D layer; without its own compositing context every tap
-     inside it forces the whole transformed subtree to repaint */
+  /* the app is a live, animating subtree; its own compositing context keeps a
+     tap inside it off the rest of the page's paint */
   will-change: transform;
+}
+
+/* the screen comes up after the plate has landed, like a phone waking */
+.cdev__screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  border-radius: inherit;
+  background: #05070a;
+  opacity: 1;
+}
+
+.cdev.is-live .cdev__screen::after {
+  animation: cdev-wake 0.9s ease-out 0.35s forwards;
+}
+
+@keyframes cdev-wake {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* the tap targets inside the glass are the app's, so they get the app's
    feedback - never a browser highlight rectangle over a phone screen */
-.cdev__glass * {
+.cdev__screen * {
   -webkit-tap-highlight-color: transparent;
-}
-
-.cdev__glass--fit {
-  height: 88%;
-  /*
-    The same rectangle the app is authored into.
-
-    DEVICE_PX in deviceStage.ts is 300 wide by the model glass's own aspect -
-    662 - and the CSS bezel has to agree with it, because the two states swap
-    live. When this said 628 the fallback cropped 34px off the foot of every
-    screen, which is precisely where a tab bar sits: the bar fell below the
-    visible glass and only the part standing proud of it showed.
-  */
-  aspect-ratio: 300 / 662;
-  box-shadow:
-    0 2px 0 1px rgba(255, 255, 255, 0.5),
-    0 0 0 9px #14181f,
-    0 0 0 10px rgba(255, 255, 255, 0.14),
-    0 38px 70px -34px rgba(14, 20, 28, 0.55);
 }
 
 /*
   Whatever is on the glass is pinned to the glass, at the size it was drawn.
 
-  Two things have to be true at once. The app must cover the bezel exactly -
-  three different roots can be on the glass (the running screen, the slide
-  wrapper, the launch screen) and any of them sizing itself with `height: 100%`
+  Two things have to be true at once. The app must cover the cut-out - three
+  different roots can be on the glass (the running screen, the slide wrapper,
+  the launch screen) and any of them sizing itself with `height: 100%`
   collapses the moment the parent's height is derived rather than declared.
   And it must be laid out at the 300x662 it is *authored* at: the kit's type
   scale is in fixed pixels, so rendering it into a 200px-wide box does not make
   it smaller, it makes it look zoomed in.
 
-  So: a fixed 300x662 rectangle, scaled from its top-left corner by --cdev-k,
-  which ConceptDevice keeps equal to glassWidth / 300. The glass carries the
-  same 300/662 aspect, so the scaled box lands on all four edges exactly.
+  So: a fixed 300x662 rectangle, scaled by --cdev-k and centred by --cdev-dx /
+  --cdev-dy, all three set by ConceptDevice from the cut-out's measured size.
 */
-.cdev__glass > .ios,
-.cdev__glass > .phone3d__slide {
+.cdev__screen > .ios,
+.cdev__screen > .phone3d__slide {
   position: absolute;
   top: 0;
   left: 0;
   width: 300px;
   height: 662px;
   transform-origin: 0 0;
-  transform: scale(var(--cdev-k, 1));
+  transform: translate(var(--cdev-dx, 0px), var(--cdev-dy, 0px))
+    scale(var(--cdev-k, 1));
   border-radius: inherit;
 }
 
-/* the reflection, travelling slowly across the glass */
-.cdev__sheen {
+/*
+  There was a reflection here - a white band on `soft-light` travelling across
+  the glass every thirteen seconds. On a photograph of a phone the glass
+  already carries its own highlights, so this one was not read as glass: it was
+  read as a smear of fog over the lower half of the app, sitting on top of the
+  invoice totals and the tab bar. The app is the thing being shown; nothing
+  goes over it.
+*/
+
+/* ---- the weather round the device ----------------------------------- */
+
+/*
+  Cloud, not a vignette.
+
+  The case study opens above the cloud line, and the hand comes up out of it -
+  so the frame's edges are given to weather rather than hidden. Three banks
+  drift at three speeds: two behind the phone where they read as distance, one
+  in front and low, which is the one that takes the foot of the frame.
+
+  They are radial gradients rather than an image because they have to sit on
+  whatever sky the concept's backdrop happens to be showing, and a white blur
+  over white cloud is the only version of this that never shows a seam.
+*/
+.cdev__smoke {
   position: absolute;
-  inset: 0;
-  z-index: 5;
   pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(
-    112deg,
-    transparent 26%,
-    rgba(255, 255, 255, 0.5) 42%,
-    rgba(255, 255, 255, 0.14) 50%,
-    transparent 62%
-  );
-  opacity: 0.5;
-  mix-blend-mode: soft-light;
-  animation: cdev-sheen 11s ease-in-out infinite;
+  background-repeat: no-repeat;
+  will-change: transform;
 }
 
-@keyframes cdev-sheen {
+.cdev__smoke--back {
+  inset: 12% -26% 2%;
+  z-index: 0;
+  background-image:
+    radial-gradient(
+      38% 22% at 22% 62%,
+      color-mix(in srgb, var(--cdev-accent, #fff) 5%, rgba(255, 255, 255, 0.92))
+        0%,
+      rgba(255, 255, 255, 0) 68%
+    ),
+    radial-gradient(
+      44% 26% at 82% 40%,
+      color-mix(in srgb, var(--cdev-accent, #fff) 7%, rgba(255, 255, 255, 0.8))
+        0%,
+      rgba(255, 255, 255, 0) 70%
+    ),
+    radial-gradient(
+      30% 18% at 58% 84%,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0) 72%
+    );
+  filter: blur(16px);
+  animation: cdev-drift-a 34s ease-in-out infinite;
+}
+
+.cdev__smoke--front {
+  inset: auto -30% -16%;
+  height: 34%;
+  z-index: 3;
+  background-image:
+    radial-gradient(
+      34% 46% at 18% 68%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0) 70%
+    ),
+    radial-gradient(
+      40% 52% at 62% 78%,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    radial-gradient(
+      30% 44% at 88% 62%,
+      color-mix(in srgb, var(--cdev-accent, #fff) 6%, rgba(255, 255, 255, 0.82))
+        0%,
+      rgba(255, 255, 255, 0) 74%
+    );
+  filter: blur(20px);
+  /* the bank has to gather below the phone, not on it: without this its top
+     edge hazes the tab bar, which is the one part of the app people are being
+     asked to press */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 60%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 60%);
+  animation: cdev-drift-b 26s ease-in-out infinite;
+}
+
+@keyframes cdev-drift-a {
   0%,
   100% {
-    transform: translate3d(-32%, 0, 0);
+    transform: translate3d(-2.5%, 0, 0) scale(1);
   }
   50% {
-    transform: translate3d(32%, 0, 0);
+    transform: translate3d(3%, -1.5%, 0) scale(1.06);
   }
 }
 
-/* drei parks its wrapper at the canvas origin; nothing of ours should be
-   catching clicks except the glass itself */
-.cdev__html {
+@keyframes cdev-drift-b {
+  0%,
+  100% {
+    transform: translate3d(2%, 0, 0) scale(1.04);
+  }
+  50% {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+}
+
+/* ---- the light the device stands in --------------------------------- */
+
+/*
+  A bloom of the product's own colour behind the glass, the same way the
+  studio's red reads on the ridge. It lives outside the crop so it can bleed
+  past the frame - a glow with a straight edge is a box.
+*/
+.cdev__halo {
+  position: absolute;
+  inset: 4% -10% 8%;
+  z-index: -1;
   pointer-events: none;
+  background: radial-gradient(
+    42% 38% at 46% 42%,
+    color-mix(in srgb, var(--cdev-accent, #f5333b) 16%, transparent) 0%,
+    transparent 70%
+  );
+  filter: blur(14px);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cdev__halo,
-  .cdev__sheen {
+  .cdev__smoke {
     animation: none;
+  }
+
+  .cdev__rig {
+    opacity: 1;
+    transition: none;
+  }
+
+  .cdev.is-live .cdev__screen::after {
+    animation: none;
+    opacity: 0;
   }
 }

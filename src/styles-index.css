@@ -179,6 +179,23 @@
   zoom: 0.6;
 }
 
+/*
+  The stage's device is half the width of the one that number was chosen for.
+
+  `zoom` sets the scale the app is *laid out* at, so the layout width is the
+  device's width divided by it - and 0.6 in a 106px display lays the app out in
+  177px, which is where "1,240" breaks after the comma and the tab bar runs off
+  the side. The plate was shrunk to fit the card's slot at some point and this
+  was left behind at the wide plate's value.
+
+  0.353 puts the layout back at the ~300px the screens are drawn for. The slot
+  gives up a little width on a short viewport, which takes it to about 266 -
+  the same figure the 158px device above was accepted at.
+*/
+.work-stage .work-plate__device .phone3d__slide {
+  zoom: 0.353;
+}
+
 .work-index .work-plate__preview {
   display: none;
 }

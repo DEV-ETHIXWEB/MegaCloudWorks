@@ -52,7 +52,21 @@
   min-height: 100svh;
   flex-direction: column;
   overflow: hidden;
-  background: linear-gradient(176deg, #ffffff 0%, #eceff3 58%, #e3e8ee 100%);
+  /*
+    The sky carries the product's colour too.
+
+    --c-hero-to is the concept's own pale end of this gradient - a couple of
+    per cent of the accent in snow, which on a photograph of cloud reads as the
+    light being that colour rather than as a tint laid over the picture. It was
+    defined per concept and then never used; the gradient was three fixed greys
+    for all five, so every case study opened in the same weather.
+  */
+  background: linear-gradient(
+    176deg,
+    #ffffff 0%,
+    color-mix(in srgb, var(--c-hero-to, #eceff3) 52%, #ffffff) 54%,
+    var(--c-hero-to, #e3e8ee) 100%
+  );
 }
 
 /* ---- the weather behind it ---- */
@@ -68,6 +82,9 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  /* the tint blends on `color`, and without this it would reach past the
+     photograph and recolour the hero's gradient underneath it too */
+  isolation: isolate;
 }
 
 /* ---- the plate ---- */
@@ -117,14 +134,40 @@
 }
 
 /*
+  The photograph, in the concept's colour.
+
+  `color` takes the hue and the saturation from this layer and the luminosity
+  from the picture below it, so the red smoke coming off the ridge becomes the
+  product's colour while the snow stays snow and the rock stays rock. A flat
+  overlay at the same opacity would fog the whole frame instead.
+
+  Held well under half: the point is that Prophy opens in green light and Stamp
+  in cream, not that the studio's photograph is repainted five times.
+*/
+.cs-sky__tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--c-accent, transparent);
+  mix-blend-mode: color;
+  opacity: 0.3;
+}
+
+/*
   Just enough veil to set type on.
 
   Not a scrim over the whole frame - that is what turned the picture grey. It
   is a wedge: strongest at the top left where the eyebrow, the wordmark and the
   paragraph sit, and gone by the right half, where the only thing over the
   photograph is the device, which brings its own ground.
+
+  It used to be selected as `.cs-sky__plate + .cs-sky__haze::before`. That
+  adjacency was doing no work and was one element away from breaking: putting
+  the tint layer between the picture and the haze dropped the veil entirely,
+  and the headline went straight onto bare photograph.
 */
-.cs-sky__plate + .cs-sky__haze::before {
+.cs-sky__haze::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -157,7 +200,8 @@
     ),
     radial-gradient(
       70% 54% at 14% 46%,
-      rgba(211, 220, 230, 0.7) 0%,
+      color-mix(in srgb, var(--c-accent, #d3dce6) 9%, rgba(211, 220, 230, 0.7))
+        0%,
       transparent 72%
     );
   animation: cs-haze 18s ease-in-out infinite alternate;
@@ -200,55 +244,16 @@
   z-index: 1;
   height: 34svh;
   pointer-events: none;
+  /* it lands on the ticker, which is --c-wash, so it dissolves into that
+     rather than into a white the next element does not have */
   background: linear-gradient(
     to top,
-    #ffffff 0%,
-    rgba(255, 255, 255, 0.92) 24%,
-    rgba(255, 255, 255, 0.55) 52%,
-    rgba(255, 255, 255, 0.16) 78%,
+    var(--c-wash, #ffffff) 0%,
+    color-mix(in srgb, var(--c-wash, #ffffff) 92%, transparent) 24%,
+    color-mix(in srgb, var(--c-wash, #ffffff) 55%, transparent) 52%,
+    color-mix(in srgb, var(--c-wash, #ffffff) 16%, transparent) 78%,
     transparent 100%
   );
-}
-
-/* ---- snow ---- */
-
-.cs-snow {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-/*
-  White snow on a white page is not snow, it is nothing. These are the grey a
-  flake actually is when it is between you and the light - pale slate, lit
-  along one edge - which is the only way it reads against paper.
-*/
-.cs-snow__flake {
-  position: absolute;
-  top: -6%;
-  border-radius: 50%;
-  background: linear-gradient(150deg, #ffffff 0%, #aebccd 100%);
-  box-shadow: 0 0 0 0.5px rgba(24, 38, 56, 0.1);
-  opacity: 0;
-  will-change: transform;
-  animation: cs-fall linear infinite;
-}
-
-@keyframes cs-fall {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 0, 0);
-  }
-  8% {
-    opacity: 0.9;
-  }
-  92% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(var(--drift, 3rem), 108svh, 0);
-  }
 }
 
 /* ---- hero copy ---- */
@@ -300,57 +305,6 @@
   letter-spacing: 0.06em;
   color: var(--granite-soft);
   backdrop-filter: blur(6px);
-}
-
-/* the label pinned to the device, the way a diagram labels a part */
-.cs-callout {
-  opacity: 0;
-  transform: translateX(0.75rem);
-  transition:
-    opacity 460ms ease,
-    transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cs-callout.is-on {
-  opacity: 1;
-  transform: none;
-}
-
-.cs-callout__wire {
-  transform-origin: right;
-  animation: cs-wire 4.5s ease-in-out infinite;
-}
-
-@keyframes cs-wire {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.cs-callout__pip::after {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 999px;
-  border: 1px solid var(--c-accent);
-  opacity: 0;
-  animation: cs-ping 2.6s ease-out infinite;
-}
-
-@keyframes cs-ping {
-  0% {
-    opacity: 0.8;
-    transform: scale(0.55);
-  }
-  70%,
-  100% {
-    opacity: 0;
-    transform: scale(1.5);
-  }
 }
 
 /* ---- the screen picker ---- */
@@ -1424,19 +1378,7 @@
 @media (prefers-reduced-motion: reduce) {
   .cs-sky__plate,
   .cs-sky__haze,
-  .cs-snow__flake,
-  .cs-ticker__track,
-  .cs-callout__wire,
-  .cs-callout__pip::after {
+  .cs-ticker__track {
     animation: none;
-  }
-
-  .cs-snow {
-    display: none;
-  }
-
-  .cs-callout {
-    opacity: 1;
-    transform: none;
   }
 }

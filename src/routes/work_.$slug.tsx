@@ -260,9 +260,9 @@ function ConceptDetail() {
 
         <SiteHeader />
 
-        <div className="relative z-10 flex flex-1 flex-col justify-end px-6 pb-14 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-20 lg:pb-20">
+        <div className="relative z-10 flex flex-1 flex-col justify-center px-6 pb-12 pt-20 sm:px-10 sm:pb-14 sm:pt-24 lg:px-20 lg:pb-14">
           <div className="mx-auto w-full max-w-[1600px]">
-            <div className="grid grid-cols-1 items-end gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
+            <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
               {/* ---- copy ---- */}
               <div className="pb-2">
                 <Link
@@ -372,37 +372,19 @@ function ConceptDetail() {
               {/* ---- the device, standing in the weather ---- */}
               <div
                 data-hero-device
-                className="relative mx-auto w-full max-w-[clamp(306px,37vw,504px)] lg:mx-0"
+                className="relative mx-auto w-[clamp(300px,86vw,442px)] max-w-full lg:mx-0 lg:w-[min(36vw,520px,calc(80vh*0.678))]"
               >
-                {/* the leader-line callout the About hero labels basecamp
-                    with, pointing at the thing it names */}
-                <div
-                  className={`cs-callout pointer-events-none absolute -left-[13rem] top-10 hidden w-[13rem] xl:block ${
-                    beat >= 6 ? 'is-on' : ''
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-[8.5rem] shrink-0 text-right">
-                      <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--c-band)]">
-                        {concept.flow}
-                      </p>
-                      <p className="text-[11px] font-bold uppercase leading-tight tracking-[0.1em] text-[var(--granite)]">
-                        {concept.motion} motion
-                      </p>
-                    </div>
-                    <span
-                      aria-hidden="true"
-                      className="cs-callout__wire h-px flex-1 bg-[var(--c-accent)]"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="cs-callout__pip relative size-[7px] shrink-0 rounded-full bg-[var(--c-accent)]"
-                    />
-                  </div>
-                  <p className="mt-1.5 w-[8.5rem] text-right text-[10.5px] font-semibold uppercase leading-snug tracking-[0.06em] text-[var(--granite-soft)]">
-                    Live · tap anything
-                  </p>
-                </div>
+                {/*
+                    There was a leader line here - a wire out to the left of
+                    the phone labelling its navigation and its motion. Two
+                    things were wrong with it. The label duplicated the Motion
+                    and Navigation panels further down the page, which say the
+                    same two words and then explain them; and the wire had to
+                    reach across the gap to the glass, which at this width put
+                    it straight through the headline. The device does not need
+                    a caption to say it is running - the hint under it says so,
+                    and tapping it proves it.
+                */}
 
                 {/* The screens navigate each other from inside the glass - a
                     tab, a job row, a nudge - so the router the page owns is

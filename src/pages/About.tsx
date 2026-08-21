@@ -55,7 +55,7 @@ export function About() {
           {/* --fs-h1, not --fs-page-h1: display size scales inversely with
               line length, and at the page-hero step this sentence ran to
               four rows and swamped everything under it */}
-          <h1 className="mt-4 text-balance font-sans text-[length:var(--fs-h1)] font-black leading-[1.02] tracking-[var(--tracking-tight)] sm:leading-[0.94]">
+          <h1 className="mt-4 text-balance font-sans text-[length:clamp(2.45rem,5.5vw,4.2rem)] font-black leading-[1.14] tracking-[var(--tracking-tight)] sm:text-[length:var(--fs-h1)] sm:leading-[0.94]">
             {ABOUT_HERO.headlineLines[0]}
             <br />
             <span className="text-[var(--brand)]">{ABOUT_HERO.headlineLines[1]}</span>

@@ -10,16 +10,21 @@ import { CIRCLES } from '../content/services'
 // read as sitting in the same physical space rather than each having its
 // own shadow direction. Kept deliberately restrained: a soft ambient drop
 // plus a faint inset highlight, not a cartoon bevel.
-// A restrained red "pixel shadow" ring around each circle: present at
-// rest, starting darker right at the edge and fading out fast so it never
-// bleeds far enough to touch a neighbour, then intensifies a little more
-// on hover/press.
-const REST_SHADOW =
-  '5px 7px 14px -8px rgba(20,20,20,0.1), -4px -4px 10px -8px rgba(255,255,255,0.8), inset 1.5px 1.5px 4px rgba(255,255,255,0.7), inset -1.5px -1.5px 5px rgba(20,20,20,0.03), 0 0 2px 0.5px rgba(193,20,32,0.14), 0 0 10px 1px rgba(193,20,32,0.06)'
-const HOVER_SHADOW =
-  '7px 10px 18px -9px rgba(20,20,20,0.15), -5px -5px 12px -9px rgba(255,255,255,0.85), inset 1.5px 1.5px 4px rgba(255,255,255,0.75), inset -1.5px -1.5px 5px rgba(20,20,20,0.03), 0 0 4px 1px rgba(193,20,32,0.3), 0 0 18px 3px rgba(193,20,32,0.14)'
-const PRESSED_SHADOW =
-  'inset 4px 5px 10px rgba(20,20,20,0.1), inset -3px -3px 8px rgba(255,255,255,0.6), 0 0 3px 1px rgba(193,20,32,0.18), 0 0 10px 1px rgba(193,20,32,0.08)'
+//
+// The cloud is an irregular silhouette, so it can't lean on box-shadow's
+// inset terms and border-radius the way the old circle did — box-shadow
+// draws around the element's own box, not its clip-path. Ambient/glow
+// shadows move to filter: drop-shadow(), which follows a clipped shape's
+// real alpha silhouette; the inset highlight/shade stays as box-shadow on a
+// separate overlay clipped to the same cloud path (inset shadows do respect
+// clip-path, since they paint inside the element rather than around it).
+const REST_DROP = 'drop-shadow(5px 7px 10px rgba(20,20,20,0.16)) drop-shadow(0 0 8px rgba(193,20,32,0.08))'
+const HOVER_DROP = 'drop-shadow(7px 11px 16px rgba(20,20,20,0.22)) drop-shadow(0 0 14px rgba(193,20,32,0.16))'
+const PRESSED_DROP = 'drop-shadow(2px 3px 6px rgba(20,20,20,0.14)) drop-shadow(0 0 6px rgba(193,20,32,0.12))'
+
+const REST_INSET = 'inset 1.5px 2px 5px rgba(255,255,255,0.8), inset -2px -3px 7px rgba(20,20,20,0.04)'
+const HOVER_INSET = 'inset 1.5px 2px 5px rgba(255,255,255,0.85), inset -2px -3px 8px rgba(20,20,20,0.04)'
+const PRESSED_INSET = 'inset 3px 4px 9px rgba(20,20,20,0.12), inset -2px -2px 6px rgba(255,255,255,0.55)'
 
 // each circle floats on its own slow, slightly offset loop so the three
 // never move in lockstep: barely perceptible, not a bounce
@@ -50,7 +55,8 @@ function ClayCircle({
     setPos({ x: (e.clientX - (rect.left + rect.width / 2)) / 22, y: (e.clientY - (rect.top + rect.height / 2)) / 22 })
   }
 
-  const shadow = pressed ? PRESSED_SHADOW : hovering ? HOVER_SHADOW : REST_SHADOW
+  const drop = pressed ? PRESSED_DROP : hovering ? HOVER_DROP : REST_DROP
+  const inset = pressed ? PRESSED_INSET : hovering ? HOVER_INSET : REST_INSET
   const lift = pressed ? 1 : hovering ? -6 : 0
 
   return (
@@ -91,41 +97,52 @@ function ClayCircle({
             to={hash}
             onTouchStart={() => setPressed(true)}
             onTouchEnd={() => setPressed(false)}
-            className="group flex size-[15rem] flex-col items-center justify-center gap-3 rounded-full p-6 text-center no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand)] md:size-[13.5rem] lg:size-[17.5rem]"
+            className="group relative flex size-[17rem] flex-col items-center justify-center gap-2 px-8 pb-24 pt-5 text-center no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand)] md:size-[15.5rem] lg:size-[19.6rem] md:pb-20 lg:pb-28"
             style={{
-              background: 'linear-gradient(145deg, #ffffff 0%, #fbfbfa 55%, #f4f4f2 100%)',
-              boxShadow: shadow,
-              transition: 'box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1)',
+              filter: drop,
+              transition: 'filter 380ms cubic-bezier(0.22, 1, 0.36, 1)',
             }}
           >
             <span
-              className="flex size-8 items-center justify-center rounded-full text-[11px] font-black text-white"
+              aria-hidden="true"
+              className="absolute inset-0"
               style={{
-                background: 'linear-gradient(145deg, var(--brand-2), var(--brand))',
-                boxShadow: '2px 3px 6px -2px rgba(193,20,32,0.45), inset 1px 1px 2px rgba(255,255,255,0.35)',
+                clipPath: 'url(#clay-cloud)',
+                background: 'linear-gradient(145deg, #ffffff 0%, #fbfbfa 55%, #f4f4f2 100%)',
+                boxShadow: inset,
+                transition: 'box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1)',
               }}
-            >
-              {n}
-            </span>
-            <span className="font-sans text-xl font-extrabold leading-tight tracking-tight text-[var(--ink)] lg:text-2xl">
-              {title}
-            </span>
-            <div className="flex flex-wrap items-center justify-center gap-1.5">
-              {tags.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full px-2.5 py-1 text-[10px] font-semibold text-[var(--ink-soft)]"
-                  style={{
-                    background: '#f2f2f0',
-                    boxShadow: 'inset 1px 1.5px 3px rgba(20,20,20,0.08), inset -1px -1px 2px rgba(255,255,255,0.7)',
-                  }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-text)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              Find out more <ArrowRight size={12} />
+            />
+            <span className="relative flex flex-col items-center gap-2.5">
+              <span
+                className="flex size-8 items-center justify-center rounded-full text-[11px] font-black text-white"
+                style={{
+                  background: 'linear-gradient(145deg, var(--brand-2), var(--brand))',
+                  boxShadow: '2px 3px 6px -2px rgba(193,20,32,0.45), inset 1px 1px 2px rgba(255,255,255,0.35)',
+                }}
+              >
+                {n}
+              </span>
+              <span className="font-sans text-xl font-extrabold leading-tight tracking-tight text-[var(--ink)] lg:text-2xl">
+                {title}
+              </span>
+              <div className="flex flex-wrap items-center justify-center gap-1.5">
+                {tags.map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full px-2.5 py-1 text-[10px] font-semibold text-[var(--ink-soft)]"
+                    style={{
+                      background: '#f2f2f0',
+                      boxShadow: 'inset 1px 1.5px 3px rgba(20,20,20,0.08), inset -1px -1px 2px rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-text)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                Find out more <ArrowRight size={12} />
+              </span>
             </span>
           </Link>
         </motion.div>
@@ -145,8 +162,31 @@ export function ServiceCircles() {
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   return (
-    <div className="py-10 sm:py-14">
-      <div className="mx-auto flex max-w-[60rem] flex-col items-center gap-10 md:flex-row md:justify-center md:gap-9 lg:gap-14">
+    <div className="py-2 sm:py-4">
+      {/* the cloud silhouette every card clips to, defined once and shared
+          by url(#clay-cloud) rather than duplicated per card. objectBoundingBox
+          units mean the 0-1 path scales to whatever box.size the element
+          clipping to it happens to have (16.5rem here, 19rem at lg). */}
+      <svg width="0" height="0" aria-hidden="true" className="absolute">
+        <defs>
+          {/* a clipPath's children union automatically, so the cloud is just
+              a flat-bottomed base plus several full circles overlapping
+              along the top — every lobe stays a perfect arc (crisp, premium)
+              instead of an eyeballed cubic curve trying to fake one. */}
+          <clipPath id="clay-cloud" clipPathUnits="objectBoundingBox">
+            <circle cx="0.4773" cy="0.2973" r="0.2273" />
+            <circle cx="0.2864" cy="0.3882" r="0.1727" />
+            <circle cx="0.6591" cy="0.3700" r="0.1818" />
+            <circle cx="0.1773" cy="0.5336" r="0.1273" />
+            <circle cx="0.8136" cy="0.5155" r="0.1364" />
+            <circle cx="0.3682" cy="0.5700" r="0.1455" />
+            <circle cx="0.5500" cy="0.5973" r="0.1545" />
+            <circle cx="0.7136" cy="0.5791" r="0.1273" />
+          </clipPath>
+        </defs>
+      </svg>
+
+      <div className="mx-auto flex max-w-[60rem] flex-col items-center gap-14 md:flex-row md:justify-center md:gap-10 lg:gap-16">
         {CIRCLES.map((c, i) => (
           <ClayCircle key={c.n} {...c} index={i} delay={i * 0.08} reduced={reduced} />
         ))}

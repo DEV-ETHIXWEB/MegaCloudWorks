@@ -65,9 +65,17 @@ export const STEPS = [
   },
 ] as const
 
-export const STATS = [
-  { value: '40+', label: 'Apps shipped' },
-  { value: '9', label: 'Weeks, average' },
-  { value: '98%', label: 'Client retention' },
-  { value: '5', label: 'Concepts built' },
+export const PRINCIPLES = [
+  {
+    title: 'One team, start to store',
+    desc: 'Design and engineering sit together, so nothing gets lost in a handoff.',
+  },
+  {
+    title: 'Weekly staging builds',
+    desc: "You're using the app before it's finished, not waiting for a reveal.",
+  },
+  {
+    title: 'No ghosting after launch',
+    desc: 'The team that shipped it is the team that answers when something breaks.',
+  },
 ] as const

@@ -1,18 +1,15 @@
 import { Reveal } from './Reveal'
-import { AnimatedStat } from './AnimatedStat'
-import { STATS } from '../content/home'
+import { PRINCIPLES } from '../content/home'
 
 export function StatsSection() {
   return (
     <section className="relative isolate overflow-hidden border-y border-[var(--line)] bg-[var(--near-black)]">
       <div className="grain-overlay" aria-hidden="true" />
-      <div className="relative mx-auto grid max-w-[var(--container-wide)] grid-cols-1 divide-y divide-white/10 px-[var(--edge)] sm:grid-cols-4 sm:divide-x sm:divide-y-0">
-        {STATS.map((s, i) => (
-          <Reveal key={s.label} delay={i * 0.08} className="px-2 py-10 text-center sm:px-8">
-            <AnimatedStat value={s.value} />
-            <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-white/50">
-              {s.label}
-            </p>
+      <div className="relative mx-auto grid max-w-[var(--container-wide)] grid-cols-1 gap-10 px-[var(--edge)] py-16 sm:grid-cols-3 sm:gap-8 sm:py-20">
+        {PRINCIPLES.map((p, i) => (
+          <Reveal key={p.title} delay={i * 0.08} className="relative border-l-2 border-[var(--brand)] pl-4">
+            <p className="font-sans text-lg font-black text-white sm:text-xl">{p.title}</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-white/50">{p.desc}</p>
           </Reveal>
         ))}
       </div>

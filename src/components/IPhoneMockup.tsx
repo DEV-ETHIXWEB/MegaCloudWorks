@@ -24,7 +24,7 @@ export function IPhoneMockup({
 
   return (
     <div
-      className={`iphone-frame w-full ${className}`}
+      className={`iphone-frame mx-auto w-full ${className}`}
       style={{ maxWidth, aspectRatio: `1 / ${ASPECT}` }}
       role={label ? 'group' : undefined}
       aria-label={label}

@@ -85,12 +85,12 @@ export function Services() {
 
       {/* Quick nav: three glass circles over a bed of concentric rings,
           jumps straight into the capability picker below */}
-      <section className="px-[var(--edge)] py-10 sm:py-12">
+      <section className="px-[var(--edge)]">
         <ServiceCircles />
       </section>
 
       {/* 02 · Capabilities: one interactive picker, not three duplicated blocks */}
-      <section id="capabilities" className="scroll-mt-28 px-[var(--edge)] py-24 sm:py-32">
+      <section id="capabilities" className="scroll-mt-28 px-[var(--edge)] pb-24 pt-2 sm:pb-32 sm:pt-4">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <SectionHeading n="02" kicker="Capabilities" title="What's included, service by service." />
           <div className="mt-12">

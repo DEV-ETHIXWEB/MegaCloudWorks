@@ -5,7 +5,7 @@ import { SiteHeader } from '../components/SiteHeader'
 import { SiteFooter } from '../components/SiteFooter'
 import { Reveal } from '../components/Reveal'
 import { CTASection } from '../components/CTASection'
-import { ScreensShowcase } from '../components/ScreensShowcase'
+import { ScreensCarousel } from '../components/ScreensCarousel'
 import { IPhoneMockup } from '../components/IPhoneMockup'
 import { PhoneNavProvider } from '../lib/phoneUI'
 import { CONCEPT_SCREENS } from '../lib/conceptScreens'
@@ -125,7 +125,7 @@ export function WorkDetail() {
             </p>
           </div>
           <div className="mt-16">
-            <ScreensShowcase concept={concept} />
+            <ScreensCarousel concept={concept} />
           </div>
         </div>
       </section>

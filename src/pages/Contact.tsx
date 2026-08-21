@@ -58,10 +58,17 @@ export function Contact() {
               the heading's own footprint and it can never grow past it */}
           <p
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 -z-10 flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-sans font-black leading-none tracking-tight text-transparent"
+            className="pointer-events-none absolute inset-0 -z-10 flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-sans font-black leading-none tracking-tight"
             style={{
               fontSize: 'clamp(3rem, 16vw, 11rem)',
-              WebkitTextStroke: '1.5px rgba(16,16,20,0.07)',
+              backgroundImage: 'url(/cta-sky.webp)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center 65%',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              color: 'transparent',
+              WebkitTextStroke: '1.5px rgba(16,16,20,0.09)',
+              opacity: 0.9,
             }}
           >
             {CONTACT_HERO.word}

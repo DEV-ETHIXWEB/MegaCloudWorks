@@ -8,16 +8,16 @@ export function CTASection({
   title,
   sub,
   ctaLabel = 'Get in touch',
-  bgImage = false,
+  bgImage = true,
 }: {
   eyebrow: string
   title: ReactNode
   sub?: string
   ctaLabel?: string
-  /** Swap the flat brand-red field for the coral cloudscape photo, used
-   * on the homepage's closing CTA. Off by default so the other spots
-   * this component appears (About, Work, a case study's own CTA) keep
-   * the plain colour field their copy was designed against. */
+  /** Swap the coral cloudscape photo for a flat brand-red field. On by
+   * default so every closing CTA across the site shares the same
+   * cloudscape background; pass `bgImage={false}` for the rare spot that
+   * wants the plain colour field instead. */
   bgImage?: boolean
 }) {
   return (

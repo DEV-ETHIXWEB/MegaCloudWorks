@@ -7,7 +7,7 @@ import { useInView } from 'motion/react'
  * driving a number instead so "40+ apps shipped" reads as a live tally
  * loading in rather than a static label.
  */
-export function AnimatedStat({ value }: { value: string }) {
+export function AnimatedStat({ value, className }: { value: string; className?: string }) {
   const ref = useRef<HTMLParagraphElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const match = value.match(/^(\d+)(.*)$/)
@@ -37,7 +37,10 @@ export function AnimatedStat({ value }: { value: string }) {
   }, [inView, target])
 
   return (
-    <p ref={ref} className="font-sans text-5xl font-black tracking-tight text-white sm:text-6xl">
+    <p
+      ref={ref}
+      className={`font-sans font-black tracking-tight text-[var(--ink)] ${className ?? 'text-5xl sm:text-6xl'}`}
+    >
       {match ? n : value}
       {suffix}
     </p>

@@ -16,10 +16,13 @@ export function WobbleCard({
   children,
   containerClassName = '',
   className = '',
+  surface = 'lift',
 }: {
   children: ReactNode
   containerClassName?: string
   className?: string
+  /** which surface treatment supplies the card's background/border/shadow */
+  surface?: 'lift' | 'glass'
 }) {
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [hovering, setHovering] = useState(false)
@@ -50,7 +53,7 @@ export function WobbleCard({
         transform: hovering ? `translate3d(${pos.x}px, ${pos.y}px, 0)` : 'translate3d(0px, 0px, 0)',
         transition: 'transform 0.15s ease-out',
       }}
-      className={`surface-lift relative mx-auto w-full overflow-hidden ${containerClassName}`}
+      className={`${surface === 'glass' ? 'surface-glass-card' : 'surface-lift'} relative mx-auto w-full overflow-hidden ${containerClassName}`}
     >
       <motion.div
         style={{

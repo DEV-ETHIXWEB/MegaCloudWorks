@@ -83,15 +83,15 @@ export function About() {
       <section className="px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto grid max-w-[var(--container-wide)] gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4 lg:self-start lg:sticky lg:top-32">
-            <p className="kicker text-sm sm:text-base" data-n="02">
+            <p className="kicker text-sm sm:text-base lg:text-xl" data-n="02">
               {STUDIOS.eyebrow}
             </p>
-            <p className="mt-4 hidden max-w-[18rem] text-lg leading-relaxed text-[var(--ink-faint)] lg:block">
+            <p className="mt-4 hidden max-w-[22rem] text-[1.61rem] leading-relaxed text-[var(--ink-faint)] lg:block">
               One team, two studios: the web side and the app side of the same standard.
             </p>
           </div>
           <Reveal className="lg:col-span-7 lg:col-start-6">
-            <p className="text-[length:var(--fs-lead)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">
+            <p className="text-[length:clamp(1.254rem,2.508vw,1.452rem)] font-light leading-relaxed tracking-tight text-[var(--ink-soft)]">
               {STUDIOS.body}
             </p>
             <div className="mt-10">

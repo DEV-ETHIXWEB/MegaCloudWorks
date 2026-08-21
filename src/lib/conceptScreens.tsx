@@ -58,23 +58,6 @@ function useClock() {
   return `${h}:${m}`
 }
 
-function Bar({
-  w,
-  h = 7,
-  tone = '#e6e6ea',
-}: {
-  w: string
-  h?: number
-  tone?: string
-}) {
-  return (
-    <span
-      className="block rounded-full"
-      style={{ width: w, height: h, background: tone }}
-    />
-  )
-}
-
 function StatusBar({
   accent,
   dark = false,
@@ -174,13 +157,24 @@ function Avatar({
   )
 }
 
-/** A horizontal strip of icon + number + label: Dently/Leadr's stat-chip row. */
+/**
+ * A horizontal strip of icon + number + label: Dently/Leadr's stat-chip
+ * row. Each chip doubles as a filter — tapping one selects it (a ring
+ * highlight) and calls `onSelect`; the row is inert only if the caller
+ * doesn't wire a handler at all.
+ */
 function StatChipRow({
   items,
   tone = 'light',
+  accent,
+  selected,
+  onSelect,
 }: {
-  items: Array<{ icon: React.ComponentType<{ className?: string; strokeWidth?: number }>; value: string; label: string }>
+  items: Array<{ icon: React.ComponentType<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>; value: string; label: string }>
   tone?: 'light' | 'dark'
+  accent?: string
+  selected?: number
+  onSelect?: (i: number) => void
 }) {
   const lineColor = tone === 'dark' ? 'rgba(255,255,255,0.1)' : 'var(--line)'
   return (
@@ -188,61 +182,90 @@ function StatChipRow({
       className="flex items-stretch rounded-xl"
       style={{ background: tone === 'dark' ? 'rgba(255,255,255,0.06)' : '#f4f4f6' }}
     >
-      {items.map(({ icon: Icon, value, label }, i) => (
-        <div
-          key={label}
-          className="flex flex-1 flex-col items-center gap-0.5 px-1 py-2"
-          style={{ borderLeft: i > 0 ? `1px solid ${lineColor}` : undefined }}
-        >
-          <Icon
-            className={`size-3 ${tone === 'dark' ? 'text-white/60' : 'text-[var(--ink-faint)]'}`}
-            strokeWidth={2}
-          />
+      {items.map(({ icon: Icon, value, label }, i) => {
+        const isSelected = selected === i
+        const chip = (
           <span
-            className={`text-[10px] font-extrabold ${tone === 'dark' ? 'text-white' : 'text-[var(--ink)]'}`}
+            className="flex flex-1 flex-col items-center gap-0.5 px-1 py-2 transition-colors"
+            style={{
+              borderLeft: i > 0 ? `1px solid ${lineColor}` : undefined,
+              borderRadius: 10,
+              boxShadow: isSelected ? `inset 0 0 0 1.5px ${accent}` : undefined,
+              background: isSelected ? `${accent}14` : undefined,
+            }}
           >
-            {value}
+            <Icon
+              className="size-3"
+              style={{ color: isSelected ? accent : tone === 'dark' ? 'rgba(255,255,255,0.6)' : 'var(--ink-faint)' }}
+              strokeWidth={2}
+            />
+            <span
+              className="text-[10px] font-extrabold"
+              style={{ color: isSelected ? accent : tone === 'dark' ? 'white' : 'var(--ink)' }}
+            >
+              {value}
+            </span>
+            <span
+              className={`text-center text-[6.5px] font-semibold leading-tight ${tone === 'dark' ? 'text-white/50' : 'text-[var(--ink-faint)]'}`}
+            >
+              {label}
+            </span>
           </span>
-          <span
-            className={`text-center text-[6.5px] font-semibold leading-tight ${tone === 'dark' ? 'text-white/50' : 'text-[var(--ink-faint)]'}`}
-          >
-            {label}
-          </span>
-        </div>
-      ))}
+        )
+        if (!onSelect) return <Fragment key={label}>{chip}</Fragment>
+        return (
+          <Tap key={label} press={false} ripple={accent} label={`Filter ${label}`} onTap={() => onSelect(i)} className="!w-auto flex-1">
+            {chip}
+          </Tap>
+        )
+      })}
     </div>
   )
 }
 
-/** Horizontal stage stepper: Leadr's deal-detail progress line. */
+/**
+ * Horizontal stage stepper: Leadr's deal-detail progress line. Each stage
+ * is tappable — advancing (or reverting to) a stage is the primary verb of
+ * a CRM detail screen, so this isn't decoration.
+ */
 function Stepper({
   stages,
   activeIndex,
   accent,
+  onSelect,
 }: {
   stages: string[]
   activeIndex: number
   accent: string
+  onSelect?: (i: number) => void
 }) {
   return (
     <div className="flex items-center">
       {stages.map((s, i) => (
         <Fragment key={s}>
-          <div className="flex flex-col items-center gap-1">
-            <span
-              className="flex size-3 items-center justify-center rounded-full border-2 transition-colors"
-              style={{
-                background: i <= activeIndex ? accent : 'transparent',
-                borderColor: i <= activeIndex ? accent : 'rgba(255,255,255,0.25)',
-              }}
-            />
-            <span
-              className="whitespace-nowrap text-[6px] font-bold"
-              style={{ color: i === activeIndex ? accent : 'rgba(255,255,255,0.45)' }}
-            >
-              {s}
+          <Tap
+            press={false}
+            ripple={accent}
+            label={`Move to ${s}`}
+            onTap={() => onSelect?.(i)}
+            className="!w-auto"
+          >
+            <span className="flex flex-col items-center gap-1 px-0.5">
+              <span
+                className="flex size-3 items-center justify-center rounded-full border-2 transition-colors"
+                style={{
+                  background: i <= activeIndex ? accent : 'transparent',
+                  borderColor: i <= activeIndex ? accent : 'rgba(255,255,255,0.25)',
+                }}
+              />
+              <span
+                className="whitespace-nowrap text-[6px] font-bold"
+                style={{ color: i === activeIndex ? accent : 'rgba(255,255,255,0.45)' }}
+              >
+                {s}
+              </span>
             </span>
-          </div>
+          </Tap>
           {i < stages.length - 1 && (
             <span
               className="mb-3.5 h-[2px] flex-1"
@@ -292,8 +315,8 @@ function ProgressRing({
 /* ============================= FIELDLY =============================
  * Reference: Flux (image 7): navy/near-black ground, map-pin price-style
  * highlight card, operational stat tiles + icon grid on the home screen,
- * colour-coded icon-chip rows for jobs/transactions. Indigo-blue accent
- * (#5B4FE8), Flux's own primary colour, replacing the old amber.
+ * colour-coded icon-chip rows for jobs/transactions. Sky-blue accent
+ * (#40A7E7), chosen to sit apart from Stamp and Leadr's own hues.
  */
 
 const FIELDLY_BG = '#0A0912'
@@ -313,18 +336,22 @@ function FieldlyDispatch({ accent }: { accent: string }) {
       <div className="px-3.5 pb-2.5">
         <p className="text-[13px] font-extrabold text-white">Morning, Marcus</p>
         <div className="mt-2.5 grid grid-cols-2 gap-2">
-          <div className="rounded-xl p-2.5" style={{ background: 'rgba(255,255,255,0.06)' }}>
-            <p className="text-[7.5px] font-bold uppercase tracking-wide text-white/50">
-              Today&rsquo;s Jobs
-            </p>
-            <p className="mt-1 text-lg font-extrabold text-white">4</p>
-          </div>
-          <div className="rounded-xl p-2.5" style={{ background: accent }}>
-            <p className="text-[7.5px] font-bold uppercase tracking-wide text-white/70">
-              Est. Revenue
-            </p>
-            <p className="mt-1 text-lg font-extrabold text-white">$2,340</p>
-          </div>
+          <Tap ripple={accent} label="View today's jobs on the schedule" onTap={() => go(3)}>
+            <span className="block rounded-xl p-2.5" style={{ background: 'rgba(255,255,255,0.06)' }}>
+              <span className="block text-[7.5px] font-bold uppercase tracking-wide text-white/50">
+                Today&rsquo;s Jobs
+              </span>
+              <span className="mt-1 block text-lg font-extrabold text-white">4</span>
+            </span>
+          </Tap>
+          <Tap ripple="#ffffff" label="View revenue on the latest quote" onTap={() => go(1)}>
+            <span className="block rounded-xl p-2.5" style={{ background: accent }}>
+              <span className="block text-[7.5px] font-bold uppercase tracking-wide text-white/70">
+                Est. Revenue
+              </span>
+              <span className="mt-1 block text-lg font-extrabold text-white">$2,340</span>
+            </span>
+          </Tap>
         </div>
       </div>
       <div className="flex-1 space-y-2 overflow-hidden px-3.5 pb-3">
@@ -389,10 +416,15 @@ function FieldlyQuote({ accent }: { accent: string }) {
     'none',
   )
   const lines = [
-    { l: 'Labour (4h × $85)', v: '$340.00' },
-    { l: 'Pipe fittings & parts', v: '$120.00' },
-    { l: 'Emergency call-out fee', v: '$75.00' },
+    { l: 'Labour (4h × $85)', v: 340 },
+    { l: 'Pipe fittings & parts', v: 120 },
+    { l: 'Emergency call-out fee', v: 75 },
+    { l: 'Trip charge', v: 53.5 },
   ]
+  // struck-through line items drop out of the live total: an editable
+  // quote, not a static receipt
+  const [removed, setRemoved] = useScreenState<number[]>('fieldly.quoteLinesOff', [])
+  const total = lines.reduce((sum, row, i) => (removed.includes(i) ? sum : sum + row.v), 0)
   return (
     <DarkScreenShell bg={FIELDLY_BG}>
       <DarkStatusBar accent={accent} />
@@ -412,34 +444,51 @@ function FieldlyQuote({ accent }: { accent: string }) {
             Jobs
           </span>
         </Tap>
-        {/* card-visual treatment, echoing Flux's debit-card hero */}
-        <div
-          className="relative overflow-hidden rounded-xl p-3 text-white"
-          style={{ background: `linear-gradient(135deg, ${accent}, #3B2FC9)` }}
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[8px] font-bold uppercase tracking-wide text-white/65">
-                Quote #Q-0847
-              </p>
-              <p className="mt-1 text-base font-extrabold">$588.50</p>
-            </div>
-            <Receipt className="size-4 text-white/55" strokeWidth={2} />
-          </div>
-          <p className="mt-2 text-[8.5px] font-semibold text-white/70">
-            Sarah Johnson · 18 Nov 2025
-          </p>
-        </div>
-        <div className="mt-3 space-y-1.5 rounded-xl p-2.5" style={{ background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)' }}>
-          {lines.map((row) => (
-            <div key={row.l} className="flex items-center justify-between">
-              <span className="text-[8.5px] text-white/55">{row.l}</span>
-              <span className="text-[9px] font-semibold text-white/55">{row.v}</span>
-            </div>
-          ))}
-          <div className="mt-1 flex items-center justify-between border-t border-white/10 pt-1.5">
+        {/* card-visual treatment, echoing Flux's debit-card hero; taps
+            through to the job it was quoted from */}
+        <Tap ripple="#ffffff" label="Open job #1047" onTap={() => go(2)}>
+          <span
+            className="relative block overflow-hidden rounded-xl p-3 text-left text-white"
+            style={{ background: `linear-gradient(135deg, ${accent}, #1E4FA3)` }}
+          >
+            <span className="flex items-start justify-between">
+              <span>
+                <span className="block text-[8px] font-bold uppercase tracking-wide text-white/65">
+                  Quote #Q-0847
+                </span>
+                <span className="mt-1 block text-base font-extrabold">${total.toFixed(2)}</span>
+              </span>
+              <Receipt className="size-4 text-white/55" strokeWidth={2} />
+            </span>
+            <span className="mt-2 block text-[8.5px] font-semibold text-white/70">
+              Sarah Johnson · 18 Nov 2025
+            </span>
+          </span>
+        </Tap>
+        <div className="mt-3 space-y-0.5 rounded-xl p-1.5" style={{ background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)' }}>
+          {lines.map((row, i) => {
+            const off = removed.includes(i)
+            return (
+              <Tap
+                key={row.l}
+                ripple={accent}
+                label={off ? `Restore ${row.l}` : `Remove ${row.l}`}
+                onTap={() => setRemoved((cur) => (off ? cur.filter((n) => n !== i) : [...cur, i]))}
+              >
+                <span className="flex items-center justify-between rounded-lg px-1 py-1 transition-opacity" style={{ opacity: off ? 0.4 : 1 }}>
+                  <span className="text-[8.5px]" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: off ? 'line-through' : undefined }}>
+                    {row.l}
+                  </span>
+                  <span className="text-[9px] font-semibold" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: off ? 'line-through' : undefined }}>
+                    ${row.v.toFixed(2)}
+                  </span>
+                </span>
+              </Tap>
+            )
+          })}
+          <div className="mt-1 flex items-center justify-between border-t border-white/10 px-1 pt-1.5">
             <span className="text-[9px] font-extrabold text-white">Total</span>
-            <span className="text-[11px] font-extrabold text-white">$588.50</span>
+            <span className="text-[11px] font-extrabold text-white">${total.toFixed(2)}</span>
           </div>
         </div>
       </div>
@@ -473,6 +522,7 @@ function FieldlyQuote({ accent }: { accent: string }) {
 function FieldlyPhotos({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
   const [shot, setShot] = useScreenState('fieldly.before', false)
+  const [after, setAfter] = useScreenState('fieldly.after', false)
   const [done, setDone] = useScreenState('fieldly.done', false)
   return (
     <DarkScreenShell bg={FIELDLY_BG}>
@@ -487,8 +537,8 @@ function FieldlyPhotos({ accent }: { accent: string }) {
             </p>
             <Tap
               ripple={accent}
-              label="Take before photo"
-              onTap={() => setShot(true)}
+              label={shot ? 'Retake before photo' : 'Take before photo'}
+              onTap={() => setShot((s) => !s)}
             >
               <span
                 className="flex aspect-square items-center justify-center rounded-xl border transition-colors"
@@ -517,30 +567,45 @@ function FieldlyPhotos({ accent }: { accent: string }) {
           <div className="space-y-1">
             <p
               className="text-[8px] font-bold uppercase tracking-wide"
-              style={{ color: accent }}
+              style={{ color: shot ? accent : 'rgba(255,255,255,0.3)' }}
             >
               After
             </p>
-            <div
-              className="flex aspect-square items-center justify-center rounded-xl"
-              style={{ background: `${accent}26` }}
+            <Tap
+              ripple={accent}
+              disabled={!shot}
+              label={!shot ? 'Take the before photo first' : after ? 'Retake after photo' : 'Take after photo'}
+              onTap={() => setAfter((a) => !a)}
             >
-              <Check
-                className="size-4"
-                style={{ color: accent }}
-                strokeWidth={2.5}
-              />
-            </div>
+              <span
+                className="flex aspect-square items-center justify-center rounded-xl border transition-colors"
+                style={
+                  after
+                    ? { background: `${accent}26`, borderColor: 'transparent' }
+                    : {
+                        background: 'rgba(255,255,255,0.04)',
+                        borderColor: 'rgba(255,255,255,0.14)',
+                        borderStyle: 'dashed',
+                        opacity: shot ? 1 : 0.4,
+                      }
+                }
+              >
+                {after ? (
+                  <Check className="size-4" style={{ color: accent }} strokeWidth={2.5} />
+                ) : (
+                  <Camera className="size-4 text-white/35" strokeWidth={1.75} />
+                )}
+              </span>
+            </Tap>
           </div>
         </div>
         <div className="mt-3 rounded-xl p-2.5" style={{ background: 'rgba(255,255,255,0.045)' }}>
           <p className="text-[7.5px] font-bold uppercase tracking-wide text-white/40">
             Notes
           </p>
-          <div className="mt-1.5 space-y-1">
-            <Bar w="90%" h={6} tone="rgba(255,255,255,0.12)" />
-            <Bar w="60%" h={6} tone="rgba(255,255,255,0.08)" />
-          </div>
+          <p className="mt-1.5 text-[8.5px] leading-relaxed text-white/60">
+            Replaced 100A panel, upgraded to 200A service. Client wants surge protector quoted for next visit.
+          </p>
         </div>
       </div>
       <div className="px-3.5 pb-4">
@@ -568,13 +633,40 @@ function FieldlySchedule({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
   const [day, setDay] = useChoice('fieldly.day', 2)
   const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-  const rows = [
-    { t: '8:00', label: 'HVAC · Oak St', tone: accent, Icon: Zap },
-    { t: '10:30', label: 'Plumbing · Birch Ave', tone: '#F08A24', Icon: Droplet },
-    { t: '13:00', label: 'Lunch', tone: '#9aa0ac', Icon: Package },
-    { t: '14:00', label: 'Electrical · Elm Rd', tone: '#1F9D55', Icon: Wrench },
-    { t: '16:00', label: 'HVAC · Pine Close', tone: accent, Icon: Zap },
+  // one row set per day: different jobs, different load, weekends lighter —
+  // the day picker actually changes what's below it now
+  const week: Array<Array<{ t: string; label: string; tone: string; Icon: typeof Zap; job: boolean }>> = [
+    [
+      { t: '9:00', label: 'HVAC · Maple Dr', tone: accent, Icon: Zap, job: true },
+      { t: '13:00', label: 'Lunch', tone: '#9aa0ac', Icon: Package, job: false },
+      { t: '14:30', label: 'Plumbing · Ash Ct', tone: '#F08A24', Icon: Droplet, job: true },
+    ],
+    [
+      { t: '8:30', label: 'Electrical · Cedar Ln', tone: '#1F9D55', Icon: Wrench, job: true },
+      { t: '13:00', label: 'Lunch', tone: '#9aa0ac', Icon: Package, job: false },
+      { t: '15:00', label: 'HVAC · Birch Ave', tone: accent, Icon: Zap, job: true },
+    ],
+    [
+      { t: '8:00', label: 'HVAC · Oak St', tone: accent, Icon: Zap, job: true },
+      { t: '10:30', label: 'Plumbing · Birch Ave', tone: '#F08A24', Icon: Droplet, job: true },
+      { t: '13:00', label: 'Lunch', tone: '#9aa0ac', Icon: Package, job: false },
+      { t: '14:00', label: 'Electrical · Elm Rd', tone: '#1F9D55', Icon: Wrench, job: true },
+      { t: '16:00', label: 'HVAC · Pine Close', tone: accent, Icon: Zap, job: true },
+    ],
+    [
+      { t: '9:30', label: 'Plumbing · Fir St', tone: '#F08A24', Icon: Droplet, job: true },
+      { t: '13:00', label: 'Lunch', tone: '#9aa0ac', Icon: Package, job: false },
+    ],
+    [
+      { t: '8:00', label: 'HVAC · Willow Rd', tone: accent, Icon: Zap, job: true },
+      { t: '11:00', label: 'Electrical · Spruce Way', tone: '#1F9D55', Icon: Wrench, job: true },
+      { t: '13:00', label: 'Lunch', tone: '#9aa0ac', Icon: Package, job: false },
+      { t: '15:30', label: 'HVAC · Poplar Dr', tone: accent, Icon: Zap, job: true },
+    ],
+    [{ t: '10:00', label: 'Plumbing · Chestnut Ave', tone: '#F08A24', Icon: Droplet, job: true }],
+    [],
   ]
+  const rows = week[day]
   return (
     <DarkScreenShell bg={FIELDLY_BG}>
       <DarkStatusBar accent={accent} />
@@ -606,30 +698,105 @@ function FieldlySchedule({ accent }: { accent: string }) {
           ))}
         </div>
         <div className="mt-3 space-y-1.5">
-          {rows.map((r) => (
-            <Tap
-              key={r.t}
-              ripple={r.tone}
-              label={`Open ${r.label}`}
-              onTap={() => go(0)}
-            >
-              <span className="flex items-center gap-2">
-                <span className="w-7 shrink-0 text-[8px] font-bold text-white/40">
-                  {r.t}
+          {rows.length === 0 && (
+            <p className="py-6 text-center text-[8.5px] text-white/35">Nothing scheduled — day off.</p>
+          )}
+          {rows.map((r) =>
+            r.job ? (
+              <Tap key={r.t} ripple={r.tone} label={`Open ${r.label}`} onTap={() => go(0)}>
+                <span className="flex items-center gap-2">
+                  <span className="w-9 shrink-0 text-[8px] font-bold text-white/40">{r.t}</span>
+                  <span className="flex h-7 flex-1 items-center gap-1.5 rounded-lg px-2" style={{ background: `${r.tone}22` }}>
+                    <r.Icon className="size-3" style={{ color: r.tone }} strokeWidth={2.2} />
+                    <span className="text-[8px] font-bold" style={{ color: r.tone }}>
+                      {r.label}
+                    </span>
+                  </span>
                 </span>
-                <span
-                  className="flex h-7 flex-1 items-center gap-1.5 rounded-lg px-2"
-                  style={{ background: `${r.tone}22` }}
-                >
+              </Tap>
+            ) : (
+              <span key={r.t} className="flex items-center gap-2" aria-hidden="true">
+                <span className="w-9 shrink-0 text-[8px] font-bold text-white/40">{r.t}</span>
+                <span className="flex h-7 flex-1 items-center gap-1.5 rounded-lg px-2" style={{ background: `${r.tone}14` }}>
                   <r.Icon className="size-3" style={{ color: r.tone }} strokeWidth={2.2} />
                   <span className="text-[8px] font-bold" style={{ color: r.tone }}>
                     {r.label}
                   </span>
                 </span>
               </span>
+            ),
+          )}
+        </div>
+      </div>
+    </DarkScreenShell>
+  )
+}
+
+function FieldlyTeam({ accent }: { accent: string }) {
+  const { go } = usePhoneNav()
+  const [picked, setPicked] = useChoice('fieldly.tech', -1)
+  const team = [
+    { name: 'Marcus D.', role: 'HVAC', jobs: 3, tone: accent, status: 'On site', note: 'Panel upgrade · 14 Oak Street · ETA 45 min' },
+    { name: 'Dana K.', role: 'Plumbing', jobs: 2, tone: '#F08A24', status: 'En route', note: 'Heading to 82 Birch Avenue · ETA 12 min' },
+    { name: 'Ray O.', role: 'Electrical', jobs: 4, tone: '#1F9D55', status: 'Available', note: 'Free from 2:00 PM — closest to Elm Rd' },
+    { name: 'Priya S.', role: 'HVAC', jobs: 1, tone: accent, status: 'Off today', note: 'Back tomorrow, 8:00 AM' },
+  ]
+  return (
+    <DarkScreenShell bg={FIELDLY_BG}>
+      <DarkStatusBar accent={accent} />
+      <div className="flex-1 px-3.5 pb-3">
+        <div className="flex items-center justify-between">
+          <p className="text-[13px] font-extrabold text-white">Team</p>
+          <span className="flex items-center gap-1 text-[8px] font-bold text-white/45">
+            <Users className="size-2.5" strokeWidth={2.5} />
+            10 techs
+          </span>
+        </div>
+        <p className="text-[8.5px] text-white/45">Who's on, and where.</p>
+        <div className="mt-3 space-y-1.5">
+          {team.map((t, i) => (
+            <Tap
+              key={t.name}
+              ripple={t.tone}
+              label={`Open ${t.name}`}
+              onTap={() => setPicked(picked === i ? -1 : i)}
+            >
+              <span className="block rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-2">
+                <span className="flex items-center gap-2">
+                  <Avatar name={t.name} tone={t.tone} size={26} fontSize={8.5} />
+                  <span className="min-w-0 flex-1 text-left">
+                    <span className="block truncate text-[9px] font-bold text-white">{t.name}</span>
+                    <span className="block truncate text-[7.5px] text-white/45">
+                      {t.role} · {t.jobs} jobs today
+                    </span>
+                  </span>
+                  <span
+                    className="shrink-0 rounded-full px-1.5 py-0.5 text-[7px] font-bold"
+                    style={{ background: `${t.tone}26`, color: t.tone }}
+                  >
+                    {t.status}
+                  </span>
+                  <ChevronRight
+                    className="size-3 shrink-0 text-white/30 transition-transform"
+                    style={{ transform: picked === i ? 'rotate(90deg)' : undefined }}
+                  />
+                </span>
+                {picked === i && (
+                  <span className="mt-2 block border-t border-white/10 pt-2 text-left text-[7.5px] leading-relaxed" style={{ color: t.tone }}>
+                    {t.note}
+                  </span>
+                )}
+              </span>
             </Tap>
           ))}
         </div>
+      </div>
+      <div className="px-3.5 pb-4">
+        <Tap ripple="#ffffff" label="Assign a new job" onTap={() => go(0)}>
+          <span className="block rounded-xl py-2.5 text-center text-[10.5px] font-bold text-white" style={{ background: accent }}>
+            Assign a Job
+          </span>
+        </Tap>
       </div>
     </DarkScreenShell>
   )
@@ -638,8 +805,8 @@ function FieldlySchedule({ accent }: { accent: string }) {
 /* ============================= STAMP =============================
  * Reference: Vault (image 3/4): a balance/card hero, month-pill +
  * chart treatment for anything numeric, category-icon-chip rows for
- * the reward catalog and offers. Purple accent already matches Vault's
- * own palette, so the cream/purple pairing carries over almost as-is.
+ * the reward catalog and offers. Magenta accent, chosen to sit apart
+ * from Fieldly and Leadr's own hues; cream/magenta pairing kept.
  */
 
 const STAMP_BG = '#0D0A16'
@@ -656,7 +823,7 @@ function StampWallet({ accent }: { accent: string }) {
           <Avatar name="Jamie Ortiz" tone={accent} />
         </div>
         {/* Vault-style balance/card hero */}
-        <Tap ripple="#ffffff" label="See reward catalog" onTap={() => go(2)} className="mt-3">
+        <Tap ripple="#ffffff" label="See reward catalog" onTap={() => go(3)} className="mt-3">
           <span
             className="relative block overflow-hidden rounded-2xl p-3.5 text-left text-white"
             style={{ background: `linear-gradient(135deg, ${accent}, #E88FD8)` }}
@@ -677,7 +844,7 @@ function StampWallet({ accent }: { accent: string }) {
           </span>
         </Tap>
         <div className="mt-3 space-y-2">
-          <Tap ripple={accent} label="Open Brew and Co punch card" onTap={() => go(1)}>
+          <Tap ripple={accent} label="Open Brew and Co punch card" onTap={() => go(0)}>
             <span className="flex items-center gap-2.5 rounded-xl px-2.5 py-2" style={{ background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <span className="flex size-7 shrink-0 items-center justify-center rounded-lg" style={{ background: `${accent}22`, color: accent }}>
                 <Coffee className="size-3.5" strokeWidth={2} />
@@ -703,7 +870,7 @@ function StampWallet({ accent }: { accent: string }) {
               </span>
             </span>
           </Tap>
-          <Tap ripple={accent} label="Open Corner Mart card" onTap={() => go(3)}>
+          <Tap ripple={accent} label="Open Corner Mart card in the catalog" onTap={() => go(3)}>
             <span className="flex items-center gap-2.5 rounded-xl px-2.5 py-2" style={{ background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <span className="flex size-7 shrink-0 items-center justify-center rounded-lg" style={{ background: `${accent}22`, color: accent }}>
                 <ShoppingBag className="size-3.5" strokeWidth={2} />
@@ -734,34 +901,68 @@ function StampPunchCard({ accent }: { accent: string }) {
   const [stamps, setStamps] = useScreenState('stamp.stamps', 9)
   const full = stamps >= 10
   return (
-    <ScreenShell bg="#FBF4EA">
-      <StatusBar accent={accent} />
+    <ScreenShell bg="linear-gradient(165deg, #241a3a 0%, #150f24 55%, #0d0a16 100%)">
+      <StatusBar accent={accent} dark />
       <div className="flex-1 px-3.5 pb-3">
-        <p className="text-[13px] font-extrabold text-[var(--ink)]">
-          Brew &amp; Co
-        </p>
-        <p className="text-[8.5px] text-[var(--ink-faint)]">
-          Coffee · Punch Card
-        </p>
-        <div className="mt-3 rounded-2xl border border-[#e7d9c2] bg-white p-3">
+        {/* merchant identity: an icon chip instead of bare text, so the
+            hero reads as a real branded card rather than a settings row */}
+        <div className="flex items-center gap-2.5">
+          <span
+            className="flex size-9 shrink-0 items-center justify-center rounded-xl text-white"
+            style={{ background: `linear-gradient(145deg, ${accent}, #4C1D95)`, boxShadow: `0 4px 14px -3px ${accent}66` }}
+          >
+            <Coffee className="size-4" strokeWidth={2} />
+          </span>
+          <div>
+            <p className="text-[13px] font-extrabold text-white">Brew &amp; Co</p>
+            <p className="text-[8.5px] text-white/45">Coffee · Punch Card</p>
+          </div>
+        </div>
+
+        {/* the card itself: a glass panel over the dark ground, matching
+            the depth every other concept's hero screen already has */}
+        <div
+          className="mt-4 rounded-2xl p-3.5"
+          style={{
+            background: 'linear-gradient(165deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03))',
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 20px 40px -20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
+          }}
+        >
           <div className="grid grid-cols-5 gap-2">
             {Array.from({ length: 10 }).map((_, i) => (
-              <span
+              <Tap
                 key={i}
-                className="flex aspect-square items-center justify-center rounded-full border-2 transition-colors duration-300"
-                style={
-                  i < stamps
-                    ? { background: accent, borderColor: accent }
-                    : { borderColor: '#e7d9c2' }
-                }
+                press={false}
+                ripple={accent}
+                label={i < stamps ? `Remove stamp ${i + 1}` : `Jump to ${i + 1} stamps`}
+                onTap={() => setStamps(i < stamps ? i : i + 1)}
+                className="!w-auto aspect-square"
               >
-                {i < stamps && (
-                  <Check className="size-2.5 text-white" strokeWidth={3} />
-                )}
-              </span>
+                <span
+                  className="flex aspect-square size-full items-center justify-center rounded-full border-2 transition-colors duration-300"
+                  style={
+                    i < stamps
+                      ? { background: `linear-gradient(145deg, ${accent}, #4C1D95)`, borderColor: 'transparent', boxShadow: `0 3px 8px -2px ${accent}88` }
+                      : { borderColor: 'rgba(255,255,255,0.16)', background: 'rgba(255,255,255,0.03)' }
+                  }
+                >
+                  {i < stamps && (
+                    <Check className="size-2.5 text-white" strokeWidth={3} />
+                  )}
+                </span>
+              </Tap>
             ))}
           </div>
-          <p className="mt-2.5 text-center text-[9px] font-bold text-[var(--ink)]">
+          {/* thin progress bar under the stamp grid: the same "fill state"
+              said twice, once discrete (dots) and once continuous (bar) */}
+          <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/8">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{ width: `${stamps * 10}%`, background: `linear-gradient(90deg, ${accent}, #E88FD8)` }}
+            />
+          </div>
+          <p className="mt-2.5 text-center text-[9px] font-bold text-white/85">
             {full
               ? 'Card full: your next coffee is free'
               : `${stamps} of 10 stamps, ${10 - stamps} more and it’s free`}
@@ -772,11 +973,14 @@ function StampPunchCard({ accent }: { accent: string }) {
         <Tap
           ripple="#ffffff"
           label={full ? 'Claim free coffee' : 'Scan to stamp'}
-          onTap={() => (full ? go(2) : setStamps((n) => n + 1))}
+          onTap={() => (full ? go(3) : setStamps((n) => n + 1))}
         >
           <span
             className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-center text-[10.5px] font-bold text-white transition-colors"
-            style={{ background: full ? '#1F9D55' : accent }}
+            style={{
+              background: full ? '#1F9D55' : `linear-gradient(135deg, ${accent}, #4C1D95)`,
+              boxShadow: full ? undefined : `0 8px 20px -6px ${accent}77`,
+            }}
           >
             {!full && <QrCode className="size-3.5" strokeWidth={2.2} />}
             {full ? 'Claim Free Coffee' : 'Scan to Stamp'}
@@ -790,6 +994,7 @@ function StampPunchCard({ accent }: { accent: string }) {
 function StampCatalog({ accent }: { accent: string }) {
   const [points, setPoints] = useScreenState('stamp.points', 1240)
   const [taken, setTaken] = useScreenState<Array<string>>('stamp.taken', [])
+  const [bar, setBar] = useChoice('stamp.bar', -1)
   const rewards = [
     { name: 'Free Coffee', cost: '500 pts', price: 500, Icon: Coffee },
     { name: '10% Off Order', cost: '300 pts', price: 300, Icon: Percent },
@@ -797,10 +1002,10 @@ function StampCatalog({ accent }: { accent: string }) {
   ]
   // a Vault-style bar breakdown of where the points came from this month
   const bars = [
-    { l: 'Brew & Co', v: 60 },
-    { l: 'Corner Mart', v: 34 },
-    { l: 'Sunny Bakes', v: 18 },
-    { l: 'Other', v: 8 },
+    { l: 'Brew & Co', v: 60, pts: 744 },
+    { l: 'Corner Mart', v: 34, pts: 422 },
+    { l: 'Sunny Bakes', v: 18, pts: 223 },
+    { l: 'Other', v: 8, pts: 99 },
   ]
   return (
     <ScreenShell bg="#FBF4EA">
@@ -811,18 +1016,34 @@ function StampCatalog({ accent }: { accent: string }) {
             Reward Catalog
           </p>
           <p className="text-[8.5px] text-[var(--ink-faint)]">
-            {points.toLocaleString()} points available
+            {bar >= 0 ? `${bars[bar].l} · ${bars[bar].pts} pts this month` : `${points.toLocaleString()} points available`}
           </p>
         </div>
         <div className="flex h-12 items-end gap-2 rounded-xl bg-white p-2">
-          {bars.map((b) => (
-            <div key={b.l} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
+          {bars.map((b, i) => (
+            <Tap
+              key={b.l}
+              press={false}
+              ripple={accent}
+              label={`${b.l}: ${b.pts} points this month`}
+              onTap={() => setBar(bar === i ? -1 : i)}
+              className="!w-auto flex h-full flex-1 flex-col items-center justify-end gap-1"
+            >
               <span
-                className="block w-full rounded-t"
-                style={{ height: `${b.v}%`, background: `linear-gradient(180deg, ${accent}, #4C1D95)` }}
+                className="block w-full rounded-t transition-opacity"
+                style={{
+                  height: `${b.v}%`,
+                  background: `linear-gradient(180deg, ${accent}, #4C1D95)`,
+                  opacity: bar === -1 || bar === i ? 1 : 0.35,
+                }}
               />
-              <span className="text-[6px] font-bold text-[var(--ink-faint)]">{b.l}</span>
-            </div>
+              <span
+                className="text-[6px] font-bold"
+                style={{ color: bar === i ? accent : 'var(--ink-faint)' }}
+              >
+                {b.l}
+              </span>
+            </Tap>
           ))}
         </div>
         <div className="space-y-2">
@@ -877,6 +1098,7 @@ function StampCatalog({ accent }: { accent: string }) {
 
 function StampOffers({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
+  const [dismissed, setDismissed] = useScreenState('stamp.offersSeen', false)
   const offers = [
     { name: 'Brew & Co', offer: 'Double points today', dist: '0.2 km', Icon: Coffee },
     { name: 'Corner Mart', offer: 'Bonus 200 pts', dist: '0.4 km', Icon: ShoppingBag },
@@ -889,15 +1111,19 @@ function StampOffers({ accent }: { accent: string }) {
         <p className="text-[13px] font-extrabold text-[var(--ink)]">
           Offers &amp; Alerts
         </p>
-        <div
-          className="flex items-center gap-1.5 rounded-xl px-2.5 py-2"
-          style={{ background: `${accent}1f` }}
-        >
-          <Bell className="size-3" style={{ color: accent }} strokeWidth={2.2} />
-          <p className="text-[8.5px] font-bold" style={{ color: accent }}>
-            3 live deals nearby
-          </p>
-        </div>
+        {!dismissed && (
+          <Tap ripple={accent} label="Dismiss: 3 live deals nearby" onTap={() => setDismissed(true)}>
+            <span className="flex items-center gap-1.5 rounded-xl px-2.5 py-2" style={{ background: `${accent}1f` }}>
+              <Bell className="size-3 shrink-0" style={{ color: accent }} strokeWidth={2.2} />
+              <span className="flex-1 text-left text-[8.5px] font-bold" style={{ color: accent }}>
+                3 live deals nearby
+              </span>
+              <span className="shrink-0 text-[7px] font-bold" style={{ color: accent }}>
+                Dismiss
+              </span>
+            </span>
+          </Tap>
+        )}
         {offers.map((o) => (
           <Tap key={o.name} ripple={accent} label={`Open ${o.name}`} onTap={() => go(1)}>
             <span className="flex items-center gap-2.5 rounded-xl border border-[#e7d9c2] bg-white px-2.5 py-2">
@@ -921,6 +1147,110 @@ function StampOffers({ accent }: { accent: string }) {
             </span>
           </Tap>
         ))}
+      </div>
+    </ScreenShell>
+  )
+}
+
+function StampInsights({ accent }: { accent: string }) {
+  const { go } = usePhoneNav()
+  const periods = ['7d', '30d', '90d']
+  const [period, setPeriod] = useChoice('stamp.period', 1)
+  const [open, setOpen] = useChoice('stamp.regular', -1)
+  const stats = [
+    { repeat: '61%', members: 288 },
+    { repeat: '68%', members: 312 },
+    { repeat: '74%', members: 356 },
+  ]
+  const regulars = [
+    { name: 'Jordan P.', visits: 24, spend: '$186', tone: accent, note: 'Redeems almost every visit · loves the punch card' },
+    { name: 'Mei L.', visits: 19, spend: '$142', tone: accent, note: 'Refers friends often · high lifetime value' },
+    { name: 'Chris B.', visits: 15, spend: '$97', tone: '#4C1D95', note: 'Slowing down · last visit 9 days ago' },
+  ]
+  return (
+    <ScreenShell bg="#FBF4EA">
+      <StatusBar accent={accent} />
+      <div className="flex-1 space-y-3 overflow-hidden px-3.5 pb-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[13px] font-extrabold text-[var(--ink)]">Customer Insights</p>
+            <p className="text-[8.5px] text-[var(--ink-faint)]">Who keeps coming back.</p>
+          </div>
+          <div className="flex gap-1 rounded-full bg-white p-0.5">
+            {periods.map((p, i) => (
+              <Tap key={p} press={false} ripple={accent} label={`Last ${p}`} onTap={() => setPeriod(i)} className="!w-auto">
+                <span
+                  className="block rounded-full px-1.5 py-0.5 text-[7px] font-bold transition-colors"
+                  style={period === i ? { background: accent, color: 'white' } : { color: 'var(--ink-faint)' }}
+                >
+                  {p}
+                </span>
+              </Tap>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-xl bg-white p-2.5">
+            <span className="flex items-center gap-1 text-[7.5px] font-bold text-[var(--ink-faint)]">
+              <TrendingUp className="size-2.5" style={{ color: accent }} strokeWidth={2.4} />
+              Repeat rate
+            </span>
+            <p className="mt-1 text-[15px] font-extrabold text-[var(--ink)]">{stats[period].repeat}</p>
+          </div>
+          <div className="rounded-xl bg-white p-2.5">
+            <span className="flex items-center gap-1 text-[7.5px] font-bold text-[var(--ink-faint)]">
+              <Users className="size-2.5" style={{ color: accent }} strokeWidth={2.4} />
+              Active members
+            </span>
+            <p className="mt-1 text-[15px] font-extrabold text-[var(--ink)]">{stats[period].members}</p>
+          </div>
+        </div>
+        <div>
+          <p className="text-[8px] font-bold uppercase tracking-wide text-[var(--ink-faint)]">
+            Top Regulars
+          </p>
+          <div className="mt-1.5 space-y-1.5">
+            {regulars.map((r, i) => (
+              <Tap
+                key={r.name}
+                ripple={r.tone}
+                label={`${open === i ? 'Collapse' : 'Expand'} ${r.name}`}
+                onTap={() => setOpen(open === i ? -1 : i)}
+              >
+                <span className="block rounded-xl border border-[#e7d9c2] bg-white px-2.5 py-2">
+                  <span className="flex items-center gap-2">
+                    <Avatar name={r.name} tone={r.tone} size={24} fontSize={8} />
+                    <span className="min-w-0 flex-1 text-left">
+                      <span className="block truncate text-[9px] font-bold text-[var(--ink)]">{r.name}</span>
+                      <span className="block truncate text-[7.5px] text-[var(--ink-faint)]">
+                        {r.visits} visits
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-[8.5px] font-extrabold" style={{ color: r.tone }}>
+                      {r.spend}
+                    </span>
+                    <ChevronRight
+                      className="size-3 shrink-0 text-[var(--ink-faint)] transition-transform"
+                      style={{ transform: open === i ? 'rotate(90deg)' : undefined }}
+                    />
+                  </span>
+                  {open === i && (
+                    <span className="mt-2 block border-t border-[#e7d9c2] pt-2 text-left text-[7.5px] leading-relaxed text-[var(--ink-soft)]">
+                      {r.note}
+                    </span>
+                  )}
+                </span>
+              </Tap>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="px-3.5 pb-4">
+        <Tap ripple={accent} label="See all offers" onTap={() => go(2)}>
+          <span className="block rounded-xl border border-[#e7d9c2] bg-white py-2 text-center text-[10px] font-semibold text-[var(--ink)]">
+            See Live Offers
+          </span>
+        </Tap>
       </div>
     </ScreenShell>
   )
@@ -964,7 +1294,7 @@ function SlateBooking({ accent }: { accent: string }) {
                 className="block rounded-full px-2.5 py-1 text-[7.5px] font-bold transition-colors"
                 style={
                   service === i
-                    ? { background: accent, color: '#04211d' }
+                    ? { background: accent, color: 'var(--ink)' }
                     : { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }
                 }
               >
@@ -990,7 +1320,7 @@ function SlateBooking({ accent }: { accent: string }) {
                   className="flex size-5 items-center justify-center rounded-full text-[8px] font-bold transition-colors"
                   style={
                     day === i
-                      ? { background: accent, color: '#04211d' }
+                      ? { background: accent, color: 'var(--ink)' }
                       : { color: 'rgba(255,255,255,0.7)' }
                   }
                 >
@@ -1027,7 +1357,7 @@ function SlateBooking({ accent }: { accent: string }) {
         <Tap ripple="#ffffff" label="Confirm booking" onTap={() => go(1)}>
           <span
             className="block rounded-xl py-2.5 text-center text-[10.5px] font-bold"
-            style={{ background: accent, color: '#04211d' }}
+            style={{ background: accent, color: 'var(--ink)' }}
           >
             Confirm {days[day]} Nov · {slots[slot]}
           </span>
@@ -1038,8 +1368,17 @@ function SlateBooking({ accent }: { accent: string }) {
 }
 
 function SlateConfirmed({ accent }: { accent: string }) {
-  const { go } = usePhoneNav()
+  const { go, store } = usePhoneNav()
   const [added, setAdded] = useScreenState('slate.calendar', false)
+  // reads the actual selection made on Book a Slot, rather than a
+  // hardcoded confirmation that ignores what the visitor picked
+  const services = ['Haircut', 'Colour', 'Massage']
+  const days = [17, 18, 19, 20, 21, 22, 23]
+  const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const slots = ['9:00 AM', '9:30 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:30 PM']
+  const service = (store['slate.service'] as number) ?? 0
+  const day = (store['slate.day'] as number) ?? 1
+  const slot = (store['slate.slot'] as number) ?? 0
   return (
     <DarkScreenShell bg={SLATE_BG}>
       <DarkStatusBar accent={accent} />
@@ -1059,25 +1398,35 @@ function SlateConfirmed({ accent }: { accent: string }) {
         <div className="mt-4 w-full space-y-1.5 rounded-xl border border-white/10 bg-white/[0.04] p-2.5 text-left">
           <div className="flex justify-between">
             <span className="text-[8px] text-white/45">Service</span>
-            <span className="text-[8.5px] font-bold text-white">
-              Haircut &amp; Style
-            </span>
+            <span className="text-[8.5px] font-bold text-white">{services[service]}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-[8px] text-white/45">Date</span>
             <span className="text-[8.5px] font-bold text-white">
-              Mon, 18 Nov
+              {dayLabels[day]}, {days[day]} Nov
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-[8px] text-white/45">Time</span>
-            <span className="text-[8.5px] font-bold text-white">9:00 AM</span>
+            <span className="text-[8.5px] font-bold text-white">{slots[slot]}</span>
           </div>
+        </div>
+        <div className="mt-3 flex w-full gap-2">
+          <Tap ripple={accent} label="Reschedule this booking" className="flex-1" onTap={() => go(0)}>
+            <span className="block rounded-xl border border-white/15 py-2 text-center text-[9.5px] font-semibold text-white/75">
+              Reschedule
+            </span>
+          </Tap>
+          <Tap ripple="#DC2626" label="Cancel this booking" className="flex-1" onTap={() => go(2)}>
+            <span className="block rounded-xl border border-white/15 py-2 text-center text-[9.5px] font-semibold text-white/75">
+              Cancel
+            </span>
+          </Tap>
         </div>
         <Tap
           ripple="#ffffff"
           label="Add booking to calendar"
-          className="mt-3"
+          className="mt-2"
           onTap={() => {
             setAdded(true)
             window.setTimeout(() => go(2), 700)
@@ -1087,7 +1436,7 @@ function SlateConfirmed({ accent }: { accent: string }) {
             className="block w-full rounded-xl py-2.5 text-center text-[10px] font-bold transition-colors"
             style={{
               background: added ? '#1F9D55' : accent,
-              color: added ? 'white' : '#04211d',
+              color: added ? 'white' : 'var(--ink)',
             }}
           >
             {added ? 'Added to Calendar ✓' : 'Add to Calendar'}
@@ -1106,16 +1455,17 @@ function SlateAppointments({ accent }: { accent: string }) {
     [],
   )
   const upcoming = [
-    { s: 'Haircut & Style', t: 'Mon 18 Nov · 9:00 AM' },
-    { s: 'Deep Tissue Massage', t: 'Thu 21 Nov · 2:30 PM' },
+    { id: 'up-0', s: 'Haircut & Style', t: 'Mon 18 Nov · 9:00 AM', price: '$65' },
+    { id: 'up-1', s: 'Deep Tissue Massage', t: 'Thu 21 Nov · 2:30 PM', price: '$110' },
   ]
   const past = [
-    { s: 'Haircut & Style', t: 'Mon 21 Oct · 9:00 AM' },
-    { s: 'Beard Trim', t: 'Fri 4 Oct · 5:15 PM' },
+    { id: 'pa-0', s: 'Haircut & Style', t: 'Mon 21 Oct · 9:00 AM', price: '$65' },
+    { id: 'pa-1', s: 'Beard Trim', t: 'Fri 4 Oct · 5:15 PM', price: '$25' },
   ]
-  const shown = (tab === 0 ? upcoming : past).filter(
-    (u) => !cancelled.includes(u.s),
-  )
+  // cancelling by id, not service name, so cancelling a past-tab duplicate
+  // (same service, different date) can never also cancel the upcoming one
+  const shown = (tab === 0 ? upcoming : past).filter((u) => !cancelled.includes(u.id))
+  const [open, setOpen] = useScreenState('slate.apptOpen', '')
   return (
     <DarkScreenShell bg={SLATE_BG}>
       <DarkStatusBar accent={accent} />
@@ -1135,7 +1485,7 @@ function SlateAppointments({ accent }: { accent: string }) {
                 className="block rounded-full px-2.5 py-1 text-[8px] font-bold transition-colors"
                 style={
                   tab === i
-                    ? { background: accent, color: '#04211d' }
+                    ? { background: accent, color: 'var(--ink)' }
                     : { color: 'rgba(255,255,255,0.5)' }
                 }
               >
@@ -1146,30 +1496,35 @@ function SlateAppointments({ accent }: { accent: string }) {
         </div>
         <div className="mt-3 space-y-2">
           {shown.map((u) => (
-            <div
-              key={u.s}
-              className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5"
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-[9.5px] font-bold text-white">{u.s}</p>
-                <span
-                  className="rounded-full px-1.5 py-0.5 text-[7px] font-bold"
-                  style={{
-                    background: tab === 0 ? accent : 'rgba(255,255,255,0.15)',
-                    color: tab === 0 ? '#04211d' : 'rgba(255,255,255,0.7)',
-                  }}
-                >
-                  {tab === 0 ? 'Upcoming' : 'Done'}
+            <div key={u.id} className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5">
+              <Tap
+                ripple={accent}
+                label={`${open === u.id ? 'Collapse' : 'Expand'} ${u.s}`}
+                onTap={() => setOpen(open === u.id ? '' : u.id)}
+              >
+                <span className="block text-left">
+                  <span className="flex items-center justify-between">
+                    <span className="text-[9.5px] font-bold text-white">{u.s}</span>
+                    <span
+                      className="rounded-full px-1.5 py-0.5 text-[7px] font-bold"
+                      style={{
+                        background: tab === 0 ? accent : 'rgba(255,255,255,0.15)',
+                        color: tab === 0 ? 'var(--ink)' : 'rgba(255,255,255,0.7)',
+                      }}
+                    >
+                      {tab === 0 ? 'Upcoming' : 'Done'}
+                    </span>
+                  </span>
+                  <span className="mt-0.5 block text-[8px] text-white/45">{u.t}</span>
+                  {open === u.id && (
+                    <span className="mt-1.5 block text-[7.5px] font-semibold" style={{ color: accent }}>
+                      {u.price} · confirmation #{u.id.toUpperCase()}
+                    </span>
+                  )}
                 </span>
-              </div>
-              <p className="mt-0.5 text-[8px] text-white/45">{u.t}</p>
+              </Tap>
               <div className="mt-2 flex gap-1.5">
-                <Tap
-                  ripple={accent}
-                  className="flex-1"
-                  label={`Reschedule ${u.s}`}
-                  onTap={() => go(0)}
-                >
+                <Tap ripple={accent} className="flex-1" label={`Reschedule ${u.s}`} onTap={() => go(0)}>
                   <span className="block rounded-md border border-white/15 py-1 text-center text-[7.5px] font-semibold text-white/70">
                     {tab === 0 ? 'Reschedule' : 'Book again'}
                   </span>
@@ -1179,9 +1534,9 @@ function SlateAppointments({ accent }: { accent: string }) {
                     ripple="#DC2626"
                     className="flex-1"
                     label={`Cancel ${u.s}`}
-                    onTap={() => setCancelled((c) => [...c, u.s])}
+                    onTap={() => setCancelled((c) => [...c, u.id])}
                   >
-                    <span className="block rounded-md border border-white/15 py-1 text-center text-[7.5px] font-semibold text-white/70">
+                    <span className="block rounded-md border py-1 text-center text-[7.5px] font-bold" style={{ borderColor: '#DC262666', color: '#F87171' }}>
                       Cancel
                     </span>
                   </Tap>
@@ -1205,13 +1560,19 @@ function SlateSchedule({ accent }: { accent: string }) {
   const [staff, setStaff] = useChoice('slate.staff', 0)
   const [picked, setPicked] = useChoice('slate.picked', -1)
   const staffOptions = ['All Staff', 'Neha', 'Priya']
-  const rows = [
-    { t: '9:00', name: 'Sarah M.', tone: accent, kind: 'confirmed' as const },
-    { t: '10:15', name: 'Priya K.', tone: accent, kind: 'confirmed' as const },
-    { t: '11:30', name: 'Open slot', tone: 'rgba(255,255,255,0.08)', kind: 'open' as const },
-    { t: '13:00', name: 'Tom R.', tone: '#DC2626', kind: 'urgent' as const },
-    { t: '15:30', name: 'Aisha N.', tone: accent, kind: 'confirmed' as const },
+  const allRows = [
+    { t: '9:00', name: 'Sarah M.', tone: accent, kind: 'confirmed' as const, staff: 1, price: 65 },
+    { t: '10:15', name: 'Priya K.', tone: accent, kind: 'confirmed' as const, staff: 2, price: 45 },
+    { t: '11:30', name: 'Open slot', tone: 'rgba(255,255,255,0.08)', kind: 'open' as const, staff: 1, price: 0 },
+    { t: '13:00', name: 'Tom R.', tone: '#DC2626', kind: 'urgent' as const, staff: 2, price: 65 },
+    { t: '15:30', name: 'Aisha N.', tone: accent, kind: 'confirmed' as const, staff: 1, price: 135 },
   ]
+  // the picker actually filters now — "Neha" and "Priya" show only their
+  // own chair, "All Staff" shows the full board
+  const rows = staff === 0 ? allRows : allRows.filter((r) => r.staff === staff || r.kind === 'open')
+  const bookings = rows.filter((r) => r.kind !== 'open').length
+  const revenue = rows.reduce((sum, r) => sum + r.price, 0)
+  const pendingIndex = rows.findIndex((r) => r.kind === 'urgent')
   return (
     <DarkScreenShell bg={SLATE_BG}>
       <DarkStatusBar accent={accent} />
@@ -1219,7 +1580,7 @@ function SlateSchedule({ accent }: { accent: string }) {
         <p className="text-[13px] font-extrabold text-white">
           Today&rsquo;s Schedule
         </p>
-        <p className="text-[8.5px] text-white/45">Mon, 18 Nov · 5 booked</p>
+        <p className="text-[8.5px] text-white/45">Mon, 18 Nov · {bookings} booked</p>
         <div className="no-scrollbar mt-2 flex gap-1.5 overflow-x-auto">
           {staffOptions.map((s, i) => (
             <Tap
@@ -1234,7 +1595,7 @@ function SlateSchedule({ accent }: { accent: string }) {
                 className="flex items-center gap-1 rounded-full px-2 py-1 text-[7.5px] font-bold transition-colors"
                 style={
                   staff === i
-                    ? { background: accent, color: '#04211d' }
+                    ? { background: accent, color: 'var(--ink)' }
                     : { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }
                 }
               >
@@ -1284,16 +1645,114 @@ function SlateSchedule({ accent }: { accent: string }) {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-1.5 px-3.5 pb-4">
-        {[
-          { l: 'Bookings', v: '5' },
-          { l: 'Revenue', v: '$310' },
-          { l: 'Pending', v: '1' },
-        ].map((s) => (
-          <div key={s.l} className="rounded-lg bg-white/[0.06] p-1.5 text-center">
-            <p className="text-[11px] font-extrabold text-white">{s.v}</p>
-            <p className="text-[6.5px] font-semibold text-white/45">{s.l}</p>
-          </div>
-        ))}
+        <Tap ripple={accent} label="See all appointments" onTap={() => go(2)}>
+          <span className="block rounded-lg bg-white/[0.06] p-1.5 text-center">
+            <span className="block text-[11px] font-extrabold text-white">{bookings}</span>
+            <span className="block text-[6.5px] font-semibold text-white/45">Bookings</span>
+          </span>
+        </Tap>
+        <span className="block rounded-lg bg-white/[0.06] p-1.5 text-center">
+          <span className="block text-[11px] font-extrabold text-white">${revenue}</span>
+          <span className="block text-[6.5px] font-semibold text-white/45">Revenue</span>
+        </span>
+        <Tap
+          ripple="#DC2626"
+          disabled={pendingIndex === -1}
+          label="Jump to the pending booking"
+          onTap={() => setPicked(pendingIndex)}
+        >
+          <span className="block rounded-lg p-1.5 text-center" style={{ background: pendingIndex === -1 ? 'rgba(255,255,255,0.06)' : 'rgba(220,38,38,0.16)' }}>
+            <span className="block text-[11px] font-extrabold text-white">{pendingIndex === -1 ? 0 : 1}</span>
+            <span className="block text-[6.5px] font-semibold text-white/45">Pending</span>
+          </span>
+        </Tap>
+      </div>
+    </DarkScreenShell>
+  )
+}
+
+function SlateClients({ accent }: { accent: string }) {
+  const { go } = usePhoneNav()
+  const [open, setOpen] = useChoice('slate.clientOpen', -1)
+  const [filter, setFilter] = useChoice('slate.clientFilter', 0)
+  const filters = ['All', 'Regulars', 'New']
+  const clients = [
+    { name: 'Sarah M.', visits: 12, last: 'Mon 18 Nov', note: 'Prefers 9 AM slots', tone: accent, kind: 'regular' as const },
+    { name: 'Priya K.', visits: 7, last: 'Mon 18 Nov', note: 'Allergic to ammonia dye', tone: '#DC2626', kind: 'regular' as const },
+    { name: 'Tom R.', visits: 3, last: '13:00 today', note: 'New client', tone: accent, kind: 'new' as const },
+    { name: 'Aisha N.', visits: 19, last: '15:30 today', note: 'Regular · every 3 weeks', tone: accent, kind: 'regular' as const },
+  ]
+  const shown = clients.filter((c) => filter === 0 || (filter === 1 ? c.kind === 'regular' : c.kind === 'new'))
+  return (
+    <DarkScreenShell bg={SLATE_BG}>
+      <DarkStatusBar accent={accent} />
+      <div className="flex-1 px-3.5 pb-3">
+        <div className="flex items-center justify-between">
+          <p className="text-[13px] font-extrabold text-white">Clients</p>
+          <span className="flex items-center gap-1 text-[8px] font-bold text-white/45">
+            <Users className="size-2.5" strokeWidth={2.5} />
+            41 total
+          </span>
+        </div>
+        <p className="text-[8.5px] text-white/45">History and preferences, at a glance.</p>
+        <div className="no-scrollbar mt-2 flex gap-1.5 overflow-x-auto">
+          {filters.map((f, i) => (
+            <Tap key={f} press={false} ripple={accent} label={`Show ${f}`} onTap={() => setFilter(i)} className="!w-auto shrink-0">
+              <span
+                className="block rounded-full px-2.5 py-1 text-[7.5px] font-bold transition-colors"
+                style={
+                  filter === i
+                    ? { background: accent, color: 'var(--ink)' }
+                    : { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }
+                }
+              >
+                {f}
+              </span>
+            </Tap>
+          ))}
+        </div>
+        <div className="mt-3 space-y-1.5">
+          {shown.map((c, i) => (
+            <Tap
+              key={c.name}
+              ripple={accent}
+              label={`Open ${c.name}`}
+              onTap={() => setOpen(open === i ? -1 : i)}
+            >
+              <span className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-2">
+                <Avatar name={c.name} tone={c.tone} size={26} fontSize={8.5} />
+                <span className="min-w-0 flex-1 text-left">
+                  <span className="block truncate text-[9px] font-bold text-white">{c.name}</span>
+                  <span className="block truncate text-[7.5px] text-white/45">
+                    {c.visits} visits · last {c.last}
+                  </span>
+                  {open === i && (
+                    <span className="mt-1 block text-[7.5px]" style={{ color: accent }}>
+                      {c.note}
+                    </span>
+                  )}
+                </span>
+                <ChevronRight
+                  className="size-3 shrink-0 text-white/30 transition-transform"
+                  style={{ transform: open === i ? 'rotate(90deg)' : undefined }}
+                />
+              </span>
+            </Tap>
+          ))}
+          {shown.length === 0 && (
+            <p className="py-6 text-center text-[8.5px] text-white/35">No clients in this filter.</p>
+          )}
+        </div>
+      </div>
+      <div className="px-3.5 pb-4">
+        <Tap ripple="var(--ink)" label="Book a new client" onTap={() => go(0)}>
+          <span
+            className="block rounded-xl py-2.5 text-center text-[10px] font-bold"
+            style={{ background: accent, color: 'var(--ink)' }}
+          >
+            Book a New Client
+          </span>
+        </Tap>
       </div>
     </DarkScreenShell>
   )
@@ -1322,12 +1781,20 @@ function GlassCard({ children, className = '' }: { children: ReactNode; classNam
 function ProphyRecall({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
   const [called, setCalled] = useScreenState<Array<string>>('prophy.called', [])
+  const [filter, setFilter] = useChoice('prophy.recallFilter', -1)
   const patients = [
     { name: 'Emma Wilkins', due: 'Overdue 2 wks', urgent: true },
     { name: 'Marcus Lee', due: 'Due this week', urgent: false },
     { name: 'Priya Shah', due: 'Due this week', urgent: false },
     { name: 'Tom Baxter', due: 'Due in 2 wks', urgent: false },
   ]
+  // filter chip 1 = "Overdue" narrows to urgent patients, chip 2 =
+  // "Contacted" narrows to whoever's already been called
+  const shown = patients.filter((p) => {
+    if (filter === 1) return p.urgent
+    if (filter === 2) return called.includes(p.name)
+    return true
+  })
   return (
     <DarkScreenShell bg={PROPHY_BG}>
       <DarkStatusBar accent={accent} />
@@ -1336,15 +1803,18 @@ function ProphyRecall({ accent }: { accent: string }) {
         <p className="text-[8.5px] text-white/50">14 patients due this month</p>
         <StatChipRow
           tone="dark"
+          accent={accent}
+          selected={filter}
+          onSelect={(i) => setFilter(filter === i ? -1 : i)}
           items={[
             { icon: Users, value: '14', label: 'Due' },
             { icon: Bell, value: '1', label: 'Overdue' },
-            { icon: Check, value: '9', label: 'Contacted' },
+            { icon: Check, value: String(called.length), label: 'Contacted' },
           ]}
         />
       </div>
       <div className="flex-1 space-y-2 overflow-hidden px-3.5 pb-3">
-        {patients.map((p) => {
+        {shown.map((p) => {
           const done = called.includes(p.name)
           return (
             <Tap
@@ -1379,6 +1849,9 @@ function ProphyRecall({ accent }: { accent: string }) {
             </Tap>
           )
         })}
+        {shown.length === 0 && (
+          <p className="py-6 text-center text-[8.5px] text-white/35">Nobody matches this filter.</p>
+        )}
       </div>
     </DarkScreenShell>
   )
@@ -1387,6 +1860,13 @@ function ProphyRecall({ accent }: { accent: string }) {
 function ProphyChart({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
   const [saved, setSaved] = useScreenState('prophy.saved', false)
+  const [joined, setJoined] = useScreenState('prophy.joined', false)
+  const [statOpen, setStatOpen] = useChoice('prophy.chartStat', -1)
+  const statDetail = [
+    'Last cleaning: 22 May 2025',
+    'Next recall due in 2 weeks — already on the list',
+    '4.9 average across 31 reviews',
+  ]
   return (
     <DarkScreenShell bg={PROPHY_BG}>
       <DarkStatusBar accent={accent} />
@@ -1420,36 +1900,52 @@ function ProphyChart({ accent }: { accent: string }) {
           </p>
           <p className="text-[8px] text-white/45">Wed 20 Nov · 10:00 AM</p>
           <div className="mt-2 flex gap-1.5">
-            <span className="flex-1 rounded-lg border border-white/15 py-1.5 text-center text-[7.5px] font-semibold text-white/70">
-              Reschedule
-            </span>
-            <span
-              className="flex flex-1 items-center justify-center gap-1 rounded-lg py-1.5 text-center text-[7.5px] font-bold text-white"
-              style={{ background: accent }}
+            <Tap ripple={accent} className="flex-1" label="Reschedule this appointment" onTap={() => go(2)}>
+              <span className="block rounded-lg border border-white/15 py-1.5 text-center text-[7.5px] font-semibold text-white/70">
+                Reschedule
+              </span>
+            </Tap>
+            <Tap
+              ripple="#ffffff"
+              className="flex-1"
+              label={joined ? 'Call in progress' : 'Join video call now'}
+              onTap={() => setJoined(true)}
             >
-              <Video className="size-2.5" strokeWidth={2.4} />
-              Join Now
-            </span>
+              <span
+                className="flex items-center justify-center gap-1 rounded-lg py-1.5 text-center text-[7.5px] font-bold text-white transition-colors"
+                style={{ background: joined ? '#1F9D55' : accent }}
+              >
+                <Video className="size-2.5" strokeWidth={2.4} />
+                {joined ? 'Connected ✓' : 'Join Now'}
+              </span>
+            </Tap>
           </div>
         </GlassCard>
         <GlassCard className="mt-2.5 p-2.5">
           <p className="text-[8px] font-bold uppercase tracking-wide" style={{ color: accent }}>
             Today&rsquo;s notes
           </p>
-          <div className="mt-1.5 space-y-1">
-            <Bar w="95%" h={6} tone="rgba(255,255,255,0.14)" />
-            <Bar w="88%" h={6} tone="rgba(255,255,255,0.14)" />
-            <Bar w="60%" h={6} tone="rgba(255,255,255,0.14)" />
-          </div>
+          <p className="mt-1.5 text-[8px] leading-relaxed text-white/70">
+            Routine scale &amp; polish. Slight gum sensitivity upper-left, recommend softer brush.
+            No new decay. Flagged for whitening consult next visit.
+          </p>
         </GlassCard>
         <StatChipRow
           tone="dark"
+          accent={accent}
+          selected={statOpen}
+          onSelect={(i) => setStatOpen(statOpen === i ? -1 : i)}
           items={[
             { icon: CalendarDays, value: '6 mo', label: 'Last visit' },
             { icon: Bell, value: '2 wks', label: 'Next recall' },
             { icon: Star, value: '4.9', label: 'Satisfaction' },
           ]}
         />
+        {statOpen >= 0 && (
+          <p className="mt-1.5 text-[7.5px] leading-relaxed" style={{ color: accent }}>
+            {statDetail[statOpen]}
+          </p>
+        )}
       </div>
       <div className="px-3.5 pb-4">
         <Tap
@@ -1474,20 +1970,21 @@ function ProphyChart({ accent }: { accent: string }) {
 
 function ProphyDaySchedule({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
-  const [filled, setFilled] = useScreenState<Array<string>>('prophy.filled', [])
+  const [filled, setFilled] = useScreenState<Record<string, string>>('prophy.filled', {})
   const chairs = ['Chair 1', 'Chair 2']
   const rows = [
-    { t: '9:00', c1: true, c2: false },
-    { t: '10:00', c1: false, c2: true },
-    { t: '11:00', c1: true, c2: false },
-    { t: '13:00', c1: false, c2: false },
+    { t: '9:00', c1: 'Emma Wilkins', c2: null },
+    { t: '10:00', c1: null, c2: 'Marcus Lee' },
+    { t: '11:00', c1: 'Priya Shah', c2: null },
+    { t: '13:00', c1: null, c2: null },
   ]
+  const bookedCount = rows.reduce((n, r) => n + (r.c1 ? 1 : 0) + (r.c2 ? 1 : 0), 0) + Object.keys(filled).length
   return (
     <DarkScreenShell bg={PROPHY_BG}>
       <DarkStatusBar accent={accent} />
       <div className="flex-1 px-3.5 pb-3">
         <p className="text-[13px] font-extrabold text-white">Day Schedule</p>
-        <p className="text-[8.5px] text-white/45">Wed, 20 Nov · 2 chairs</p>
+        <p className="text-[8.5px] text-white/45">Wed, 20 Nov · 2 chairs · {bookedCount} booked</p>
         <GlassCard className="mt-2.5 p-2">
           <div className="grid grid-cols-[2.2rem_1fr_1fr] gap-1.5">
             <span />
@@ -1501,31 +1998,32 @@ function ProphyDaySchedule({ accent }: { accent: string }) {
                 <span className="self-center text-[7.5px] font-bold text-white/40">
                   {r.t}
                 </span>
-                {[r.c1, r.c2].map((isBooked, col) => {
+                {[r.c1, r.c2].map((patient, col) => {
                   const key = `${r.t}-${col}`
-                  const booked = isBooked || filled.includes(key)
+                  const name = patient ?? filled[key]
+                  const booked = Boolean(name)
                   return (
                     <Tap
                       key={key}
                       ripple={accent}
-                      label={booked ? `${r.t} booked` : `Book ${r.t}`}
+                      label={booked ? `${r.t}: ${name}` : `Book ${r.t}`}
                       onTap={() => {
                         if (booked) {
                           go(1)
                           return
                         }
-                        setFilled((f) => [...f, key])
+                        setFilled((f) => ({ ...f, [key]: 'New Patient' }))
                       }}
                     >
                       <span
-                        className="flex h-7 items-center justify-center rounded-lg text-[7px] font-bold transition-colors"
+                        className="flex h-7 items-center justify-center rounded-lg px-1 text-center text-[6.5px] font-bold leading-tight transition-colors"
                         style={{
                           background: booked ? `${accent}33` : 'rgba(255,255,255,0.06)',
                           color: booked ? accent : 'rgba(255,255,255,0.35)',
                           border: booked ? `1px solid ${accent}55` : '1px dashed rgba(255,255,255,0.14)',
                         }}
                       >
-                        {booked ? '' : '+'}
+                        {booked ? name : '+'}
                       </span>
                     </Tap>
                   )
@@ -1534,6 +2032,13 @@ function ProphyDaySchedule({ accent }: { accent: string }) {
             ))}
           </div>
         </GlassCard>
+      </div>
+      <div className="px-3.5 pb-4">
+        <Tap ripple={accent} label="Open patient records" onTap={() => go(4)}>
+          <span className="block rounded-xl border border-white/15 py-2.5 text-center text-[10px] font-semibold text-white/75">
+            View Patient Records
+          </span>
+        </Tap>
       </div>
     </DarkScreenShell>
   )
@@ -1596,6 +2101,66 @@ function ProphyTreatment({ accent }: { accent: string }) {
             </Tap>
           ))}
         </div>
+      </div>
+    </DarkScreenShell>
+  )
+}
+
+function ProphyPatients({ accent }: { accent: string }) {
+  const { go } = usePhoneNav()
+  const [open, setOpen] = useChoice('prophy.patient', -1)
+  const patients = [
+    { name: 'Emma Wilkins', last: '4 Nov 2025', note: 'Crown, tooth 14 · watch sensitivity' },
+    { name: 'Marcus Lee', last: '22 Oct 2025', note: 'Routine cleaning · no concerns' },
+    { name: 'Priya Shah', last: '15 Oct 2025', note: 'Ortho referral pending' },
+  ]
+  return (
+    <DarkScreenShell bg={PROPHY_BG}>
+      <DarkStatusBar accent={accent} />
+      <div className="px-3.5 pb-2.5">
+        <p className="text-[13px] font-extrabold text-white">Patient Records</p>
+        <p className="text-[8.5px] text-white/50">One record, history and plan together.</p>
+      </div>
+      <div className="flex-1 space-y-2 overflow-hidden px-3.5 pb-3">
+        {patients.map((p, i) => (
+          <Tap
+            key={p.name}
+            ripple={accent}
+            label={`Open ${p.name}`}
+            onTap={() => setOpen(open === i ? -1 : i)}
+          >
+            <GlassCard className="px-2.5 py-2">
+              <span className="flex items-center gap-2.5">
+                <Avatar name={p.name} tone={accent} />
+                <span className="min-w-0 flex-1 text-left">
+                  <span className="block truncate text-[9px] font-bold text-white">{p.name}</span>
+                  <span className="block truncate text-[8px] font-semibold text-white/50">
+                    Last visit {p.last}
+                  </span>
+                </span>
+                <ChevronRight
+                  className="size-3 shrink-0 text-white/35 transition-transform"
+                  style={{ transform: open === i ? 'rotate(90deg)' : undefined }}
+                />
+              </span>
+              {open === i && (
+                <p className="mt-2 border-t border-white/10 pt-2 text-[8px] leading-relaxed text-white/60">
+                  {p.note}
+                </p>
+              )}
+            </GlassCard>
+          </Tap>
+        ))}
+      </div>
+      <div className="px-3.5 pb-4">
+        <Tap ripple="#082420" label="Open chart notes" onTap={() => go(1)}>
+          <span
+            className="block rounded-xl py-2.5 text-center text-[10px] font-bold"
+            style={{ background: accent, color: '#082420' }}
+          >
+            Open Chart Notes
+          </span>
+        </Tap>
       </div>
     </DarkScreenShell>
   )
@@ -1669,7 +2234,7 @@ function LeadrBottomNav({ active, accent, onNav }: { active: number; accent: str
         it === null ? (
           <Tap key="fab" ripple="#ffffff" label="New lead" className="!w-auto" onTap={() => onNav(2)}>
             <span
-              className="flex size-8 items-center justify-center rounded-full text-white shadow-[0_4px_14px_-2px_rgba(22,163,74,0.6)]"
+              className="flex size-8 items-center justify-center rounded-full text-white shadow-[0_4px_14px_-2px_rgba(124,111,232,0.6)]"
               style={{ background: accent }}
             >
               <Plus className="size-4" strokeWidth={2.5} />
@@ -1704,21 +2269,25 @@ function leadrTabToScreen(tab: number) {
   return 0 // Home, Leads, and the FAB all land on Pipeline
 }
 
+// stage labels match LeadrPipeline's hero stat row exactly, so tapping a
+// stage there is a real filter over this same list rather than a mismatch
 const leadsFor = (accent: string) => [
   { name: 'Sarah Mitchell', company: 'Acme HVAC', value: '$18,500', stage: 'Qualified', tone: accent },
   { name: 'James Carter', company: 'Northstar Plumbing', value: '$9,800', stage: 'Proposal', tone: '#F08A24' },
-  { name: 'Maya Chen', company: 'Evergreen Services', value: '$24,200', stage: 'Negotiation', tone: '#9aa0ac' },
-  { name: 'Daniel Osei', company: 'BrightCore Ltd.', value: '$6,400', stage: 'New Lead', tone: accent },
+  { name: 'Maya Chen', company: 'Evergreen Services', value: '$24,200', stage: 'Won', tone: '#34D399' },
+  { name: 'Daniel Osei', company: 'BrightCore Ltd.', value: '$6,400', stage: 'New Leads', tone: '#9aa0ac' },
 ]
 
 function LeadrPipeline({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
+  const [stage, setStage] = useChoice('leadr.stage', -1)
   const stages = [
     { label: 'New Leads', count: 18, tone: '#9aa0ac' },
     { label: 'Qualified', count: 12, tone: accent },
     { label: 'Proposal', count: 7, tone: '#F08A24' },
     { label: 'Won', count: 4, tone: '#34D399' },
   ]
+  const leads = leadsFor(accent)
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
@@ -1732,59 +2301,82 @@ function LeadrPipeline({ accent }: { accent: string }) {
           <Avatar name="Alex Rivera" tone={accent} size={24} fontSize={8} />
         </div>
 
-        {/* gradient hero: pipeline value + 4-up stat row */}
-        <Tap ripple="#ffffff" label="View pipeline value details" onTap={() => go(3)} className="mt-2.5">
-          <span
-            className="block rounded-2xl p-3"
-            style={{ background: `linear-gradient(135deg, ${accent}, #0f5c28 85%)` }}
-          >
+        {/* gradient hero: pipeline value + 4-up stat row. Each stage count
+            is its own filter, not just decoration inside one big tap
+            target — tapping "Won" narrows the list below to won deals. */}
+        <span
+          className="block rounded-2xl p-3"
+          style={{ background: `linear-gradient(135deg, ${accent}, #4A2FA8 85%)` }}
+        >
+          <Tap ripple="#ffffff" press={false} label="View pipeline value details" onTap={() => go(3)}>
             <span className="flex items-center justify-between">
               <span className="text-[6.5px] font-bold uppercase tracking-wide text-white/75">Pipeline Value</span>
               <TrendingUp className="size-3 text-white/80" strokeWidth={2.2} />
             </span>
             <span className="mt-0.5 block text-[15px] font-black text-white">$184.2K</span>
-            <span className="mt-2 flex items-stretch border-t border-white/20 pt-1.5">
-              {stages.map((s, i) => (
+          </Tap>
+          <span className="mt-2 flex items-stretch border-t border-white/20 pt-1.5">
+            {stages.map((s, i) => (
+              <Tap
+                key={s.label}
+                press={false}
+                ripple="#ffffff"
+                label={`Filter by ${s.label}`}
+                onTap={() => setStage(stage === i ? -1 : i)}
+                className="!w-auto flex-1"
+              >
                 <span
-                  key={s.label}
-                  className="flex-1 text-center"
-                  style={{ borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.2)' : undefined }}
+                  className="block text-center transition-opacity"
+                  style={{
+                    borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.2)' : undefined,
+                    opacity: stage === -1 || stage === i ? 1 : 0.5,
+                  }}
                 >
-                  <span className="block text-[9px] font-extrabold text-white">{s.count}</span>
+                  <span
+                    className="block text-[9px] font-extrabold"
+                    style={{ color: stage === i ? 'white' : 'white', textDecoration: stage === i ? 'underline' : undefined }}
+                  >
+                    {s.count}
+                  </span>
                   <span className="block text-[5.5px] font-semibold text-white/70">{s.label}</span>
                 </span>
-              ))}
-            </span>
+              </Tap>
+            ))}
           </span>
-        </Tap>
+        </span>
 
         {/* leads list */}
         <div className="mt-3 flex items-center justify-between">
-          <p className="text-[8px] font-bold text-white">Pipeline</p>
-          <Tap ripple={accent} label="View all leads" className="!w-auto" onTap={() => go(0)}>
+          <p className="text-[8px] font-bold text-white">Pipeline{stage >= 0 ? ` · ${stages[stage].label}` : ''}</p>
+          <Tap ripple={accent} label="See team pipeline" className="!w-auto" onTap={() => go(4)}>
             <span className="flex items-center gap-0.5 text-[6.5px] font-bold" style={{ color: accent }}>
               View All <ArrowUpRight className="size-2" strokeWidth={2.4} />
             </span>
           </Tap>
         </div>
         <div className="mt-1.5 space-y-1.5">
-          {leadsFor(accent).map((l) => (
-            <LeadRow
-              key={l.name}
-              name={l.name}
-              sub={`${l.company} · ${l.value}`}
-              tone={l.tone}
-              onTap={() => go(1)}
-              right={
-                <span
-                  className="shrink-0 rounded-md px-1.5 py-0.5 text-[6.5px] font-bold"
-                  style={{ background: `${l.tone}26`, color: l.tone }}
-                >
-                  {l.stage}
-                </span>
-              }
-            />
-          ))}
+          {leads
+            .filter((l) => stage === -1 || l.stage === stages[stage].label)
+            .map((l) => (
+              <LeadRow
+                key={l.name}
+                name={l.name}
+                sub={`${l.company} · ${l.value}`}
+                tone={l.tone}
+                onTap={() => go(1)}
+                right={
+                  <span
+                    className="shrink-0 rounded-md px-1.5 py-0.5 text-[6.5px] font-bold"
+                    style={{ background: `${l.tone}26`, color: l.tone }}
+                  >
+                    {l.stage}
+                  </span>
+                }
+              />
+            ))}
+          {leads.filter((l) => stage === -1 || l.stage === stages[stage].label).length === 0 && (
+            <p className="py-4 text-center text-[8px] text-white/35">No leads in this stage.</p>
+          )}
         </div>
       </div>
       <LeadrBottomNav active={0} accent={accent} onNav={(tab) => go(leadrTabToScreen(tab))} />
@@ -1797,6 +2389,8 @@ function LeadrDetail({ accent }: { accent: string }) {
   const [log, setLog] = useScreenState<Array<string>>('leadr.log', [])
   const [logged, setLogged] = useScreenState('leadr.logged', false)
   const [tab, setTab] = useChoice('leadr.detailTab', 0)
+  const [dealStage, setDealStage] = useChoice('leadr.dealStage', 2)
+  const [followUpDone, setFollowUpDone] = useScreenState('leadr.followUpDone', false)
   const lead = leadsFor(accent)[0]
   const stages = ['New', 'Contacted', 'Proposal', 'Won']
   const tabs = ['Overview', 'Activity', 'Notes']
@@ -1829,7 +2423,7 @@ function LeadrDetail({ accent }: { accent: string }) {
         </div>
 
         <div className="mt-3">
-          <Stepper stages={stages} activeIndex={2} accent={accent} />
+          <Stepper stages={stages} activeIndex={dealStage} accent={accent} onSelect={setDealStage} />
         </div>
 
         {/* tabs */}
@@ -1873,11 +2467,26 @@ function LeadrDetail({ accent }: { accent: string }) {
                 </Tap>
               ))}
             </div>
-            <div className="rounded-xl p-2.5" style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}>
-              <p className="text-[6.5px] font-bold uppercase tracking-wide text-white/40">Next Follow-up</p>
-              <p className="mt-1 text-[8.5px] font-bold text-white">Send proposal follow-up</p>
-              <p className="text-[7px] text-white/45">Due Today, 11:00 AM</p>
-            </div>
+            <Tap
+              ripple={accent}
+              label={followUpDone ? 'Follow-up already sent' : 'Mark follow-up as sent'}
+              onTap={() => setFollowUpDone(true)}
+            >
+              <span className="block rounded-xl p-2.5 text-left" style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}>
+                <span className="flex items-center justify-between">
+                  <span className="text-[6.5px] font-bold uppercase tracking-wide text-white/40">Next Follow-up</span>
+                  {followUpDone && (
+                    <span className="rounded-full px-1.5 py-0.5 text-[6px] font-bold" style={{ background: '#1F9D5533', color: '#4ADE80' }}>
+                      Sent
+                    </span>
+                  )}
+                </span>
+                <span className="mt-1 block text-[8.5px] font-bold text-white">Send proposal follow-up</span>
+                <span className="block text-[7px] text-white/45">
+                  {followUpDone ? 'Sent just now' : 'Due Today, 11:00 AM'}
+                </span>
+              </span>
+            </Tap>
           </div>
         )}
 
@@ -2007,7 +2616,23 @@ function LeadrDigest({ accent }: { accent: string }) {
   const { go } = usePhoneNav()
   const [day, setDay] = useChoice('leadr.day', 5)
   const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-  const bars = [40, 65, 30, 90, 55, 82, 45]
+  // each day carries its own metrics, so selecting a bar actually changes
+  // the numbers below it instead of just recolouring the bar
+  const daily = [
+    { h: 40, value: '$142.0K', delta: '+6.2%', won: '$38.4K', conv: '24.1%', leads: 31 },
+    { h: 65, value: '$158.6K', delta: '+9.8%', won: '$44.0K', conv: '27.5%', leads: 36 },
+    { h: 30, value: '$149.2K', delta: '+4.1%', won: '$36.2K', conv: '22.0%', leads: 29 },
+    { h: 90, value: '$184.2K', delta: '+18.4%', won: '$64.8K', conv: '32.6%', leads: 48 },
+    { h: 55, value: '$171.4K', delta: '+11.7%', won: '$52.6K', conv: '29.3%', leads: 40 },
+    { h: 82, value: '$179.8K', delta: '+15.9%', won: '$59.1K', conv: '31.0%', leads: 44 },
+    { h: 45, value: '$153.7K', delta: '+7.5%', won: '$41.9K', conv: '25.4%', leads: 33 },
+  ]
+  const active = daily[day]
+  const [followUpsDone, setFollowUpsDone] = useScreenState<Array<string>>('leadr.digestDone', [])
+  const followUps = [
+    { name: 'Follow up with Sarah Mitchell', t: 'Today, 11:00 AM', Ico: Phone },
+    { name: 'Demo with Northstar Plumbing', t: 'Today, 2:30 PM', Ico: Video },
+  ]
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
@@ -2024,20 +2649,20 @@ function LeadrDigest({ accent }: { accent: string }) {
         <div className="mt-2 flex items-end justify-between">
           <div>
             <p className="text-[6.5px] font-bold uppercase tracking-wide text-white/40">Pipeline Value</p>
-            <p className="text-[16px] font-black text-white">$184.2K</p>
+            <p className="text-[16px] font-black text-white">{active.value}</p>
           </div>
           <span
             className="mb-0.5 flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[6.5px] font-bold"
             style={{ background: 'rgba(52,211,153,0.16)', color: '#34D399' }}
           >
             <TrendingUp className="size-2" strokeWidth={2.6} />
-            +18.4%
+            {active.delta}
           </span>
         </div>
 
         {/* minimal 7-day bar chart, tappable */}
         <div className="mt-3 flex h-14 items-end justify-between gap-1.5 rounded-xl px-2 py-2" style={{ background: LEADR_SURFACE }}>
-          {bars.map((h, i) => (
+          {daily.map((d, i) => (
             <Tap
               key={i}
               press={false}
@@ -2048,7 +2673,7 @@ function LeadrDigest({ accent }: { accent: string }) {
             >
               <span
                 className="block w-full rounded-full transition-colors"
-                style={{ height: `${h}%`, background: day === i ? accent : 'rgba(255,255,255,0.14)' }}
+                style={{ height: `${d.h}%`, background: day === i ? accent : 'rgba(255,255,255,0.14)' }}
               />
               <span
                 className="text-[5.5px] font-bold"
@@ -2062,43 +2687,123 @@ function LeadrDigest({ accent }: { accent: string }) {
 
         {/* 3-up metric row */}
         <div className="mt-3 grid grid-cols-3 gap-1.5">
-          {[
-            { l: 'Won', v: '$64.8K', tone: '#34D399' },
-            { l: 'Conversion', v: '32.6%', tone: accent },
-            { l: 'New leads', v: '48', tone: '#9aa0ac' },
-          ].map((s) => (
-            <span
-              key={s.l}
-              className="block rounded-xl p-2 text-center"
-              style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}
-            >
-              <span className="block text-[10px] font-extrabold" style={{ color: s.tone }}>
-                {s.v}
-              </span>
-              <span className="block text-[6px] font-semibold text-white/45">{s.l}</span>
+          <Tap ripple="#34D399" label="See won deals" onTap={() => go(0)}>
+            <span className="block rounded-xl p-2 text-center" style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}>
+              <span className="block text-[10px] font-extrabold" style={{ color: '#34D399' }}>{active.won}</span>
+              <span className="block text-[6px] font-semibold text-white/45">Won</span>
             </span>
-          ))}
+          </Tap>
+          <Tap ripple={accent} label="See pipeline breakdown" onTap={() => go(0)}>
+            <span className="block rounded-xl p-2 text-center" style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}>
+              <span className="block text-[10px] font-extrabold" style={{ color: accent }}>{active.conv}</span>
+              <span className="block text-[6px] font-semibold text-white/45">Conversion</span>
+            </span>
+          </Tap>
+          <Tap ripple="#9aa0ac" label="See new leads" onTap={() => go(0)}>
+            <span className="block rounded-xl p-2 text-center" style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}>
+              <span className="block text-[10px] font-extrabold" style={{ color: '#9aa0ac' }}>{active.leads}</span>
+              <span className="block text-[6px] font-semibold text-white/45">New leads</span>
+            </span>
+          </Tap>
         </div>
 
         {/* upcoming follow-ups */}
         <div className="mt-3 space-y-1.5">
           <p className="text-[6.5px] font-bold uppercase tracking-wide text-white/40">Upcoming Follow-ups</p>
-          {[
-            { name: 'Follow up with Sarah Mitchell', t: 'Today, 11:00 AM', Ico: Phone },
-            { name: 'Demo with Northstar Plumbing', t: 'Today, 2:30 PM', Ico: Video },
-          ].map((f) => (
-            <div key={f.name} className="flex items-center gap-2 rounded-lg px-2 py-1.5" style={{ background: LEADR_SURFACE }}>
-              <span
-                className="flex size-5 shrink-0 items-center justify-center rounded-md"
-                style={{ background: `${accent}22`, color: accent }}
+          {followUps.map((f) => {
+            const done = followUpsDone.includes(f.name)
+            return (
+              <Tap
+                key={f.name}
+                ripple={accent}
+                label={done ? `${f.name}, done` : `Mark ${f.name} done`}
+                onTap={() => setFollowUpsDone((cur) => (done ? cur.filter((n) => n !== f.name) : [...cur, f.name]))}
               >
-                <f.Ico className="size-2.5" strokeWidth={2.2} />
-              </span>
-              <span className="min-w-0 flex-1 text-left">
-                <span className="block truncate text-[7px] font-semibold text-white">{f.name}</span>
-                <span className="block text-[6px] text-white/40">{f.t}</span>
-              </span>
-            </div>
+                <span className="flex items-center gap-2 rounded-lg px-2 py-1.5" style={{ background: LEADR_SURFACE }}>
+                  <span
+                    className="flex size-5 shrink-0 items-center justify-center rounded-md transition-colors"
+                    style={{ background: done ? accent : `${accent}22`, color: done ? 'white' : accent }}
+                  >
+                    {done ? <Check className="size-2.5" strokeWidth={2.6} /> : <f.Ico className="size-2.5" strokeWidth={2.2} />}
+                  </span>
+                  <span className="min-w-0 flex-1 text-left">
+                    <span
+                      className="block truncate text-[7px] font-semibold"
+                      style={{ color: done ? 'rgba(255,255,255,0.5)' : 'white', textDecoration: done ? 'line-through' : undefined }}
+                    >
+                      {f.name}
+                    </span>
+                    <span className="block text-[6px] text-white/40">{f.t}</span>
+                  </span>
+                </span>
+              </Tap>
+            )
+          })}
+        </div>
+
+        {/* team view */}
+        <Tap ripple={accent} label="See the whole team's pipeline" onTap={() => go(4)} className="mt-3">
+          <span
+            className="flex items-center justify-between rounded-xl px-2.5 py-2"
+            style={{ background: LEADR_SURFACE, border: `1px solid ${LEADR_BORDER}` }}
+          >
+            <span className="flex items-center gap-1.5 text-[7.5px] font-bold text-white">
+              <Users className="size-3" style={{ color: accent }} strokeWidth={2.2} />
+              See the whole team
+            </span>
+            <ChevronRight className="size-3 text-white/35" />
+          </span>
+        </Tap>
+      </div>
+      <LeadrBottomNav active={4} accent={accent} onNav={(tab) => go(leadrTabToScreen(tab))} />
+    </DarkScreenShell>
+  )
+}
+
+function LeadrTeam({ accent }: { accent: string }) {
+  const { go } = usePhoneNav()
+  const [sortByValue, setSortByValue] = useScreenState('leadr.teamSort', true)
+  const reps = [
+    { name: 'Alex Rivera', deals: 12, value: '$64.8K', raw: 64800, tone: accent },
+    { name: 'Sam Okafor', deals: 9, value: '$41.2K', raw: 41200, tone: '#F08A24' },
+    { name: 'Nadia Torres', deals: 7, value: '$38.5K', raw: 38500, tone: '#9aa0ac' },
+  ]
+  const shown = [...reps].sort((a, b) => (sortByValue ? b.raw - a.raw : b.deals - a.deals))
+  return (
+    <DarkScreenShell bg={LEADR_BG}>
+      <DarkStatusBar accent={accent} />
+      <div className="flex-1 overflow-hidden px-3.5 pb-2">
+        <Tap ripple={accent} press={false} label="Back to pipeline" onTap={() => go(0)} className="!w-auto">
+          <span className="flex items-center gap-0.5 text-[8px] font-bold" style={{ color: accent }}>
+            <ChevronRight className="size-2.5 rotate-180" strokeWidth={3} />
+            Pipeline
+          </span>
+        </Tap>
+        <div className="mt-1.5 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-extrabold text-white">Team View</p>
+            <p className="text-[7.5px] text-white/45">The whole pipeline, no separate report.</p>
+          </div>
+          <Tap press={false} ripple={accent} label={`Sort by ${sortByValue ? 'deal count' : 'pipeline value'}`} onTap={() => setSortByValue((s) => !s)} className="!w-auto">
+            <span className="rounded-full px-2 py-1 text-[6.5px] font-bold" style={{ background: `${accent}22`, color: accent }}>
+              {sortByValue ? 'By value' : 'By deals'}
+            </span>
+          </Tap>
+        </div>
+        <div className="mt-3 space-y-1.5">
+          {shown.map((r) => (
+            <LeadRow
+              key={r.name}
+              name={r.name}
+              sub={`${r.deals} open deals`}
+              tone={r.tone}
+              onTap={() => go(1)}
+              right={
+                <span className="shrink-0 text-[8.5px] font-extrabold" style={{ color: r.tone }}>
+                  {r.value}
+                </span>
+              }
+            />
           ))}
         </div>
       </div>
@@ -2112,11 +2817,11 @@ function LeadrDigest({ accent }: { accent: string }) {
 type ScreenComponent = (props: { accent: string }) => ReactNode
 
 export const CONCEPT_SCREENS: Record<string, ScreenComponent[]> = {
-  fieldly: [FieldlyDispatch, FieldlyQuote, FieldlyPhotos, FieldlySchedule],
+  fieldly: [FieldlyDispatch, FieldlyQuote, FieldlyPhotos, FieldlySchedule, FieldlyTeam],
   // ordered to match concepts.ts's screen names: Stamp Card, Rewards Wallet,
-  // Nearby Offers, Redeem at Till
-  stamp: [StampPunchCard, StampWallet, StampOffers, StampCatalog],
-  slate: [SlateBooking, SlateConfirmed, SlateAppointments, SlateSchedule],
-  prophy: [ProphyRecall, ProphyChart, ProphyDaySchedule, ProphyTreatment],
-  leadr: [LeadrPipeline, LeadrDetail, LeadrReminders, LeadrDigest],
+  // Nearby Offers, Redeem at Till, Customer Insights
+  stamp: [StampPunchCard, StampWallet, StampOffers, StampCatalog, StampInsights],
+  slate: [SlateBooking, SlateConfirmed, SlateAppointments, SlateSchedule, SlateClients],
+  prophy: [ProphyRecall, ProphyChart, ProphyDaySchedule, ProphyTreatment, ProphyPatients],
+  leadr: [LeadrPipeline, LeadrDetail, LeadrReminders, LeadrDigest, LeadrTeam],
 }

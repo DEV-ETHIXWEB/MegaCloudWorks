@@ -10,7 +10,7 @@ export const ABOUT_HERO = {
 
 export const STUDIOS = {
   eyebrow: 'Two studios. One team.',
-  body: 'Ethixweb builds the web presence: marketing sites, e-commerce, and platforms. MegaCloudWorks is aimed squarely at apps: native and cross-platform products designed and engineered end to end. Same team, same standards, two focused studios.',
+  body: 'Ethixweb handles the web side, marketing sites, e-commerce, the platforms a business runs on. MegaCloudWorks grew out of that same team turning its attention to apps, native and cross-platform, held to the same bar by the same people.',
 }
 
 export const ABOUT_STEPS = [

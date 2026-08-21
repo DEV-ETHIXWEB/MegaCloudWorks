@@ -11,7 +11,7 @@ import { WORK_HERO, MADE } from '../content/work'
 import { CONCEPTS } from '../content/concepts'
 
 export function Work() {
-  const totalScreens = CONCEPTS.length * 4
+  const totalScreens = CONCEPTS.reduce((sum, c) => sum + c.screens.length, 0)
   const totalFeatures = CONCEPTS.reduce((sum, c) => sum + c.features.length, 0)
 
   return (

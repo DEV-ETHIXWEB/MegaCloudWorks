@@ -107,8 +107,13 @@ export function ScreensShowcase({ concept }: { concept: Concept }) {
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   // a gentle wave, not a staircase: no card sits more than 24px off the
-  // others' baseline, so all four stay comfortably inside the same viewport
-  const lift = ['lg:mt-0', 'lg:mt-6', 'lg:mt-0', 'lg:mt-6']
+  // others' baseline, so all screens stay comfortably inside the same viewport
+  const lift = ['lg:mt-0', 'lg:mt-6', 'lg:mt-0', 'lg:mt-6', 'lg:mt-6', 'lg:mt-0']
+
+  // grid columns follow the concept's own screen count (most have four; a
+  // concept with five gets a fifth column rather than wrapping one card
+  // onto its own lonely row)
+  const lgCols = screens.length >= 5 ? 'lg:grid-cols-5' : 'lg:grid-cols-4'
 
   return (
     <>
@@ -118,13 +123,13 @@ export function ScreensShowcase({ concept }: { concept: Concept }) {
         </Reveal>
       </div>
 
-      <div className="mx-auto hidden max-w-xs grid-cols-1 gap-x-8 gap-y-14 sm:grid sm:max-w-none sm:grid-cols-2 lg:max-w-none lg:grid-cols-4 lg:gap-x-6">
+      <div className={`mx-auto hidden max-w-xs grid-cols-1 gap-x-8 gap-y-14 sm:grid sm:max-w-none sm:grid-cols-2 lg:max-w-none ${lgCols} lg:gap-x-6`}>
         {screens.map((_, i) => {
           const Active = screens[indices[i]]
           const isHovered = hovered === i
           return (
             <Reveal key={concept.screens[i]} delay={i * 0.08} className={lift[i % lift.length]}>
-              <div className="mx-auto flex w-full max-w-[220px] flex-col items-center lg:max-w-none">
+              <div className="mx-auto flex w-full max-w-[220px] flex-col items-center">
                 <motion.div
                   className="w-full"
                   onMouseEnter={() => setHovered(i)}

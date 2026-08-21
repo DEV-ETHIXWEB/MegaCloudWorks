@@ -1,9 +1,8 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { ScreensShowcase } from './ScreensShowcase'
+import { ThemesShowcase } from './ThemesShowcase'
 import { SectionHeading } from './SectionHeading'
 import { Reveal } from './Reveal'
-import type { Concept } from '../content/concepts'
 
 /**
  * The homepage's screens-showcase moment: needs the ~1600-line interactive
@@ -11,7 +10,7 @@ import type { Concept } from '../content/concepts'
  * that library only downloads once a visitor actually scrolls this far,
  * instead of shipping in the homepage's initial bundle.
  */
-export function ProductExperienceSection({ concept }: { concept: Concept }) {
+export function ProductExperienceSection() {
   return (
     <section
       data-header-tone="dark"
@@ -23,18 +22,18 @@ export function ProductExperienceSection({ concept }: { concept: Concept }) {
           n="04"
           kicker="Product experience"
           title="We don't just design apps. We build them."
-          sub={`${concept.name} · ${concept.blurb}`}
+          sub="Five products, five different problems: one phone for each, live and tappable."
           light
         />
         <div className="mt-16">
-          <ScreensShowcase concept={concept} />
+          <ThemesShowcase />
         </div>
         <Reveal delay={0.2} className="mt-14 text-center">
           <Link
-            to={`/work/${concept.slug}`}
+            to="/work"
             className="edge-hard inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-[var(--brand-text)] no-underline"
           >
-            See the full case study <ArrowRight size={15} />
+            See the whole index <ArrowRight size={15} />
           </Link>
         </Reveal>
       </div>

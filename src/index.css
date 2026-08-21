@@ -15,7 +15,8 @@
  *   Swiss    -> the grid, the type scale, the spacing rhythm (skeleton)
  *   Brutalism -> numbered markers, hard 2px edges, the CTA weight
  *   Clay/Neu -> one merged "lift" surface for interactive cards
- *   Glass    -> reserved for nav chrome + one hero atmosphere layer
+ *   Glass    -> nav chrome, one hero atmosphere layer, and the
+ *               "Selected work" cards (their own frosted variant, below)
  * Never combined per-element: each surface role picks exactly one.
  * ------------------------------------------------------------------ */
 :root {
@@ -182,6 +183,33 @@ textarea:focus-visible,
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
 }
 
+/* frosted variant of glass for the "Selected work" cards: sits over each
+   card's own gradient hero, so the blur has real color underneath it to
+   diffuse instead of just tinting flat white-on-white */
+.surface-glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--lift-radius);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow:
+    0 1px 1px rgba(16, 16, 20, 0.03),
+    0 10px 24px -12px rgba(16, 16, 20, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.surface-glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 1px 1px rgba(16, 16, 20, 0.04),
+    0 24px 40px -16px rgba(16, 16, 20, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
 /* brutalist hard edge: numbered markers, key CTAs only */
 .edge-hard {
   border: 2px solid var(--ink);
@@ -331,6 +359,28 @@ textarea:focus-visible,
   }
   to {
     transform: translateX(calc(100% / 0.42));
+  }
+}
+
+/* the same rail, oriented for a vertical connector (mobile-stacked studio
+   cards): the pulse travels top-to-bottom instead of left-to-right */
+.link-track--vertical::after {
+  inset-block: auto;
+  inset-inline: 0;
+  left: auto;
+  top: 0;
+  width: auto;
+  height: 42%;
+  background: linear-gradient(180deg, rgba(245, 51, 59, 0) 0%, var(--brand) 50%, rgba(245, 51, 59, 0) 100%);
+  animation-name: link-travel-vertical;
+}
+
+@keyframes link-travel-vertical {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(calc(100% / 0.42));
   }
 }
 
@@ -493,10 +543,10 @@ textarea:focus-visible,
 .iphone-frame__island {
   position: absolute;
   left: 50%;
-  top: 10px;
+  top: 14px;
   z-index: 20;
-  height: 20px;
-  width: 84px;
+  height: 14px;
+  width: 56px;
   transform: translateX(-50%);
   border-radius: 999px;
   background: #000;

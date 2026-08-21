@@ -6,26 +6,25 @@ import { STEPS } from '../content/home'
 
 // One hand-drawn frame per phase — an unclimbed peak, a map with the
 // target marked, a pickaxe breaking ground, a flag planted at the
-// summit — standing in for what that phase actually is. Used at their
-// native 3:2 frame, not cropped into an icon shape. Each drawing
-// renders on its own black canvas, so it sits on a matching near-black
-// card rather than a white one: the seam between image and container
-// disappears completely.
+// summit — standing in for what that phase actually is. Real cutouts
+// with proper alpha (no more black canvas baked in), so a CSS
+// drop-shadow can trace the illustration's own silhouette instead of a
+// box's edges: a thin dark outline that hugs the artwork itself, plus
+// a soft lift shadow for depth.
 const ICONS = ['/timeline/step1.webp', '/timeline/step2.webp', '/timeline/step3.webp', '/timeline/step4.webp']
 
 function Frame({ icon, className = '' }: { icon: string; className?: string }) {
   return (
-    <div
-      className={`group relative aspect-[3/2] w-full overflow-hidden rounded-2xl shadow-[0_0_0_1px_rgba(193,20,32,0.16),0_16px_30px_-16px_rgba(0,0,0,0.55),0_0_18px_1px_rgba(193,20,32,0.07)] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-[0_0_0_1px_rgba(193,20,32,0.4),0_22px_38px_-16px_rgba(0,0,0,0.6),0_0_26px_4px_rgba(193,20,32,0.2)] ${className}`}
-      style={{ background: 'radial-gradient(circle at 50% 40%, #1c1c1c 0%, #050505 78%)' }}
-    >
+    <div className={`group relative aspect-[3/2] w-full ${className}`}>
       <img
         src={icon}
         alt=""
         aria-hidden="true"
-        className="h-full w-full object-cover opacity-95 transition-transform duration-500 ease-out group-hover:scale-[1.08]"
+        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.04] group-hover:-translate-y-1"
+        style={{
+          filter: 'drop-shadow(0 0 0.75px rgba(16,16,20,0.85)) drop-shadow(0 8px 14px rgba(16,16,20,0.18))',
+        }}
       />
-      <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/[0.06]" />
     </div>
   )
 }

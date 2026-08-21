@@ -31,9 +31,6 @@ const ProductExperienceSection = lazy(() =>
 )
 
 const HERO_CONCEPT = getConcept('fieldly')!
-// the four-phone showcase runs Slate's screens: a booking flow reads more
-// legibly at four-across than Fieldly's denser dispatch UI
-const SHOWCASE_CONCEPT = getConcept('slate')!
 
 export function Home() {
   return (
@@ -155,7 +152,7 @@ export function Home() {
           </div>
         }
       >
-        <ProductExperienceSection concept={SHOWCASE_CONCEPT} />
+        <ProductExperienceSection />
       </Suspense>
 
       {/* 05 · Selected work: three small, equal, refined cards, not one
@@ -173,10 +170,23 @@ export function Home() {
             </Reveal>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-2xl gap-5 sm:max-w-none sm:grid-cols-3">
+          {/* soft color field behind the cards: pure decoration, so the
+              glass cards below have something with actual color/gradient
+              to blur — without it, translucent-white-on-white backdrop-blur
+              is invisible */}
+          <div className="relative mx-auto mt-12 max-w-2xl sm:max-w-none">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-6 -inset-y-10 -z-10 opacity-70 blur-3xl"
+              style={{
+                background:
+                  'radial-gradient(40% 60% at 12% 20%, rgba(124,58,237,0.35), transparent 70%), radial-gradient(35% 55% at 50% 40%, rgba(56,189,248,0.3), transparent 70%), radial-gradient(40% 60% at 88% 30%, rgba(245,51,59,0.3), transparent 70%)',
+              }}
+            />
+            <div className="grid gap-5 sm:grid-cols-3">
             {CONCEPTS.slice(0, 3).map((c, i) => (
               <Reveal key={c.slug} delay={i * 0.07}>
-                <WobbleCard containerClassName="h-full">
+                <WobbleCard containerClassName="h-full" surface="glass">
                 <CardSpotlight className="h-full" color="rgba(255,255,255,0.16)" radius={240}>
                   <Link to={`/work/${c.slug}`} className="group flex h-full flex-col overflow-hidden no-underline">
                     <div
@@ -208,7 +218,7 @@ export function Home() {
                         {c.name}
                       </h3>
                     </div>
-                    <div className="flex items-start justify-between gap-3 bg-[var(--paper)] p-4">
+                    <div className="flex items-start justify-between gap-3 border-t border-white/50 bg-white/45 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] backdrop-blur-xl backdrop-saturate-150">
                       <div>
                         <p className="text-sm font-bold text-[var(--ink)]">{c.tagline}</p>
                         <p className="mt-1 text-[11px] font-semibold text-[var(--ink-faint)]">
@@ -225,6 +235,7 @@ export function Home() {
                 </WobbleCard>
               </Reveal>
             ))}
+            </div>
           </div>
         </div>
       </section>
@@ -268,7 +279,7 @@ export function Home() {
             </Reveal>
           </div>
           <Reveal className="lg:col-span-7 lg:col-start-6">
-            <p className="text-[length:var(--fs-lead)] font-medium leading-relaxed tracking-tight text-[var(--ink)]">
+            <p className="text-[length:clamp(1.254rem,2.508vw,1.452rem)] font-light leading-relaxed tracking-tight text-[var(--ink-soft)]">
               {STUDIOS.body}
             </p>
             <p className="mt-6 text-lg text-[var(--ink-soft)]">{COVERAGE.body}</p>
@@ -291,7 +302,6 @@ export function Home() {
           </>
         }
         sub="Tell us about your project, we'll come back with a plan."
-        bgImage
       />
 
       <SiteFooter />

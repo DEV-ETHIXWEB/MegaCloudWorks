@@ -1,6 +1,8 @@
-import { useState } from 'react'
 import type { ReactNode, MouseEvent } from 'react'
-import { motion } from 'motion/react'
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'motion/react'
+
+// matches the previous 0.15s ease-out settle by feel
+const TILT_SPRING = { stiffness: 420, damping: 34, mass: 0.4 }
 
 /**
  * A card that tilts gently toward the cursor, ported from Aceternity UI's
@@ -11,6 +13,14 @@ import { motion } from 'motion/react'
  * original, our own `.grain-overlay` texture in place of its external
  * noise.webp, and no default background: the caller's own content (a
  * gradient hero, a photo) supplies that.
+ *
+ * The tilt itself lives entirely in Motion values, not React state: a raw
+ * mousemove can fire far more often than a frame, so setState-per-pixel
+ * here was re-rendering on every one of those events — and once the
+ * `glass` surface's backdrop-blur is behind it, each of those re-renders
+ * gets a lot pricier to repaint. Motion values update the transform
+ * directly on the node without touching React, same approach
+ * CardSpotlight already uses for its cursor glow.
  */
 export function WobbleCard({
   children,
@@ -24,8 +34,11 @@ export function WobbleCard({
   /** which surface treatment supplies the card's background/border/shadow */
   surface?: 'lift' | 'glass'
 }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 })
-  const [hovering, setHovering] = useState(false)
+  const rawX = useMotionValue(0)
+  const rawY = useMotionValue(0)
+  const x = useSpring(rawX, TILT_SPRING)
+  const y = useSpring(rawY, TILT_SPRING)
+  const innerScale = useSpring(1, TILT_SPRING)
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   // Touch-only devices can fire a synthetic mouseenter on tap with no
   // matching mouseleave, which would otherwise leave the tilt stuck after
@@ -35,35 +48,28 @@ export function WobbleCard({
   const onMove = (e: MouseEvent<HTMLElement>) => {
     if (reduced || !canHover) return
     const rect = e.currentTarget.getBoundingClientRect()
-    setPos({
-      x: (e.clientX - (rect.left + rect.width / 2)) / 26,
-      y: (e.clientY - (rect.top + rect.height / 2)) / 26,
-    })
+    rawX.set((e.clientX - (rect.left + rect.width / 2)) / 26)
+    rawY.set((e.clientY - (rect.top + rect.height / 2)) / 26)
   }
+
+  const outerTransform = useMotionTemplate`translate3d(${x}px, ${y}px, 0)`
+  const innerX = useTransform(x, (v) => -v * 0.6)
+  const innerY = useTransform(y, (v) => -v * 0.6)
+  const innerTransform = useMotionTemplate`translate3d(${innerX}px, ${innerY}px, 0) scale3d(${innerScale}, ${innerScale}, 1)`
 
   return (
     <motion.section
       onMouseMove={onMove}
-      onMouseEnter={() => canHover && setHovering(true)}
+      onMouseEnter={() => canHover && innerScale.set(1.015)}
       onMouseLeave={() => {
-        setHovering(false)
-        setPos({ x: 0, y: 0 })
+        rawX.set(0)
+        rawY.set(0)
+        innerScale.set(1)
       }}
-      style={{
-        transform: hovering ? `translate3d(${pos.x}px, ${pos.y}px, 0)` : 'translate3d(0px, 0px, 0)',
-        transition: 'transform 0.15s ease-out',
-      }}
+      style={{ transform: outerTransform }}
       className={`${surface === 'glass' ? 'surface-glass-card' : 'surface-lift'} relative mx-auto w-full overflow-hidden ${containerClassName}`}
     >
-      <motion.div
-        style={{
-          transform: hovering
-            ? `translate3d(${-pos.x * 0.6}px, ${-pos.y * 0.6}px, 0) scale3d(1.015, 1.015, 1)`
-            : 'translate3d(0px, 0px, 0) scale3d(1, 1, 1)',
-          transition: 'transform 0.15s ease-out',
-        }}
-        className={`h-full ${className}`}
-      >
+      <motion.div style={{ transform: innerTransform }} className={`h-full ${className}`}>
         {children}
       </motion.div>
     </motion.section>

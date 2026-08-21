@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'motion/react'
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
 import { Reveal } from './Reveal'
 import { CIRCLES } from '../content/services'
@@ -31,6 +31,9 @@ const PRESSED_INSET = 'inset 3px 4px 9px rgba(20,20,20,0.12), inset -2px -2px 6p
 const FLOAT_DURATIONS = [7.5, 8.6, 7.9]
 const FLOAT_DELAYS = [0, 0.6, 1.3]
 
+// matches the previous 380ms cubic-bezier(0.22, 1, 0.36, 1) settle by feel
+const TILT_SPRING = { stiffness: 340, damping: 30, mass: 0.5 }
+
 function ClayCircle({
   n,
   title,
@@ -40,7 +43,18 @@ function ClayCircle({
   delay,
   reduced,
 }: (typeof CIRCLES)[number] & { index: number; delay: number; reduced: boolean }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 })
+  // Cursor tilt lives in Motion values, not React state: a raw mousemove
+  // can fire far more often than a frame, so setState-per-pixel here was
+  // re-rendering (and, since this card now clips to an SVG path and casts
+  // filter: drop-shadow instead of the old box-shadow, repainting) on every
+  // one of those events. Motion values update the transform directly on
+  // the node without touching React at all — same approach CardSpotlight
+  // already uses for its cursor glow.
+  const rawX = useMotionValue(0)
+  const rawY = useMotionValue(0)
+  const x = useSpring(rawX, TILT_SPRING)
+  const y = useSpring(rawY, TILT_SPRING)
+  const lift = useSpring(0, TILT_SPRING)
   const [hovering, setHovering] = useState(false)
   const [pressed, setPressed] = useState(false)
   // Touch-only devices can leave a synthetic hover engaged after a tap since
@@ -52,12 +66,20 @@ function ClayCircle({
   const onMove = (e: MouseEvent<HTMLElement>) => {
     if (reduced || !canHover) return
     const rect = e.currentTarget.getBoundingClientRect()
-    setPos({ x: (e.clientX - (rect.left + rect.width / 2)) / 22, y: (e.clientY - (rect.top + rect.height / 2)) / 22 })
+    rawX.set((e.clientX - (rect.left + rect.width / 2)) / 22)
+    rawY.set((e.clientY - (rect.top + rect.height / 2)) / 22)
   }
 
   const drop = pressed ? PRESSED_DROP : hovering ? HOVER_DROP : REST_DROP
   const inset = pressed ? PRESSED_INSET : hovering ? HOVER_INSET : REST_INSET
-  const lift = pressed ? 1 : hovering ? -6 : 0
+  const liftTarget = pressed ? 1 : hovering ? -6 : 0
+
+  useEffect(() => {
+    lift.set(liftTarget)
+  }, [liftTarget, lift])
+
+  const tiltY = useTransform([y, lift], ([yy, ll]) => (yy as number) + (ll as number))
+  const transform = useMotionTemplate`translate3d(${x}px, ${tiltY}px, 0)`
 
   return (
     <Reveal delay={delay}>
@@ -77,6 +99,11 @@ function ClayCircle({
                 ease: 'easeInOut',
               }
         }
+        // promotes this to its own compositor layer so the infinite float
+        // moves the already-painted (clipped + filtered) bitmap around
+        // instead of repainting the clay-cloud clip-path and drop-shadow
+        // on every frame, forever
+        style={{ willChange: 'transform' }}
       >
         <motion.div
           onMouseMove={onMove}
@@ -84,13 +111,14 @@ function ClayCircle({
           onMouseLeave={() => {
             setHovering(false)
             setPressed(false)
-            setPos({ x: 0, y: 0 })
+            rawX.set(0)
+            rawY.set(0)
           }}
           onMouseDown={() => setPressed(true)}
           onMouseUp={() => setPressed(false)}
           style={{
-            transform: `translate3d(${hovering ? pos.x : 0}px, ${(hovering ? pos.y : 0) + lift}px, 0)`,
-            transition: 'transform 380ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1)',
+            transform,
+            transition: 'box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1)',
           }}
         >
           <Link

@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
+import type { Location } from 'react-router-dom'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
 import { Services } from './pages/Services'
@@ -31,27 +32,47 @@ function RouteFallback() {
   )
 }
 
-function PageTransition({ children }: { children: React.ReactNode }) {
-  const location = useLocation()
+function PageTransition({
+  location,
+  children,
+}: {
+  location: Location
+  children: React.ReactNode
+}) {
   const reduced =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  // Fade the incoming page in; don't fade the outgoing one out. `mode="wait"`
+  // plus an exit fade means a stretch where the old page has reached opacity 0
+  // and the new one hasn't started — against the near-white --paper body that
+  // reads as a white flash on every single navigation, which is the symptom
+  // this whole transition was accused of. Entering-only keeps the intended
+  // softness with nothing ever fully blank, and it removes the exit/enter
+  // handoff that was stranding pages at opacity 0 (see AppRoutes).
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial={reduced ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={reduced ? undefined : { opacity: 0 }}
-        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={location.pathname}
+      initial={reduced ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
   )
 }
 
 function AppRoutes() {
+  // `location` is read once here and handed to BOTH the transition wrapper and
+  // <Routes>. That pairing is the fix for the white screen: <Routes> with no
+  // `location` prop resolves against the router context instead, so the moment
+  // the URL changed the *outgoing* wrapper re-rendered with the *incoming*
+  // page inside it — the fade-out then ran over the new page and left it
+  // parked at opacity 0 indefinitely, which is why the screen went white and
+  // only a reload (or some later unrelated re-render) brought it back. Pinning
+  // <Routes> to an explicit location keeps each wrapper rendering the route it
+  // was created for.
+  const location = useLocation()
+
   // Suspense sits outside the fade: a lazy chunk that's still downloading
   // renders its spinner at full opacity immediately, rather than the
   // spinner itself being born inside a motion.div whose enter animation
@@ -60,8 +81,8 @@ function AppRoutes() {
   // caught up with the fetch.
   return (
     <Suspense fallback={<RouteFallback />}>
-      <PageTransition>
-        <Routes>
+      <PageTransition location={location}>
+        <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />

@@ -540,6 +540,14 @@ textarea:focus-visible,
   overflow: hidden;
   border-radius: 2.15rem;
   background: #000;
+  /* Safari has a long-standing bug where overflow: hidden fails to clip
+     correctly when an ancestor (the drop-shadow wrapper every phone card
+     sits in) has an active CSS filter — screen content visibly bleeds past
+     the rounded frame edge on iOS/macOS Safari only. Promoting this element
+     onto its own compositing layer forces Safari to rasterize the clip
+     before the ancestor's filter composites, which resolves it. */
+  transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 .iphone-frame__island {

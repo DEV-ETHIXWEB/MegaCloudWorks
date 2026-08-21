@@ -309,7 +309,19 @@ export function CloudShader({
       gl.uniform2f(loc.res, w, h)
     }
 
-    const observer = new ResizeObserver(resize)
+    // iOS Safari's address bar collapses and expands as this hero (100svh)
+    // scrolls past, firing a burst of ResizeObserver callbacks mid-scroll —
+    // each one reallocates the canvas's WebGL backing store, which visibly
+    // flashes/glitches the shader while the visitor is actively scrolling.
+    // Debouncing collapses that burst into one resize after the toolbar
+    // settles, instead of reallocating on every intermediate height.
+    let resizeTimer = 0
+    const debouncedResize = () => {
+      window.clearTimeout(resizeTimer)
+      resizeTimer = window.setTimeout(resize, 120)
+    }
+
+    const observer = new ResizeObserver(debouncedResize)
     observer.observe(canvas)
     resize()
 
@@ -336,6 +348,7 @@ export function CloudShader({
     return () => {
       running = false
       cancelAnimationFrame(frame)
+      window.clearTimeout(resizeTimer)
       observer.disconnect()
       visibility.disconnect()
       gl.deleteBuffer(buffer)

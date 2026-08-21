@@ -129,7 +129,7 @@ function ClayCircle({
             // tall as it is wide reads as a bell, not a cloud. The clip-path
             // is in objectBoundingBox units, so stretching this box is all
             // it takes to reshape it — no need to touch the circle cluster.
-            className="group relative flex w-[17.75rem] aspect-[7/6] flex-col items-center justify-center gap-2 px-8 pb-20 pt-5 text-center no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand)] md:w-[16.25rem] md:pb-16 lg:w-[20.5rem] lg:pb-24"
+            className="group relative flex w-[17.75rem] aspect-[7/6] flex-col items-center justify-center gap-2 px-8 pb-20 pt-9 text-center no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand)] md:w-[16.25rem] md:pb-16 md:pt-8 lg:w-[20.5rem] lg:pb-24 lg:pt-10"
             style={{
               filter: drop,
               transition: 'filter 380ms cubic-bezier(0.22, 1, 0.36, 1)',

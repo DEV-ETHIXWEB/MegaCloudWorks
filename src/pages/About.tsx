@@ -10,7 +10,7 @@ import { MagneticButton } from '../components/MagneticButton'
 import { StudioHandshake } from '../components/StudioHandshake'
 import { StatsSection } from '../components/StatsSection'
 import { WorkCard } from '../components/WorkCard'
-import { ABOUT_HERO, STUDIOS, ABOUT_STEPS, COVERAGE, ORIGIN, VALUES } from '../content/about'
+import { ABOUT_HERO, STUDIOS, ABOUT_STEPS, COVERAGE, ORIGIN } from '../content/about'
 import { CONCEPTS } from '../content/concepts'
 
 export function About() {
@@ -86,38 +86,18 @@ export function About() {
             <p className="kicker text-sm sm:text-base lg:text-xl" data-n="02">
               {STUDIOS.eyebrow}
             </p>
-            <p className="mt-4 hidden max-w-[22rem] text-[1.61rem] leading-relaxed text-[var(--ink-faint)] lg:block">
+            <p className="mt-4 hidden max-w-[22rem] text-[1.61rem] font-semibold leading-relaxed text-[var(--ink)] lg:block">
               One team, two studios: the web side and the app side of the same standard.
             </p>
           </div>
           <Reveal className="lg:col-span-7 lg:col-start-6">
-            <p className="text-[length:clamp(1.254rem,2.508vw,1.452rem)] font-light leading-relaxed tracking-tight text-[var(--ink-soft)]">
+            <p className="text-[length:clamp(1.254rem,2.508vw,1.452rem)] font-normal leading-relaxed tracking-tight text-[var(--ink-soft)]">
               {STUDIOS.body}
             </p>
             <div className="mt-10">
               <StudioHandshake variant="feature" />
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* What we actually believe: same card weight as the process steps
-          below, so the page reads as having a point of view, not just a
-          workflow diagram */}
-      <section className="border-y border-[var(--line)] bg-[var(--paper-2)] px-[var(--edge)] py-24 sm:py-32">
-        <div className="mx-auto max-w-[var(--container-wide)]">
-          <SectionHeading n="03" kicker="What we won't compromise on" title="Four things that don't flex, project to project." />
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {VALUES.map((v, i) => (
-              <Reveal key={v.n} delay={i * 0.08}>
-                <div className="surface-lift h-full p-6">
-                  <span className="text-4xl font-black text-[var(--ink-faint)]">{v.n}</span>
-                  <h3 className="mt-3 font-sans text-xl font-extrabold tracking-tight">{v.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--ink-soft)]">{v.body}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -129,7 +109,7 @@ export function About() {
       >
         <div className="grain-overlay" aria-hidden="true" />
         <div className="mx-auto max-w-[var(--container-wide)]">
-          <SectionHeading n="04" kicker="How we work" title="Four moves, in the same order, every time." light />
+          <SectionHeading n="03" kicker="How we work" title="Four moves, in the same order, every time." light />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {ABOUT_STEPS.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.08}>
@@ -148,19 +128,23 @@ export function About() {
         </div>
       </section>
 
-      {/* Origin: the human "why" behind two studios instead of one, as a
-          pull-quote rather than another paragraph block */}
+      {/* Origin: the human "why" behind two studios instead of one. The
+          heading sits centered on its own, then the quote runs wide and
+          left-aligned underneath — one unhurried thought, not a caption
+          squeezed into a narrow centered block. */}
       <section className="px-[var(--edge)] py-24 sm:py-32">
-        <div className="mx-auto max-w-[var(--container)] text-center">
-          <p className="kicker justify-center" data-n="05">
+        <div className="mx-auto max-w-[var(--container-wide)] text-center">
+          <p className="kicker justify-center" data-n="04">
             {ORIGIN.eyebrow}
           </p>
-          <p className="mx-auto mt-6 max-w-2xl text-balance font-sans text-[length:var(--fs-lead)] font-bold leading-relaxed tracking-tight text-[var(--ink)]">
-            &ldquo;{ORIGIN.quote}&rdquo;
-          </p>
-          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-faint)]">
-            {ORIGIN.attribution}
-          </p>
+          <Reveal className="mx-auto mt-8 max-w-6xl text-left">
+            <p className="font-sans text-[length:clamp(1.2rem,1.9vw,1.55rem)] font-medium leading-[1.65] tracking-tight text-[var(--ink)]">
+              &ldquo;{ORIGIN.quote}&rdquo;
+            </p>
+            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+              {ORIGIN.attribution}
+            </p>
+          </Reveal>
         </div>
       </section>
 
@@ -173,7 +157,7 @@ export function About() {
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="kicker" data-n="06">
+            <p className="kicker" data-n="05">
               {COVERAGE.eyebrow}
             </p>
             <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)]">
@@ -191,7 +175,7 @@ export function About() {
       <section className="bg-[var(--paper-2)] px-[var(--edge)] py-24 sm:py-32">
         <div className="mx-auto max-w-[var(--container-wide)]">
           <div className="flex flex-wrap items-end justify-between gap-6">
-            <SectionHeading n="07" kicker="What we build" title="Five products, one standard." />
+            <SectionHeading n="06" kicker="What we build" title="Five products, one standard." />
             <Reveal>
               <Link to="/work" className="text-sm font-semibold text-[var(--brand-text)] no-underline hover:opacity-70">
                 See the whole index →

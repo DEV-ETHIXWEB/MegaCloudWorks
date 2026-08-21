@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { Reveal } from './Reveal'
 
 export function SectionHeading({
@@ -18,7 +18,15 @@ export function SectionHeading({
 }) {
   return (
     <Reveal className={align === 'center' ? 'mx-auto max-w-2xl text-center' : ''}>
-      <p className="kicker" data-n={n} style={light ? { color: 'rgba(255,255,255,0.6)' } : undefined}>
+      <p
+        className="kicker"
+        data-n={n}
+        style={
+          light
+            ? ({ color: 'rgba(255,255,255,0.6)', '--kicker-number': '#ffffff' } as CSSProperties)
+            : undefined
+        }
+      >
         {kicker}
       </p>
       <h2

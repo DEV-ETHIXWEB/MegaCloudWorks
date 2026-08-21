@@ -316,7 +316,9 @@ textarea:focus-visible,
 
 .kicker::before {
   content: attr(data-n);
-  color: var(--brand);
+  /* on a brand-red band (SectionHeading's `light`), the number switches to
+     white via --kicker-number below — brand-red-on-brand-red is invisible */
+  color: var(--kicker-number, var(--brand));
   font-weight: 900;
 }
 

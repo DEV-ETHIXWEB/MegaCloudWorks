@@ -125,7 +125,11 @@ function ClayCircle({
             to={hash}
             onTouchStart={() => setPressed(true)}
             onTouchEnd={() => setPressed(false)}
-            className="group relative flex size-[17rem] flex-col items-center justify-center gap-2 px-8 pb-24 pt-5 text-center no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand)] md:size-[15.5rem] lg:size-[19.6rem] md:pb-20 lg:pb-28"
+            // wider than tall (aspect-[7/6], not a square): a dome that's as
+            // tall as it is wide reads as a bell, not a cloud. The clip-path
+            // is in objectBoundingBox units, so stretching this box is all
+            // it takes to reshape it — no need to touch the circle cluster.
+            className="group relative flex w-[17.75rem] aspect-[7/6] flex-col items-center justify-center gap-2 px-8 pb-20 pt-5 text-center no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand)] md:w-[16.25rem] md:pb-16 lg:w-[20.5rem] lg:pb-24"
             style={{
               filter: drop,
               transition: 'filter 380ms cubic-bezier(0.22, 1, 0.36, 1)',
@@ -193,8 +197,9 @@ export function ServiceCircles() {
     <div className="py-2 sm:py-4">
       {/* the cloud silhouette every card clips to, defined once and shared
           by url(#clay-cloud) rather than duplicated per card. objectBoundingBox
-          units mean the 0-1 path scales to whatever box.size the element
-          clipping to it happens to have (16.5rem here, 19rem at lg). */}
+          units mean the 0-1 path scales to whatever box each ClayCircle's
+          Link ends up with — width from its own classes, height derived
+          from that same element's aspect-[7/6]. */}
       <svg width="0" height="0" aria-hidden="true" className="absolute">
         <defs>
           {/* a clipPath's children union automatically, so the cloud is just

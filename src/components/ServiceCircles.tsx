@@ -82,7 +82,7 @@ function ClayCircle({
   const transform = useMotionTemplate`translate3d(${x}px, ${tiltY}px, 0)`
 
   return (
-    <Reveal delay={delay}>
+    <Reveal delay={delay} className={index > 0 ? '-mt-10 md:mt-0' : undefined}>
       <motion.div
         animate={
           reduced
@@ -219,7 +219,11 @@ export function ServiceCircles() {
         </defs>
       </svg>
 
-      <div className="mx-auto flex max-w-[60rem] flex-col items-center gap-14 md:flex-row md:justify-center md:gap-10 lg:gap-16">
+      <div className="mx-auto flex max-w-[60rem] flex-col items-center gap-0 md:flex-row md:justify-center md:gap-10 lg:gap-16">
+        {/* on mobile the cards stack; -mt pulls each into the previous
+            card's own transparent lower corners (its cloud shape doesn't
+            fill its box) instead of leaving a second, visually-doubled gap
+            on top of that dead space */}
         {CIRCLES.map((c, i) => (
           <ClayCircle key={c.n} {...c} index={i} delay={i * 0.08} reduced={reduced} />
         ))}

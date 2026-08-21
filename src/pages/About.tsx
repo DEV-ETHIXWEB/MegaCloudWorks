@@ -147,26 +147,29 @@ export function About() {
         </div>
       </section>
 
-      {/* Coverage */}
+      {/* Coverage: image and copy share one capsule so they read as a
+          single object, not two independent blocks — matters most on
+          mobile, where the grid collapses to a single stacked column and
+          the pairing otherwise has nothing left to signal it's a pair. */}
       <section className="border-t border-[var(--line)] px-[var(--edge)] py-24 sm:py-32">
-        <div className="mx-auto grid max-w-[var(--container-wide)] items-center gap-12 lg:grid-cols-2">
-          <Reveal>
-            <div className="surface-lift aspect-[4/3] overflow-hidden">
+        <Reveal className="mx-auto max-w-[var(--container-wide)]">
+          <div className="surface-lift grid items-center overflow-hidden lg:grid-cols-2">
+            <div className="aspect-[4/3] lg:aspect-auto lg:h-full">
               <img src="/about-background.webp" alt="Coverage map background" className="h-full w-full object-cover" />
             </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="kicker" data-n="05">
-              {COVERAGE.eyebrow}
-            </p>
-            <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)]">
-              {COVERAGE.titleLines[0]}
-              <br />
-              <span className="text-[var(--brand)]">{COVERAGE.titleLines[1]}</span>
-            </h2>
-            <p className="mt-4 max-w-md text-lg text-[var(--ink-soft)]">{COVERAGE.body}</p>
-          </Reveal>
-        </div>
+            <div className="p-8 sm:p-10 lg:p-14">
+              <p className="kicker" data-n="05">
+                {COVERAGE.eyebrow}
+              </p>
+              <h2 className="mt-4 font-sans text-[length:var(--fs-h2)] font-extrabold leading-[0.98] tracking-[var(--tracking-tight)]">
+                {COVERAGE.titleLines[0]}
+                <br />
+                <span className="text-[var(--brand)]">{COVERAGE.titleLines[1]}</span>
+              </h2>
+              <p className="mt-4 max-w-md text-lg text-[var(--ink-soft)]">{COVERAGE.body}</p>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* Proof: the same five concepts Work runs, tying "here's who we are"

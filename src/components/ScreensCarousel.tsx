@@ -51,7 +51,7 @@ export function ScreensCarousel({ concept }: { concept: Concept }) {
       className="mx-auto w-full max-w-[46rem] select-none"
       onPointerDown={() => setPaused(true)}
     >
-      <div className="relative flex items-center justify-center" style={{ height: 'clamp(340px, 46vw, 420px)' }}>
+      <div className="relative flex items-center justify-center py-2" style={{ minHeight: 470 }}>
         {/* previous phone, peeking at the left edge */}
         {count > 2 && (
           <button

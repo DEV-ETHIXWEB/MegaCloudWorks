@@ -58,7 +58,7 @@ export function Contact() {
               the heading's own footprint and it can never grow past it */}
           <p
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 -z-10 flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-sans font-black leading-none tracking-tight"
+            className="pointer-events-none absolute inset-0 -z-10 hidden select-none items-center justify-center overflow-hidden whitespace-nowrap font-sans font-black leading-none tracking-tight sm:flex"
             style={{
               fontSize: 'clamp(3rem, 16vw, 11rem)',
               backgroundImage: 'url(/cta-sky.webp)',

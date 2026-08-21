@@ -113,11 +113,12 @@ export function ContactForm() {
     setStatus('loading')
     setErrorMsg('')
     try {
-      // No backend is wired in this rebuild; simulate the original site's
-      // one-business-day-reply flow so the UI states are real and testable.
-      await new Promise((resolve, reject) => {
-        setTimeout(() => (Math.random() > 0.05 ? resolve(null) : reject(new Error('Network error'))), 900)
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields),
       })
+      if (!res.ok) throw new Error('Request failed')
       setStatus('success')
     } catch {
       setErrorMsg('Something went wrong sending your message. Please try again or email us directly.')

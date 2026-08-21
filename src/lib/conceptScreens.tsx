@@ -1759,14 +1759,15 @@ function SlateClients({ accent }: { accent: string }) {
 }
 
 /* ============================= PROPHY =============================
- * Reference: Dently (image 1/2): deep teal ground, glassy frosted
- * cards, pill bottom nav, avatar-and-stat-chip doctor/patient cards,
- * an appointment card with two buttons, and a proper chair-schedule
- * grid. Photography is replaced throughout with initials avatars.
- * Blue accent (#2563EB) preserved.
+ * Reference: Dently (image 1/2): glassy frosted cards, pill bottom nav,
+ * avatar-and-stat-chip doctor/patient cards, an appointment card with two
+ * buttons, and a proper chair-schedule grid. Photography is replaced
+ * throughout with initials avatars. Deep jewel-emerald ground and accent,
+ * a richer, darker green than the shared status-success tone so it reads
+ * as this concept's own brand colour, not a system state.
  */
 
-const PROPHY_BG = 'linear-gradient(180deg, #0F3630 0%, #071D1A 100%)'
+const PROPHY_BG = 'linear-gradient(180deg, #112C23 0%, #09140F 100%)'
 
 function GlassCard({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
@@ -1829,7 +1830,7 @@ function ProphyRecall({ accent }: { accent: string }) {
               <GlassCard className="flex items-center gap-2.5 px-2.5 py-2">
                 <Avatar
                   name={p.name}
-                  tone={done ? '#1F9D55' : p.urgent ? '#DC2626' : accent}
+                  tone={done ? '#DDB43C' : p.urgent ? '#DC2626' : accent}
                 />
                 <span className="min-w-0 flex-1 text-left">
                   <span className="block truncate text-[9px] font-bold text-white">
@@ -1838,7 +1839,7 @@ function ProphyRecall({ accent }: { accent: string }) {
                   <span
                     className="block text-[8px] font-semibold"
                     style={{
-                      color: done ? '#4ADE80' : p.urgent ? '#F87171' : 'rgba(255,255,255,0.5)',
+                      color: done ? '#DDB43C' : p.urgent ? '#F87171' : 'rgba(255,255,255,0.5)',
                     }}
                   >
                     {done ? 'Contacted' : p.due}
@@ -1913,7 +1914,7 @@ function ProphyChart({ accent }: { accent: string }) {
             >
               <span
                 className="flex items-center justify-center gap-1 rounded-lg py-1.5 text-center text-[7.5px] font-bold text-white transition-colors"
-                style={{ background: joined ? '#1F9D55' : accent }}
+                style={{ background: joined ? '#DDB43C' : accent, color: joined ? '#1A1408' : undefined }}
               >
                 <Video className="size-2.5" strokeWidth={2.4} />
                 {joined ? 'Connected ✓' : 'Join Now'}
@@ -1957,8 +1958,8 @@ function ProphyChart({ accent }: { accent: string }) {
           }}
         >
           <span
-            className="block rounded-xl py-2.5 text-center text-[10.5px] font-bold text-white transition-colors"
-            style={{ background: saved ? '#1F9D55' : accent }}
+            className="block rounded-xl py-2.5 text-center text-[10.5px] font-bold transition-colors"
+            style={{ background: saved ? '#DDB43C' : accent, color: saved ? '#1A1408' : 'white' }}
           >
             {saved ? 'Notes saved ✓' : 'Save Notes'}
           </span>
@@ -2153,10 +2154,10 @@ function ProphyPatients({ accent }: { accent: string }) {
         ))}
       </div>
       <div className="px-3.5 pb-4">
-        <Tap ripple="#082420" label="Open chart notes" onTap={() => go(1)}>
+        <Tap ripple="#0C1D16" label="Open chart notes" onTap={() => go(1)}>
           <span
             className="block rounded-xl py-2.5 text-center text-[10px] font-bold"
-            style={{ background: accent, color: '#082420' }}
+            style={{ background: accent, color: '#0C1D16' }}
           >
             Open Chart Notes
           </span>

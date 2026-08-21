@@ -30,7 +30,7 @@ export function Work() {
           src="/work-hero-background.webp"
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-30 h-full w-full object-cover opacity-[0.88]"
+          className="pointer-events-none absolute inset-0 -z-30 h-full w-full object-cover"
         />
         <div
           className="pointer-events-none absolute inset-0 -z-20"

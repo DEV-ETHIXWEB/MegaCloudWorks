@@ -45,7 +45,6 @@ export function About() {
         />
         {/* dissolve the photo into the page rather than ending on a hard seam */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-b from-transparent to-[var(--paper)]" />
-        <div className="grain-media grain-media--behind" aria-hidden="true" />
 
         {/* wider than the other heroes: this headline is a full sentence
             rather than three short lines, so it needs room to break well */}

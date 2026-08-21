@@ -36,20 +36,13 @@ export function Services() {
           src="/services-hero-background.png"
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-30 h-full w-full object-cover opacity-[0.88]"
+          className="pointer-events-none absolute inset-0 -z-30 h-full w-full object-cover"
         />
         <div
           className="pointer-events-none absolute inset-0 -z-20"
           style={{
             background:
               'linear-gradient(to bottom, var(--paper) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.1) 60%, var(--paper) 100%)',
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 -z-20"
-          style={{
-            background:
-              'radial-gradient(ellipse 40% 60% at 50% 45%, var(--paper) 0%, rgba(255,255,255,0.5) 50%, transparent 82%)',
           }}
         />
         <div

@@ -1,7 +1,8 @@
 import { Suspense, lazy } from 'react'
 import type { Location } from 'react-router-dom'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
+import { DebugOverlay } from './components/DebugOverlay'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
 import { Services } from './pages/Services'
@@ -72,6 +73,8 @@ function AppRoutes() {
   // <Routes> to an explicit location keeps each wrapper rendering the route it
   // was created for.
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const debug = searchParams.get('debug') === '1'
 
   // Suspense sits outside the fade: a lazy chunk that's still downloading
   // renders its spinner at full opacity immediately, rather than the
@@ -102,6 +105,7 @@ function AppRoutes() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </PageTransition>
+      {debug && <DebugOverlay />}
     </Suspense>
   )
 }

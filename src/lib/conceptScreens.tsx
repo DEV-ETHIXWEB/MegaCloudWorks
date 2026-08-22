@@ -354,7 +354,7 @@ function FieldlyDispatch({ accent }: { accent: string }) {
           </Tap>
         </div>
       </div>
-      <div className="flex-1 space-y-2 overflow-hidden px-3.5 pb-3">
+      <div className="no-scrollbar flex-1 space-y-2 overflow-y-auto px-3.5 pb-3">
         {jobs.map((j, i) => (
           <Tap
             key={j.name}
@@ -1010,7 +1010,7 @@ function StampCatalog({ accent }: { accent: string }) {
   return (
     <ScreenShell bg="#FBF4EA">
       <StatusBar accent={accent} />
-      <div className="flex-1 space-y-3 overflow-hidden px-3.5 pb-3">
+      <div className="no-scrollbar flex-1 space-y-3 overflow-y-auto px-3.5 pb-3">
         <div>
           <p className="text-[13px] font-extrabold text-[var(--ink)]">
             Reward Catalog
@@ -1170,7 +1170,7 @@ function StampInsights({ accent }: { accent: string }) {
   return (
     <ScreenShell bg="#FBF4EA">
       <StatusBar accent={accent} />
-      <div className="flex-1 space-y-3 overflow-hidden px-3.5 pb-3">
+      <div className="no-scrollbar flex-1 space-y-3 overflow-y-auto px-3.5 pb-3">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[13px] font-extrabold text-[var(--ink)]">Customer Insights</p>
@@ -1814,7 +1814,7 @@ function ProphyRecall({ accent }: { accent: string }) {
           ]}
         />
       </div>
-      <div className="flex-1 space-y-2 overflow-hidden px-3.5 pb-3">
+      <div className="no-scrollbar flex-1 space-y-2 overflow-y-auto px-3.5 pb-3">
         {shown.map((p) => {
           const done = called.includes(p.name)
           return (
@@ -2122,7 +2122,7 @@ function ProphyPatients({ accent }: { accent: string }) {
         <p className="text-[13px] font-extrabold text-white">Patient Records</p>
         <p className="text-[8.5px] text-white/50">One record, history and plan together.</p>
       </div>
-      <div className="flex-1 space-y-2 overflow-hidden px-3.5 pb-3">
+      <div className="no-scrollbar flex-1 space-y-2 overflow-y-auto px-3.5 pb-3">
         {patients.map((p, i) => (
           <Tap
             key={p.name}
@@ -2292,7 +2292,7 @@ function LeadrPipeline({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 overflow-hidden px-3.5 pb-2">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-3.5 pb-2">
         {/* greeting header */}
         <div className="flex items-center justify-between">
           <div>
@@ -2399,7 +2399,7 @@ function LeadrDetail({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 overflow-hidden px-3.5 pb-3">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-3.5 pb-3">
         <Tap ripple={accent} press={false} label="Back to pipeline" onTap={() => go(0)} className="!w-auto">
           <span className="flex items-center gap-0.5 text-[8px] font-bold" style={{ color: accent }}>
             <ChevronRight className="size-2.5 rotate-180" strokeWidth={3} />
@@ -2545,7 +2545,7 @@ function LeadrReminders({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 overflow-hidden px-3.5 pb-2">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-3.5 pb-2">
         <Tap ripple={accent} press={false} label="Back to pipeline" onTap={() => go(0)} className="!w-auto">
           <span className="flex items-center gap-0.5 text-[8px] font-bold" style={{ color: accent }}>
             <ChevronRight className="size-2.5 rotate-180" strokeWidth={3} />
@@ -2637,7 +2637,7 @@ function LeadrDigest({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 overflow-hidden px-3.5 pb-2">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-3.5 pb-2">
         <Tap ripple={accent} press={false} label="Back to pipeline" onTap={() => go(0)} className="!w-auto">
           <span className="flex items-center gap-0.5 text-[8px] font-bold" style={{ color: accent }}>
             <ChevronRight className="size-2.5 rotate-180" strokeWidth={3} />
@@ -2773,7 +2773,7 @@ function LeadrTeam({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 overflow-hidden px-3.5 pb-2">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-3.5 pb-2">
         <Tap ripple={accent} press={false} label="Back to pipeline" onTap={() => go(0)} className="!w-auto">
           <span className="flex items-center gap-0.5 text-[8px] font-bold" style={{ color: accent }}>
             <ChevronRight className="size-2.5 rotate-180" strokeWidth={3} />

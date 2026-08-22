@@ -152,7 +152,7 @@ export function HomeHeroHome() {
         </div>
       </div>
 
-      <div className="mt-1.5 min-h-0 flex-1 overflow-hidden px-3.5">
+      <div className="no-scrollbar mt-1.5 min-h-0 flex-1 overflow-y-auto px-3.5">
         <div className="flex items-center justify-between gap-2">
           <p className="min-w-0 truncate text-[7px] font-extrabold text-[#101014]">Today&rsquo;s schedule</p>
           <Tap press={false} ripple={BRAND} label="See full schedule" onTap={() => go(1)} className="!w-auto">
@@ -230,7 +230,7 @@ export function HomeHeroSchedule() {
         </div>
       </div>
 
-      <div className="mt-2 min-h-0 flex-1 space-y-1.5 overflow-hidden px-3.5">
+      <div className="no-scrollbar mt-2 min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3.5">
         {ALL_JOBS.slice(0, 4).map((j) => (
           <div key={j.title} className="flex items-center gap-1.5 rounded-lg border border-[rgba(16,16,20,0.06)] px-1.5 py-1.5">
             <span className="flex w-7 shrink-0 flex-col items-start">
@@ -275,7 +275,7 @@ export function HomeHeroJobs() {
         </div>
       </div>
 
-      <div className="mt-2 min-h-0 flex-1 space-y-1.5 overflow-hidden px-3.5">
+      <div className="no-scrollbar mt-2 min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3.5">
         {filtered.map((j) => (
           <div key={j.title} className="flex items-center gap-1.5 rounded-lg border border-[rgba(16,16,20,0.06)] px-1.5 py-1">
             <span className="flex size-4.5 shrink-0 items-center justify-center rounded-md" style={{ background: `${j.tone}1A`, color: j.tone }}>
@@ -316,7 +316,7 @@ export function HomeHeroProfile() {
         <p className="mt-0.5 text-[6.5px] font-semibold text-[#a3a4aa]">Field technician &middot; 4 years</p>
       </div>
 
-      <div className="mt-2.5 min-h-0 flex-1 space-y-1 overflow-hidden px-3.5">
+      <div className="no-scrollbar mt-2.5 min-h-0 flex-1 space-y-1 overflow-y-auto px-3.5">
         {rows.map((r) => (
           <Tap key={r.label} ripple={BRAND} label={r.label}>
             <span className="flex items-center gap-2 rounded-lg border border-[rgba(16,16,20,0.06)] px-2 py-1.5">

@@ -45,6 +45,7 @@ function AutoplayThemePhone() {
       <Link
         to={`/work/${concept.slug}`}
         onPointerDown={() => setPaused(true)}
+        className="block w-full"
         style={{ filter: 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))' }}
       >
         <PhoneNavProvider index={0} count={CONCEPT_SCREENS[concept.slug].length} onGo={() => {}}>

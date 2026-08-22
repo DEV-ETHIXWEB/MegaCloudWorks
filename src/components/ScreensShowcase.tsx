@@ -42,6 +42,7 @@ function AutoplayPhone({ concept }: { concept: Concept }) {
         // a tap on the phone hands control to the visitor: pause the
         // autoplay so their own navigation isn't yanked away mid-read
         onPointerDown={() => setPaused(true)}
+        className="w-full"
         style={{ filter: 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))' }}
       >
         <PhoneNavProvider index={index} count={screens.length} onGo={setIndex}>

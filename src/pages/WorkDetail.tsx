@@ -38,7 +38,7 @@ export function WorkDetail() {
           className="pointer-events-none absolute -right-40 -top-20 size-[36rem] rounded-full opacity-30 blur-3xl"
           style={{ background: concept.accent }}
         />
-        <div className="mx-auto grid max-w-[var(--container-wide)] items-center gap-12 lg:grid-cols-[1fr_auto]">
+        <div className="mx-auto grid max-w-[var(--container-wide)] items-center gap-12 lg:grid-cols-[1fr_300px]">
           <div>
             <Link to="/work" className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/70 no-underline hover:text-white">
               <ArrowLeft size={14} /> All concepts
@@ -73,7 +73,7 @@ export function WorkDetail() {
           </div>
 
           {HeroScreen && (
-            <Reveal delay={0.15} className="mx-auto lg:mx-0">
+            <Reveal delay={0.15} className="mx-auto w-full max-w-[280px] lg:mx-0 lg:w-[300px] lg:max-w-none">
               <PhoneNavProvider index={0} count={CONCEPT_SCREENS[concept.slug].length} onGo={() => {}}>
                 <IPhoneMockup size="lg" label={`${concept.name} · ${concept.screens[0]}`}>
                   <HeroScreen accent={concept.accent} />

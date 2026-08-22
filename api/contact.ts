@@ -48,9 +48,10 @@ const FONT_STACK =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
 
 function wordmark() {
-  return `<span style="font-family:${FONT_STACK};font-size:18px;font-weight:800;letter-spacing:-0.02em;">
-    <span style="color:${INK};">MEGACLOUD</span><span style="color:${BRAND};">WORKS</span>
-  </span>`
+  // the site's own header lockup (cloud mark + wordmark, one image), rasterized
+  // from public/logo-resized.svg — SVG has unreliable support in Outlook
+  // desktop, so email uses a PNG export of the exact same artwork instead
+  return `<img src="${SITE_URL}logo-email.png" width="170" height="23" alt="MegaCloudWorks" style="display:block;width:170px;height:23px;">`
 }
 
 function emailShell(opts: { preheader: string; body: string }) {

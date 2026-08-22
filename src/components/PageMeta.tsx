@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const SITE_URL = 'https://megacloudworks.com'
+const SITE_URL = 'https://www.megacloudworks.com'
 const SITE_NAME = 'MegaCloudWorks'
 const DEFAULT_IMAGE = `${SITE_URL}/logo512.png`
 

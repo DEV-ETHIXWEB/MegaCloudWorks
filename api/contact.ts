@@ -252,7 +252,7 @@ export default async function handler(req: Request) {
       text_body: buildLeadEmailText(name, email, subject, message),
     })
 
-    if (!leadResult.ok) {
+    if (leadResult.ok === false) {
       console.error('SMTP2GO lead send failed', leadResult.status, leadResult.data)
       return new Response(JSON.stringify({ error: 'Failed to send message' }), { status: 502 })
     }
@@ -270,7 +270,7 @@ export default async function handler(req: Request) {
         text_body: buildConfirmationEmailText(name, subject, message),
       })
 
-      if (!confirmationResult.ok) {
+      if (confirmationResult.ok === false) {
         console.error('SMTP2GO customer confirmation failed', confirmationResult.status, confirmationResult.data)
       }
     } catch (err) {

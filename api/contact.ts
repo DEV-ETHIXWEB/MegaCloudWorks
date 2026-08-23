@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 export const config = { runtime: 'edge' }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

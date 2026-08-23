@@ -216,7 +216,7 @@ export default async function handler(req: Request) {
 
   let body: { name?: string; email?: string; subject?: string; message?: string }
   try {
-    body = await req.json()
+    body = (await req.json()) as { name?: string; email?: string; subject?: string; message?: string }
   } catch {
     return new Response(JSON.stringify({ error: 'Invalid request body' }), { status: 400 })
   }

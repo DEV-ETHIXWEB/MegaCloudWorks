@@ -354,7 +354,7 @@ function FieldlyDispatch({ accent }: { accent: string }) {
           </Tap>
         </div>
       </div>
-      <div className="no-scrollbar flex-1 space-y-2 overflow-y-auto px-3.5 pb-3">
+      <div className="no-scrollbar scroll-fade-bottom flex-1 space-y-2 overflow-y-auto px-3.5 pb-3">
         {jobs.map((j, i) => (
           <Tap
             key={j.name}
@@ -428,7 +428,7 @@ function FieldlyQuote({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={FIELDLY_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 px-3.5 pb-3">
+      <div className="no-scrollbar scroll-fade-bottom flex-1 overflow-y-auto px-3.5 pb-3">
         <Tap
           ripple={accent}
           press={false}
@@ -1170,7 +1170,7 @@ function StampInsights({ accent }: { accent: string }) {
   return (
     <ScreenShell bg="#FBF4EA">
       <StatusBar accent={accent} />
-      <div className="no-scrollbar flex-1 space-y-3 overflow-y-auto px-3.5 pb-3">
+      <div className="no-scrollbar scroll-fade-bottom flex-1 space-y-3 overflow-y-auto px-3.5 pb-3">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[13px] font-extrabold text-[var(--ink)]">Customer Insights</p>
@@ -1686,7 +1686,7 @@ function SlateClients({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={SLATE_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 px-3.5 pb-3">
+      <div className="no-scrollbar scroll-fade-bottom flex-1 overflow-y-auto px-3.5 pb-3">
         <div className="flex items-center justify-between">
           <p className="text-[13px] font-extrabold text-white">Clients</p>
           <span className="flex items-center gap-1 text-[8px] font-bold text-white/45">
@@ -1871,7 +1871,7 @@ function ProphyChart({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={PROPHY_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="flex-1 px-3.5 pb-3">
+      <div className="no-scrollbar scroll-fade-bottom flex-1 overflow-y-auto px-3.5 pb-3">
         <Tap
           ripple={accent}
           press={false}
@@ -2292,7 +2292,7 @@ function LeadrPipeline({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="no-scrollbar flex-1 overflow-y-auto px-3.5 pb-2">
+      <div className="no-scrollbar scroll-fade-bottom flex-1 overflow-y-auto px-3.5 pb-2">
         {/* greeting header */}
         <div className="flex items-center justify-between">
           <div>
@@ -2577,7 +2577,7 @@ function LeadrReminders({ accent }: { accent: string }) {
                     {i < tasks.length - 1 && <span className="mt-1 w-px flex-1 bg-white/10" />}
                   </span>
                   <span
-                    className="flex flex-1 items-center gap-2 rounded-xl px-2.5 py-2 transition-colors"
+                    className="flex min-w-0 flex-1 items-center gap-2 rounded-xl px-2.5 py-2 transition-colors"
                     style={{
                       background: isDone ? `${accent}14` : LEADR_SURFACE,
                       border: `1px solid ${isDone ? `${accent}40` : LEADR_BORDER}`,
@@ -2637,7 +2637,7 @@ function LeadrDigest({ accent }: { accent: string }) {
   return (
     <DarkScreenShell bg={LEADR_BG}>
       <DarkStatusBar accent={accent} />
-      <div className="no-scrollbar flex-1 overflow-y-auto px-3.5 pb-2">
+      <div className="no-scrollbar scroll-fade-bottom flex-1 overflow-y-auto px-3.5 pb-2">
         <Tap ripple={accent} press={false} label="Back to pipeline" onTap={() => go(0)} className="!w-auto">
           <span className="flex items-center gap-0.5 text-[8px] font-bold" style={{ color: accent }}>
             <ChevronRight className="size-2.5 rotate-180" strokeWidth={3} />

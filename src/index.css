@@ -508,6 +508,17 @@ textarea:focus-visible,
   display: none;
 }
 
+/* a vertically scrollable phone-screen list whose content can exceed the
+   screen's fixed height (e.g. Leadr's pipeline, Fieldly's job list): fades
+   the last ~14% of the scrollable area to transparent so the cut at rest
+   reads as "more below, scroll for it" instead of a row sliced in half.
+   Pure CSS, percentage-based, so it scales with the container at any
+   phone size or viewport instead of a fixed-pixel mask. */
+.scroll-fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 86%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 86%, transparent 100%);
+}
+
 /* the percentage progress ring used by Prophy's Treatment Plan screen:
    animates its stroke in from empty so a status change reads as motion,
    not just a redraw */

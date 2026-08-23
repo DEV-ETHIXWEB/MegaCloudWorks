@@ -45,8 +45,8 @@ function AutoplayThemePhone() {
       <Link
         to={`/work/${concept.slug}`}
         onPointerDown={() => setPaused(true)}
-        className="block w-full"
-        style={{ filter: 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))' }}
+        className="mx-auto block rounded-[2.75rem]"
+        style={{ width: 200, boxShadow: '0 14px 22px rgba(0,0,0,0.16)' }}
       >
         <PhoneNavProvider index={0} count={CONCEPT_SCREENS[concept.slug].length} onGo={() => {}}>
           <IPhoneMockup size="sm" label={`${concept.name} · ${concept.screens[0]}, ${index + 1} of ${CONCEPTS.length}`}>
@@ -140,12 +140,14 @@ export function ThemesShowcase() {
                   }
                 >
                   <div
+                    className="mx-auto rounded-[2.75rem]"
                     style={{
+                      width: 200,
                       transform: isHovered && !reduced ? 'translateY(-10px) scale(1.02)' : 'translateY(0) scale(1)',
-                      transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 420ms ease',
-                      filter: isHovered
-                        ? 'drop-shadow(0 26px 36px rgba(0,0,0,0.30))'
-                        : 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))',
+                      transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 420ms ease',
+                      boxShadow: isHovered
+                        ? '0 26px 36px rgba(0,0,0,0.30)'
+                        : '0 14px 22px rgba(0,0,0,0.16)',
                     }}
                   >
                     <PhoneNavProvider index={0} count={CONCEPT_SCREENS[concept.slug].length} onGo={() => {}}>

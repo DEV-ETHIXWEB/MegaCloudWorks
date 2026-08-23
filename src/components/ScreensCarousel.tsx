@@ -68,7 +68,7 @@ export function ScreensCarousel({ concept }: { concept: Concept }) {
         )}
 
         {/* active phone, live and tappable */}
-        <div className="relative z-10 w-[13.5rem] shrink-0 sm:w-[15rem]" style={{ filter: 'drop-shadow(0 26px 40px rgba(0,0,0,0.22))' }}>
+        <div className="relative z-10 w-[13.5rem] shrink-0 rounded-[2.75rem] sm:w-[15rem]" style={{ boxShadow: '0 26px 40px rgba(0,0,0,0.22)' }}>
           <PhoneNavProvider index={index} count={count} onGo={(next) => go(next, next > index ? 1 : -1)}>
             <AnimatePresence mode="wait" custom={dir}>
               <motion.div

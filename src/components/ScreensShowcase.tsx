@@ -42,8 +42,8 @@ function AutoplayPhone({ concept }: { concept: Concept }) {
         // a tap on the phone hands control to the visitor: pause the
         // autoplay so their own navigation isn't yanked away mid-read
         onPointerDown={() => setPaused(true)}
-        className="w-full"
-        style={{ filter: 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))' }}
+        className="mx-auto rounded-[2.75rem]"
+        style={{ width: 200, boxShadow: '0 14px 22px rgba(0,0,0,0.16)' }}
       >
         <PhoneNavProvider index={index} count={screens.length} onGo={setIndex}>
           <IPhoneMockup size="sm" label={`${concept.name} · ${concept.screens[index]}, screen ${index + 1} of ${screens.length}`}>
@@ -151,12 +151,14 @@ export function ScreensShowcase({ concept }: { concept: Concept }) {
                       the idle float above instead of fighting it for the
                       transform channel */}
                   <div
+                    className="mx-auto rounded-[2.75rem]"
                     style={{
+                      width: 200,
                       transform: isHovered && !reduced ? 'translateY(-10px) scale(1.02)' : 'translateY(0) scale(1)',
-                      transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 420ms ease',
-                      filter: isHovered
-                        ? 'drop-shadow(0 26px 36px rgba(0,0,0,0.30))'
-                        : 'drop-shadow(0 14px 22px rgba(0,0,0,0.16))',
+                      transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 420ms ease',
+                      boxShadow: isHovered
+                        ? '0 26px 36px rgba(0,0,0,0.30)'
+                        : '0 14px 22px rgba(0,0,0,0.16)',
                     }}
                   >
                     <PhoneNavProvider

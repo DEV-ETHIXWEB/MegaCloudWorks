@@ -1772,7 +1772,14 @@ const PROPHY_BG = 'linear-gradient(180deg, #112C23 0%, #09140F 100%)'
 function GlassCard({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-sm ${className}`}
+      // isolate: backdrop-blur composites this element onto its own GPU
+      // layer, and when it sits inside a .phone-tap row (which gets
+      // transform: scale() on press), two composited layers in the same
+      // clipped ancestor is the exact WebKit bug (#98538) that lets
+      // content bleed past the phone's rounded screen edge. isolation
+      // gives this its own well-defined stacking context up front instead
+      // of leaving that to the browser to resolve mid-press.
+      className={`rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-sm isolate ${className}`}
     >
       {children}
     </div>

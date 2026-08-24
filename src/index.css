@@ -430,19 +430,40 @@ textarea:focus-visible,
   text-align: inherit;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition:
-    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 180ms ease;
+  /* transform (press scale) is the only GPU-compositing trigger on this
+     element. Combining it with `filter` here caused a WebKit bug: a
+     transformed *and* filtered descendant breaks the phone screen's own
+     overflow:hidden + border-radius clip on iOS Safari, letting content
+     bleed past the rounded bezel (WebKit bug #98538). The press-dim effect
+     below uses a ::after overlay instead so no filter ever runs on this
+     element. */
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.phone-tap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
 }
 
 .phone-tap[data-down] {
   transform: scale(0.972);
-  filter: brightness(0.97);
+}
+
+.phone-tap[data-down]::after {
+  opacity: 0.03;
 }
 
 .phone-tap--flat[data-down] {
   transform: none;
-  filter: brightness(0.94);
+}
+
+.phone-tap--flat[data-down]::after {
+  opacity: 0.06;
 }
 
 .phone-tap:disabled {
@@ -460,21 +481,31 @@ textarea:focus-visible,
   z-index: 2;
   width: 8px;
   height: 8px;
-  margin: -4px 0 0 -4px;
+  margin-top: -4px;
+  margin-left: -4px;
   border-radius: 999px;
   background: var(--ripple, currentColor);
   opacity: 0.32;
   pointer-events: none;
+  /* grows via width/height, not transform: scale() — a second transformed
+     descendant here would be a second trigger for the same WebKit
+     overflow-clip bug the .phone-tap rule above documents. */
   animation: phone-ripple 620ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
 }
 
 @keyframes phone-ripple {
   from {
-    transform: scale(1);
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    margin-left: -4px;
     opacity: 0.32;
   }
   to {
-    transform: scale(34);
+    width: 272px;
+    height: 272px;
+    margin-top: -136px;
+    margin-left: -136px;
     opacity: 0;
   }
 }
@@ -551,18 +582,19 @@ textarea:focus-visible,
   overflow: hidden;
   border-radius: 2.15rem;
   background: #000;
-  /* Safari has a long-standing bug where overflow: hidden fails to clip
-     correctly when an ancestor (the drop-shadow wrapper every phone card
-     sits in) has an active CSS filter — screen content visibly bleeds past
-     the rounded frame edge on iOS/macOS Safari only. Two independent
-     workarounds, stacked rather than either/or:
-     - clip-path is a hard geometric clip (not an image-based mask), so
-       there is no soft/antialiased seam at the boundary the way a radial
-       mask can leave under heavy device pixel ratios.
-     - translateZ(0) forces this element onto its own compositing layer,
-       which makes Safari rasterize the clip before the ancestor's filter
-       composites — the actual mechanism that resolves the bug; clip-path
-       alone does not reliably trigger that promotion on its own. */
+  /* WebKit bug (webkit.org/b/98538, still open): overflow: hidden +
+     border-radius fails to clip once a DESCENDANT gets its own composited
+     layer (a transform is the common trigger) — content bleeds past the
+     rounded edge on iOS/macOS Safari only. Every .phone-tap row inside a
+     screen applies transform: scale() on press, so this can trigger on any
+     tap, which is why it only showed up on real devices/interaction, never
+     in an automated screenshot. Fix is two-sided: this element gets
+     isolation + its own layer promoted up front (isolate/clip-path/
+     translateZ(0)), and .phone-tap/.phone-tap__ripple (see above) were
+     changed to never pair transform with filter, and the ripple no longer
+     uses transform: scale() at all, removing the descendant trigger
+     instead of only compensating for it here. */
+  isolation: isolate;
   clip-path: inset(0 round 2.15rem);
   transform: translateZ(0);
 }

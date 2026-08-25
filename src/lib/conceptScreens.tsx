@@ -395,7 +395,7 @@ function FieldlyDispatch({ accent }: { accent: string }) {
           </Tap>
         ))}
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap ripple="#ffffff" label="New job" onTap={() => go(1)}>
           <span
             className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-[11px] font-bold text-white"
@@ -492,7 +492,7 @@ function FieldlyQuote({ accent }: { accent: string }) {
           </div>
         </div>
       </div>
-      <div className="space-y-2 px-3.5 pb-4">
+      <div className="space-y-2 px-6 pb-6">
         <Tap
           ripple="#ffffff"
           label="Convert to invoice"
@@ -608,7 +608,7 @@ function FieldlyPhotos({ accent }: { accent: string }) {
           </p>
         </div>
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap
           ripple="#ffffff"
           label="Mark job complete"
@@ -791,7 +791,7 @@ function FieldlyTeam({ accent }: { accent: string }) {
           ))}
         </div>
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap ripple="#ffffff" label="Assign a new job" onTap={() => go(0)}>
           <span className="block rounded-xl py-2.5 text-center text-[10.5px] font-bold text-white" style={{ background: accent }}>
             Assign a Job
@@ -969,7 +969,7 @@ function StampPunchCard({ accent }: { accent: string }) {
           </p>
         </div>
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap
           ripple="#ffffff"
           label={full ? 'Claim free coffee' : 'Scan to stamp'}
@@ -1245,7 +1245,7 @@ function StampInsights({ accent }: { accent: string }) {
           </div>
         </div>
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap ripple={accent} label="See all offers" onTap={() => go(2)}>
           <span className="block rounded-xl border border-[#e7d9c2] bg-white py-2 text-center text-[10px] font-semibold text-[var(--ink)]">
             See Live Offers
@@ -1353,7 +1353,7 @@ function SlateBooking({ accent }: { accent: string }) {
           ))}
         </div>
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap ripple="#ffffff" label="Confirm booking" onTap={() => go(1)}>
           <span
             className="block rounded-xl py-2.5 text-center text-[10.5px] font-bold"
@@ -1644,7 +1644,7 @@ function SlateSchedule({ accent }: { accent: string }) {
           })}
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-1.5 px-3.5 pb-4">
+      <div className="grid grid-cols-3 gap-1.5 px-6 pb-6">
         <Tap ripple={accent} label="See all appointments" onTap={() => go(2)}>
           <span className="block rounded-lg bg-white/[0.06] p-1.5 text-center">
             <span className="block text-[11px] font-extrabold text-white">{bookings}</span>
@@ -1744,7 +1744,7 @@ function SlateClients({ accent }: { accent: string }) {
           )}
         </div>
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap ripple="var(--ink)" label="Book a new client" onTap={() => go(0)}>
           <span
             className="block rounded-xl py-2.5 text-center text-[10px] font-bold"
@@ -1955,7 +1955,7 @@ function ProphyChart({ accent }: { accent: string }) {
           </p>
         )}
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap
           ripple="#ffffff"
           label="Save notes"
@@ -2041,7 +2041,7 @@ function ProphyDaySchedule({ accent }: { accent: string }) {
           </div>
         </GlassCard>
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap ripple={accent} label="Open patient records" onTap={() => go(4)}>
           <span className="block rounded-xl border border-white/15 py-2.5 text-center text-[10px] font-semibold text-white/75">
             View Patient Records
@@ -2160,7 +2160,7 @@ function ProphyPatients({ accent }: { accent: string }) {
           </Tap>
         ))}
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap ripple="#0C1D16" label="Open chart notes" onTap={() => go(1)}>
           <span
             className="block rounded-xl py-2.5 text-center text-[10px] font-bold"
@@ -2237,7 +2237,7 @@ function LeadrBottomNav({ active, accent, onNav }: { active: number; accent: str
     { Ico: TrendingUp, label: 'Insights' },
   ]
   return (
-    <div className="flex items-center justify-between px-3.5 pb-3.5 pt-1.5">
+    <div className="flex items-center justify-between px-3.5 pb-6 pt-1.5">
       {items.map((it, i) =>
         it === null ? (
           <Tap key="fab" ripple="#ffffff" label="New lead" className="!w-auto" onTap={() => onNav(2)}>
@@ -2517,7 +2517,7 @@ function LeadrDetail({ accent }: { accent: string }) {
           </div>
         )}
       </div>
-      <div className="px-3.5 pb-4">
+      <div className="px-6 pb-6">
         <Tap
           ripple="#ffffff"
           label="Log follow-up"

@@ -1353,10 +1353,10 @@ function SlateBooking({ accent }: { accent: string }) {
           ))}
         </div>
       </div>
-      <div className="px-6 pb-6">
+      <div className="px-4 pb-6">
         <Tap ripple="#ffffff" label="Confirm booking" onTap={() => go(1)}>
           <span
-            className="block rounded-xl py-2.5 text-center text-[10.5px] font-bold"
+            className="block rounded-xl px-2.5 py-2.5 text-center text-[10px] font-bold"
             style={{ background: accent, color: 'var(--ink)' }}
           >
             Confirm {days[day]} Nov · {slots[slot]}

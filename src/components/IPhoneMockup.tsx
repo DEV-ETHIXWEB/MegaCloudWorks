@@ -23,9 +23,16 @@ export function IPhoneMockup({
   const maxWidth = MAX_WIDTH[size]
 
   return (
+    // The aspect ratio lives on the screen, not the frame. With padding on
+    // the same element, Blink resolves aspect-ratio against the border box
+    // (200 wide -> 412 tall) while WebKit resolves it against the content
+    // box and then adds the padding (-> 432 tall), so Safari rendered every
+    // phone 20px taller than every other browser and the screen spilled out
+    // of the chassis. The screen has no padding of its own, so the ratio is
+    // unambiguous there, and the frame just wraps it plus its 10px bezel.
     <div
       className={`iphone-frame mx-auto w-full ${className}`}
-      style={{ maxWidth, aspectRatio: `1 / ${ASPECT}` }}
+      style={{ maxWidth: maxWidth }}
       role={label ? 'group' : undefined}
       aria-label={label}
     >
@@ -33,7 +40,12 @@ export function IPhoneMockup({
       {/* the glass is always its own paper: reset ink/paper tokens here so
           screens still read correctly when the phone sits on an .on-brand
           (white-on-red) section instead of the normal light page */}
-      <div className="iphone-frame__screen reset-surface h-full w-full">{children}</div>
+      <div
+        className="iphone-frame__screen reset-surface w-full"
+        style={{ aspectRatio: `1 / ${ASPECT}` }}
+      >
+        {children}
+      </div>
     </div>
   )
 }
